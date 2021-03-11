@@ -20,8 +20,8 @@ public class Benchmark {
         final int nbTest = 2;
 
         CounterFactory counterFactory = new CounterFactory();
-        // Counter count = counterFactory.createjavacounter();
-        Counter count = counterFactory.createdegradablecounter();
+        Counter count = counterFactory.createjavacounter();
+        // Counter count = counterFactory.createdegradablecounter();
 
         List<Double> result = new ArrayList<>();
         Map<Integer, List<Double>> results = new HashMap<>();
@@ -48,8 +48,8 @@ public class Benchmark {
                 System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
                 result.add(duration);
                 executor.shutdown();
-                // count = counterFactory.createjavacounter();
-                count = counterFactory.createdegradablecounter();
+                count = counterFactory.createjavacounter();
+                // count = counterFactory.createdegradablecounter();
             }
             results.put(i, result);
             result = new ArrayList<>();
@@ -81,7 +81,8 @@ public class Benchmark {
             try {
                 latch.await();
                 for (int i = 0; i < nbOps; i++) {
-                    this.count.write();
+                    if (i%2==0) this.count.increment();
+                    else this.count.read();
                 }
             } catch (InterruptedException e) {
                 //ignore

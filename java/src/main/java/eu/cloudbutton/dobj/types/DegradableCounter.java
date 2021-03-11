@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,11 +29,11 @@ public class DegradableCounter extends Counter {
 
     @Override
     public int read() {
-        AtomicInteger total = new AtomicInteger();
-        count.forEach((k,v) -> {
-            total.addAndGet(v.intValue());
-        });
-        return total.intValue();
+        Integer total = 0;
+        for (AtomicInteger v : count.values()) {
+            total += v.get();
+        }
+        return total;
     }
 
     @Override
