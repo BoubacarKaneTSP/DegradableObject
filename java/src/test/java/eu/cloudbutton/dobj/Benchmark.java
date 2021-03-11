@@ -1,7 +1,8 @@
-import factories.counter;
-import factories.counterfactory;
-import factories.degradablecounterfactory;
-//import factories.javacounterfactory;
+package eu.cloudbutton.dobj;
+
+import eu.cloudbutton.dobj.types.Counter;
+import eu.cloudbutton.dobj.types.CounterFactory;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,35 +12,15 @@ import java.util.concurrent.*;
 
 public class Benchmark {
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
-
-        class testCallable implements Callable<Void> {
-            private final counter count;
-
-            public testCallable(counter count) {
-                this.count = count;
-            }
-
-
-            @Override
-            public Void call() {
-/*                String pid_name = Thread.currentThread().getName();
-                System.out.println("my_name : "+pid_name);*/
-
-                int nbOp = 10000000;
-                for (int i = 0; i < nbOp; i++) {
-                    this.count.write();
-                }
-                return null;
-            }
-        }
+    @Test
+    public void counter() throws InterruptedException, ExecutionException {
 
         final int nbTasks = 10;
         final int nbThreads = 5;
         final int nbTest = 2;
 
-        counterfactory counterFactory = new degradablecounterfactory();
-        counter count = counterFactory.getcounter();
+        CounterFactory counterFactory = new CounterFactory();
+        Counter count = counterFactory.createdegradablecounter();
 
         List<Double> result = new ArrayList<>();
         Map<Integer, List<Double>> results = new HashMap<>();
@@ -65,7 +46,7 @@ public class Benchmark {
                 System.out.println(duration+" seconds, "+ "nbThreads = "+i+", test num : "+a);
                 result.add(duration);
                 executor.shutdown();
-                count = counterFactory.getcounter();
+                count = counterFactory.createdegradablecounter();
             }
             results.put(i, result);
             result = new ArrayList<>();
@@ -73,4 +54,29 @@ public class Benchmark {
 
         System.out.println(results);
     }
+
+
+    private class testCallable implements Callable<Void> {
+
+        private final Counter count;
+
+        public testCallable(Counter count) {
+            this.count = count;
+        }
+
+
+        @Override
+        public Void call() {
+/*                String pid_name = Thread.currentThread().getName();
+                System.out.println("my_name : "+pid_name);*/
+
+            int nbOp = 10000000;
+            for (int i = 0; i < nbOp; i++) {
+                this.count.write();
+            }
+            return null;
+        }
+    }
+
+
 }

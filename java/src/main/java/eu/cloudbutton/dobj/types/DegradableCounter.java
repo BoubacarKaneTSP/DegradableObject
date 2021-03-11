@@ -1,14 +1,14 @@
-package factories;
+package eu.cloudbutton.dobj.types;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class degradablecounter extends counter{
+public class DegradableCounter extends Counter {
 
     private final ConcurrentMap<String, AtomicInteger> count;
 
-    public degradablecounter() {
+    public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
     }
 

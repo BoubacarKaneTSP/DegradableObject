@@ -1,6 +1,6 @@
-package factories;
+package eu.cloudbutton.dobj.types;
 
-public abstract class counter {
+public abstract class Counter {
 
     public abstract void increment();
     public abstract int read();
