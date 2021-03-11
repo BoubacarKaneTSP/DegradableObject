@@ -80,9 +80,9 @@ public class Benchmark {
             latch.countDown();
             try {
                 latch.await();
+                this.count.increment();
                 for (int i = 0; i < nbOps; i++) {
-                    if (i%2==0) this.count.increment();
-                    else this.count.read();
+                    this.count.read();
                 }
             } catch (InterruptedException e) {
                 //ignore
