@@ -2,7 +2,7 @@ package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.types.CounterFactory;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;

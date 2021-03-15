@@ -1,21 +1,18 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.types.Counter;
-import eu.cloudbutton.dobj.types.CounterFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-
 public class CounterTest {
 
     private CounterFactory factory;
 
-    @Before
+    @BeforeEach
     public void setUp(){
         factory = new CounterFactory();
     }
@@ -41,7 +38,8 @@ public class CounterTest {
         for (Future<Void> future : futures) {
             future.get();
         }
-        assertEquals("Failed incrementing the Counter",10, count.read());
+        assertEquals(10, count.read(),"Failed incrementing the Counter");
+//        assertEquals("Failed incrementing the Counter",10, count.read());
     }
 
 }
