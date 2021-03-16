@@ -1,18 +1,17 @@
 package eu.cloudbutton.dobj.types;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.concurrent.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ListTest {
 
     private ListFactory factory;
 
-    @BeforeEach
+    @BeforeTest
     void setUp() {
         factory = new ListFactory();
     }
@@ -30,7 +29,6 @@ class ListTest {
             list.append("v1");
             list.append("v2");
             list.append("v3");
-            System.out.println(Thread.currentThread().getName());
             return null;
         };
 

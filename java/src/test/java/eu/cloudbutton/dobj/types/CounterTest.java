@@ -1,8 +1,8 @@
 package eu.cloudbutton.dobj.types;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class CounterTest {
 
     private CounterFactory factory;
 
-    @BeforeEach
+    @BeforeTest
     public void setUp(){
         factory = new CounterFactory();
     }

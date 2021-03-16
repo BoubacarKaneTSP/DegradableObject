@@ -1,8 +1,8 @@
 package eu.cloudbutton.dobj.types;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ class SetTest {
 
     private SetFactory factory;
 
-    @BeforeEach
+    @BeforeTest
     void setUp() {
         factory = new SetFactory();
     }
