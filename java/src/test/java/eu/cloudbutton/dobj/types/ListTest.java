@@ -22,7 +22,7 @@ class ListTest {
         doAppend(factory.createjavalist());
     }
 
-    private static void doAppend(List list) throws ExecutionException, InterruptedException {
+    private static void doAppend(AbstractList list) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         java.util.List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {

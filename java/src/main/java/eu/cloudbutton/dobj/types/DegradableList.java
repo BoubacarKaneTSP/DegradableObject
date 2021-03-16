@@ -1,11 +1,10 @@
 package eu.cloudbutton.dobj.types;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
-public class DegradableList extends List {
+public class DegradableList extends AbstractList {
 
     private final ConcurrentMap<String, ConcurrentLinkedQueue<String>> list;
     private final ThreadLocal<ConcurrentLinkedQueue<String>> local;
