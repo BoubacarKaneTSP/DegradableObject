@@ -10,20 +10,20 @@ import java.util.concurrent.*;
 
 public class CounterTest {
 
-    private CounterFactory factory;
+    private Factory factory;
 
     @BeforeTest
     public void setUp(){
-        factory = new CounterFactory();
+        factory = new Factory();
     }
 
     @Test
     public void increment() throws ExecutionException, InterruptedException {
-        doIncrement(factory.createdegradablecounter());
-        doIncrement(factory.createjavacounter());
+        doIncrement(factory.createDegradableCounter());
+        doIncrement(factory.createCounter());
     }
 
-    private static void doIncrement(Counter count) throws ExecutionException, InterruptedException {
+    private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {

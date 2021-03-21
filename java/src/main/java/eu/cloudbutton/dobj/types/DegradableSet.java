@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class DegradableSet extends Set{
+public class DegradableSet extends AbstractSet {
 
     private final ConcurrentMap<String, ConcurrentSkipListSet<String>> set;
     private final ThreadLocal<ConcurrentSkipListSet<String>> local;

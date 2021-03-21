@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DegradableCounter extends Counter {
+public class DegradableCounter extends AbstractCounter {
 
     private final ConcurrentMap<String, AtomicInteger> count;
 

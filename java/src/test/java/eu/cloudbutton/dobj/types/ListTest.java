@@ -9,17 +9,17 @@ import java.util.concurrent.*;
 
 class ListTest {
 
-    private ListFactory factory;
+    private Factory factory;
 
     @BeforeTest
     void setUp() {
-        factory = new ListFactory();
+        factory = new Factory();
     }
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-        doAppend(factory.createdegradablelist());
-        doAppend(factory.createjavalist());
+        doAppend(factory.createDegradableList());
+        doAppend(factory.createList());
     }
 
     private static void doAppend(AbstractList list) throws ExecutionException, InterruptedException {

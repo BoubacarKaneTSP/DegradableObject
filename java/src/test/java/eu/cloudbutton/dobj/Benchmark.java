@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.types.Counter;
+import eu.cloudbutton.dobj.types.AbstractCounter;
 import eu.cloudbutton.dobj.types.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -8,17 +8,17 @@ import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import org.testng.annotations.Test;
 
-/*import static org.kohsuke.args4j.ExampleMode.ALL;
-import org.kohsuke.args4j.*;
-import org.kohsuke.args4j.spi.BooleanOptionHandler;*/
-
-//import com.github.sh0nk.matplotlib4j;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static java.lang.System.exit;
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Benchmark {
@@ -29,12 +29,15 @@ public class Benchmark {
     @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
     private String[] ratios;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    @Option(name = "-ow", usage = "overwrite")
+    private Boolean overwrite;
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         new Benchmark().counter(args);
     }
 
     @Test
-    public void counter(String[] args) throws InterruptedException, ExecutionException {
+    public void counter(String[] args) throws InterruptedException, ExecutionException, IOException {
        CmdLineParser parser = new CmdLineParser(this);
 
         try {
@@ -65,10 +68,24 @@ public class Benchmark {
             return;
         }
 
-        final int nbOps = 1000000;
+        File file = new File("results_"+type+".txt");
+
+        if(!file.exists()){
+            file.createNewFile();
+        }else {
+            if(overwrite == null) {
+                System.out.println("The file " + file.getName() + " already exists. Please re-run with option -ow to overwrite.");
+                exit(0);
+            }
+        }
+
+        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+        BufferedWriter bw = new BufferedWriter(fw);
+
+        final int nbOps = 100000000;
 //        final int nbThreads = Runtime.getRuntime().availableProcessors()/2;
-        final int nbThreads = 5;
-        final int nbTest = 5;
+        final int nbThreads = 40;
+        final int nbTest = 10;
 
         try {
 
@@ -119,34 +136,22 @@ public class Benchmark {
             }
 
             List<Double> avg_result = new ArrayList<>();
-
             System.out.println(results);
+
             for (List<Double> l : results.values()) {
                 Double sum = 0.0;
                 for (Double d: l) {
                     sum += d;
                 }
                 avg_result.add(sum/l.size());
+                bw.write(String.valueOf((sum/l.size())));
+                bw.newLine();
             }
+
             System.out.println(avg_result);
 
-/*        Plot plt = Plot.create();
-        plt.plot()
-                .add(Arrays.asList(1.3, 2))
-                .label("label")
-                .linestyle("--");
-        plt.xlabel("xlabel");
-        plt.ylabel("ylabel");
-        plt.text(0.5, 0.2, "text");
-        plt.title("Title!");
-        plt.legend();
-        plt.show();*/
-
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+            bw.close();
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -155,10 +160,10 @@ public class Benchmark {
 
     public static class FactoryTester {
 
-        private Object object;
-        private int[] ratios;
-        private CountDownLatch latch;
-        private int nbOps;
+        private final Object object;
+        private final int[] ratios;
+        private final CountDownLatch latch;
+        private final int nbOps;
 
         FactoryTester(Object object, int[] ratios, CountDownLatch latch, int nbOps){
             this.object = object;
@@ -168,11 +173,27 @@ public class Benchmark {
         }
 
         public CounterTester createCounterTester(){
-            return new CounterTester((Counter) object, ratios, latch, nbOps);
+            return new CounterTester((AbstractCounter) object, ratios, latch, nbOps);
+        }
+
+        public DegradableCounterTester createDegradableCounterTester(){
+            return new DegradableCounterTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
         public ListTester createListTester(){
-            return new ListTester((eu.cloudbutton.dobj.types.List) object, ratios, latch, nbOps);
+            return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public DegradableListTester createDegradableListTester(){
+            return new DegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public SetTester createSetTester(){
+            return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
+        }
+
+        public DegradableSetTester createDegradableSetTester(){
+            return new DegradableSetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
     }
@@ -211,9 +232,9 @@ public class Benchmark {
         protected abstract void test();
     }
 
-    public static class CounterTester extends Tester<Counter> {
+    public static class CounterTester extends Tester<AbstractCounter> {
 
-        public CounterTester(Counter counter, int[] ratios, CountDownLatch latch, int nbOps) {
+        public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, int nbOps) {
             super(counter, ratios, latch, nbOps);
         }
 
@@ -227,16 +248,82 @@ public class Benchmark {
         }
     }
 
-    public static class ListTester extends Tester<eu.cloudbutton.dobj.types.List> {
+    public static class DegradableCounterTester extends Tester<AbstractCounter> {
 
-        public ListTester(eu.cloudbutton.dobj.types.List counter, int[] ratios, CountDownLatch latch, int nbOps) {
+        public DegradableCounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, int nbOps) {
             super(counter, ratios, latch, nbOps);
         }
 
         @Override
         protected void test() {
             if (random.nextFloat()<=ratios[0]){
+                object.increment();
+            } else {
+                object.read();
+            }
+        }
+    }
+
+    public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat()<=ratios[0]){
                 object.append("0");
+            } else {
+                object.read();
+            }
+        }
+    }
+
+    public static class DegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public DegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat()<=ratios[0]){
+                object.append("0");
+            } else {
+                object.read();
+            }
+        }
+    }
+
+    public static class SetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
+
+        public SetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test(){
+            float n = random.nextFloat();
+            if (n<=ratios[0]){
+                object.add(String.valueOf(n));
+            } else {
+                object.read();
+            }
+        }
+    }
+
+    public static class DegradableSetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
+
+        public DegradableSetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test(){
+            float n = random.nextFloat();
+            if (n<=ratios[0]){
+                object.add(String.valueOf(n));
             } else {
                 object.read();
             }

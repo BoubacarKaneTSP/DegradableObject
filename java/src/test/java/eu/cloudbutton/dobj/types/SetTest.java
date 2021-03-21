@@ -11,20 +11,20 @@ import java.util.concurrent.*;
 
 class SetTest {
 
-    private SetFactory factory;
+    private Factory factory;
 
     @BeforeTest
     void setUp() {
-        factory = new SetFactory();
+        factory = new Factory();
     }
 
     @Test
     void add() throws ExecutionException, InterruptedException {
-        doAdd(factory.createdegradableset());
-        doAdd(factory.createjavaset());
+        doAdd(factory.createDegradableSet());
+        doAdd(factory.createSet());
     }
 
-    private static void doAdd(Set set) throws ExecutionException, InterruptedException {
+    private static void doAdd(AbstractSet set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
