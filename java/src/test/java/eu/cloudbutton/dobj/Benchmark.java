@@ -123,7 +123,7 @@ public class Benchmark {
 
                     // report
                     // System.out.println(count.read()+" operations; "+i+" threads");
-                    System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
+                    // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
                     result.add(duration);
 
                     executor.shutdown();
@@ -133,11 +133,12 @@ public class Benchmark {
                 }
                 results.put(i, result);
                 result = new ArrayList<>();
+		System.out.println(type+", "+i+" Threads");
             }
 
             List<Double> avg_result = new ArrayList<>();
             System.out.println(results);
-
+	    
             for (List<Double> l : results.values()) {
                 Double sum = 0.0;
                 for (Double d: l) {
