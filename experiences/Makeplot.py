@@ -16,7 +16,7 @@ for file in files:
     numprocess = []
     resultat = []
     for elt in file.read().split():
-        print(elt)
+        #print(elt)
         if i % 2 == 0:
             numprocess.append(elt)
         else:
@@ -24,6 +24,9 @@ for file in files:
         i += 1
     resultats.append(resultat)
     numprocesses.append(numprocess)
+
+print(resultats)
+print(numprocesses)
 
 for numprocess, resultat, name in zip(numprocesses,resultats,sys.argv[1:]):
     plt.plot(numprocess, resultat, marker = "o", label=name[7:len(name)-4].replace("_", " "))
