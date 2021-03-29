@@ -109,7 +109,7 @@ public class Benchmark {
                     // report
                     // System.out.println(count.read()+" operations; "+i+" threads");
                     // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add(duration);
+                    result.add(duration/(((double)nbOps)/((double)i)));
 
                     executor.shutdown();
 
