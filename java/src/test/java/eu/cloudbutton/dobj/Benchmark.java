@@ -8,17 +8,11 @@ import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import org.testng.annotations.Test;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static java.lang.System.exit;
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Benchmark {
@@ -32,12 +26,23 @@ public class Benchmark {
     @Option(name = "-ow", usage = "overwrite")
     private Boolean overwrite;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
+    @Option(name = "-nbThreads", usage = "Number of threads")
+    private int nbThreads = Runtime.getRuntime().availableProcessors()/2;
+
+    @Option(name = "-nbOps", usage = "Number of operations")
+    private int nbOps = 100000000;
+
+    @Option(name = "-nbTest", usage = "Number of test")
+    private int nbTest = 1;
+
+
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().counter(args);
     }
 
     @Test
-    public void counter(String[] args) throws InterruptedException, ExecutionException, IOException {
+    public void counter(String[] args) throws InterruptedException, ExecutionException {
        CmdLineParser parser = new CmdLineParser(this);
 
         try {
@@ -68,25 +73,6 @@ public class Benchmark {
             return;
         }
 
-        File file = new File("results_"+type+".txt");
-
-        if(!file.exists()){
-            file.createNewFile();
-        }else {
-            if(overwrite == null) {
-                System.out.println("The file " + file.getName() + " already exists. Please re-run with option -ow to overwrite.");
-                exit(0);
-            }
-        }
-
-        FileWriter fw = new FileWriter(file.getAbsoluteFile());
-        BufferedWriter bw = new BufferedWriter(fw);
-
-        final int nbOps = 100000000;
-//        final int nbThreads = Runtime.getRuntime().availableProcessors()/2;
-        final int nbThreads = 40;
-        final int nbTest = 10;
-
         try {
 
             Factory factory = new Factory();
@@ -94,7 +80,6 @@ public class Benchmark {
             Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
 
             List<Double> result = new ArrayList<>();
-            Map<Integer, List<Double>> results = new HashMap<>();
 
             for (int i = 1; i <= nbThreads; i++) {
                 for (int a = 0; a < nbTest; a++) {
@@ -131,27 +116,14 @@ public class Benchmark {
                     object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
 
                 }
-                results.put(i, result);
-                result = new ArrayList<>();
-		System.out.println(type+", "+i+" Threads");
-            }
-
-            List<Double> avg_result = new ArrayList<>();
-            System.out.println(results);
-	    
-            for (List<Double> l : results.values()) {
                 Double sum = 0.0;
-                for (Double d: l) {
+                for (Double d: result){
                     sum += d;
                 }
-                avg_result.add(sum/l.size());
-                bw.write(String.valueOf((sum/l.size())));
-                bw.newLine();
+                System.out.println(i + " "+ sum/result.size());
+                result = new ArrayList<>();
             }
 
-            System.out.println(avg_result);
-
-            bw.close();
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
