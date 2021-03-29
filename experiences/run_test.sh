@@ -10,8 +10,8 @@ for type in 'Counter' 'DegradableCounter' 'List' 'DegradableList' 'Set' 'Degrada
 do
   echo $type
   if [ $type = 'Counter'  ] || [ $type = 'DegradableCounter' ]; then
-         CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios 0 -ow > "result_${type}.txt"
+         CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios 100 -nbTest 5 -ow > "result_${type}.txt"
   else
-     CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios 0 -ow -nbOps 1000000 > "result_${type}.txt"
+     CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios 100 -ow -nbTest 5 -nbOps 1000000 > "result_${type}.txt"
   fi
 done

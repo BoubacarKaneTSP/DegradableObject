@@ -38,11 +38,11 @@ public class Benchmark {
 
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        new Benchmark().counter(args);
+        new Benchmark().doMain(args);
     }
 
     @Test
-    public void counter(String[] args) throws InterruptedException, ExecutionException {
+    public void doMain(String[] args) throws InterruptedException, ExecutionException {
        CmdLineParser parser = new CmdLineParser(this);
 
         try {
