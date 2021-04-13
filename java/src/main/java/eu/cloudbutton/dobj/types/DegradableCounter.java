@@ -25,6 +25,15 @@ public class DegradableCounter extends AbstractCounter {
         local.get().incrementAndGet();
     }
 
+    public void increment(int val) {
+        String pid = Thread.currentThread().getName();
+        if (!count.containsKey(pid)) {
+            local.set(new AtomicInteger());
+            this.count.put(pid,local.get());
+        }
+        local.get().addAndGet(val);
+    }
+
     @Override
     public int read() {
         int total = 0;
@@ -37,5 +46,10 @@ public class DegradableCounter extends AbstractCounter {
     @Override
     public void write() {
         increment();
+    }
+
+    @Override
+    public void write(int val) {
+        increment(val);
     }
 }

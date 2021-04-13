@@ -4,10 +4,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
-public class DegradableList extends AbstractList {
+public class DegradableList<T> extends AbstractList<T> {
 
-    private final ConcurrentMap<String, ConcurrentLinkedQueue<String>> list;
-    private final ThreadLocal<ConcurrentLinkedQueue<String>> local;
+    private final ConcurrentMap<String, ConcurrentLinkedQueue<T>> list;
+    private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
 
     public DegradableList() {
         this.list = new ConcurrentHashMap<>();
@@ -15,26 +15,26 @@ public class DegradableList extends AbstractList {
     }
 
     @Override
-    public void append(String s) {
+    public void append(T val) {
         String pid = Thread.currentThread().getName();
         if(!list.containsKey(pid)){
             local.set(new ConcurrentLinkedQueue<>());
             this.list.put(pid, local.get());
         }
-        local.get().add(s);
+        local.get().add(val);
     }
 
     @Override
-    public ConcurrentLinkedQueue<String> read() {
-        ConcurrentLinkedQueue<String> result = new ConcurrentLinkedQueue<>();
-        for (ConcurrentLinkedQueue<String> s : list.values()){
-            result.addAll(s);
+    public ConcurrentLinkedQueue<T> read() {
+        ConcurrentLinkedQueue<T> result = new ConcurrentLinkedQueue<>();
+        for (ConcurrentLinkedQueue<T> val : list.values()){
+            result.addAll(val);
         }
         return result;
     }
 
     @Override
-    public void remove(String s) {
+    public void remove(T val) {
         throw new java.lang.Error("Remove not build yet");
     }
 }

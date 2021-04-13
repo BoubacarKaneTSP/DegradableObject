@@ -13,6 +13,10 @@ public class Counter extends AbstractCounter {
         count.incrementAndGet();
     }
 
+    public void increment(int val) {
+        count.addAndGet(val);
+    }
+
     @Override
     public int read() {
         return count.intValue();
@@ -21,5 +25,10 @@ public class Counter extends AbstractCounter {
     @Override
     public void write() {
         increment();
+    }
+
+    @Override
+    public void write(int val) {
+        increment(val);
     }
 }

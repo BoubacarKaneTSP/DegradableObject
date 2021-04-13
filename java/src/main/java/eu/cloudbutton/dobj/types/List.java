@@ -2,26 +2,26 @@ package eu.cloudbutton.dobj.types;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class List extends AbstractList {
+public class List<T> extends AbstractList<T> {
 
-    private final ConcurrentLinkedQueue<String> list;
+    private final ConcurrentLinkedQueue<T> list;
 
     public List() {
         list = new ConcurrentLinkedQueue<>();
     }
 
     @Override
-    public void append(String s) {
-        list.add(s);
+    public void append(T val) {
+        list.add(val);
     }
 
     @Override
-    public ConcurrentLinkedQueue<String> read() {
+    public ConcurrentLinkedQueue<T> read() {
         return list;
     }
 
     @Override
-    public void remove(String s) {
-        list.remove(s);
+    public void remove(T val) {
+        list.remove(val);
     }
 }

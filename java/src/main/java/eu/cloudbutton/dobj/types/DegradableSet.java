@@ -5,10 +5,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class DegradableSet extends AbstractSet {
+public class DegradableSet<T> extends AbstractSet<T> {
 
-    private final ConcurrentMap<String, ConcurrentSkipListSet<String>> set;
-    private final ThreadLocal<ConcurrentSkipListSet<String>> local;
+    private final ConcurrentMap<String, ConcurrentSkipListSet<T>> set;
+    private final ThreadLocal<ConcurrentSkipListSet<T>> local;
 
     public DegradableSet() {
         this.set = new ConcurrentHashMap<>();
@@ -16,26 +16,26 @@ public class DegradableSet extends AbstractSet {
     }
 
     @Override
-    public void add(String s) {
+    public void add(T val) {
         String pid = Thread.currentThread().getName();
         if(!set.containsKey(pid)) {
             local.set(new ConcurrentSkipListSet<>());
             this.set.put(pid, local.get());
         }
-        local.get().add(s);
+        local.get().add(val);
     }
 
     @Override
-    public java.util.Set<String> read() {
-        java.util.Set<String> result = new HashSet<>();
-        for (ConcurrentSkipListSet<String> s : set.values()){
-            result.addAll(s);
+    public java.util.Set<T> read() {
+        java.util.Set<T> result = new HashSet<>();
+        for (ConcurrentSkipListSet<T> val : set.values()){
+            result.addAll(val);
         }
         return result;
     }
 
     @Override
-    public void remove(String s) {
+    public void remove(T val) {
         throw new java.lang.Error("Remove not build yet");
     }
 }

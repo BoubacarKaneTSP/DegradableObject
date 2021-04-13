@@ -26,9 +26,9 @@ class ListTest {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         java.util.List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
-            list.append("v1");
-            list.append("v2");
-            list.append("v3");
+            list.append(1);
+            list.append(2);
+            list.append(3);
             return null;
         };
 
@@ -40,10 +40,10 @@ class ListTest {
             future.get();
         }
 
-        java.util.List<String> result = new ArrayList<>();
-        result.add("v1");
-        result.add("v2");
-        result.add("v3");
+        java.util.List<Integer> result = new ArrayList<>();
+        result.add(1);
+        result.add(2);
+        result.add(3);
         assertTrue(list.read().containsAll(result), "Failed adding elements in the list");
     }
 }
