@@ -153,6 +153,10 @@ public class Benchmark {
             return new DegradableCounterTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
+        public CounterSnapshotTester createCounterSnapshotTester(){
+            return new CounterSnapshotTester((AbstractCounter) object, ratios, latch, nbOps);
+        }
+
         public ListTester createListTester(){
             return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
@@ -161,12 +165,20 @@ public class Benchmark {
             return new DegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
+        public ListSnapshotTester createListSnapshotTester(){
+            return new ListSnapshotTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
         public SetTester createSetTester(){
             return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
         public DegradableSetTester createDegradableSetTester(){
             return new DegradableSetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
+        }
+
+        public SetSnapshotTester createSetSnapshotTester(){
+            return new SetSnapshotTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
     }
@@ -237,6 +249,22 @@ public class Benchmark {
         }
     }
 
+    public static class CounterSnapshotTester extends Tester<AbstractCounter>{
+
+        public CounterSnapshotTester(AbstractCounter object, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat()<=ratios[0]){
+                object.increment();
+            } else {
+                object.read();
+            }
+        }
+    }
+
     public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
         public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
@@ -269,6 +297,22 @@ public class Benchmark {
         }
     }
 
+    public static class ListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList>{
+
+        public ListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat()<=ratios[0]){
+                object.append("0");
+            } else {
+                object.read();
+            }
+        }
+    }
+
     public static class SetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
 
         public SetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
@@ -289,6 +333,23 @@ public class Benchmark {
     public static class DegradableSetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
 
         public DegradableSetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test(){
+            float n = random.nextFloat();
+            if (n<=ratios[0]){
+                object.add(String.valueOf(n));
+            } else {
+                object.read();
+            }
+        }
+    }
+
+    public static class SetSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
+
+        public SetSnapshotTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
             super(object, ratios, latch, nbOps);
         }
 

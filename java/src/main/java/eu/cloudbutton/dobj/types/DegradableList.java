@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -25,8 +27,8 @@ public class DegradableList<T> extends AbstractList<T> {
     }
 
     @Override
-    public ConcurrentLinkedQueue<T> read() {
-        ConcurrentLinkedQueue<T> result = new ConcurrentLinkedQueue<>();
+    public List<T> read() {
+        List<T> result = new ArrayList<>();
         for (ConcurrentLinkedQueue<T> val : list.values()){
             result.addAll(val);
         }

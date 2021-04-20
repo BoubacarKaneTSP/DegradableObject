@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class Snapshot<T> {
+public class Snapshot<T> {
 
     protected final ConcurrentMap<String, Triplet<T, AtomicInteger, List<T>>> obj;
     private final ThreadLocal<Set<Triplet<T, AtomicInteger, List<T>>>> read1;

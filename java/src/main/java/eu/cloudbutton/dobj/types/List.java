@@ -16,8 +16,8 @@ public class List<T> extends AbstractList<T> {
     }
 
     @Override
-    public ConcurrentLinkedQueue<T> read() {
-        return list;
+    public java.util.List<T> read() {
+        return (java.util.List<T>) list;
     }
 
     @Override
