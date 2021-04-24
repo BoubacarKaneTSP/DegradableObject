@@ -81,9 +81,9 @@ public class Benchmark {
 
             List<Double> result = new ArrayList<>();
 
-            for (int i = 1; i <= nbThreads; i++) {
+            for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
-                    List<Callable<Void>> callables = new ArrayList<>();
+                    List<Callable<Double>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
                     CountDownLatch latch = new CountDownLatch(i);
@@ -98,18 +98,15 @@ public class Benchmark {
                     }
 
                     // launch computation
-                    double startTime = System.nanoTime();
-                    List<Future<Void>> futures = executor.invokeAll(callables);
-                    for (Future<Void> future : futures) {
-                        future.get();
+                    double duration = 0;
+                    List<Future<Double>> futures = executor.invokeAll(callables);
+                    for (Future<Double> future : futures) {
+                        duration = future.get();
                     }
-                    double endTime = System.nanoTime();
-                    double duration = endTime - startTime;
 
                     // report
-                    // System.out.println(count.read()+" operations; "+i+" threads");
                     // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add(duration/(((double)nbOps)/((double)i)));
+                    result.add((((double)1/3*nbOps)*((double)i))/duration);
 
                     executor.shutdown();
 
@@ -120,8 +117,12 @@ public class Benchmark {
                 for (Double d: result){
                     sum += d;
                 }
-                System.out.println(i + " "+ sum/result.size());
+                System.out.println(i + " "+ sum/result.size()); // printing the avg time per op for i thread(s)
                 result = new ArrayList<>();
+
+                i=2*i;
+                if (i > nbThreads && i != 2*nbThreads)
+                    i = nbThreads;
             }
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -184,7 +185,7 @@ public class Benchmark {
     }
 
 
-    public static abstract class Tester<T> implements Callable<Void> {
+    public static abstract class Tester<T> implements Callable<Double> {
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -201,17 +202,25 @@ public class Benchmark {
         }
 
         @Override
-        public Void call() {
+        public Double call() {
             latch.countDown();
+            double startTime = 0;
+            double endTime = 0;
             try {
                 latch.await();
                 for (int i = 0; i < nbOps; i++) {
+                    if (i == 1/3*nbOps)
+                        startTime = System.nanoTime();
+                    else if (i == 2/3*nbOps)
+                        endTime = System.nanoTime();
                     test();
                 }
             } catch (InterruptedException e) {
                 //ignore
             }
-            return null;
+
+            double duration = endTime - startTime;
+            return duration;
         }
 
         protected abstract void test();
@@ -323,7 +332,7 @@ public class Benchmark {
         protected void test(){
             float n = random.nextFloat();
             if (n<=ratios[0]){
-                object.add(String.valueOf(n));
+                object.add(n);
             } else {
                 object.read();
             }
@@ -340,7 +349,7 @@ public class Benchmark {
         protected void test(){
             float n = random.nextFloat();
             if (n<=ratios[0]){
-                object.add(String.valueOf(n));
+                object.add(n);
             } else {
                 object.read();
             }
@@ -357,7 +366,7 @@ public class Benchmark {
         protected void test(){
             float n = random.nextFloat();
             if (n<=ratios[0]){
-                object.add(String.valueOf(n));
+                object.add(n);
             } else {
                 object.read();
             }
