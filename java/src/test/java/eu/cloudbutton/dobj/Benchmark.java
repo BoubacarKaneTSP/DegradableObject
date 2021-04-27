@@ -106,7 +106,7 @@ public class Benchmark {
 
                     // report
                     // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add((((double)1/3*nbOps)*((double)i))/duration);
+                    result.add(duration/((double)1/3*nbOps));
 
                     executor.shutdown();
 
@@ -211,7 +211,7 @@ public class Benchmark {
                 for (int i = 0; i < nbOps; i++) {
                     if (i == 1/3*nbOps)
                         startTime = System.nanoTime();
-                    else if (i == 2/3*nbOps)
+                    if (i == 2/3*nbOps)
                         endTime = System.nanoTime();
                     test();
                 }
