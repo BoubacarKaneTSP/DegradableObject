@@ -106,7 +106,7 @@ public class Benchmark {
 
                     // report
                     // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add(duration/((double)1/3*nbOps));
+                    result.add(duration/((double)nbOps*1/3));
 
                     executor.shutdown();
 
@@ -206,20 +206,30 @@ public class Benchmark {
             latch.countDown();
             double startTime = 0;
             double endTime = 0;
+            double realStart = System.nanoTime();
             try {
                 latch.await();
+                System.out.println("nb d'ope effectué par proc : " + nbOps*1/3);
+
                 for (int i = 0; i < nbOps; i++) {
-                    if (i == 1/3*nbOps)
+                    if (i == nbOps*1/3) {
                         startTime = System.nanoTime();
-                    if (i == 2/3*nbOps)
+                        System.out.println("1/3 = "+i);
+                    }
+                    if (i == nbOps*2/3) {
                         endTime = System.nanoTime();
+                        System.out.println("2/3 = " + i);
+                    }
                     test();
                 }
             } catch (InterruptedException e) {
                 //ignore
             }
-
             double duration = endTime - startTime;
+            double realEnd = System.nanoTime();
+            double realDuration = realEnd-realStart;
+//            System.out.println("real time = "+ realDuration);
+//            System.out.println("duration (1/3)= "+ duration);
             return duration;
         }
 

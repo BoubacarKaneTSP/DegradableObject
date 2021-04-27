@@ -31,7 +31,8 @@ print(numprocesses)
 for numprocess, resultat, name in zip(numprocesses,resultats,sys.argv[1:]):
     plt.plot(numprocess, resultat, marker = "o", label=name[7:len(name)-4].replace("_", " "))
 
-plt.ylabel("time per ope")
+
+plt.ylabel("# ope/s")
 plt.xlabel("# processes")
 plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
 plt.yscale("log")
