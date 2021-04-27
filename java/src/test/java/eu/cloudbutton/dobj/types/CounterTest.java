@@ -19,8 +19,11 @@ public class CounterTest {
 
     @Test
     public void increment() throws ExecutionException, InterruptedException {
-        doIncrement(factory.createDegradableCounter());
-        doIncrement(factory.createCounter());
+//        doIncrement(factory.createDegradableCounter());
+//        doIncrement(factory.createCounter());
+        double nbOps = 30;
+        System.out.println("2/3 de nbOps = " + (double)2/3*nbOps);
+
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {

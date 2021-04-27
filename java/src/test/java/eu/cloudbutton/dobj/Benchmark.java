@@ -209,16 +209,16 @@ public class Benchmark {
             double realStart = System.nanoTime();
             try {
                 latch.await();
-                //System.out.println("nb d'ope effectué par proc : " + nbOps*1/3);
-
+//                System.out.println("nb d'ope effectué par proc : " + (double)1/3*nbOps);
+//                System.out.println("2/3 de nbOps = " + (double)2/3*nbOps);
                 for (int i = 0; i < nbOps; i++) {
-                    if (i == nbOps*1/3) {
+                    if (i == (double)1/3*nbOps) {
                         startTime = System.nanoTime();
-                        //System.out.println("1/3 = "+i);
+//                        System.out.println("1/3 = "+i);
                     }
-                    if (i == nbOps*2/3) {
+                    if (i == (double)2/3*nbOps) {
                         endTime = System.nanoTime();
-                        //System.out.println("2/3 = " + i);
+//                        System.out.println("2/3 = " + i);
                     }
                     test();
                 }
