@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.AbstractCounter;
 import eu.cloudbutton.dobj.types.Factory;
+import eu.cloudbutton.dobj.types.SecondDegradableList;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -182,6 +183,14 @@ public class Benchmark {
             return new SetSnapshotTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
+        public SecondDegradableListTester createSecondDegradableListTester(){
+            return new SecondDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public ThirdDegradableListTester createThirdDegradableListTester(){
+            return new ThirdDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
     }
 
 
@@ -240,7 +249,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<=ratios[0]){
+            if (random.nextFloat()<ratios[0]){
                 object.increment();
             } else {
                 object.read();
@@ -256,7 +265,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<=ratios[0]){
+            if (random.nextFloat()<ratios[0]){
                 object.increment();
             } else {
                 object.read();
@@ -272,7 +281,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<=ratios[0]){
+            if (random.nextFloat()<ratios[0]){
                 object.increment();
             } else {
                 object.read();
@@ -288,7 +297,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<=ratios[0]){
+            if (random.nextFloat()<ratios[0]){
                 object.append("0");
             } else {
                 object.read();
@@ -304,7 +313,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<=ratios[0]){
+            if (random.nextFloat()<ratios[0]){
                 object.append("0");
             } else {
                 object.read();
@@ -320,7 +329,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<=ratios[0]){
+            if (random.nextFloat()<ratios[0]){
                 object.append("0");
             } else {
                 object.read();
@@ -337,7 +346,7 @@ public class Benchmark {
         @Override
         protected void test(){
             float n = random.nextFloat();
-            if (n<=ratios[0]){
+            if (n<ratios[0]){
                 object.add(n);
             } else {
                 object.read();
@@ -354,7 +363,7 @@ public class Benchmark {
         @Override
         protected void test(){
             float n = random.nextFloat();
-            if (n<=ratios[0]){
+            if (n<ratios[0]){
                 object.add(n);
             } else {
                 object.read();
@@ -371,7 +380,7 @@ public class Benchmark {
         @Override
         protected void test(){
             float n = random.nextFloat();
-            if (n<=ratios[0]){
+            if (n<ratios[0]){
                 object.add(n);
             } else {
                 object.read();
@@ -379,5 +388,35 @@ public class Benchmark {
         }
     }
 
+    public static class SecondDegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
+        public SecondDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat()<ratios[0]){
+                object.append("0");
+            } else {
+                object.read();
+            }
+        }
+    }
+
+    public static class ThirdDegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public ThirdDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat()<ratios[0]){
+                object.append("0");
+            } else {
+                object.read();
+            }
+        }
+    }
 }

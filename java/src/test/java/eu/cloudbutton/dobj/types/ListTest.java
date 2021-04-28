@@ -7,7 +7,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-class ListTest {
+public class ListTest {
 
     private Factory factory;
 
@@ -20,6 +20,8 @@ class ListTest {
     void append() throws ExecutionException, InterruptedException {
         doAppend(factory.createDegradableList());
         doAppend(factory.createList());
+        doAppend(factory.createSecondDegradableList());
+        doAppend(factory.createThirdDegradableList());
     }
 
     private static void doAppend(AbstractList list) throws ExecutionException, InterruptedException {

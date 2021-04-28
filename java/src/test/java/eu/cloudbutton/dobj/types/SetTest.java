@@ -31,7 +31,6 @@ class SetTest {
             set.add("v1");
             set.add("v2");
             set.add("v3");
-            System.out.println(Thread.currentThread().getName());
             return null;
         };
 

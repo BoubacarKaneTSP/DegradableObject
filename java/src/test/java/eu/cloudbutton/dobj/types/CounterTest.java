@@ -19,10 +19,8 @@ public class CounterTest {
 
     @Test
     public void increment() throws ExecutionException, InterruptedException {
-//        doIncrement(factory.createDegradableCounter());
-//        doIncrement(factory.createCounter());
-        double nbOps = 30;
-        System.out.println("2/3 de nbOps = " + (double)2/3*nbOps);
+        doIncrement(factory.createDegradableCounter());
+        doIncrement(factory.createCounter());
 
     }
 
@@ -42,7 +40,6 @@ public class CounterTest {
             future.get();
         }
         assertEquals(10, count.read(),"Failed incrementing the Counter");
-//        assertEquals("Failed incrementing the Counter",10, count.read());
     }
 
 }

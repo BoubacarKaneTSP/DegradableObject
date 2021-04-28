@@ -23,7 +23,7 @@ public class SnapshotTest {
 
         doSetTest(factory.createSetSnapshot());
 
-//        doListTest(factory.createListSnapshot());
+        //doListTest(factory.createListSnapshot());
     }
 
     public void doCounterTest(AbstractCounter snap) throws ExecutionException, InterruptedException {
@@ -73,8 +73,6 @@ public class SnapshotTest {
         for (int i = 0; i < 1000; i++) {
             result.add("v"+i);
         }
-        System.out.println(snap.read());
-        System.out.println(result);
         assertEquals(snap.read(), result,"Failed adding into the SetSnapshot and/or DegradableSetSnapshot object");
     }
 

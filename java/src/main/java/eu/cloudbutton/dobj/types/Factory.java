@@ -11,4 +11,7 @@ public class Factory {
     public AbstractCounter createCounterSnapshot() { return new CounterSnapshot(); }
     public AbstractSet createSetSnapshot () { return new SetSnapshot(); }
     public AbstractList createListSnapshot () { return  new ListSnapshot(); }
+
+    public AbstractList createSecondDegradableList() {return new SecondDegradableList(); }
+    public AbstractList createThirdDegradableList() {return new ThirdDegradableList(); }
 }
