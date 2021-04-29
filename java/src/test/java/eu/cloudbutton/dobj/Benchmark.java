@@ -31,7 +31,7 @@ public class Benchmark {
     private int nbThreads = Runtime.getRuntime().availableProcessors()/2;
 
     @Option(name = "-nbOps", usage = "Number of operations")
-    private int nbOps = 15000000000;
+    private long nbOps = 10_000_000;
 
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
@@ -138,9 +138,9 @@ public class Benchmark {
         private final Object object;
         private final int[] ratios;
         private final CountDownLatch latch;
-        private final int nbOps;
+        private final long nbOps;
 
-        FactoryTester(Object object, int[] ratios, CountDownLatch latch, int nbOps){
+        FactoryTester(Object object, int[] ratios, CountDownLatch latch, long nbOps){
             this.object = object;
             this.ratios = ratios;
             this.latch = latch;
@@ -200,9 +200,9 @@ public class Benchmark {
         protected final T object;
         protected final int[] ratios;
         protected final CountDownLatch latch;
-        protected final int nbOps;
+        protected final long nbOps;
 
-        public Tester(T object, int[] ratios, CountDownLatch latch, int nbOps) {
+        public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.random =  ThreadLocalRandom.current();
             this.object = object;
             this.ratios = ratios;
@@ -243,7 +243,7 @@ public class Benchmark {
 
     public static class CounterTester extends Tester<AbstractCounter> {
 
-        public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, int nbOps) {
+        public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, long nbOps) {
             super(counter, ratios, latch, nbOps);
         }
 
@@ -259,7 +259,7 @@ public class Benchmark {
 
     public static class DegradableCounterTester extends Tester<AbstractCounter> {
 
-        public DegradableCounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, int nbOps) {
+        public DegradableCounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, long nbOps) {
             super(counter, ratios, latch, nbOps);
         }
 
@@ -275,7 +275,7 @@ public class Benchmark {
 
     public static class CounterSnapshotTester extends Tester<AbstractCounter>{
 
-        public CounterSnapshotTester(AbstractCounter object, int[] ratios, CountDownLatch latch, int nbOps) {
+        public CounterSnapshotTester(AbstractCounter object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
@@ -291,7 +291,7 @@ public class Benchmark {
 
     public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
-        public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+        public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 
@@ -307,7 +307,7 @@ public class Benchmark {
 
     public static class DegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
-        public DegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+        public DegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 
@@ -323,7 +323,7 @@ public class Benchmark {
 
     public static class ListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList>{
 
-        public ListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, int nbOps) {
+        public ListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
@@ -339,7 +339,7 @@ public class Benchmark {
 
     public static class SetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
 
-        public SetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
+        public SetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
@@ -356,7 +356,7 @@ public class Benchmark {
 
     public static class DegradableSetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
 
-        public DegradableSetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
+        public DegradableSetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
@@ -373,7 +373,7 @@ public class Benchmark {
 
     public static class SetSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
 
-        public SetSnapshotTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, int nbOps) {
+        public SetSnapshotTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
@@ -390,7 +390,7 @@ public class Benchmark {
 
     public static class SecondDegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
-        public SecondDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+        public SecondDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 
@@ -406,7 +406,7 @@ public class Benchmark {
 
     public static class ThirdDegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
-        public ThirdDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, int nbOps) {
+        public ThirdDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 

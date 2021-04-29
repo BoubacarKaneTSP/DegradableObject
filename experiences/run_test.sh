@@ -12,7 +12,7 @@ do
   do
     echo $type $ratio
     if [ $type = 'Counter'  ] || [ $type = 'DegradableCounter' ] ; then
-           CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 5 > "results_${type}_ratio_write_${ratio}.txt"
+           CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 5 -nbOps 15000000000 > "results_${type}_ratio_write_${ratio}.txt"
     elif [ $type = 'CounterSnapshot' ] || [ $type = 'SetSnapshot' ] || [ $type = 'ListSnapshot' ]; then
      CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 5 -nbOps 300000 > "results_${type}_ratio_write_${ratio}.txt"
     else
