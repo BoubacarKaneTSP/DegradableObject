@@ -31,7 +31,7 @@ public class Benchmark {
     private int nbThreads = Runtime.getRuntime().availableProcessors()/2;
 
     @Option(name = "-nbOps", usage = "Number of operations")
-    private int nbOps = 100000000;
+    private int nbOps = 15000000000;
 
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
