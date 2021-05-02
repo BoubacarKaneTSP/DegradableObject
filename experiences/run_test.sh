@@ -8,11 +8,11 @@ mvn clean package -f ../java -DskipTests;
 
 for ratio in 100 80 50 20 0;
 do
-  for type in 'Counter' 'DegradableCounter' 'CounterSnapshot' 'List' 'DegradableList' 'ListSnapshot' 'Set' 'DegradableSet' 'SetSnapshot'
+  for type in 'Counter' 'DegradableCounter' 'CounterSnapshot' 'List' 'DegradableList' 'ListSnapshot' 'Set' 'DegradableSet' 'SetSnapshot' 'SecondDegradableList' 'ThirdDegradableList'
   do
     echo $type $ratio
     if [ $type = 'Counter'  ] || [ $type = 'DegradableCounter' ] ; then
-           CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 5 -nbOps 15000000000 > "results_${type}_ratio_write_${ratio}.txt"
+           CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 5 -nbOps 3000000000 > "results_${type}_ratio_write_${ratio}.txt"
     elif [ $type = 'CounterSnapshot' ] || [ $type = 'SetSnapshot' ] || [ $type = 'ListSnapshot' ]; then
      CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 5 -nbOps 300000 > "results_${type}_ratio_write_${ratio}.txt"
     else
