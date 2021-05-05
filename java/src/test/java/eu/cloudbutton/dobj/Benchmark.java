@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.AbstractCounter;
 import eu.cloudbutton.dobj.types.Factory;
-import eu.cloudbutton.dobj.types.SecondDegradableList;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -24,19 +23,16 @@ public class Benchmark {
     @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
     private String[] ratios;
 
-    @Option(name = "-ow", usage = "overwrite")
-    private Boolean overwrite;
-
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors()/2;
 
-    @Option(name = "-nbOps", usage = "Number of operations")
-    private long nbOps = 10_000_000;
+    @Option(name = "-nbOps", usage = "Number of operations between two time's read")
+    private long nbOps = 100_000_000;
 
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
 
-
+    private static List<Double> durations = new ArrayList();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
@@ -74,6 +70,8 @@ public class Benchmark {
             return;
         }
 
+        List<Future<Void>> futures = null;
+
         try {
 
             Factory factory = new Factory();
@@ -84,7 +82,7 @@ public class Benchmark {
 
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
-                    List<Callable<Double>> callables = new ArrayList<>();
+                    List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
                     CountDownLatch latch = new CountDownLatch(i);
@@ -99,15 +97,15 @@ public class Benchmark {
                     }
 
                     // launch computation
-                    double duration = 0;
-                    List<Future<Double>> futures = executor.invokeAll(callables);
-                    for (Future<Double> future : futures) {
-                        duration = future.get();
+                    futures = executor.invokeAll(callables, 2, TimeUnit.SECONDS);
+                    for (Future<Void> future : futures) {
+                        future.get();
                     }
 
+                    System.out.println(durations);
                     // report
                     // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add(duration/((double)nbOps*1/3));
+                    result.add(durations.size()/((double)nbOps*1/3));
 
                     executor.shutdown();
 
@@ -126,11 +124,17 @@ public class Benchmark {
                     i = nbThreads;
             }
 
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
+        } catch (CancellationException e) {
+            System.out.println("error");
+            for (Future<Void> future : futures) {
+                future.cancel(true);
+                System.out.println(future.isCancelled());
+                System.out.println(future.isDone());
+            }
+//            e.printStackTrace();
         }
-
-
     }
 
     public static class FactoryTester {
@@ -194,7 +198,7 @@ public class Benchmark {
     }
 
 
-    public static abstract class Tester<T> implements Callable<Double> {
+    public static abstract class Tester<T> implements Callable<Void> {
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -211,7 +215,7 @@ public class Benchmark {
         }
 
         @Override
-        public Double call() {
+        public Void call() {
             latch.countDown();
             double startTime = 0;
             double endTime = 0;
@@ -220,7 +224,9 @@ public class Benchmark {
                 latch.await();
 //                System.out.println("nb d'ope effectué par proc : " + (double)1/3*nbOps);
 //                System.out.println("2/3 de nbOps = " + (double)2/3*nbOps);
-                for (int i = 0; i < nbOps; i++) {
+//                for (int i = 0; i < nbOps; i++) {
+                int i = 0;
+                while(true){
                     if (i == (double)1/3*nbOps) {
                         startTime = System.nanoTime();
 //                        System.out.println("1/3 = "+i);
@@ -230,12 +236,17 @@ public class Benchmark {
 //                        System.out.println("2/3 = " + i);
                     }
                     test();
+                    i+=1;
+                    if(i%10000000==0)
+                        System.out.println(i);
                 }
             } catch (InterruptedException e) {
                 //ignore
             }
             double duration = endTime - startTime;
-            return duration;
+            durations.add(duration);
+
+            return null;
         }
 
         protected abstract void test();
