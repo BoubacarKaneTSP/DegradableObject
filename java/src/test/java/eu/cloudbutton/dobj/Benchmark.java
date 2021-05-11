@@ -6,7 +6,6 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
-import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,19 +25,21 @@ public class Benchmark {
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors()/2;
 
+    @Option(name = "-time", usage = "How long will the test last (seconds)")
+    private int time = 300;
+
     @Option(name = "-nbOps", usage = "Number of operations between two time's read")
     private long nbOps = 100_000_000;
 
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
 
-    private static List<Double> durations = new ArrayList();
+    private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
     }
 
-    @Test
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
        CmdLineParser parser = new CmdLineParser(this);
 
@@ -70,19 +71,17 @@ public class Benchmark {
             return;
         }
 
-        List<Future<Void>> futures = null;
-
         try {
 
             Factory factory = new Factory();
             String constructor = "create"+type;
             Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
 
-            List<Double> result = new ArrayList<>();
+            List<Integer> result = new ArrayList<>();
 
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
-                    List<Callable<Void>> callables = new ArrayList<>();
+                    List<Callable<Integer>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
                     CountDownLatch latch = new CountDownLatch(i);
@@ -97,27 +96,39 @@ public class Benchmark {
                     }
 
                     // launch computation
-                    futures = executor.invokeAll(callables, 2, TimeUnit.SECONDS);
-                    for (Future<Void> future : futures) {
-                        future.get();
+                    List<Future<Integer>> futures;
+                    System.out.println("run test");
+                    futures = executor.invokeAll(callables, time, TimeUnit.SECONDS);
+                    int total_ops = 0;
+                    try{
+                        for (Future<Integer> future : futures) {
+                            System.out.println(future.get());
+                            result.add(future.get());
+                        }
+                    }catch (CancellationException e){
+                        System.out.println("stopped");
                     }
 
-                    System.out.println(durations);
-                    // report
+//                    System.out.println(total_ops);
+//                     report
                     // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add(durations.size()/((double)nbOps*1/3));
+                    result.add(total_ops);
 
                     executor.shutdown();
 
                     object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
 
                 }
-                Double sum = 0.0;
-                for (Double d: result){
-                    sum += d;
+                Long sum = 0L;
+                for (Long val: nbOperations){
+                    sum += val;
                 }
-                System.out.println(i + " "+ sum/result.size()); // printing the avg time per op for i thread(s)
-                result = new ArrayList<>();
+                System.out.println("sum = " +sum);
+                System.out.println("result = " + nbOperations);
+                double avg_op = sum/nbOperations.size();
+                System.out.println("avg_op = " + avg_op);
+                System.out.println(i + " "+ time/avg_op); // printing the avg time per op for i thread(s)
+                nbOperations = new ConcurrentLinkedQueue<>();
 
                 i=2*i;
                 if (i > nbThreads && i != 2*nbThreads)
@@ -126,14 +137,6 @@ public class Benchmark {
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
-        } catch (CancellationException e) {
-            System.out.println("error");
-            for (Future<Void> future : futures) {
-                future.cancel(true);
-                System.out.println(future.isCancelled());
-                System.out.println(future.isDone());
-            }
-//            e.printStackTrace();
         }
     }
 
@@ -198,7 +201,7 @@ public class Benchmark {
     }
 
 
-    public static abstract class Tester<T> implements Callable<Void> {
+    public static abstract class Tester<T> implements Callable<Integer> {
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -215,38 +218,24 @@ public class Benchmark {
         }
 
         @Override
-        public Void call() {
+        public Integer call() {
             latch.countDown();
-            double startTime = 0;
-            double endTime = 0;
-            double realStart = System.nanoTime();
+            Long i = 0L;
             try {
                 latch.await();
-//                System.out.println("nb d'ope effectué par proc : " + (double)1/3*nbOps);
-//                System.out.println("2/3 de nbOps = " + (double)2/3*nbOps);
-//                for (int i = 0; i < nbOps; i++) {
-                int i = 0;
-                while(true){
-                    if (i == (double)1/3*nbOps) {
-                        startTime = System.nanoTime();
-//                        System.out.println("1/3 = "+i);
-                    }
-                    if (i == (double)2/3*nbOps) {
-                        endTime = System.nanoTime();
-//                        System.out.println("2/3 = " + i);
-                    }
+                while(!Thread.currentThread().isInterrupted()){
                     test();
-                    i+=1;
-                    if(i%10000000==0)
+                    i++;
+                    if(i%100000000==0)
                         System.out.println(i);
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | CancellationException e) {
                 //ignore
             }
-            double duration = endTime - startTime;
-            durations.add(duration);
 
-            return null;
+            nbOperations.add(i);
+
+            return 1;
         }
 
         protected abstract void test();
