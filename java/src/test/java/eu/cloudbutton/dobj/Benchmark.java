@@ -115,22 +115,21 @@ public class Benchmark {
                     executor.shutdown();
 
                     object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-
                 }
                 Long sum = 0L;
                 for (Long val: nbOperations){
                     sum += val;
                 }
                 double avg_op = sum/nbOperations.size();
-                System.out.println(i + " "+ time/avg_op); // printing the avg time per op for i thread(s)
+                System.out.println(i + " "+ (time-25)/avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
-		System.exit(0);	
-		if (i!=nbThreads){
-                	i=2*i;
+		        System.exit(0);
+		        if (i!=nbThreads){
+		            i=2*i;
                 	if (i > nbThreads && i != 2*nbThreads){
                     		i = nbThreads;
-			}
-		}
+			        }
+		        }
             }
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -223,6 +222,9 @@ public class Benchmark {
             Long i = 0L;
             try {
                 latch.await();
+                for (Long j = 0L; j < nbOps; j++) {
+                    test();
+                }
                 while(!Thread.currentThread().isInterrupted()){
                     test();
                     i++;
