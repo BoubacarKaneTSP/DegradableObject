@@ -123,13 +123,10 @@ public class Benchmark {
                 double avg_op = sum/nbOperations.size();
                 System.out.println(i + " "+ (time-25)/avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
-		        System.exit(0);
-		        if (i!=nbThreads){
-		            i=2*i;
-                	if (i > nbThreads && i != 2*nbThreads){
-                    		i = nbThreads;
-			        }
-		        }
+		i=2*i;
+               	if (i > nbThreads && i != 2*nbThreads){
+               		i = nbThreads;
+		}
             }
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {

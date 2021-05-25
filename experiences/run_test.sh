@@ -38,11 +38,11 @@ do
 
 
     if [ $type = 'Counter'  ] || [ $type = 'DegradableCounter' ] ; then
-        CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -nbThreads 1 -ratios $ratio -nbTest 3 -time 60 -nbOps $nbOperation > "results_${type}_ratio_write_${ratio}.txt"
+        CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 3 -time 60 -nbOps $nbOperation > "results_${type}_ratio_write_${ratio}.txt"
     elif [ $type = 'CounterSnapshot' ] || [ $type = 'SetSnapshot' ] || [ $type = 'ListSnapshot' ]; then
-    	CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -nbThreads 1 -ratios $ratio -nbTest 3 -time 60 -nbOps $nbOperation > "results_${type}_ratio_write_${ratio}.txt"
+    	CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 3 -time 60 -nbOps $nbOperation > "results_${type}_ratio_write_${ratio}.txt"
     else
-    	CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -nbThreads 1 -ratios $ratio -nbTest 3 -time 60 -nbOps $nbOperation > "results_${type}_ratio_write_${ratio}.txt"
+    	CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 3 -time 60 -nbOps $nbOperation > "results_${type}_ratio_write_${ratio}.txt"
     fi
   done
 done
