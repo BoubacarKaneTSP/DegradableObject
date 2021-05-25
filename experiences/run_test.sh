@@ -6,17 +6,17 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 mvn clean package -f ../java -DskipTests;
 
-for ratio in 100; #80 50 20 0;
+for ratio in 95; # 80 50 20 0;
 do
-  for type in 'Counter' 'DegradableCounter' 'CounterSnapshot' 'List' 'DegradableList' 'ListSnapshot' 'Set' 'DegradableSet' 'SetSnapshot' 'SecondDegradableList' 'ThirdDegradableList'
+  for type in 'Counter' 'DegradableCounter' 'CoounterSnapshot' 'List' 'DegradableList' 'ListSnapshot' 'Set' 'DegradableSet' 'SetSnapshot' 'SecondDegradableList' 'ThirdDegradableList'
   do
     echo $type $ratio
     if [ $type = 'Counter'  ] || [ $type = 'DegradableCounter' ] ; then
-           CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 60 #> "results_${type}_ratio_write_${ratio}.txt"
+        CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -nbThreads 1 -ratios $ratio -nbTest 1 -time 1 #> "results_${type}_ratio_write_${ratio}.txt"
     elif [ $type = 'CounterSnapshot' ] || [ $type = 'SetSnapshot' ] || [ $type = 'ListSnapshot' ]; then
-     CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 60 #> "results_${type}_ratio_write_${ratio}.txt"
+    	CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -nbThreads 1 -ratios $ratio -nbTest 5 -time 60 #> "results_${type}_ratio_write_${ratio}.txt"
     else
-       CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 60 #> "results_${type}_ratio_write_${ratio}.txt"
+    	CLASSPATH=../java/target/*:../java/target/lib/* java  eu.cloudbutton.dobj.Benchmark -type $type -nbThreads 1 -ratios $ratio -nbTest 5 -time 60 #> "results_${type}_ratio_write_${ratio}.txt"
     fi
   done
 done

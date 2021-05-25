@@ -97,16 +97,14 @@ public class Benchmark {
 
                     // launch computation
                     List<Future<Integer>> futures;
-                    System.out.println("run test");
                     futures = executor.invokeAll(callables, time, TimeUnit.SECONDS);
                     int total_ops = 0;
                     try{
                         for (Future<Integer> future : futures) {
-                            System.out.println(future.get());
                             result.add(future.get());
                         }
                     }catch (CancellationException e){
-                        System.out.println("stopped");
+			//ignore
                     }
 
 //                    System.out.println(total_ops);
@@ -123,21 +121,23 @@ public class Benchmark {
                 for (Long val: nbOperations){
                     sum += val;
                 }
-                System.out.println("sum = " +sum);
-                System.out.println("result = " + nbOperations);
                 double avg_op = sum/nbOperations.size();
-                System.out.println("avg_op = " + avg_op);
                 System.out.println(i + " "+ time/avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
-
-                i=2*i;
-                if (i > nbThreads && i != 2*nbThreads)
-                    i = nbThreads;
+		System.exit(0);	
+		if (i!=nbThreads){
+                	i=2*i;
+                	if (i > nbThreads && i != 2*nbThreads){
+                    		i = nbThreads;
+			}
+		}
             }
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
+	    System.exit(-1);
         }
+	System.exit(0);
     }
 
     public static class FactoryTester {
@@ -226,8 +226,6 @@ public class Benchmark {
                 while(!Thread.currentThread().isInterrupted()){
                     test();
                     i++;
-                    if(i%100000000==0)
-                        System.out.println(i);
                 }
             } catch (InterruptedException | CancellationException e) {
                 //ignore
