@@ -23,10 +23,13 @@ public class Benchmark {
     private String[] ratios;
 
     @Option(name = "-nbThreads", usage = "Number of threads")
-    private int nbThreads = Runtime.getRuntime().availableProcessors()/2;
+    private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
 
     @Option(name = "-time", usage = "How long will the test last (seconds)")
     private int time = 300;
+
+    @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
+    private int wTime = 0;
 
     @Option(name = "-nbOps", usage = "Number of operations between two time's read")
     private long nbOps = 100_000_000;
@@ -35,15 +38,16 @@ public class Benchmark {
     private int nbTest = 1;
 
     private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
+    private static boolean flag;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
-       CmdLineParser parser = new CmdLineParser(this);
+        CmdLineParser parser = new CmdLineParser(this);
 
-        try {
+        try{
             // parse the arguments.
             parser.parseArgument(args);
 
@@ -52,10 +56,10 @@ public class Benchmark {
 
             // after parsing arguments, you should check
             // if enough arguments are given.
-            if( args.length < 1 )
-                throw new CmdLineException(parser,"No argument is given");
+            if (args.length < 1)
+                throw new CmdLineException(parser, "No argument is given");
 
-        } catch( CmdLineException e ) {
+        } catch (CmdLineException e) {
             // if there's a problem in the command line,
             // you'll get this exception. this will report
             // an error message.
@@ -66,74 +70,72 @@ public class Benchmark {
             System.err.println();
 
             // print option sample. This is useful some time
-            System.err.println("  Example: java Benchmark"+ parser.printExample(ALL));
+            System.err.println("  Example: java Benchmark" + parser.printExample(ALL));
 
             return;
         }
 
-        try {
+        try{
 
             Factory factory = new Factory();
-            String constructor = "create"+type;
+            String constructor = "create" + type;
             Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-
-            List<Integer> result = new ArrayList<>();
 
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
-                    List<Callable<Integer>> callables = new ArrayList<>();
+                    List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
                     CountDownLatch latch = new CountDownLatch(i);
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
-                            latch,nbOps / i);
+                            latch, nbOps / i);
                     for (int j = 0; j < i; j++) {
-                        Method m = factoryTester.getClass().getDeclaredMethod("create"+type+"Tester");
+                        Method m = factoryTester.getClass().getDeclaredMethod("create" + type + "Tester");
                         Tester tester = (Tester) m.invoke(factoryTester);
                         callables.add(tester);
                     }
 
-                    // launch computation
-                    List<Future<Integer>> futures;
-                    futures = executor.invokeAll(callables, time, TimeUnit.SECONDS);
-                    int total_ops = 0;
-                    try{
-                        for (Future<Integer> future : futures) {
-                            result.add(future.get());
-                        }
-                    }catch (CancellationException e){
-			//ignore
-                    }
+                    ExecutorService executorService = Executors.newFixedThreadPool(1);
+                    flag = true;
+                    executorService.submit(new Coordinator());
 
-//                    System.out.println(total_ops);
-//                     report
-                    // System.out.println(duration+" time per op: "+ duration/(((double)nbOps)/((double)i))+"ns");
-                    result.add(total_ops);
+                    List<Future<Void>> futures;
+
+                    // launch computation
+                    futures = executor.invokeAll(callables, time + wTime, TimeUnit.SECONDS);
+
+                    try{
+                        for (Future<Void> future : futures) {
+                            future.get();
+                        }
+                    } catch (CancellationException e) {
+                        //ignore
+                    }
 
                     executor.shutdown();
 
                     object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
                 }
                 Long sum = 0L;
-                for (Long val: nbOperations){
+                for (Long val : nbOperations) {
                     sum += val;
                 }
-                double avg_op = sum/nbOperations.size();
-                System.out.println(i + " "+ (time-25)/avg_op); // printing the avg time per op for i thread(s)
+                double avg_op = sum / nbOperations.size();
+                System.out.println(i + " " + (time - wTime) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
-		i=2*i;
-               	if (i > nbThreads && i != 2*nbThreads){
-               		i = nbThreads;
-		}
+                i = 2 * i;
+                if (i > nbThreads && i != 2 * nbThreads) {
+                    i = nbThreads;
+                }
             }
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
-	    System.exit(-1);
+            System.exit(-1);
         }
-	System.exit(0);
+        System.exit(0);
     }
 
     public static class FactoryTester {
@@ -143,61 +145,73 @@ public class Benchmark {
         private final CountDownLatch latch;
         private final long nbOps;
 
-        FactoryTester(Object object, int[] ratios, CountDownLatch latch, long nbOps){
+        FactoryTester(Object object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.object = object;
             this.ratios = ratios;
             this.latch = latch;
             this.nbOps = nbOps;
         }
 
-        public CounterTester createCounterTester(){
+        public CounterTester createCounterTester() {
             return new CounterTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
-        public DegradableCounterTester createDegradableCounterTester(){
+        public DegradableCounterTester createDegradableCounterTester() {
             return new DegradableCounterTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
-        public CounterSnapshotTester createCounterSnapshotTester(){
+        public CounterSnapshotTester createCounterSnapshotTester() {
             return new CounterSnapshotTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
-        public ListTester createListTester(){
+        public ListTester createListTester() {
             return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
-        public DegradableListTester createDegradableListTester(){
+        public DegradableListTester createDegradableListTester() {
             return new DegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
-        public ListSnapshotTester createListSnapshotTester(){
+        public ListSnapshotTester createListSnapshotTester() {
             return new ListSnapshotTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
-        public SetTester createSetTester(){
+        public SetTester createSetTester() {
             return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
-        public DegradableSetTester createDegradableSetTester(){
+        public DegradableSetTester createDegradableSetTester() {
             return new DegradableSetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
-        public SetSnapshotTester createSetSnapshotTester(){
+        public SetSnapshotTester createSetSnapshotTester() {
             return new SetSnapshotTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
-        public SecondDegradableListTester createSecondDegradableListTester(){
+        public SecondDegradableListTester createSecondDegradableListTester() {
             return new SecondDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
-        public ThirdDegradableListTester createThirdDegradableListTester(){
+        public ThirdDegradableListTester createThirdDegradableListTester() {
             return new ThirdDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
     }
 
 
-    public static abstract class Tester<T> implements Callable<Integer> {
+    public class Coordinator implements Callable<Void> {
+        @Override
+        public Void call() throws Exception {
+            try {
+                TimeUnit.SECONDS.sleep(wTime);
+                flag=false;
+            } catch (InterruptedException e) {
+                throw new Exception("Thread interrupted", e);
+            }
+            return null;
+        }
+    }
+    public static abstract class Tester<T> implements Callable<Void> {
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -206,7 +220,7 @@ public class Benchmark {
         protected final long nbOps;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
-            this.random =  ThreadLocalRandom.current();
+            this.random = ThreadLocalRandom.current();
             this.object = object;
             this.ratios = ratios;
             this.latch = latch;
@@ -214,15 +228,15 @@ public class Benchmark {
         }
 
         @Override
-        public Integer call() {
+        public Void call() {
             latch.countDown();
             Long i = 0L;
-            try {
+            try{
                 latch.await();
-                for (Long j = 0L; j < nbOps; j++) {
+                while (flag) {
                     test();
                 }
-                while(!Thread.currentThread().isInterrupted()){
+                while (!Thread.currentThread().isInterrupted()) {
                     test();
                     i++;
                 }
@@ -232,7 +246,7 @@ public class Benchmark {
 
             nbOperations.add(i);
 
-            return 1;
+            return null;
         }
 
         protected abstract void test();
@@ -246,7 +260,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -262,7 +276,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -270,7 +284,7 @@ public class Benchmark {
         }
     }
 
-    public static class CounterSnapshotTester extends Tester<AbstractCounter>{
+    public static class CounterSnapshotTester extends Tester<AbstractCounter> {
 
         public CounterSnapshotTester(AbstractCounter object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
@@ -278,7 +292,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -294,7 +308,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.append("0");
             } else {
                 object.read();
@@ -310,7 +324,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.append("0");
             } else {
                 object.read();
@@ -318,7 +332,7 @@ public class Benchmark {
         }
     }
 
-    public static class ListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList>{
+    public static class ListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
         public ListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
@@ -326,7 +340,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.append("0");
             } else {
                 object.read();
@@ -334,16 +348,16 @@ public class Benchmark {
         }
     }
 
-    public static class SetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
+    public static class SetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
 
         public SetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
         @Override
-        protected void test(){
+        protected void test() {
             float n = random.nextFloat();
-            if (n<ratios[0]){
+            if (n < ratios[0]) {
                 object.add(n);
             } else {
                 object.read();
@@ -351,16 +365,16 @@ public class Benchmark {
         }
     }
 
-    public static class DegradableSetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
+    public static class DegradableSetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
 
         public DegradableSetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
         @Override
-        protected void test(){
+        protected void test() {
             float n = random.nextFloat();
-            if (n<ratios[0]){
+            if (n < ratios[0]) {
                 object.add(n);
             } else {
                 object.read();
@@ -368,16 +382,16 @@ public class Benchmark {
         }
     }
 
-    public static class SetSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet>{
+    public static class SetSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
 
         public SetSnapshotTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
         @Override
-        protected void test(){
+        protected void test() {
             float n = random.nextFloat();
-            if (n<ratios[0]){
+            if (n < ratios[0]) {
                 object.add(n);
             } else {
                 object.read();
@@ -393,7 +407,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.append("0");
             } else {
                 object.read();
@@ -409,7 +423,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat()<ratios[0]){
+            if (random.nextFloat() < ratios[0]) {
                 object.append("0");
             } else {
                 object.read();
