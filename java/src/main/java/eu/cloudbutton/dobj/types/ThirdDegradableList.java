@@ -4,6 +4,7 @@ import org.javatuples.Pair;
 
 import java.util.*;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -44,19 +45,50 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
     @Override
     public java.util.List<T> read() {
         inter_list.clear();
-        for (String key : this.list.keySet()){
+        for (String key : this.list.keySet()) {
+
             int lastkey = list.get(key).lastKey();
-            if (!last.containsKey(key)){
+            if (!last.containsKey(key)) {
                 last.put(key, lastkey);
                 for (Map.Entry<Integer, Pair<Integer, T>> elem : list.get(key).headMap(lastkey).entrySet())
                     inter_list.add(elem.getValue());
-            }
-            else{
-                if (last.get(key) != lastkey){
+            } else {
+                if (last.get(key) != lastkey) {
                     int i;
-                    for ( i = last.get(key)+1; i <= lastkey ; i++)
+                    for (i = last.get(key) + 1; i <= lastkey; i++)
                         inter_list.add(list.get(key).get(i));
                     last.put(key, i);
+                }
+            }
+
+        }
+
+        SortedMap<Integer, T> sortedMap = new TreeMap<>();
+
+        for (Pair<Integer,T> pair : inter_list)
+            sortedMap.put(pair.getValue0(), pair.getValue1());
+
+        list_final.addAll(sortedMap.values());
+
+        return list_final;
+    }
+
+    public java.util.List<T> read(Set following) {
+        inter_list.clear();
+        for (String key : this.list.keySet()){
+            if (following.contains(key)) {
+                int lastkey = list.get(key).lastKey();
+                if (!last.containsKey(key)) {
+                    last.put(key, lastkey);
+                    for (Map.Entry<Integer, Pair<Integer, T>> elem : list.get(key).headMap(lastkey).entrySet())
+                        inter_list.add(elem.getValue());
+                } else {
+                    if (last.get(key) != lastkey) {
+                        int i;
+                        for (i = last.get(key) + 1; i <= lastkey; i++)
+                            inter_list.add(list.get(key).get(i));
+                        last.put(key, i);
+                    }
                 }
             }
         }
