@@ -16,17 +16,17 @@ for file in files:
     numprocess = []
     resultat = []
     for elt in file.read().split():
-        #print(elt)
         if i % 2 == 0:
             numprocess.append(elt)
         else:
-            resultat.append(int(float(elt)))
+            print(float(elt))
+            resultat.append(float(elt))
         i += 1
     resultats.append(resultat)
     numprocesses.append(numprocess)
 
-print(resultats)
-print(numprocesses)
+#print(resultats)
+#print(numprocesses)
 
 for numprocess, resultat, name in zip(numprocesses,resultats,sys.argv[1:]):
     plt.plot(numprocess, resultat, marker = "o", label=name[7:len(name)-4].replace("_", " "))
@@ -34,6 +34,6 @@ for numprocess, resultat, name in zip(numprocesses,resultats,sys.argv[1:]):
 
 plt.ylabel("# ope/s")
 plt.xlabel("# processes")
-plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
+plt.legend(bbox_to_anchor=(0., 1.04, 1., 1.), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
 plt.yscale("log")
 plt.show()
