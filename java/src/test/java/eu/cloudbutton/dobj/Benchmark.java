@@ -113,7 +113,7 @@ public class Benchmark {
                     } catch (CancellationException e) {
                         //ignore
                     }
-
+		    TimeUnit.SECONDS.sleep(5);
                     executor.shutdown();
 
                     object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
@@ -122,7 +122,7 @@ public class Benchmark {
                 for (Long val : nbOperations) {
                     sum += val;
                 }
-                double avg_op = sum / nbOperations.size();
+                double avg_op = sum / nbThreads;
                 System.out.println(i + " " + (time - wTime) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
                 i = 2 * i;
