@@ -71,4 +71,13 @@ public class SecondDegradableList<T> extends AbstractList<T> {
         throw new java.lang.Error("Remove not build yet");
     }
 
+    @Override
+    public boolean contains(T val) {
+        for (ConcurrentSkipListMap<Integer, T> map : list.values()) {
+            if(map.values().contains(val))
+                return true;
+        }
+        return false;
+    }
+
 }

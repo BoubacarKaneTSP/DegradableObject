@@ -24,4 +24,10 @@ public class Set<T> extends AbstractSet<T> {
     public void remove(T s) {
         set.remove(s);
     }
+
+    @Override
+    public boolean contains(T val) {
+        return set.contains(val);
+    }
+
 }

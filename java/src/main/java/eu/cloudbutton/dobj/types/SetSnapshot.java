@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.types;
 import org.javatuples.Triplet;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,10 +42,25 @@ public class SetSnapshot<T> extends AbstractSet<T>{
         java.util.Set<T> result = new HashSet<>();
 
         for (Set<T> ens : list) {
-            for (T val : ens.read())
-                result.add(val);
+            result.addAll(ens.read());
         }
         return result;
+    }
+
+    @Override
+    public boolean contains(T val) {
+        boolean contained = false;
+
+        for ( Triplet<Set<T>, AtomicInteger, List<Set<T>>> triplet: snapobject.obj.values()){
+
+            contained = triplet.getValue0().contains(val);
+
+            if (contained)
+                break;
+
+        }
+
+        return contained;
     }
 
     @Override

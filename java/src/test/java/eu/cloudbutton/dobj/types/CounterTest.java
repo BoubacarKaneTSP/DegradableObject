@@ -19,6 +19,7 @@ public class CounterTest {
 
     @Test
     public void increment() throws ExecutionException, InterruptedException {
+
         doIncrement(factory.createDegradableCounter());
         doIncrement(factory.createCounter());
 //        System.out.println(150_000_000);

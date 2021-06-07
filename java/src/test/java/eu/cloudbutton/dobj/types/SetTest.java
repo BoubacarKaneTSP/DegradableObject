@@ -48,5 +48,7 @@ class SetTest {
         result.add("v3");
 
         assertEquals(result, set.read(), "Failed adding elements in the set");
+
+        assertEquals(set.contains("v3"), true,"error in contains methods");
     }
 }

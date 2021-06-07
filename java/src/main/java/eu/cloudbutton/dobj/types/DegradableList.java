@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class DegradableList<T> extends AbstractList<T> {
 
@@ -38,5 +39,18 @@ public class DegradableList<T> extends AbstractList<T> {
     @Override
     public void remove(T val) {
         throw new java.lang.Error("Remove not build yet");
+    }
+
+    @Override
+    public boolean contains(T val) {
+
+        boolean contained = false;
+
+        for (ConcurrentLinkedQueue<T> s : list.values()){
+            contained = s.contains(val);
+            if (contained)
+                break;
+        }
+        return contained;
     }
 }

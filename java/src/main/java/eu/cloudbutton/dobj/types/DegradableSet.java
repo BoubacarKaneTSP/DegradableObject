@@ -38,4 +38,18 @@ public class DegradableSet<T> extends AbstractSet<T> {
     public void remove(T val) {
         throw new java.lang.Error("Remove not build yet");
     }
+
+    @Override
+    public boolean contains(T val) {
+
+        boolean contained = false;
+
+
+        for (ConcurrentSkipListSet<T> s : set.values()){
+            contained = s.contains(val);
+            if (contained)
+                break;
+        }
+        return contained;
+    }
 }

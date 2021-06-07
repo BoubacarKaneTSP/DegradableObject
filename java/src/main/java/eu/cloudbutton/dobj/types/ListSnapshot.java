@@ -43,8 +43,8 @@ public class ListSnapshot<T> extends AbstractList<T>{
 
         java.util.List<T> result = new ArrayList<>();
 
-        for (List<T> count : list) {
-            result.addAll((Collection<? extends T>) count);
+        for (List<T> ens : list) {
+            result.addAll(ens.read());
         }
         return result;
     }
@@ -52,5 +52,21 @@ public class ListSnapshot<T> extends AbstractList<T>{
     @Override
     public void remove(T val) {
         throw new java.lang.Error("Remove not build yet");
+    }
+
+    @Override
+    public boolean contains(T val) {
+        boolean contained = false;
+
+        for ( Triplet<List<T>, AtomicInteger, java.util.List<List<T>>> triplet: snapobject.obj.values()){
+
+            contained = triplet.getValue0().contains(val);
+
+            if (contained)
+                break;
+
+        }
+
+        return contained;
     }
 }

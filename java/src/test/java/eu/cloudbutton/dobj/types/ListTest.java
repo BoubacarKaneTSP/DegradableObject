@@ -47,5 +47,7 @@ public class ListTest {
         result.add(2);
         result.add(3);
         assertTrue(list.read().containsAll(result), "Failed adding elements in the list");
+
+        assertTrue(list.contains(3), "error in contains methods");
     }
 }

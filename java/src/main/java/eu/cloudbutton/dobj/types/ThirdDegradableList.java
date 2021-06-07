@@ -108,4 +108,17 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
     public void remove(T val){
         throw new java.lang.Error("Remove not build yet");
     }
+
+    @Override
+    public boolean contains(T val) {
+
+        for ( ConcurrentSkipListMap<Integer, Pair<Integer, T>> map : list.values()){
+            for (Pair<Integer, T> i : map.values())
+                if(i.getValue1() == val)
+                    return true;
+
+        }
+
+        return false;
+    }
 }

@@ -16,29 +16,22 @@ import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Benchmark {
 
-    @Option(name = "-type", required = true, usage = "type to test")
-    private String type;
-
-    @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios;
-
-    @Option(name = "-nbThreads", usage = "Number of threads")
-    private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
-
-    @Option(name = "-time", usage = "How long will the test last (seconds)")
-    private int time = 300;
-
-    @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
-    private int wTime = 0;
-
-    @Option(name = "-nbOps", usage = "Number of operations between two time's read")
-    private long nbOps = 100_000_000;
-
-    @Option(name = "-nbTest", usage = "Number of test")
-    private int nbTest = 1;
-
     private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
     private static boolean flag;
+    @Option(name = "-type", required = true, usage = "type to test")
+    private String type;
+    @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
+    private String[] ratios;
+    @Option(name = "-nbThreads", usage = "Number of threads")
+    private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    @Option(name = "-time", usage = "How long will the test last (seconds)")
+    private int time = 300;
+    @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
+    private int wTime = 0;
+    @Option(name = "-nbOps", usage = "Number of operations between two time's read")
+    private long nbOps = 100_000_000;
+    @Option(name = "-nbTest", usage = "Number of test")
+    private int nbTest = 1;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
@@ -89,13 +82,25 @@ public class Benchmark {
                     CountDownLatch latch = new CountDownLatch(i);
                     FactoryTester factoryTester = new FactoryTester(
                             object,
-                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
+                            new int[] {100},
                             latch, nbOps / i);
-                    for (int j = 0; j < i; j++) {
+                    for (int j = 0; j < i-1; j++) {
                         Method m = factoryTester.getClass().getDeclaredMethod("create" + type + "Tester");
                         Tester tester = (Tester) m.invoke(factoryTester);
                         callables.add(tester);
                     }
+
+                    ExecutorService es = Executors.newFixedThreadPool(1);
+
+                    FactoryTester factoryT = new FactoryTester(
+                            object,
+                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
+                            latch,
+                            nbOps/i);
+
+                    Method m1 = factoryT.getClass().getDeclaredMethod("create" + type + "Tester");
+                    Tester t = (Tester) m1.invoke(factoryT);
+                    callables.add(t);
 
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
                     flag = true;
@@ -113,10 +118,10 @@ public class Benchmark {
                     } catch (CancellationException e) {
                         //ignore
                     }
-		    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(5);
                     executor.shutdown();
 
-                    object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
+//                    object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
                 }
                 Long sum = 0L;
                 for (Long val : nbOperations) {
@@ -198,19 +203,6 @@ public class Benchmark {
 
     }
 
-
-    public class Coordinator implements Callable<Void> {
-        @Override
-        public Void call() throws Exception {
-            try {
-                TimeUnit.SECONDS.sleep(wTime);
-                flag=false;
-            } catch (InterruptedException e) {
-                throw new Exception("Thread interrupted", e);
-            }
-            return null;
-        }
-    }
     public static abstract class Tester<T> implements Callable<Void> {
 
         protected final ThreadLocalRandom random;
@@ -308,10 +300,11 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
-                object.append("0");
+            float n = random.nextFloat();
+            if (n < ratios[0]) {
+                object.append((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -324,10 +317,11 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
-                object.append("0");
+            float n = random.nextFloat();
+            if (n < ratios[0]) {
+                object.append((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -340,10 +334,11 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
-                object.append("0");
+            float n = random.nextFloat();
+            if (n < ratios[0]) {
+                object.append((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -358,9 +353,9 @@ public class Benchmark {
         protected void test() {
             float n = random.nextFloat();
             if (n < ratios[0]) {
-                object.add(n);
+                object.add((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -375,9 +370,9 @@ public class Benchmark {
         protected void test() {
             float n = random.nextFloat();
             if (n < ratios[0]) {
-                object.add(n);
+                object.add((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -392,9 +387,9 @@ public class Benchmark {
         protected void test() {
             float n = random.nextFloat();
             if (n < ratios[0]) {
-                object.add(n);
+                object.add((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -407,10 +402,11 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
-                object.append("0");
+            float n = random.nextFloat();
+            if (n < ratios[0]) {
+                object.append((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
         }
     }
@@ -423,11 +419,25 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
-                object.append("0");
+            float n = random.nextFloat();
+            if (n < ratios[0]) {
+                object.append((int) n);
             } else {
-                object.read();
+                object.contains((int) n);
             }
+        }
+    }
+
+    public class Coordinator implements Callable<Void> {
+        @Override
+        public Void call() throws Exception {
+            try {
+                TimeUnit.SECONDS.sleep(wTime);
+                flag=false;
+            } catch (InterruptedException e) {
+                throw new Exception("Thread interrupted", e);
+            }
+            return null;
         }
     }
 }

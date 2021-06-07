@@ -31,4 +31,9 @@ public class List<T> extends AbstractList<T> {
     public void remove(T val) {
         list.remove(val);
     }
+
+    @Override
+    public boolean contains(T val) {
+        return list.contains(val);
+    }
 }
