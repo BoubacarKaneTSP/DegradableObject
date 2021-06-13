@@ -1,0 +1,8 @@
+1 2.9793649185739566E-5
+2 Infinity
+4 Infinity
+8 Infinity
+16 Infinity
+32 Infinity
+64 Infinity
+80 Infinity
