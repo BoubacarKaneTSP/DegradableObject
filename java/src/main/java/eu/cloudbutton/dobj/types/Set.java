@@ -21,8 +21,8 @@ public class Set<T> extends AbstractSet<T> {
     }
 
     @Override
-    public void remove(T s) {
-        set.remove(s);
+    public boolean remove(T s) {
+        return set.remove(s);
     }
 
     @Override

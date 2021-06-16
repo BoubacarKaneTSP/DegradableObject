@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class DegradableSet<T> extends AbstractSet<T> {
 
-    private final ConcurrentMap<String, ConcurrentSkipListSet<T>> set;
+    private final ConcurrentMap<Integer, ConcurrentSkipListSet<T>> set;
     private final ThreadLocal<ConcurrentSkipListSet<T>> local;
 
     public DegradableSet() {
@@ -17,7 +17,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public void add(T val) {
-        String pid = Thread.currentThread().getName();
+        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
         if(!set.containsKey(pid)) {
             local.set(new ConcurrentSkipListSet<>());
             this.set.put(pid, local.get());
@@ -35,15 +35,15 @@ public class DegradableSet<T> extends AbstractSet<T> {
     }
 
     @Override
-    public void remove(T val) {
-        throw new java.lang.Error("Remove not build yet");
+    public boolean remove(T val) {
+
+        return local.get().remove(val);
     }
 
     @Override
     public boolean contains(T val) {
 
         boolean contained = false;
-
 
         for (ConcurrentSkipListSet<T> s : set.values()){
             contained = s.contains(val);

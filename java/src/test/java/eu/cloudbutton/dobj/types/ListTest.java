@@ -20,8 +20,12 @@ public class ListTest {
     void append() throws ExecutionException, InterruptedException {
         doAppend(factory.createDegradableList());
         doAppend(factory.createList());
+        doAppend(factory.createListSnapshot());
         doAppend(factory.createSecondDegradableList());
         doAppend(factory.createThirdDegradableList());
+        doAppend(factory.createDegradableLinkedList());
+        doAppend(factory.createLinkedList());
+        doAppend(factory.createLinkedListSnapshot());
     }
 
     private static void doAppend(AbstractList list) throws ExecutionException, InterruptedException {

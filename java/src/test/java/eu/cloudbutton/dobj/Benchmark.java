@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
@@ -90,8 +91,6 @@ public class Benchmark {
                         callables.add(tester);
                     }
 
-                    ExecutorService es = Executors.newFixedThreadPool(1);
-
                     FactoryTester factoryT = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
@@ -121,14 +120,13 @@ public class Benchmark {
                     TimeUnit.SECONDS.sleep(5);
                     executor.shutdown();
 
-//                    object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
                 }
                 Long sum = 0L;
                 for (Long val : nbOperations) {
                     sum += val;
                 }
                 double avg_op = sum / nbThreads;
-                System.out.println(i + " " + (time - wTime) / avg_op); // printing the avg time per op for i thread(s)
+                System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
                 i = 2 * i;
                 if (i > nbThreads && i != 2 * nbThreads) {
@@ -169,6 +167,10 @@ public class Benchmark {
             return new CounterSnapshotTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
+        public CounterSnapshotV2Tester createCounterSnapshotV2Tester() {
+            return new CounterSnapshotV2Tester((AbstractCounter) object, ratios, latch, nbOps);
+        }
+
         public ListTester createListTester() {
             return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
@@ -181,6 +183,26 @@ public class Benchmark {
             return new ListSnapshotTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
+        public ListSnapshotV2Tester createListSnapshotV2Tester() {
+            return new ListSnapshotV2Tester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public LinkedListTester createLinkedListTester() {
+            return new LinkedListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public DegradableLinkedListTester createDegradableLinkedListTester() {
+            return new DegradableLinkedListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public LinkedListSnapshotTester createLinkedListSnapshotTester() {
+            return new LinkedListSnapshotTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
+        public LinkedListSnapshotV2Tester createLinkedListSnapshotV2Tester() {
+            return new LinkedListSnapshotV2Tester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+        }
+
         public SetTester createSetTester() {
             return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
@@ -191,6 +213,10 @@ public class Benchmark {
 
         public SetSnapshotTester createSetSnapshotTester() {
             return new SetSnapshotTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
+        }
+
+        public SetSnapshotV2Tester createSetSnapshotV2Tester() {
+            return new SetSnapshotV2Tester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
         public SecondDegradableListTester createSecondDegradableListTester() {
@@ -210,6 +236,8 @@ public class Benchmark {
         protected final int[] ratios;
         protected final CountDownLatch latch;
         protected final long nbOps;
+        protected int name;
+        protected final ThreadLocal<AtomicInteger> seq;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.random = ThreadLocalRandom.current();
@@ -217,11 +245,16 @@ public class Benchmark {
             this.ratios = ratios;
             this.latch = latch;
             this.nbOps = nbOps;
+            this.seq = new ThreadLocal<>();
         }
 
         @Override
         public Void call() {
+
+            seq.set(new AtomicInteger(1));
             latch.countDown();
+
+            this.name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
             Long i = 0L;
             try{
                 latch.await();
@@ -292,6 +325,22 @@ public class Benchmark {
         }
     }
 
+    public static class CounterSnapshotV2Tester extends Tester<AbstractCounter> {
+
+        public CounterSnapshotV2Tester(AbstractCounter object, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            if (random.nextFloat() < ratios[0]) {
+                object.increment();
+            } else {
+                object.read();
+            }
+        }
+    }
+
     public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
         public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
@@ -300,11 +349,11 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt();
             if (n < ratios[0]) {
-                object.append((int) n);
+                object.append(n);
             } else {
-                object.contains((int) n);
+                object.contains(n);
             }
         }
     }
@@ -317,11 +366,11 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt();
             if (n < ratios[0]) {
-                object.append((int) n);
+                object.append(n);
             } else {
-                object.contains((int) n);
+                object.contains(n);
             }
         }
     }
@@ -334,11 +383,96 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt();
             if (n < ratios[0]) {
-                object.append((int) n);
+                object.append(n);
             } else {
-                object.contains((int) n);
+                object.contains(n);
+            }
+        }
+    }
+
+    public static class ListSnapshotV2Tester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public ListSnapshotV2Tester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt();
+            if (n < ratios[0]) {
+                object.append(n);
+            } else {
+                object.contains(n);
+            }
+        }
+    }
+
+    public static class LinkedListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public LinkedListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt();
+            if (n < ratios[0]) {
+                object.append(n);
+            } else {
+                object.contains(n);
+            }
+        }
+    }
+
+    public static class DegradableLinkedListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public DegradableLinkedListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt();
+            if (n < ratios[0]) {
+                object.append(n);
+            } else {
+                object.contains(n);
+            }
+        }
+    }
+
+    public static class LinkedListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public LinkedListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt();
+            if (n < ratios[0]) {
+                object.append(n);
+            } else {
+                object.contains(n);
+            }
+        }
+    }
+
+    public static class LinkedListSnapshotV2Tester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+
+        public LinkedListSnapshotV2Tester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt();
+            if (n < ratios[0]) {
+                object.append(n);
+            } else {
+                object.contains(n);
             }
         }
     }
@@ -351,11 +485,14 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt(2*seq.get().intValue());
             if (n < ratios[0]) {
-                object.add((int) n);
+                if (n <= 50)
+                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                else
+                    object.remove("user_"+name+"_" + n);
             } else {
-                object.contains((int) n);
+                object.contains("user_"+name+"_" + n);
             }
         }
     }
@@ -368,11 +505,14 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt(2*seq.get().intValue());
             if (n < ratios[0]) {
-                object.add((int) n);
+                if (n <= 50)
+                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                else
+                    object.remove("user_"+name+"_" + n);
             } else {
-                object.contains((int) n);
+                object.contains("user_"+name+"_" + n);
             }
         }
     }
@@ -385,11 +525,34 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt(2*seq.get().intValue());
             if (n < ratios[0]) {
-                object.add((int) n);
+                if (n <= 50)
+                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                else
+                    object.remove("user_"+name+"_" + n);
             } else {
-                object.contains((int) n);
+                object.contains("user_"+name+"_" + n);
+            }
+        }
+    }
+
+    public static class SetSnapshotV2Tester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
+
+        public SetSnapshotV2Tester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt(2*seq.get().intValue());
+            if (n < ratios[0]) {
+                if (n <= 50)
+                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                else
+                    object.remove("user_"+name+"_" + n);
+            } else {
+                object.contains("user_"+name+"_" + n);
             }
         }
     }
@@ -402,11 +565,14 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt();
             if (n < ratios[0]) {
-                object.append((int) n);
+                if (n <= 50)
+                    object.append(n);
+                else
+                    object.remove(n);
             } else {
-                object.contains((int) n);
+                object.contains(n);
             }
         }
     }
@@ -419,11 +585,14 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            float n = random.nextFloat();
+            int n = random.nextInt();
             if (n < ratios[0]) {
-                object.append((int) n);
+                if (n <= 50)
+                    object.append(n);
+                else
+                    object.remove(n);
             } else {
-                object.contains((int) n);
+                object.contains(n);
             }
         }
     }

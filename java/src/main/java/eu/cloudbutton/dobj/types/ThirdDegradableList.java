@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThirdDegradableList<T> extends AbstractList<T>{
-    private final ConcurrentMap<String, ConcurrentSkipListMap<Integer,Pair<Integer, T>>> list;
-    private final ConcurrentMap<String,Integer> last;
+    private final ConcurrentMap<Integer, ConcurrentSkipListMap<Integer,Pair<Integer, T>>> list;
+    private final ConcurrentMap<Integer,Integer> last;
     private final ThreadLocal<ConcurrentSkipListMap<Integer, Pair<Integer, T>>> local_map;
     private final ThreadLocal<AtomicInteger> local_num_add;
     private final AtomicInteger count;
@@ -31,7 +31,7 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
 
     @Override
     public void append(T val) {
-        String pid = Thread.currentThread().getName();
+        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
         if(!list.containsKey(pid)){
             local_map.set(new ConcurrentSkipListMap<>());
             local_num_add.set(new AtomicInteger());
@@ -45,7 +45,7 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
     @Override
     public java.util.List<T> read() {
         inter_list.clear();
-        for (String key : this.list.keySet()) {
+        for (int key : this.list.keySet()) {
 
             int lastkey = list.get(key).lastKey();
             if (!last.containsKey(key)) {
@@ -75,7 +75,7 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
 
     public java.util.List<T> read(Set following) {
         inter_list.clear();
-        for (String key : this.list.keySet()){
+        for (int key : this.list.keySet()){
             if (following.contains(key)) {
                 int lastkey = list.get(key).lastKey();
                 if (!last.containsKey(key)) {
@@ -105,7 +105,7 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
 
 
     @Override
-    public void remove(T val){
+    public boolean remove(T val){
         throw new java.lang.Error("Remove not build yet");
     }
 

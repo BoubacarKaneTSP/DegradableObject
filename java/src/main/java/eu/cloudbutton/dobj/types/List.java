@@ -28,8 +28,8 @@ public class List<T> extends AbstractList<T> {
     }
 
     @Override
-    public void remove(T val) {
-        list.remove(val);
+    public boolean remove(T val) {
+        return list.remove(val);
     }
 
     @Override

@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.types;
 import org.javatuples.Triplet;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +20,7 @@ public class ListSnapshot<T> extends AbstractList<T>{
 
     @Override
     public void append(T val) {
-        String name = Thread.currentThread().getName();
+        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
 
         if (!snapobject.obj.containsKey(name)){
             tripletThreadLocal.set(new Triplet<>(new List<>(), new AtomicInteger(), new ArrayList<>()));
@@ -50,7 +49,7 @@ public class ListSnapshot<T> extends AbstractList<T>{
     }
 
     @Override
-    public void remove(T val) {
+    public boolean remove(T val) {
         throw new java.lang.Error("Remove not build yet");
     }
 

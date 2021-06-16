@@ -4,6 +4,7 @@ import numpy as np
 import sys
 
 files = []
+
 for arg in sys.argv[1:]:
     print(arg)
     files.append(open(arg,"r"))

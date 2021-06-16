@@ -10,11 +10,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Snapshot<T> {
 
-    protected final ConcurrentMap<String, Triplet<T, AtomicInteger, List<T>>> obj;
+    protected final ConcurrentMap<Integer, Triplet<T, AtomicInteger, List<T>>> obj;
     private final ThreadLocal<Set<Triplet<T, AtomicInteger, List<T>>>> read1;
     private final ThreadLocal<Set<Triplet<T, AtomicInteger, List<T>>>> read2;
 
-    public Snapshot(ConcurrentMap<String, Triplet<T, AtomicInteger, List<T>>> obj) {
+    public Snapshot(ConcurrentMap<Integer, Triplet<T, AtomicInteger, List<T>>> obj) {
         this.obj = obj;
         this.read1 = new ThreadLocal<>();
         this.read2 = new ThreadLocal<>();
@@ -22,7 +22,7 @@ public class Snapshot<T> {
 
     protected List<T> snap(){
 
-        Map<String, List<Triplet<T, AtomicInteger, List<T>>>> reads = new HashMap<>(); //Keep track of the last 4 different tags
+        Map<Integer, List<Triplet<T, AtomicInteger, List<T>>>> reads = new HashMap<>(); //Keep track of the last 4 different tags
 
         this.read1.set(new HashSet<>());
         this.read2.set(new HashSet<>());
@@ -35,7 +35,7 @@ public class Snapshot<T> {
 
             read1.get().clear();
 
-            for (String process : obj.keySet()) { // This loop goes through each process' tags
+            for (Integer process : obj.keySet()) { // This loop goes through each process' tags
                 // Maybe reset read1 here
                 t = obj.get(process);
 

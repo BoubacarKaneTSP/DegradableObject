@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class DegradableList<T> extends AbstractList<T> {
 
-    private final ConcurrentMap<String, ConcurrentLinkedQueue<T>> list;
+    private final ConcurrentMap<Integer, ConcurrentLinkedQueue<T>> list;
     private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
 
     public DegradableList() {
@@ -19,7 +18,7 @@ public class DegradableList<T> extends AbstractList<T> {
 
     @Override
     public void append(T val) {
-        String pid = Thread.currentThread().getName();
+        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
         if(!list.containsKey(pid)){
             local.set(new ConcurrentLinkedQueue<>());
             this.list.put(pid, local.get());
@@ -37,7 +36,7 @@ public class DegradableList<T> extends AbstractList<T> {
     }
 
     @Override
-    public void remove(T val) {
+    public boolean remove(T val) {
         throw new java.lang.Error("Remove not build yet");
     }
 

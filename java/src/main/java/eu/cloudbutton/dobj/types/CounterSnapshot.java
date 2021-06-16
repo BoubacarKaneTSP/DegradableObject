@@ -19,7 +19,7 @@ public class CounterSnapshot extends AbstractCounter{
 
     @Override
     public void increment() {
-        String name = Thread.currentThread().getName();
+        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
 
         if (!snapobject.obj.containsKey(name)){
             tripletThreadLocal.set(new Triplet<>(new Counter(), new AtomicInteger(), new ArrayList<>()));
@@ -36,7 +36,7 @@ public class CounterSnapshot extends AbstractCounter{
     }
 
     public void increment(int val) {
-        String name = Thread.currentThread().getName();
+        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
 
         if (!snapobject.obj.containsKey(name)){
             tripletThreadLocal.set(new Triplet<>(new Counter(), new AtomicInteger(), new ArrayList<>()));

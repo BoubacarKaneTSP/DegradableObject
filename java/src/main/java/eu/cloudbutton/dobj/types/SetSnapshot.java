@@ -22,7 +22,7 @@ public class SetSnapshot<T> extends AbstractSet<T>{
 
     @Override
     public void add(T val) {
-        String name = Thread.currentThread().getName();
+        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
         if (!snapobject.obj.containsKey(name)){
             tripletThreadLocal.set(new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
             snapobject.obj.put(name, new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
@@ -41,9 +41,9 @@ public class SetSnapshot<T> extends AbstractSet<T>{
 
         java.util.Set<T> result = new HashSet<>();
 
-        for (Set<T> ens : list) {
+        for (Set<T> ens : list)
             result.addAll(ens.read());
-        }
+
         return result;
     }
 
@@ -64,7 +64,21 @@ public class SetSnapshot<T> extends AbstractSet<T>{
     }
 
     @Override
-    public void remove(Object val) {
-        throw new java.lang.Error("Remove not build yet");
+    public boolean remove(T val) {
+        boolean removed;
+        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
+        if (!snapobject.obj.containsKey(name)){
+            tripletThreadLocal.set(new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
+            snapobject.obj.put(name, new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
+        }
+        List<Set<T>> embedded_snap = snapobject.snap();
+        removed = tripletThreadLocal.get().getValue0().remove(val);
+        tripletThreadLocal.get().getValue1().incrementAndGet();
+
+        snapobject.obj.put(name, new Triplet<>( tripletThreadLocal.get().getValue0(),
+                tripletThreadLocal.get().getValue1(),
+                embedded_snap));
+
+        return removed;
     }
 }

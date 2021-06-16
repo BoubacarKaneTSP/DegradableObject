@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DegradableCounter extends AbstractCounter {
 
-    private final ConcurrentMap<String, AtomicInteger> count;
+    private final ConcurrentMap<Integer, AtomicInteger> count;
 
     private final ThreadLocal<AtomicInteger> local;
 
@@ -17,7 +17,8 @@ public class DegradableCounter extends AbstractCounter {
 
     @Override
     public void increment() {
-        String pid = Thread.currentThread().getName();
+
+        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
         if (!count.containsKey(pid)) {
             local.set(new AtomicInteger());
             this.count.put(pid,local.get());
@@ -26,7 +27,7 @@ public class DegradableCounter extends AbstractCounter {
     }
 
     public void increment(int val) {
-        String pid = Thread.currentThread().getName();
+        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
         if (!count.containsKey(pid)) {
             local.set(new AtomicInteger());
             this.count.put(pid,local.get());
