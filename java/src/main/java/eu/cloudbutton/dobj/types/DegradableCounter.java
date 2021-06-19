@@ -7,30 +7,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DegradableCounter extends AbstractCounter {
 
     private final ConcurrentMap<Integer, AtomicInteger> count;
-
     private final ThreadLocal<AtomicInteger> local;
+    private final ThreadLocal<Integer> name;
 
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = new ThreadLocal<>();
+        name = new ThreadLocal<>();
     }
 
     @Override
     public void increment() {
-
-        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if (!count.containsKey(pid)) {
+        if (name.get() == null) {
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-", "")));
+            System.out.println(name.get());
+        }
+        if (!count.containsKey(name.get())) {
             local.set(new AtomicInteger());
-            this.count.put(pid,local.get());
+            this.count.put(name.get(),local.get());
         }
         local.get().incrementAndGet();
     }
 
     public void increment(int val) {
-        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if (!count.containsKey(pid)) {
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+
+        if (!count.containsKey(name.get())) {
             local.set(new AtomicInteger());
-            this.count.put(pid,local.get());
+            this.count.put(name.get(),local.get());
         }
         local.get().addAndGet(val);
     }

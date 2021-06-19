@@ -6,17 +6,20 @@ public class CounterSnapshotV2 extends AbstractCounter{
 
     private final SnapshotV2<Counter> snapobject;
     private final ThreadLocal<Counter> counterThreadLocal;
+    private final ThreadLocal<Integer> name;
 
     public CounterSnapshotV2(){
         snapobject = new SnapshotV2<>();
         counterThreadLocal = new ThreadLocal<>();
+        name = new ThreadLocal<>();
     }
 
     public void increment(int val) {
-        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if(!snapobject.memory.containsKey(name)){
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+        if(!snapobject.memory.containsKey(name.get())){
             counterThreadLocal.set(new Counter());
-            snapobject.memory.put   (   name,
+            snapobject.memory.put   (   name.get(),
                     new Pair<>( new Pair<>(new Counter(), 0),
                             new Pair<>(new Counter(), 0)
                     )
@@ -28,10 +31,11 @@ public class CounterSnapshotV2 extends AbstractCounter{
 
     @Override
     public void increment() {
-        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if(!snapobject.memory.containsKey(name)){
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+        if(!snapobject.memory.containsKey(name.get())){
             counterThreadLocal.set(new Counter());
-            snapobject.memory.put   (   name,
+            snapobject.memory.put   (   name.get(),
                     new Pair<>( new Pair<>(new Counter(), 0),
                             new Pair<>(new Counter(), 0)
                     )

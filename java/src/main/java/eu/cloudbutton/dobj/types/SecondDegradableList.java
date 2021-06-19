@@ -16,6 +16,7 @@ public class SecondDegradableList<T> extends AbstractList<T> {
     private final ThreadLocal<AtomicInteger> num_add;
     private final ConcurrentMap<Integer,Integer> last;
     private final List<T> list_final;
+    private final ThreadLocal<Integer> name;
 
     public SecondDegradableList() {
         this.list = new ConcurrentHashMap<>();
@@ -23,15 +24,17 @@ public class SecondDegradableList<T> extends AbstractList<T> {
         this.local = new ThreadLocal<>();
         this.num_add = new ThreadLocal<>();
         this.list_final = new ArrayList<>();
+        name = new ThreadLocal<>();
     }
 
     @Override
     public void append(T val) {
-        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if(!list.containsKey(pid)){
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+        if(!list.containsKey(name.get())){
             local.set(new ConcurrentSkipListMap<>());
             num_add.set(new AtomicInteger());
-            this.list.put(pid, local.get());
+            this.list.put(name.get(), local.get());
         }
 
         local.get().put(num_add.get().incrementAndGet(), val);

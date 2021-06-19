@@ -11,26 +11,29 @@ public class LinkedListSnapshot<T> extends AbstractList<T>{
 
     private final Snapshot<LinkedList<T>> snapobject;
     private final ThreadLocal<Triplet<LinkedList<T>, AtomicInteger, ArrayList<LinkedList<T>>>> tripletThreadLocal;
+    private final ThreadLocal<Integer> name;
 
     public LinkedListSnapshot() {
         snapobject = new Snapshot<>(new ConcurrentHashMap<>());
         tripletThreadLocal = new ThreadLocal<>();
+        name = new ThreadLocal<>();
     }
 
     @Override
     public void append(T val) {
-        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
 
-        if (!snapobject.obj.containsKey(name)){
+        if (!snapobject.obj.containsKey(name.get())){
             tripletThreadLocal.set(new Triplet<>(new LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
-            snapobject.obj.put(name, new Triplet<>(new LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
+            snapobject.obj.put(name.get(), new Triplet<>(new LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
         }
 
         java.util.List<LinkedList<T>> embedded_snap = snapobject.snap();
         tripletThreadLocal.get().getValue0().append(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
 
-        snapobject.obj.put(name, new Triplet<>( tripletThreadLocal.get().getValue0(),
+        snapobject.obj.put(name.get(), new Triplet<>( tripletThreadLocal.get().getValue0(),
                 tripletThreadLocal.get().getValue1(),
                 embedded_snap));
     }

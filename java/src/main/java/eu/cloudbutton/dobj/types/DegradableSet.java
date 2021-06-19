@@ -9,18 +9,22 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     private final ConcurrentMap<Integer, ConcurrentSkipListSet<T>> set;
     private final ThreadLocal<ConcurrentSkipListSet<T>> local;
+    private final ThreadLocal<Integer> name;
 
     public DegradableSet() {
         this.set = new ConcurrentHashMap<>();
         this.local = new ThreadLocal<>();
+        name = new ThreadLocal<>();
     }
 
     @Override
     public void add(T val) {
-        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if(!set.containsKey(pid)) {
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+
+        if(!set.containsKey(name.get())) {
             local.set(new ConcurrentSkipListSet<>());
-            this.set.put(pid, local.get());
+            this.set.put(name.get(), local.get());
         }
         local.get().add(val);
     }

@@ -236,7 +236,7 @@ public class Benchmark {
         protected final int[] ratios;
         protected final CountDownLatch latch;
         protected final long nbOps;
-        protected int name;
+        protected ThreadLocal<Integer> name;
         protected final ThreadLocal<AtomicInteger> seq;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
@@ -246,6 +246,7 @@ public class Benchmark {
             this.latch = latch;
             this.nbOps = nbOps;
             this.seq = new ThreadLocal<>();
+            this.name = new ThreadLocal<>();
         }
 
         @Override
@@ -253,9 +254,9 @@ public class Benchmark {
 
             seq.set(new AtomicInteger(1));
             latch.countDown();
-
-            this.name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
             Long i = 0L;
+
             try{
                 latch.await();
                 while (flag) {
@@ -285,7 +286,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
+            if (random.nextInt(100) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -301,7 +302,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
+            if (random.nextInt(100) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -317,7 +318,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
+            if (random.nextInt(100) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -333,7 +334,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextFloat() < ratios[0]) {
+            if (random.nextInt(100) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -349,7 +350,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -366,7 +367,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -383,7 +384,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -400,7 +401,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -417,7 +418,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -434,7 +435,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -451,7 +452,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -468,7 +469,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -486,13 +487,13 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(2*seq.get().intValue());
-            if (n < ratios[0]) {
+            if (n%100 < ratios[0]) {
                 if (n <= 50)
-                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
                 else
-                    object.remove("user_"+name+"_" + n);
+                    object.remove("user_"+name.get()+"_" + n);
             } else {
-                object.contains("user_"+name+"_" + n);
+                object.contains("user_"+name.get()+"_" + n);
             }
         }
     }
@@ -507,12 +508,12 @@ public class Benchmark {
         protected void test() {
             int n = random.nextInt(2*seq.get().intValue());
             if (n < ratios[0]) {
-                if (n <= 50)
-                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                if (n%100 <= 50)
+                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
                 else
-                    object.remove("user_"+name+"_" + n);
+                    object.remove("user_"+name.get()+"_" + n);
             } else {
-                object.contains("user_"+name+"_" + n);
+                object.contains("user_"+name.get()+"_" + n);
             }
         }
     }
@@ -527,12 +528,12 @@ public class Benchmark {
         protected void test() {
             int n = random.nextInt(2*seq.get().intValue());
             if (n < ratios[0]) {
-                if (n <= 50)
-                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                if (n%100 <= 50)
+                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
                 else
-                    object.remove("user_"+name+"_" + n);
+                    object.remove("user_"+name.get()+"_" + n);
             } else {
-                object.contains("user_"+name+"_" + n);
+                object.contains("user_"+name.get()+"_" + n);
             }
         }
     }
@@ -547,12 +548,12 @@ public class Benchmark {
         protected void test() {
             int n = random.nextInt(2*seq.get().intValue());
             if (n < ratios[0]) {
-                if (n <= 50)
-                    object.add("user_"+name+"_"+this.seq.get().incrementAndGet());
+                if (n%100 <= 50)
+                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
                 else
-                    object.remove("user_"+name+"_" + n);
+                    object.remove("user_"+name.get()+"_" + n);
             } else {
-                object.contains("user_"+name+"_" + n);
+                object.contains("user_"+name.get()+"_" + n);
             }
         }
     }
@@ -565,7 +566,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 if (n <= 50)
                     object.append(n);
@@ -585,7 +586,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
+            int n = random.nextInt(100);
             if (n < ratios[0]) {
                 if (n <= 50)
                     object.append(n);

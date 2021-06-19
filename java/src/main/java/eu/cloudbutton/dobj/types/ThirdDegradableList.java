@@ -18,6 +18,7 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
     private final AtomicInteger count;
     private final List<T> list_final;
     private final List<Pair<Integer, T>> inter_list;
+    private final  ThreadLocal<Integer> name;
 
     public ThirdDegradableList() {
         this.list = new ConcurrentHashMap<>();
@@ -27,16 +28,18 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
         this.count = new AtomicInteger();
         this.list_final = new ArrayList<>();
         this.inter_list = new ArrayList<>();
+        name = new ThreadLocal<>();
     }
 
     @Override
     public void append(T val) {
-        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if(!list.containsKey(pid)){
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+        if(!list.containsKey(name.get())){
             local_map.set(new ConcurrentSkipListMap<>());
             local_num_add.set(new AtomicInteger());
 
-            this.list.put(pid, local_map.get());
+            this.list.put(name.get(), local_map.get());
         }
 
         local_map.get().put(local_num_add.get().incrementAndGet(), new Pair<>(count.incrementAndGet() ,val));

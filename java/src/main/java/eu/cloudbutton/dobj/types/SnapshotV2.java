@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Pair;
-import org.javatuples.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,23 +11,27 @@ public class SnapshotV2<T> {
 
     private int curr_seq;
     protected final ConcurrentMap<Integer, Pair<Pair<T, Integer>, Pair<T, Integer>>> memory; //Value0 = low, Value1 = high
+    private final ThreadLocal<Integer> name;
 
     public SnapshotV2(){
         curr_seq = 0;
         memory = new ConcurrentHashMap<>();
+        name = new ThreadLocal<>();
     }
 
     protected void update(T val){
-        int name = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        int seq = curr_seq;
-        Pair<T, Integer> high_r = memory.get(name).getValue1();
-        if (seq != high_r.getValue1())
-            memory.replace(name,memory.get(name).setAt0(high_r));
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
 
-        memory.replace(name,
+        int seq = curr_seq;
+        Pair<T, Integer> high_r = memory.get(name.get()).getValue1();
+        if (seq != high_r.getValue1())
+            memory.replace(name.get(),memory.get(name.get()).setAt0(high_r));
+
+        memory.replace(name.get(),
                 new Pair<>(
-                        memory.get(name).getValue0(),
-                        memory.get(name).getValue1().setAt0(val).setAt1(seq))
+                        memory.get(name.get()).getValue0(),
+                        memory.get(name.get()).getValue1().setAt0(val).setAt1(seq))
                 );
 
     }

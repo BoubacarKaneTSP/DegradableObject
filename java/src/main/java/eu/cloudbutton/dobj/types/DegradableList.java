@@ -10,18 +10,22 @@ public class DegradableList<T> extends AbstractList<T> {
 
     private final ConcurrentMap<Integer, ConcurrentLinkedQueue<T>> list;
     private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
+    private final ThreadLocal<Integer> name;
 
     public DegradableList() {
         this.list = new ConcurrentHashMap<>();
         this.local = new ThreadLocal<>();
+        name = new ThreadLocal<>();
     }
 
     @Override
     public void append(T val) {
-        int pid = Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-",""));
-        if(!list.containsKey(pid)){
+        if (name.get() == null)
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+
+        if(!list.containsKey(name.get())){
             local.set(new ConcurrentLinkedQueue<>());
-            this.list.put(pid, local.get());
+            this.list.put(name.get(), local.get());
         }
         local.get().add(val);
     }

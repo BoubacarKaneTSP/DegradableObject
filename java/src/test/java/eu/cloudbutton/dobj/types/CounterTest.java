@@ -22,14 +22,15 @@ public class CounterTest {
 
         doIncrement(factory.createDegradableCounter());
         doIncrement(factory.createCounter());
-//        System.out.println(150_000_000);
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
-            count.increment();
+            for (int i = 0; i < 100; i++) {
+                count.increment();
+            }
             return null;
         };
 
@@ -40,7 +41,7 @@ public class CounterTest {
         for (Future<Void> future : futures) {
             future.get();
         }
-        assertEquals(10, count.read(),"Failed incrementing the Counter");
+        assertEquals(1000, count.read(),"Failed incrementing the Counter");
     }
 
 }
