@@ -240,6 +240,7 @@ public class Benchmark {
         protected final long nbOps;
         protected ThreadLocal<Integer> name;
         protected final ThreadLocal<AtomicInteger> seq;
+        public ConcurrentLinkedQueue<Integer> linkedQueue;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.random = ThreadLocalRandom.current();
@@ -249,6 +250,7 @@ public class Benchmark {
             this.nbOps = nbOps;
             this.seq = new ThreadLocal<>();
             this.name = new ThreadLocal<>();
+            linkedQueue = new ConcurrentLinkedQueue<>();
         }
 
         @Override
@@ -353,9 +355,10 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
-            if (n < ratios[0]) {
+            int n = random.nextInt();
+            if (n%100 < ratios[0]) {
                 object.append(n);
+//                linkedQueue.add(n);
             } else {
                 object.contains(n);
             }
@@ -421,8 +424,8 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
-            if (n < ratios[0]) {
+            int n = random.nextInt();
+            if (n%100 < ratios[0]) {
                 object.append(n);
             } else {
                 object.contains(n);
