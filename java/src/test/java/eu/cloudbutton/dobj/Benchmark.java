@@ -357,11 +357,11 @@ public class Benchmark {
         protected void test() {
             int n = random.nextInt();
             if (n%100 < ratios[0]) {
-//                object.append(n);
-                linkedQueue.add(n);
+                object.append(n);
+//                linkedQueue.add(n);
             } else {
-                linkedQueue.contains(n);
-//                object.contains(n);
+                object.contains(n);
+//                linkedQueue.contains(n);
             }
         }
     }
