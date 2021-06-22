@@ -11,14 +11,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Benchmark {
 
     private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
-    private static boolean flag;
+    private static AtomicBoolean flag;
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
     @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
@@ -73,10 +73,11 @@ public class Benchmark {
 
             Factory factory = new Factory();
             String constructor = "create" + type;
-            Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
 
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
+                    Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
+
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
@@ -125,7 +126,8 @@ public class Benchmark {
                 for (Long val : nbOperations) {
                     sum += val;
                 }
-                double avg_op = sum / nbThreads;
+                System.out.println(sum);
+                double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
                 i = 2 * i;
@@ -496,14 +498,14 @@ public class Benchmark {
         protected void test() {
             int n = random.nextInt(2* seq.get());
             if (n%100 < ratios[0]) {
-                if (n%100 <= 50) {
+                if (n%100 <= 100) {
                     seq.set(seq.get() + 1);
-                    object.add("user_" + name.get() + "_" + this.seq.get());
+                    object.add("user_" + name.get() +"_"+ this.seq.get());
                 }
                 else
-                    object.remove("user_"+name.get()+"_" + n);
+                    object.remove("user_"+name.get()+"_"+ n);
             } else {
-                object.contains("user_"+name.get()+"_" + n);
+                object.contains("user_"+name.get()+"_"+ n);
             }
         }
     }
