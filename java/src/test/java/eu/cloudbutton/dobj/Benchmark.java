@@ -103,6 +103,7 @@ public class Benchmark {
                     callables.add(t);
 
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
+                    flag = new AtomicBoolean();
                     flag.set(true);
                     executorService.submit(new Coordinator());
 
