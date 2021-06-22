@@ -127,7 +127,6 @@ public class Benchmark {
                 for (Long val : nbOperations) {
                     sum += val;
                 }
-                System.out.println(sum);
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
@@ -499,9 +498,9 @@ public class Benchmark {
         protected void test() {
             int n = random.nextInt(2* seq.get());
             if (n%100 < ratios[0]) {
-                if (n%100 <= 100) {
+                if (n%100 <= 50) {
                     seq.set(seq.get() + 1);
-                    object.add("user_" + name.get() +"_"+ this.seq.get());
+                    object.add("user_" + name.get() +"_"+ seq.get());
                 }
                 else
                     object.remove("user_"+name.get()+"_"+ n);
@@ -523,7 +522,7 @@ public class Benchmark {
             if (n%100 < ratios[0]) {
                 if (n%100 <= 50) {
                     seq.set(seq.get() + 1);
-                    object.add("user_" + name.get() + "_" + this.seq.get());
+                    object.add("user_" + name.get() + "_" + seq.get());
                 }
                 else
                     object.remove("user_"+name.get()+"_" + n);
@@ -545,7 +544,7 @@ public class Benchmark {
             if (n%100 < ratios[0]) {
                 if (n%100 <= 50) {
                     seq.set(seq.get() + 1);
-                    object.add("user_" + name.get() + "_" + this.seq.get());
+                    object.add("user_" + name.get() + "_" + seq.get());
                 }
                 else
                     object.remove("user_"+name.get()+"_" + n);
@@ -567,7 +566,7 @@ public class Benchmark {
             if (n%100 < ratios[0]) {
                 if (n%100 <= 50) {
                     seq.set(seq.get() + 1);
-                    object.add("user_" + name.get() + "_" + this.seq.get());
+                    object.add("user_" + name.get() + "_" + seq.get());
                 }
                 else
                     object.remove("user_"+name.get()+"_" + n);

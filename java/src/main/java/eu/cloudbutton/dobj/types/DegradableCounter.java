@@ -20,7 +20,6 @@ public class DegradableCounter extends AbstractCounter {
     public void increment() {
         if (name.get() == null) {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-", "")));
-            System.out.println(name.get());
         }
         if (!count.containsKey(name.get())) {
             local.set(new AtomicInteger());
