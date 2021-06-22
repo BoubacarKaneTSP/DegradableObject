@@ -103,7 +103,7 @@ public class Benchmark {
                     callables.add(t);
 
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
-                    flag = true;
+                    flag.set(true);
                     executorService.submit(new Coordinator());
 
                     List<Future<Void>> futures;
@@ -266,7 +266,7 @@ public class Benchmark {
 
             try{
                 latch.await();
-                while (flag) {
+                while (flag.get()) {
                     test();
                 }
                 while (!Thread.currentThread().isInterrupted()) {
@@ -621,7 +621,7 @@ public class Benchmark {
         public Void call() throws Exception {
             try {
                 TimeUnit.SECONDS.sleep(wTime);
-                flag=false;
+                flag.set(false);
                 System.out.println("GO !!");
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
