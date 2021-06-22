@@ -261,7 +261,7 @@ public class Benchmark {
             seq.set(1);
             latch.countDown();
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-            System.out.println(name.get());
+//            System.out.println(name.get());
             Long i = 0L;
 
             try{
@@ -622,7 +622,7 @@ public class Benchmark {
             try {
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-                System.out.println("GO !!");
+//                System.out.println("GO !!");
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
