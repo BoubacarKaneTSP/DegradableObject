@@ -10,6 +10,13 @@
     <name>degradableobjects</name>
     <description></description>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
@@ -44,6 +51,11 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.Data2Semantics</groupId>
+            <artifactId>powerlaws</artifactId>
+            <version>v0.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

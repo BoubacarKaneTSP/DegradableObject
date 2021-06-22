@@ -239,7 +239,7 @@ public class Benchmark {
         protected final CountDownLatch latch;
         protected final long nbOps;
         protected ThreadLocal<Integer> name;
-        protected final ThreadLocal<AtomicInteger> seq;
+        protected final ThreadLocal<Integer> seq;
         public ConcurrentLinkedQueue<Integer> linkedQueue;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
@@ -256,7 +256,7 @@ public class Benchmark {
         @Override
         public Void call() {
 
-            seq.set(new AtomicInteger(1));
+            seq.set(1);
             latch.countDown();
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
             System.out.println(name.get());
@@ -355,8 +355,9 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
-            if (n%100 < ratios[0]) {
+            int n = random.nextInt(100);
+
+            if (n < ratios[0]) {
                 object.append(n);
 //                linkedQueue.add(n);
             } else {
@@ -425,8 +426,8 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt();
-            if (n%100 < ratios[0]) {
+            int n = random.nextInt(100);
+            if (n < ratios[0]) {
                 object.append(n);
             } else {
                 object.contains(n);
@@ -493,10 +494,12 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(2*seq.get().intValue());
+            int n = random.nextInt(2* seq.get());
             if (n%100 < ratios[0]) {
-                if (n <= 50)
-                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
+                if (n%100 <= 50) {
+                    seq.set(seq.get() + 1);
+                    object.add("user_" + name.get() + "_" + this.seq.get());
+                }
                 else
                     object.remove("user_"+name.get()+"_" + n);
             } else {
@@ -513,10 +516,12 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(2*seq.get().intValue());
-            if (n < ratios[0]) {
-                if (n%100 <= 50)
-                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
+            int n = random.nextInt(2*seq.get());
+            if (n%100 < ratios[0]) {
+                if (n%100 <= 50) {
+                    seq.set(seq.get() + 1);
+                    object.add("user_" + name.get() + "_" + this.seq.get());
+                }
                 else
                     object.remove("user_"+name.get()+"_" + n);
             } else {
@@ -533,10 +538,12 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(2*seq.get().intValue());
-            if (n < ratios[0]) {
-                if (n%100 <= 50)
-                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
+            int n = random.nextInt(2*seq.get());
+            if (n%100 < ratios[0]) {
+                if (n%100 <= 50) {
+                    seq.set(seq.get() + 1);
+                    object.add("user_" + name.get() + "_" + this.seq.get());
+                }
                 else
                     object.remove("user_"+name.get()+"_" + n);
             } else {
@@ -553,10 +560,12 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(2*seq.get().intValue());
-            if (n < ratios[0]) {
-                if (n%100 <= 50)
-                    object.add("user_"+name.get()+"_"+this.seq.get().incrementAndGet());
+            int n = random.nextInt(2*seq.get());
+            if (n%100 < ratios[0]) {
+                if (n%100 <= 50) {
+                    seq.set(seq.get() + 1);
+                    object.add("user_" + name.get() + "_" + this.seq.get());
+                }
                 else
                     object.remove("user_"+name.get()+"_" + n);
             } else {
