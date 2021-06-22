@@ -8,7 +8,7 @@ mvn clean package -f ../java -DskipTests;
 
 for ratio in 100 0; # 80 50 20 5;
 do
-  for type in 'Counter' 'Set' 'List' 'LinkedList' 'DegradableCounter' 'DegradableSet' 'DegradableList' 'DegradableLinkedList' #'CounterSnapshot' 'SetSnapshot' 'ListSnapshot' 'LinkedListSnapshot' 'CounterSnapshotV2' 'SetSnapshotV2' 'ListSnapshotV2' 'LinkedListSnapshotV2'
+  for type in 'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList' #'CounterSnapshot' 'SetSnapshot' 'ListSnapshot' 'LinkedListSnapshot' 'CounterSnapshotV2' 'SetSnapshotV2' 'ListSnapshotV2' 'LinkedListSnapshotV2'
 #  for type in 'DegradableCounter'
     do
     echo $type $ratio
