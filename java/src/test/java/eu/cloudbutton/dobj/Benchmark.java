@@ -293,7 +293,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextInt(100) < ratios[0]) {
+            if (random.nextInt(101) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -309,7 +309,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextInt(100) < ratios[0]) {
+            if (random.nextInt(101) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -325,7 +325,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextInt(100) < ratios[0]) {
+            if (random.nextInt(101) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -341,7 +341,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextInt(100) < ratios[0]) {
+            if (random.nextInt(101) < ratios[0]) {
                 object.increment();
             } else {
                 object.read();
@@ -357,14 +357,12 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
 
             if (n < ratios[0]) {
                 object.append(n);
-//                linkedQueue.add(n);
             } else {
                 object.contains(n);
-//                linkedQueue.contains(n);
             }
         }
     }
@@ -377,7 +375,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -394,7 +392,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -411,7 +409,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -428,7 +426,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -445,7 +443,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -462,7 +460,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -479,7 +477,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 object.append(n);
             } else {
@@ -497,8 +495,8 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(2* seq.get());
-            if (n%100 < ratios[0]) {
-                if (n%100 <= 50) {
+            if (n%101 < ratios[0]) {
+                if (n%101 <= 50) {
                     seq.set(seq.get() + 1);
                     object.add("user_" + name.get() +"_"+ seq.get());
                 }
@@ -519,8 +517,8 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(2*seq.get());
-            if (n%100 < ratios[0]) {
-                if (n%100 <= 50) {
+            if (n%101 < ratios[0]) {
+                if (n%101 <= 50) {
                     seq.set(seq.get() + 1);
                     object.add("user_" + name.get() + "_" + seq.get());
                 }
@@ -541,8 +539,8 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(2*seq.get());
-            if (n%100 < ratios[0]) {
-                if (n%100 <= 50) {
+            if (n%101 < ratios[0]) {
+                if (n%101 <= 50) {
                     seq.set(seq.get() + 1);
                     object.add("user_" + name.get() + "_" + seq.get());
                 }
@@ -563,8 +561,8 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(2*seq.get());
-            if (n%100 < ratios[0]) {
-                if (n%100 <= 50) {
+            if (n%101 < ratios[0]) {
+                if (n%101 <= 50) {
                     seq.set(seq.get() + 1);
                     object.add("user_" + name.get() + "_" + seq.get());
                 }
@@ -584,7 +582,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 if (n <= 50)
                     object.append(n);
@@ -604,7 +602,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(100);
+            int n = random.nextInt(101);
             if (n < ratios[0]) {
                 if (n <= 50)
                     object.append(n);
