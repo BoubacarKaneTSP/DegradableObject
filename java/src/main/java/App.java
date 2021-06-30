@@ -43,10 +43,10 @@ public class App {
     private int wTime = 0;
 
     private static boolean flag;
-    private static final ConcurrentMap<String, AbstractSet<String>> users = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, Map<String, AbstractSet<String>>> follower = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, Map<String, AbstractCounter>> nbFollower = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, Map<String, AbstractList<String>>> timeline = new ConcurrentHashMap<>();
+    private static final AbstractSet<String> users = null;
+    private static final ConcurrentMap<Integer, Map<String, AbstractSet<Integer>>> follower = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Integer, Map<String, AbstractCounter>> nbFollower = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Integer, Map<String , AbstractList<String>>> timeline = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws InterruptedException {
         new App().doMain(args);
@@ -138,7 +138,7 @@ public class App {
         private final int[] ratios;
         private final CountDownLatch latch;
         private final Factory factory;
-        private final String me = Thread.currentThread().getName();
+        protected ThreadLocal<Integer> name;
 
         public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory){
             this.objectSet = objectSet;
@@ -147,54 +147,60 @@ public class App {
             this.ratios = ratios;
             this.latch = latch;
             this.factory = factory;
-            follower.put(me, new HashMap<>());
-            nbFollower.put(me, new HashMap<>());
-            timeline.put(me, new HashMap<>());
+            this.name = new ThreadLocal<>();
+            follower.put(name.get(), new HashMap<>());
+            nbFollower.put(name.get(), new HashMap<>());
+            timeline.put(name.get(), new HashMap<>());
         }
 
         @Override
         public Void call(){
             latch.countDown();
             Long i = 0L;
+            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
 
             try{
                 latch.await();
 
-            } catch (InterruptedException e) {
+                for (int j = 0; j < 10000000; j++) {
+                    addUser("user_"+name.get()+"_"+j);
+                }
+
+            } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
             return null;
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-            if(!users.get(me).contains(user)) {
-                users.get(me).add(user);
-                follower.get(me).put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
-                nbFollower.get(me).put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.get(me).put(user, (AbstractList) Factory.class.getDeclaredMethod(objectList).invoke(factory));
+            if(!users.contains(user)) {
+                users.add(user);
+                follower.get(name.get()).put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
+                nbFollower.get(name.get()).put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
+                timeline.get(name.get()).put(user, (AbstractList) Factory.class.getDeclaredMethod(objectList).invoke(factory));
             }
         }
 
-        public void follow(String userA, String userB){
+        public void follow(Integer userA, Integer userB){
 
-            follower.get(me).get(userB).add(userA);
-            nbFollower.get(me).get(userB).increment();
+            follower.get(name.get()).get(userB).add(userA);
+            nbFollower.get(name.get()).get(userB).increment();
         }
 
-        public void unfollow(String userA, String userB){
+        public void unfollow(Integer userA, Integer userB){
 
-            follower.get(me).get(userB).remove(userA);
-            nbFollower.get(me).get(userB).write(-1);
+            follower.get(name.get()).get(userB).remove(userA);
+            nbFollower.get(name.get()).get(userB).write(-1);
         }
 
-        public void tweet(String user, String msg){
+        public void tweet(Integer user, String msg){
 
-            for (String u : follower.get(me).get(user).read())
-                timeline.get(me).get(u).append(msg);
+            for (Integer u : follower.get(name.get()).get(user).read())
+                timeline.get(name.get()).get(u).append(msg);
         }
 
         public java.util.List<String> showTimeline(String user){
-            return timeline.get(me).get(user).read();
+            return timeline.get(name.get()).get(user).read();
         }
     }
 
