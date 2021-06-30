@@ -119,7 +119,7 @@ public class Benchmark {
                     } catch (CancellationException e) {
                         //ignore
                     }
-                    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(1);
                     executor.shutdown();
 
                 }
