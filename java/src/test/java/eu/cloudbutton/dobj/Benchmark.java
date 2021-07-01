@@ -314,7 +314,9 @@ public class Benchmark {
         @Override
         protected void test() {
             if (random.nextInt(101) < ratios[0]) {
-                object.increment();
+//                object.increment();
+                int a = 3;
+                a *=3 ;
             } else {
                 object.read();
             }
