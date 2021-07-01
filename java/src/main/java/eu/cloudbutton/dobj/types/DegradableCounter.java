@@ -9,33 +9,28 @@ public class DegradableCounter extends AbstractCounter {
     private final ConcurrentMap<Integer, AtomicInteger> count;
     private final ThreadLocal<AtomicInteger> local;
     private final ThreadLocal<Integer> name;
-    private final ThreadLocal<Boolean> init;
 
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = new ThreadLocal<>();
-        this.init = new ThreadLocal<>();
         name = new ThreadLocal<>();
-        init.set(false);
     }
 
     @Override
     public void increment() {
-	if (!init.get()) {
+	if (name.get() == null) {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-", "")));
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
-	    init.set(true);
         }
         local.get().incrementAndGet();
     }
 
     public void increment(int val) {
-	if (!init.get()) {
+	if (name.get() == null) {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
-	    init.set(true);
         }
         local.get().addAndGet(val);
     }
