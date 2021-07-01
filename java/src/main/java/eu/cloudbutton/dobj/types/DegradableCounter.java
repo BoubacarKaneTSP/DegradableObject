@@ -21,11 +21,8 @@ public class DegradableCounter extends AbstractCounter {
 
     @Override
     public void increment() {
-        if (name.get() == null) {
+	if (!init.get()) {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-", "")));
-        }
-
-        if (!init.get()) {
             init.set(true);
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
@@ -34,10 +31,8 @@ public class DegradableCounter extends AbstractCounter {
     }
 
     public void increment(int val) {
-        if (name.get() == null)
+	if (!init.get()) {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-
-        if (!count.containsKey(name.get())) {
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
         }
