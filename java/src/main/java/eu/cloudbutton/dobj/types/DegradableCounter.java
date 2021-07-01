@@ -23,7 +23,7 @@ public class DegradableCounter extends AbstractCounter {
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
         }
-        local.get().incrementAndGet();
+//        local.get().incrementAndGet();
     }
 
     public void increment(int val) {
