@@ -131,9 +131,10 @@ public class Benchmark {
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
                 i = 2 * i;
-                /*
+
                 if(i==2)
-                    i = nbThreads;*/
+                    i = nbThreads;
+
                 if (i > nbThreads && i != 2 * nbThreads) {
                     i = nbThreads;
                 }
@@ -296,8 +297,8 @@ public class Benchmark {
         @Override
         protected void test() {
             if (random.nextInt(101) < ratios[0]) {
-//                object.increment();
-                entier += 1;
+                object.increment();
+//                entier += 1;
             } else {
                 object.read();
             }
