@@ -244,6 +244,7 @@ public class Benchmark {
         protected ThreadLocal<Integer> name;
         protected final ThreadLocal<Integer> seq;
         public ConcurrentLinkedQueue<Integer> linkedQueue;
+        public Integer entier = 0;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.random = ThreadLocalRandom.current();
@@ -295,7 +296,8 @@ public class Benchmark {
         @Override
         protected void test() {
             if (random.nextInt(101) < ratios[0]) {
-                object.increment();
+//                object.increment();
+                entier += 1;
             } else {
                 object.read();
             }
