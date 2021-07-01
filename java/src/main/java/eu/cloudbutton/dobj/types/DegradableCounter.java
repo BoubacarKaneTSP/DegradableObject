@@ -23,9 +23,9 @@ public class DegradableCounter extends AbstractCounter {
     public void increment() {
 	if (!init.get()) {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-", "")));
-            init.set(true);
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
+	    init.set(true);
         }
         local.get().incrementAndGet();
     }
@@ -35,6 +35,7 @@ public class DegradableCounter extends AbstractCounter {
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
             local.set(new AtomicInteger());
             this.count.put(name.get(),local.get());
+	    init.set(true);
         }
         local.get().addAndGet(val);
     }
