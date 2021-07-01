@@ -272,9 +272,12 @@ public class Benchmark {
                 while (flag.get()) {
                     test();
                 }
-                while (!Thread.currentThread().isInterrupted()) {
+                while (true) {
+//                while (!Thread.currentThread().isInterrupted()) {
                     test();
                     i++;
+                    if (i%10000000 == 0)
+                        System.out.println(i);
                 }
             } catch (InterruptedException | CancellationException e) {
                 //ignore
