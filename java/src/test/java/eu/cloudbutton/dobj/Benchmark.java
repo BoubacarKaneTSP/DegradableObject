@@ -272,7 +272,8 @@ public class Benchmark {
                 while (flag.get()) {
                     //test();
                 }
-                while (!Thread.currentThread().isInterrupted()) {
+                while (true) {
+//                while (!Thread.currentThread().isInterrupted()) {
                     //test();
                     i++;
                 }
