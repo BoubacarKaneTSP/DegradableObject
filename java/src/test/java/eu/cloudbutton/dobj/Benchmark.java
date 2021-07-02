@@ -270,11 +270,10 @@ public class Benchmark {
             try{
                 latch.await();
                 while (flag.get()) {
-                    test();
+                    //test();
                 }
-                while (true) {
-//                while (!Thread.currentThread().isInterrupted()) {
-                    test();
+                while (!Thread.currentThread().isInterrupted()) {
+                    //test();
                     i++;
                 }
             } catch (InterruptedException | CancellationException e) {
