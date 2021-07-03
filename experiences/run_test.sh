@@ -13,7 +13,7 @@ do
   for type in  'DegradableCounter'
     do
     echo $type $ratio
-    CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 60 -wTime 30 #> "results_${type}_ratio_write_${ratio}_SR.txt"
+    CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 30 -wTime 10 #> "results_${type}_ratio_write_${ratio}_SR.txt"
   done
 done
 

@@ -273,7 +273,7 @@ public class Benchmark {
                     //test();
                 }
 //                while (true) {
-                while (!Thread.currentThread().isInterrupted()) {
+                while (!Thread.interrupted()) {
                     //test();
                     i++;
                 }
@@ -627,7 +627,7 @@ public class Benchmark {
             try {
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-//                System.out.println("GO !!");
+                System.out.println("GO !!");
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
