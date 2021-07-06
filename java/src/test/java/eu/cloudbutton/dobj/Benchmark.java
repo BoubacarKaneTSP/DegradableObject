@@ -110,13 +110,8 @@ public class Benchmark {
                     List<Future<Void>> futures;
 
                     // launch computation
-                    System.out.println("launching "+i+" threads");
-                    futures = executor.invokeAll(callables, time + wTime, TimeUnit.SECONDS);
-                    //programme stops until the timeout is over
-                    for (Future<Void> future : futures){
-                        System.out.println("is future work done ? : "+future.isDone());
-                        System.out.println("is future work cancelled ? : "+future.isCancelled());
-                    }
+                    System.out.println("launching "+i+" thread(s)");
+                    futures = executor.invokeAll(callables);
                     try{
                         for (Future<Void> future : futures) {
                             future.get();
@@ -125,9 +120,9 @@ public class Benchmark {
                         //ignore
                         System.out.println(e);
                     }
+		    
+		    executor.shutdownNow();		   
                     TimeUnit.SECONDS.sleep(1);
-
-                    executor.shutdown();
 
                 }
                 Long sum = 0L;
@@ -139,8 +134,8 @@ public class Benchmark {
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
-                i = 2 * i;
 
+                i = 2 * i;
                 if(i==2)
                     i = nbThreads;
 
@@ -278,21 +273,26 @@ public class Benchmark {
 
             try{
                 latch.await();
+
+		// warm up
                 while (flag.get()) {
                     test();
                 }
-                while (true) {
-//                while (!Thread.currentThread().isInterrupted()) {
+
+		// compute
+                while (!flag.get()) {
                     test();
                     i++;
-                    if (i%100000000 == 0)
+		    if (i%100000000 == 0)
                         System.out.println(name.get().toString() + " " + i);
                 }
-            } catch (InterruptedException | CancellationException e) {
-                nbOperations.add(i);
+		
+            } catch (Exception e) {
                 //ignore
             }
 
+	    System.out.println(name.get()+": OUT");	    
+	    nbOperations.add(i);
 
             return null;
         }
@@ -638,7 +638,8 @@ public class Benchmark {
             try {
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-                System.out.println("GO !!");
+		TimeUnit.SECONDS.sleep(time);
+		flag.set(true);
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
