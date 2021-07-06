@@ -319,7 +319,7 @@ public class Benchmark {
         @Override
         protected void test(){
 	    // no-op
-	    int a=0
+	    int a=0;
 	    if (random.nextInt(101) < ratios[0]) {
 		a++;
 	    } else {
