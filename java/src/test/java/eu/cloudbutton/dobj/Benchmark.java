@@ -35,7 +35,7 @@ public class Benchmark {
     private long nbOps = 100_000_000;
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
-
+    
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
     }
@@ -79,7 +79,8 @@ public class Benchmark {
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
                     Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-
+		    Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
+		    
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
@@ -89,7 +90,7 @@ public class Benchmark {
                             new int[] {100},
                             latch, nbOps / i);
                     for (int j = 0; j < i-1; j++) {
-                        Method m = factoryTester.getClass().getDeclaredMethod("create" + type + "Tester");
+                        Method m = factoryTester.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                         Tester tester = (Tester) m.invoke(factoryTester);
                         callables.add(tester);
                     }
@@ -99,8 +100,8 @@ public class Benchmark {
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                             latch,
                             nbOps/i);
-
-                    Method m1 = factoryT.getClass().getDeclaredMethod("create" + type + "Tester");
+		    
+                    Method m1 = factoryT.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                     Tester t = (Tester) m1.invoke(factoryT);
                     callables.add(t);
 
@@ -146,7 +147,7 @@ public class Benchmark {
                 }
             }
 
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(-1);
         }
@@ -167,92 +168,33 @@ public class Benchmark {
             this.nbOps = nbOps;
         }
 
-        public CounterTester createCounterTester() {
+        public NoopTester createNoopTester() {
+            return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch, nbOps);
+        }
+	
+        public CounterTester createAbstractCounterTester() {
             return new CounterTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
-        public DegradableCounterTester createDegradableCounterTester() {
-            return new DegradableCounterTester((AbstractCounter) object, ratios, latch, nbOps);
-        }
-
-        public CounterSnapshotTester createCounterSnapshotTester() {
-            return new CounterSnapshotTester((AbstractCounter) object, ratios, latch, nbOps);
-        }
-
-        public CounterSnapshotV2Tester createCounterSnapshotV2Tester() {
-            return new CounterSnapshotV2Tester((AbstractCounter) object, ratios, latch, nbOps);
-        }
-
-        public ListTester createListTester() {
-            return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public DegradableListTester createDegradableListTester() {
-            return new DegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public ListSnapshotTester createListSnapshotTester() {
-            return new ListSnapshotTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public ListSnapshotV2Tester createListSnapshotV2Tester() {
-            return new ListSnapshotV2Tester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public LinkedListTester createLinkedListTester() {
-            return new LinkedListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public DegradableLinkedListTester createDegradableLinkedListTester() {
-            return new DegradableLinkedListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public LinkedListSnapshotTester createLinkedListSnapshotTester() {
-            return new LinkedListSnapshotTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public LinkedListSnapshotV2Tester createLinkedListSnapshotV2Tester() {
-            return new LinkedListSnapshotV2Tester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public SetTester createSetTester() {
+	public SetTester createAbstractSetTester() {
             return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
-        public DegradableSetTester createDegradableSetTester() {
-            return new DegradableSetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
-        }
-
-        public SetSnapshotTester createSetSnapshotTester() {
-            return new SetSnapshotTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
-        }
-
-        public SetSnapshotV2Tester createSetSnapshotV2Tester() {
-            return new SetSnapshotV2Tester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
-        }
-
-        public SecondDegradableListTester createSecondDegradableListTester() {
-            return new SecondDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public ThirdDegradableListTester createThirdDegradableListTester() {
-            return new ThirdDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
-        }
-
-        public NoopTester createNoopTester() {
-            return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch, nbOps);
+	public ListTester createAbstractListTester() {
+            return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
     }
 
     public static abstract class Tester<T> implements Callable<Void> {
 
+	protected static final int OBJ_PER_THREAD=1000;
+	
         protected final ThreadLocalRandom random;
         protected final T object;
         protected final int[] ratios;
         protected final CountDownLatch latch;
         protected final long nbOps;
-        protected final ThreadLocal<Integer> seq;
         public ConcurrentLinkedQueue<Integer> linkedQueue;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
@@ -261,14 +203,12 @@ public class Benchmark {
             this.ratios = ratios;
             this.latch = latch;
             this.nbOps = nbOps;
-            this.seq = ThreadLocal.withInitial(() -> 0);
             linkedQueue = new ConcurrentLinkedQueue<>();
         }
 
         @Override
         public Void call() {
 
-            seq.set(1);
             latch.countDown();
             long i = 0L;
 
@@ -288,7 +228,7 @@ public class Benchmark {
                 }
 
             } catch (Exception e) {
-                //ignore
+		e.printStackTrace();
             }
 
             nbOperations.add(i);
@@ -308,15 +248,18 @@ public class Benchmark {
         @Override
         protected void test(){
             // no-op
-            int a=0;
-            if (random.nextInt(101) < ratios[0]) {
-                a++;
-            } else {
-                a=1;
-            }
-        }
+	    int n = random.nextInt(OBJ_PER_THREAD);
+            if (n%101 <= ratios[0]) {
+                if (n%101 <= 50) {
+		    n++;
+		} else {
+		    n--;
+		}
+	    } else {
+		n+=2;
+	    }
+	}
     }
-
 
     public static class CounterTester extends Tester<AbstractCounter> {
 
@@ -326,195 +269,10 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            if (random.nextInt(101) < ratios[0]) {
+            if (random.nextInt(101) <= ratios[0]) {
                 object.increment();
             } else {
                 object.read();
-            }
-        }
-    }
-
-    public static class DegradableCounterTester extends Tester<AbstractCounter> {
-
-        public DegradableCounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(counter, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            if (random.nextInt(101) < ratios[0]) {
-                object.increment();
-            } else {
-                object.read();
-            }
-        }
-    }
-
-    public static class CounterSnapshotTester extends Tester<AbstractCounter> {
-
-        public CounterSnapshotTester(AbstractCounter object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            if (random.nextInt(101) < ratios[0]) {
-                object.increment();
-            } else {
-                object.read();
-            }
-        }
-    }
-
-    public static class CounterSnapshotV2Tester extends Tester<AbstractCounter> {
-
-        public CounterSnapshotV2Tester(AbstractCounter object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            if (random.nextInt(101) < ratios[0]) {
-                object.increment();
-            } else {
-                object.read();
-            }
-        }
-    }
-
-    public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class DegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public DegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class ListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public ListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class ListSnapshotV2Tester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public ListSnapshotV2Tester(eu.cloudbutton.dobj.types.AbstractList object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class LinkedListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public LinkedListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class DegradableLinkedListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public DegradableLinkedListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class LinkedListSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public LinkedListSnapshotTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class LinkedListSnapshotV2Tester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public LinkedListSnapshotV2Tester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                object.append(n);
-            } else {
-                object.contains(n);
             }
         }
     }
@@ -527,122 +285,37 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(2* seq.get());
-            if (n%101 < ratios[0]) {
+	    int n = random.nextInt(OBJ_PER_THREAD);
+	    long oid = Thread.currentThread().getId()*1000000000L+n;
+            if (n%101 <= ratios[0]) {
                 if (n%101 <= 50) {
-                    seq.set(seq.get() + 1);
-                    object.add("user_" + Thread.currentThread().getId() +"_"+ seq.get());
-                }
-                else
-                    object.remove("user_"+Thread.currentThread().getId()+"_"+ n);
+		    object.add(oid);
+                }else{
+		    object.remove(oid);
+		}
             } else {
-                object.contains("user_"+Thread.currentThread().getId()+"_"+ n);
+		object.contains(oid);
             }
         }
-    }
+    }    
+    
+    public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
-    public static class DegradableSetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
-
-        public DegradableSetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(2*seq.get());
-            if (n%101 < ratios[0]) {
-                if (n%101 <= 50) {
-                    seq.set(seq.get() + 1);
-                    object.add("user_" + Thread.currentThread().getId() + "_" + seq.get());
-                }
-                else
-                    object.remove("user_"+Thread.currentThread().getId()+"_" + n);
-            } else {
-                object.contains("user_"+Thread.currentThread().getId()+"_" + n);
-            }
-        }
-    }
-
-    public static class SetSnapshotTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
-
-        public SetSnapshotTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(2*seq.get());
-            if (n%101 < ratios[0]) {
-                if (n%101 <= 50) {
-                    seq.set(seq.get() + 1);
-                    object.add("user_" + Thread.currentThread().getId() + "_" + seq.get());
-                }
-                else
-                    object.remove("user_"+Thread.currentThread().getId()+"_" + n);
-            } else {
-                object.contains("user_"+Thread.currentThread().getId()+"_" + n);
-            }
-        }
-    }
-
-    public static class SetSnapshotV2Tester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
-
-        public SetSnapshotV2Tester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(object, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(2*seq.get());
-            if (n%101 < ratios[0]) {
-                if (n%101 <= 50) {
-                    seq.set(seq.get() + 1);
-                    object.add("user_" + Thread.currentThread().getId() + "_" + seq.get());
-                }
-                else
-                    object.remove("user_"+Thread.currentThread().getId()+"_" + n);
-            } else {
-                object.contains("user_"+Thread.currentThread().getId()+"_" + n);
-            }
-        }
-    }
-
-    public static class SecondDegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public SecondDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
+        public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 
         @Override
         protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
+	    int n = random.nextInt(OBJ_PER_THREAD);
+	    long oid = Thread.currentThread().getId()*1000000000L+n;
+            if (n%101 <= ratios[0]) {
                 if (n <= 50)
-                    object.append(n);
+		    object.append(oid);
                 else
-                    object.remove(n);
+		    object.remove(oid);
             } else {
-                object.contains(n);
-            }
-        }
-    }
-
-    public static class ThirdDegradableListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
-
-        public ThirdDegradableListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
-            super(list, ratios, latch, nbOps);
-        }
-
-        @Override
-        protected void test() {
-            int n = random.nextInt(101);
-            if (n < ratios[0]) {
-                if (n <= 50)
-                    object.append(n);
-                else
-                    object.remove(n);
-            } else {
-                object.contains(n);
+                object.contains(oid);
             }
         }
     }
