@@ -110,7 +110,7 @@ public class Benchmark {
                     List<Future<Void>> futures;
 
                     // launch computation
-                    System.out.println("launching "+i+" thread(s)");
+                    // System.out.println("launching "+i+" thread(s)");
                     futures = executor.invokeAll(callables);
                     try{
                         for (Future<Void> future : futures) {
@@ -129,8 +129,8 @@ public class Benchmark {
                 for (Long val : nbOperations) {
                     sum += val;
                 }
-                System.out.println("nb op total : " + sum);
-                System.out.println("nb process : " + i);
+                // System.out.println("nb op total : " + sum);
+                // System.out.println("nb process : " + i);
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 nbOperations = new ConcurrentLinkedQueue<>();
