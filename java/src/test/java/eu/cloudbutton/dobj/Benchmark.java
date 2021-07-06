@@ -281,10 +281,10 @@ public class Benchmark {
 
 		// compute
                 while (!flag.get()) {
-                    test();
+                    // test();
                     i++;
-		    if (i%100000000 == 0)
-                        System.out.println(name.get().toString() + " " + i);
+		    // if (i%100000000 == 0)
+                    //     System.out.println(name.get().toString() + " " + i);
                 }
 		
             } catch (Exception e) {
