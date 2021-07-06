@@ -35,7 +35,7 @@ public class Benchmark {
     private long nbOps = 100_000_000;
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
-    
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
     }
@@ -79,8 +79,8 @@ public class Benchmark {
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
                     Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-		    Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
-		    
+                    Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
+
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
@@ -100,7 +100,7 @@ public class Benchmark {
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                             latch,
                             nbOps/i);
-		    
+
                     Method m1 = factoryT.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                     Tester t = (Tester) m1.invoke(factoryT);
                     callables.add(t);
@@ -171,16 +171,16 @@ public class Benchmark {
         public NoopTester createNoopTester() {
             return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch, nbOps);
         }
-	
+
         public CounterTester createAbstractCounterTester() {
             return new CounterTester((AbstractCounter) object, ratios, latch, nbOps);
         }
 
-	public SetTester createAbstractSetTester() {
+        public SetTester createAbstractSetTester() {
             return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
         }
 
-	public ListTester createAbstractListTester() {
+        public ListTester createAbstractListTester() {
             return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
@@ -188,8 +188,8 @@ public class Benchmark {
 
     public static abstract class Tester<T> implements Callable<Void> {
 
-	protected static final int OBJ_PER_THREAD=1000;
-	
+        protected static final int OBJ_PER_THREAD=1000;
+
         protected final ThreadLocalRandom random;
         protected final T object;
         protected final int[] ratios;
@@ -228,7 +228,7 @@ public class Benchmark {
                 }
 
             } catch (Exception e) {
-		e.printStackTrace();
+                e.printStackTrace();
             }
 
             nbOperations.add(i);
@@ -248,17 +248,17 @@ public class Benchmark {
         @Override
         protected void test(){
             // no-op
-	    int n = random.nextInt(OBJ_PER_THREAD);
+            int n = random.nextInt(OBJ_PER_THREAD);
             if (n%101 <= ratios[0]) {
                 if (n%101 <= 50) {
-		    n++;
-		} else {
-		    n--;
-		}
-	    } else {
-		n+=2;
-	    }
-	}
+                    n++;
+                } else {
+                    n--;
+                }
+            } else {
+                n+=2;
+            }
+        }
     }
 
     public static class CounterTester extends Tester<AbstractCounter> {
@@ -285,20 +285,20 @@ public class Benchmark {
 
         @Override
         protected void test() {
-	    int n = random.nextInt(OBJ_PER_THREAD);
-	    long oid = Thread.currentThread().getId()*1000000000L+n;
+            int n = random.nextInt(OBJ_PER_THREAD);
+            long oid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (n%101 <= 50) {
-		    object.add(oid);
+                    object.add(oid);
                 }else{
-		    object.remove(oid);
-		}
+                    object.remove(oid);
+                }
             } else {
-		object.contains(oid);
+                object.contains(oid);
             }
         }
-    }    
-    
+    }
+
     public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
 
         public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
@@ -307,13 +307,13 @@ public class Benchmark {
 
         @Override
         protected void test() {
-	    int n = random.nextInt(OBJ_PER_THREAD);
-	    long oid = Thread.currentThread().getId()*1000000000L+n;
+            int n = random.nextInt(OBJ_PER_THREAD);
+            long oid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (n <= 50)
-		    object.append(oid);
+                    object.append(oid);
                 else
-		    object.remove(oid);
+                    object.remove(oid);
             } else {
                 object.contains(oid);
             }
