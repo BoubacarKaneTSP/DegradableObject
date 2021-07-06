@@ -6,32 +6,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DegradableCounter extends AbstractCounter {
 
-    private final ConcurrentMap<Integer, AtomicInteger> count;
+    private final ConcurrentMap<Thread, AtomicInteger> count;
     private final ThreadLocal<AtomicInteger> local;
-    private final ThreadLocal<Integer> name;
 
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
-        this.local = new ThreadLocal<>();
-        name = new ThreadLocal<>();
+        this.local = ThreadLocal.withInitial(() -> {
+            AtomicInteger l = new AtomicInteger();
+            count.put(Thread.currentThread(), l);
+            return l;
+        });
     }
 
     @Override
     public void increment() {
-	if (name.get() == null) {
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-", "")));
-            local.set(new AtomicInteger());
-            this.count.put(name.get(),local.get());
-        }
-//        local.get().incrementAndGet();
+        local.get().incrementAndGet();
     }
 
     public void increment(int val) {
-	if (name.get() == null) {
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-            local.set(new AtomicInteger());
-            this.count.put(name.get(),local.get());
-        }
         local.get().addAndGet(val);
     }
 

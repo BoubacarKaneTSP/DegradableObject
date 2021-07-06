@@ -1,6 +1,8 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.AbstractCounter;
+import eu.cloudbutton.dobj.types.DegradableCounter;
+import eu.cloudbutton.dobj.types.Noop;
 import eu.cloudbutton.dobj.types.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -237,6 +239,10 @@ public class Benchmark {
             return new ThirdDegradableListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
         }
 
+        public NoopTester createNoopTester() {
+            return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch, nbOps);
+        }
+	
     }
 
     public static abstract class Tester<T> implements Callable<Void> {
@@ -250,6 +256,8 @@ public class Benchmark {
         protected final ThreadLocal<Integer> seq;
         public ConcurrentLinkedQueue<Integer> linkedQueue;
         public Integer entier = 0;
+
+	public static final long BILLION=1000000000L;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.random = ThreadLocalRandom.current();
@@ -269,8 +277,8 @@ public class Benchmark {
             latch.countDown();
             name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
 //            System.out.println(name.get());
-            Long i = 0L;
-
+            long i = 0L;
+	    
             try{
                 latch.await();
 
@@ -280,12 +288,14 @@ public class Benchmark {
                 }
 
 		// compute
+		long start = System.nanoTime();
                 while (!flag.get()) {
-                    // test();
+                    test();
                     i++;
 		    // if (i%100000000 == 0)
                     //     System.out.println(name.get().toString() + " " + i);
                 }
+		// System.out.println(((double)(System.nanoTime()-start))/BILLION);
 		
             } catch (Exception e) {
                 //ignore
@@ -300,6 +310,25 @@ public class Benchmark {
         protected abstract void test();
     }
 
+    public static class NoopTester extends Tester<Noop> {
+
+        public NoopTester(Noop nope, int[] ratios, CountDownLatch latch, long nbOps){
+	    super(nope, ratios, latch, nbOps);
+	}
+
+        @Override
+        protected void test(){
+	    // no-op
+	    int a=0
+	    if (random.nextInt(101) < ratios[0]) {
+		a++;
+	    } else {
+		a=1;
+	    }
+	}
+    }
+
+    
     public static class CounterTester extends Tester<AbstractCounter> {
 
         public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, long nbOps) {
@@ -310,7 +339,6 @@ public class Benchmark {
         protected void test() {
             if (random.nextInt(101) < ratios[0]) {
                 object.increment();
-//                entier += 1;
             } else {
                 object.read();
             }
@@ -326,13 +354,11 @@ public class Benchmark {
         @Override
         protected void test() {
             if (random.nextInt(101) < ratios[0]) {
-//                object.increment();
-                int a = 3;
-                a *=3 ;
+		object.increment();
             } else {
-                object.read();
+	    	object.read();
             }
-        }
+       }
     }
 
     public static class CounterSnapshotTester extends Tester<AbstractCounter> {

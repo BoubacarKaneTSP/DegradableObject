@@ -21,4 +21,5 @@ public class Factory {
 
     public AbstractList createSecondDegradableList() {return new SecondDegradableList(); }
     public AbstractList createThirdDegradableList() {return new ThirdDegradableList(); }
+    public Noop createNoop() {return new Noop(); }
 }
