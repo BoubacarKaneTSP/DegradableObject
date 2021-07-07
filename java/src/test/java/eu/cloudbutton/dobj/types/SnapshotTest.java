@@ -22,7 +22,7 @@ public class SnapshotTest {
     public void test() throws ExecutionException, InterruptedException {
 
         doCounterTest(factory.createCounterSnapshot());
-        doCounterTest(factory.createCounterSnapshotV2());
+        doCounterTest(factory.createCounterSnapshotSRMW());
         doSetTest(factory.createSetSnapshot());
         doSetTest(factory.createSetSnapshotV2());
 
