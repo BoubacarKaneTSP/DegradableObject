@@ -31,7 +31,7 @@ public class LinkedListSnapshotV2<T> extends AbstractList<T>{
 //            );
 //        }
 //        listThreadLocal.get().append(val);
-//        snapobject.update(listThreadLocal.get());
+//        snapobject.update(new List(listThreadLocal.get()));
     }
 
     @Override
