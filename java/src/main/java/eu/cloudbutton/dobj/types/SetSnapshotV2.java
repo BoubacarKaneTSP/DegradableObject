@@ -6,12 +6,12 @@ import java.util.HashSet;
 
 public class SetSnapshotV2<T> extends AbstractSet<T>{
 
-    private final SnapshotV2<eu.cloudbutton.dobj.types.Set<T>> snapobject;
+    private final SnapshotSRMW<Set<T>> snapobject;
     private final ThreadLocal<eu.cloudbutton.dobj.types.Set<T>> setThreadLocal;
     private final ThreadLocal<Integer> name;
 
     public SetSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+        snapobject = new SnapshotSRMW<>();
         setThreadLocal = new ThreadLocal<>();
         name = new ThreadLocal<>();
     }

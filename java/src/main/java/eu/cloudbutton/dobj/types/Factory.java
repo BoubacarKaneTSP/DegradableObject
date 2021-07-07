@@ -11,7 +11,7 @@ public class Factory {
     public AbstractSet createSet() { return new Set(); }
 
     public AbstractCounter createCounterSnapshot() { return new CounterSnapshot(); }
-    public AbstractCounter createCounterSnapshotV2(){ return new CounterSnapshotV2();}
+    public AbstractCounter createCounterSnapshotV2(){ return new CounterSnapshotSRMW();}
     public AbstractSet createSetSnapshot () { return new SetSnapshot(); }
     public AbstractSet createSetSnapshotV2 () { return new SetSnapshotV2(); }
     public AbstractList createListSnapshot () { return  new ListSnapshot(); }

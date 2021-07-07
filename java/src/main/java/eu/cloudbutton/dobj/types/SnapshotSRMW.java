@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class SnapshotV2<T> {
+public class SnapshotSRMW<T> {
 
-    private int curr_seq;
+    private volatile int curr_seq;
     protected final ConcurrentMap<Integer, Pair<Pair<T, Integer>, Pair<T, Integer>>> memory; //Value0 = low, Value1 = high
     private final ThreadLocal<Integer> name;
 
-    public SnapshotV2(){
+    public SnapshotSRMW(){
         curr_seq = 0;
         memory = new ConcurrentHashMap<>();
         name = new ThreadLocal<>();

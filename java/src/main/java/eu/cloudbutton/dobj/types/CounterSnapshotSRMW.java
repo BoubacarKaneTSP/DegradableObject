@@ -2,14 +2,14 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Pair;
 
-public class CounterSnapshotV2 extends AbstractCounter{
+public class CounterSnapshotSRMW extends AbstractCounter{
 
-    private final SnapshotV2<Counter> snapobject;
+    private final SnapshotSRMW<Counter> snapobject;
     private final ThreadLocal<Counter> counterThreadLocal;
     private final ThreadLocal<Integer> name;
 
-    public CounterSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+    public CounterSnapshotSRMW(){
+        snapobject = new SnapshotSRMW<>();
         counterThreadLocal = new ThreadLocal<>();
         name = new ThreadLocal<>();
     }

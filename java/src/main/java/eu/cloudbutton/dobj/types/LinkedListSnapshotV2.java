@@ -7,12 +7,12 @@ import java.util.List;
 
 public class LinkedListSnapshotV2<T> extends AbstractList<T>{
 
-    private final SnapshotV2<LinkedList<T>> snapobject;
+    private final SnapshotSRMW<LinkedList<T>> snapobject;
     private final ThreadLocal<LinkedList<T>> listThreadLocal;
     private final ThreadLocal<Integer> name;
 
     public LinkedListSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+        snapobject = new SnapshotSRMW<>();
         listThreadLocal = new ThreadLocal<>();
         name = new ThreadLocal<>();
     }

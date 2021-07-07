@@ -7,12 +7,12 @@ import java.util.List;
 
 public class ListSnapshotV2<T> extends AbstractList<T>{
 
-    private final SnapshotV2<eu.cloudbutton.dobj.types.List<T>> snapobject;
+    private final SnapshotSRMW<eu.cloudbutton.dobj.types.List<T>> snapobject;
     private final ThreadLocal<eu.cloudbutton.dobj.types.List<T>> listThreadLocal;
     private final ThreadLocal<Integer> name;
 
     public ListSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+        snapobject = new SnapshotSRMW<>();
         listThreadLocal = new ThreadLocal<>();
         name = new ThreadLocal<>();
     }
