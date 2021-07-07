@@ -18,18 +18,18 @@ public class SetSnapshotV2<T> extends AbstractSet<T>{
 
     @Override
     public void add(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!snapobject.memory.containsKey(name.get())){
-            setThreadLocal.set(new eu.cloudbutton.dobj.types.Set<>());
-            snapobject.memory.put   (   name.get(),
-                                        new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0),
-                                                    new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0)
-                                        )
-                                    );
-        }
-        setThreadLocal.get().add(val);
-        snapobject.update(setThreadLocal.get());
+//        if (name.get() == null)
+//            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+//        if(!snapobject.memory.containsKey(name.get())){
+//            setThreadLocal.set(new eu.cloudbutton.dobj.types.Set<>());
+//            snapobject.memory.put   (   name.get(),
+//                                        new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0),
+//                                                    new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0)
+//                                        )
+//                                    );
+//        }
+//        setThreadLocal.get().add(val);
+//        snapobject.update(setThreadLocal.get());
     }
 
     @Override
@@ -45,17 +45,17 @@ public class SetSnapshotV2<T> extends AbstractSet<T>{
 
     @Override
     public boolean remove(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-
-        if(!snapobject.memory.containsKey(name.get())){
-            setThreadLocal.set(new eu.cloudbutton.dobj.types.Set<>());
-            snapobject.memory.put   (   name.get(),
-                    new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0),
-                            new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0)
-                    )
-            );
-        }
+//        if (name.get() == null)
+//            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+//
+//        if(!snapobject.memory.containsKey(name.get())){
+//            setThreadLocal.set(new eu.cloudbutton.dobj.types.Set<>());
+//            snapobject.memory.put   (   name.get(),
+//                    new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0),
+//                            new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0)
+//                    )
+//            );
+//        }
 
         boolean removed;
 

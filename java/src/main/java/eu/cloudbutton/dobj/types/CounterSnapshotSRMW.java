@@ -4,44 +4,30 @@ import org.javatuples.Pair;
 
 public class CounterSnapshotSRMW extends AbstractCounter{
 
-    private final SnapshotSRMW<Counter> snapobject;
-    private final ThreadLocal<Counter> counterThreadLocal;
-    private final ThreadLocal<Integer> name;
+    private final SnapshotSRMW<Integer> snapobject;
+    private final ThreadLocal<Integer> counterThreadLocal;
 
     public CounterSnapshotSRMW(){
         snapobject = new SnapshotSRMW<>();
-        counterThreadLocal = new ThreadLocal<>();
-        name = new ThreadLocal<>();
+        counterThreadLocal = ThreadLocal.withInitial(
+                () -> {
+                    snapobject.memory.put(
+                            Thread.currentThread(),
+                            new Pair<>(new Pair<>(0, 0),new Pair<>(0, 0))
+                    );
+                    return 0;
+                }
+        );
     }
 
     public void increment(int val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!snapobject.memory.containsKey(name.get())){
-            counterThreadLocal.set(new Counter());
-            snapobject.memory.put   (   name.get(),
-                    new Pair<>( new Pair<>(new Counter(), 0),
-                            new Pair<>(new Counter(), 0)
-                    )
-            );
-        }
-        counterThreadLocal.get().increment(val);
+        counterThreadLocal.set(counterThreadLocal.get()+val);
         snapobject.update(counterThreadLocal.get());
     }
 
     @Override
     public void increment() {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!snapobject.memory.containsKey(name.get())){
-            counterThreadLocal.set(new Counter());
-            snapobject.memory.put   (   name.get(),
-                    new Pair<>( new Pair<>(new Counter(), 0),
-                            new Pair<>(new Counter(), 0)
-                    )
-            );
-        }
-        counterThreadLocal.get().increment();
+        counterThreadLocal.set(counterThreadLocal.get()+1);
         snapobject.update(counterThreadLocal.get());
     }
 
@@ -49,8 +35,8 @@ public class CounterSnapshotSRMW extends AbstractCounter{
     public int read() {
         int result = 0;
 
-        for (Counter counter: snapobject.snap()) {
-            result += counter.read();
+        for (Integer i : snapobject.snap()) {
+            result += i;
         }
 
         return result;

@@ -19,19 +19,19 @@ public class LinkedListSnapshotV2<T> extends AbstractList<T>{
 
     @Override
     public void append(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-
-        if(!snapobject.memory.containsKey(name.get())){
-            listThreadLocal.set(new LinkedList<>());
-            snapobject.memory.put   (   name.get(),
-                    new Pair<>( new Pair<>(new LinkedList<>(), 0),
-                            new Pair<>(new LinkedList<>(), 0)
-                    )
-            );
-        }
-        listThreadLocal.get().append(val);
-        snapobject.update(listThreadLocal.get());
+//        if (name.get() == null)
+//            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+//
+//        if(!snapobject.memory.containsKey(name.get())){
+//            listThreadLocal.set(new LinkedList<>());
+//            snapobject.memory.put   (   name.get(),
+//                    new Pair<>( new Pair<>(new LinkedList<>(), 0),
+//                            new Pair<>(new LinkedList<>(), 0)
+//                    )
+//            );
+//        }
+//        listThreadLocal.get().append(val);
+//        snapobject.update(listThreadLocal.get());
     }
 
     @Override
@@ -48,16 +48,16 @@ public class LinkedListSnapshotV2<T> extends AbstractList<T>{
     @Override
     public boolean remove(T val) {
 
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!snapobject.memory.containsKey(name.get())){
-            listThreadLocal.set(new LinkedList<>());
-            snapobject.memory.put   (   name.get(),
-                    new Pair<>( new Pair<>(new LinkedList<>(), 0),
-                            new Pair<>(new LinkedList<>(), 0)
-                    )
-            );
-        }
+//        if (name.get() == null)
+//            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
+//        if(!snapobject.memory.containsKey(name.get())){
+//            listThreadLocal.set(new LinkedList<>());
+//            snapobject.memory.put   (   name.get(),
+//                    new Pair<>( new Pair<>(new LinkedList<>(), 0),
+//                            new Pair<>(new LinkedList<>(), 0)
+//                    )
+//            );
+//        }
 
         boolean removed;
         removed = listThreadLocal.get().remove(val);
