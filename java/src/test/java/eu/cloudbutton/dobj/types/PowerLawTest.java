@@ -21,7 +21,7 @@ public class PowerLawTest {
     void add() throws ExecutionException, InterruptedException {
         List<Double> data = new Continuous(1, 1.35).generate(1000);
 
-        System.out.println(data);
+//        System.out.println(data);
     }
 
 }

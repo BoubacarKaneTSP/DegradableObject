@@ -13,7 +13,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
     public DegradableSet() {
         this.set = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            ConcurrentSkipListSet<T> l = new ConcurrentSkipListSet();
+            ConcurrentSkipListSet<T> l = new ConcurrentSkipListSet<>();
             set.put(Thread.currentThread(),l);
             return l;
         });

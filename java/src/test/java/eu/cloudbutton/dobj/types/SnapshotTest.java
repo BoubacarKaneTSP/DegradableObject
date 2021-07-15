@@ -23,8 +23,8 @@ public class SnapshotTest {
 
         doCounterTest(factory.createCounterSnapshot());
         doCounterTest(factory.createCounterSnapshotV2());
-        doSetTest(factory.createSetSnapshot());
-        doSetTest(factory.createSetSnapshotV2());
+//        doSetTest(factory.createSetSnapshot());
+//        doSetTest(factory.createSetSnapshotV2());
 
 //        doListTest(factory.createListSnapshot());
     }

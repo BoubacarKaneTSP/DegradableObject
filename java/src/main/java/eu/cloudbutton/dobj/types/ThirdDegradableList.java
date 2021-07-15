@@ -11,58 +11,50 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThirdDegradableList<T> extends AbstractList<T>{
-    private final ConcurrentMap<Integer, ConcurrentSkipListMap<Integer,Pair<Integer, T>>> list;
-    private final ConcurrentMap<Integer,Integer> last;
+    private final ConcurrentMap<Thread, ConcurrentSkipListMap<Integer,Pair<Integer, T>>> list;
+    private final ConcurrentMap<Thread,Integer> last;
     private final ThreadLocal<ConcurrentSkipListMap<Integer, Pair<Integer, T>>> local_map;
     private final ThreadLocal<AtomicInteger> local_num_add;
     private final AtomicInteger count;
     private final List<T> list_final;
     private final List<Pair<Integer, T>> inter_list;
-    private final  ThreadLocal<Integer> name;
 
     public ThirdDegradableList() {
         this.list = new ConcurrentHashMap<>();
         this.last = new ConcurrentHashMap<>();
-        this.local_map = new ThreadLocal<>();
-        this.local_num_add = new ThreadLocal<>();
+        this.local_map = ThreadLocal.withInitial(() -> {
+            ConcurrentSkipListMap<Integer, Pair<Integer,T>> l = new ConcurrentSkipListMap<>();
+            list.put(Thread.currentThread(), l);
+            return l;
+        });
+        this.local_num_add = ThreadLocal.withInitial(AtomicInteger::new);
         this.count = new AtomicInteger();
         this.list_final = new ArrayList<>();
         this.inter_list = new ArrayList<>();
-        name = new ThreadLocal<>();
     }
 
     @Override
     public void append(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!list.containsKey(name.get())){
-            local_map.set(new ConcurrentSkipListMap<>());
-            local_num_add.set(new AtomicInteger());
-
-            this.list.put(name.get(), local_map.get());
-        }
-
         local_map.get().put(local_num_add.get().incrementAndGet(), new Pair<>(count.incrementAndGet() ,val));
     }
 
     @Override
     public java.util.List<T> read() {
         inter_list.clear();
-        for (int key : this.list.keySet()) {
+        for (Thread key : this.list.keySet()) {
 
             int lastkey = list.get(key).lastKey();
             if (!last.containsKey(key)) {
                 last.put(key, lastkey);
                 for (Map.Entry<Integer, Pair<Integer, T>> elem : list.get(key).headMap(lastkey).entrySet())
                     inter_list.add(elem.getValue());
-            } else {
-                if (last.get(key) != lastkey) {
+            } else if (last.get(key) != lastkey) {
                     int i;
                     for (i = last.get(key) + 1; i <= lastkey; i++)
                         inter_list.add(list.get(key).get(i));
                     last.put(key, i);
-                }
             }
+
 
         }
 
@@ -72,13 +64,13 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
             sortedMap.put(pair.getValue0(), pair.getValue1());
 
         list_final.addAll(sortedMap.values());
-
         return list_final;
+
     }
 
-    public java.util.List<T> read(Set following) {
+    public java.util.List<T> read(Set<Thread> following) {
         inter_list.clear();
-        for (int key : this.list.keySet()){
+        for (Thread key : this.list.keySet()){
             if (following.contains(key)) {
                 int lastkey = list.get(key).lastKey();
                 if (!last.containsKey(key)) {

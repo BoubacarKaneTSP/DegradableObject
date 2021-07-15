@@ -10,8 +10,8 @@ for ratio in 100; #95 80 50 20 5;
 do
 #  for type in 'LinkedList' 'DegradableLinkedList' 'LinkedListSnapshot' 'LinkedListSnapshotV2'
 #  for type in 'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList' 'CounterSnapshot' 'SetSnapshot' 'ListSnapshot' 'LinkedListSnapshot' 'CounterSnapshotV2' 'SetSnapshotV2' 'ListSnapshotV2' 'LinkedListSnapshotV2'
-  for type in  'DegradableCounter'
-    do
+  for type in  'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList'
+  do
     echo $type $ratio
     CLASSPATH=../java/target/*:../java/target/lib/* java eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 10 -wTime 5 #> "results_${type}_ratio_write_${ratio}_SR.txt"
   done

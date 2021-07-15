@@ -7,25 +7,20 @@ import java.util.concurrent.ConcurrentMap;
 
 public class DegradableLinkedList<T> extends AbstractList<T>{
 
-    private final ConcurrentMap<Integer, LinkedList<T>> list;
+    private final ConcurrentMap<Thread, LinkedList<T>> list;
     private final ThreadLocal<LinkedList<T>> local;
-    private final ThreadLocal<Integer> name;
 
     public DegradableLinkedList() {
         this.list = new ConcurrentHashMap<>();
-        this.local = new ThreadLocal<>();
-        name = new ThreadLocal<>();
+        this.local = ThreadLocal.withInitial(() -> {
+            LinkedList<T> l = new LinkedList<>();
+            list.put(Thread.currentThread(), l);
+            return l;
+        });
     }
 
     @Override
     public void append(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-
-        if(!list.containsKey(name.get())){
-            local.set(new LinkedList<>());
-            this.list.put(name.get(), local.get());
-        }
         local.get().append(val);
     }
 
