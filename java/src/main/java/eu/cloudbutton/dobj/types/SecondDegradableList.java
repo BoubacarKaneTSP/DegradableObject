@@ -11,39 +11,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SecondDegradableList<T> extends AbstractList<T> {
 
-    private final ConcurrentMap<Integer, ConcurrentSkipListMap<Integer,T>> list;
+    private final ConcurrentMap<Thread, ConcurrentSkipListMap<Integer,T>> list;
     private final ThreadLocal<ConcurrentSkipListMap<Integer,T>> local;
     private final ThreadLocal<AtomicInteger> num_add;
-    private final ConcurrentMap<Integer,Integer> last;
+    private final ConcurrentMap<Thread,Integer> last;
     private final List<T> list_final;
-    private final ThreadLocal<Integer> name;
 
     public SecondDegradableList() {
         this.list = new ConcurrentHashMap<>();
         this.last = new ConcurrentHashMap<>();
-        this.local = new ThreadLocal<>();
-        this.num_add = new ThreadLocal<>();
+        this.local = ThreadLocal.withInitial(() -> {
+            ConcurrentSkipListMap<Integer, T> l = new ConcurrentSkipListMap<>();
+            list.put(Thread.currentThread(), l);
+            return l;
+        });
+        this.num_add = ThreadLocal.withInitial(AtomicInteger::new);
         this.list_final = new ArrayList<>();
-        name = new ThreadLocal<>();
     }
 
     @Override
     public void append(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!list.containsKey(name.get())){
-            local.set(new ConcurrentSkipListMap<>());
-            num_add.set(new AtomicInteger());
-            this.list.put(name.get(), local.get());
-        }
-
         local.get().put(num_add.get().incrementAndGet(), val);
     }
 
     @Override
     public java.util.List<T> read() {
 
-        for (int key : this.list.keySet()){
+        for (Thread key : this.list.keySet()){
             int lastkey = list.get(key).lastKey();
             if (!last.containsKey(key)){
                 try{
@@ -77,7 +71,7 @@ public class SecondDegradableList<T> extends AbstractList<T> {
     @Override
     public boolean contains(T val) {
         for (ConcurrentSkipListMap<Integer, T> map : list.values()) {
-            if(map.values().contains(val))
+            if(map.containsValue(val))
                 return true;
         }
         return false;

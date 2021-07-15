@@ -6,38 +6,36 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SetSnapshot<T> extends AbstractSet<T>{
 
     private final Snapshot<Set<T>> snapobject;
-    private final ThreadLocal<Triplet<Set<T>, AtomicInteger, ArrayList<Set<T>>>> tripletThreadLocal;
-    private final ThreadLocal<Integer> name;
+    private final ThreadLocal<Triplet<Set<T>, AtomicInteger, List<Set<T>>>> tripletThreadLocal;
+    private final ConcurrentMap<Thread, List<Set<T>>> embedded_snaps;
 
     public SetSnapshot() {
         snapobject = new Snapshot<>(new ConcurrentHashMap<>());
-        tripletThreadLocal = new ThreadLocal<>();
-        name = new ThreadLocal<>();
+        tripletThreadLocal = ThreadLocal.withInitial(() -> {
+            Triplet<Set<T>, AtomicInteger, List<Set<T>>> triplet = new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>());
+            snapobject.obj.put(Thread.currentThread(), triplet);
+            return triplet;
+        });
+
+        embedded_snaps = new ConcurrentHashMap<>();
+        embedded_snaps.put(Thread.currentThread(), new ArrayList<>());
     }
 
     public void write(T val) { add(val); }
 
     @Override
     public void add(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
 
-        if (!snapobject.obj.containsKey(name.get())){
-            tripletThreadLocal.set(new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
-            snapobject.obj.put(name.get(), new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
-        }
         List<Set<T>> embedded_snap = snapobject.snap();
         tripletThreadLocal.get().getValue0().add(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
-
-        snapobject.obj.put(name.get(), new Triplet<>( tripletThreadLocal.get().getValue0(),
-                tripletThreadLocal.get().getValue1(),
-                embedded_snap));
+        embedded_snaps.put(Thread.currentThread(), embedded_snap);
     }
 
     public java.util.Set<T> read() {
@@ -56,12 +54,9 @@ public class SetSnapshot<T> extends AbstractSet<T>{
         boolean contained = false;
 
         for ( Triplet<Set<T>, AtomicInteger, List<Set<T>>> triplet: snapobject.obj.values()){
-
             contained = triplet.getValue0().contains(val);
-
             if (contained)
                 break;
-
         }
 
         return contained;
@@ -69,21 +64,13 @@ public class SetSnapshot<T> extends AbstractSet<T>{
 
     @Override
     public boolean remove(T val) {
-        boolean removed;
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
 
-        if (!snapobject.obj.containsKey(name.get())){
-            tripletThreadLocal.set(new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
-            snapobject.obj.put(name.get(), new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>()));
-        }
+        boolean removed;
+
         List<Set<T>> embedded_snap = snapobject.snap();
         removed = tripletThreadLocal.get().getValue0().remove(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
-
-        snapobject.obj.put(name.get(), new Triplet<>( tripletThreadLocal.get().getValue0(),
-                tripletThreadLocal.get().getValue1(),
-                embedded_snap));
+        embedded_snaps.put(Thread.currentThread(), embedded_snap);
 
         return removed;
     }

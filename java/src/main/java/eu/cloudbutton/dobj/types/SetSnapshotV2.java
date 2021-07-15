@@ -8,26 +8,20 @@ public class SetSnapshotV2<T> extends AbstractSet<T>{
 
     private final SnapshotV2<eu.cloudbutton.dobj.types.Set<T>> snapobject;
     private final ThreadLocal<eu.cloudbutton.dobj.types.Set<T>> setThreadLocal;
-    private final ThreadLocal<Integer> name;
 
     public SetSnapshotV2(){
         snapobject = new SnapshotV2<>();
-        setThreadLocal = new ThreadLocal<>();
-        name = new ThreadLocal<>();
+        setThreadLocal = ThreadLocal.withInitial(() -> {
+            Set<T> set = new Set<>();
+            snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new Set<>(), 0),
+                    new Pair<>(new Set<>(), 0)
+            ));
+            return set;
+        });
     }
 
     @Override
     public void add(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-        if(!snapobject.memory.containsKey(name.get())){
-            setThreadLocal.set(new eu.cloudbutton.dobj.types.Set<>());
-            snapobject.memory.put   (   name.get(),
-                                        new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0),
-                                                    new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0)
-                                        )
-                                    );
-        }
         setThreadLocal.get().add(val);
         snapobject.update(setThreadLocal.get());
     }
@@ -45,17 +39,6 @@ public class SetSnapshotV2<T> extends AbstractSet<T>{
 
     @Override
     public boolean remove(T val) {
-        if (name.get() == null)
-            name.set(Integer.parseInt(Thread.currentThread().getName().substring(5).replace("-thread-","")));
-
-        if(!snapobject.memory.containsKey(name.get())){
-            setThreadLocal.set(new eu.cloudbutton.dobj.types.Set<>());
-            snapobject.memory.put   (   name.get(),
-                    new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0),
-                            new Pair<>(new eu.cloudbutton.dobj.types.Set<>(), 0)
-                    )
-            );
-        }
 
         boolean removed;
 
