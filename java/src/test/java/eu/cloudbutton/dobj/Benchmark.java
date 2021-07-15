@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.AbstractCounter;
-import eu.cloudbutton.dobj.types.DegradableCounter;
 import eu.cloudbutton.dobj.types.Noop;
 import eu.cloudbutton.dobj.types.Factory;
 import org.kohsuke.args4j.CmdLineException;
@@ -186,7 +185,7 @@ public class Benchmark {
 
     public static abstract class Tester<T> implements Callable<Void> {
 
-        protected static final int OBJ_PER_THREAD=1000;
+        protected static final int ITEM_PER_THREAD =1000;
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -246,7 +245,7 @@ public class Benchmark {
         @Override
         protected void test(){
             // no-op
-            int n = random.nextInt(OBJ_PER_THREAD);
+            int n = random.nextInt(ITEM_PER_THREAD);
             if (n%101 <= ratios[0]) {
                 if (n%101 <= 50) {
                     n++;
@@ -283,16 +282,16 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(OBJ_PER_THREAD);
-            long oid = Thread.currentThread().getId()*1000000000L+n;
+            int n = random.nextInt(ITEM_PER_THREAD);
+            long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (n%101 <= 50) {
-                    object.add(oid);
+                    object.add(iid);
                 }else{
-                    object.remove(oid);
+                    object.remove(iid);
                 }
             } else {
-                object.contains(oid);
+                object.contains(iid);
             }
         }
     }
@@ -305,15 +304,15 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(OBJ_PER_THREAD);
-            long oid = Thread.currentThread().getId()*1000000000L+n;
+            int n = random.nextInt(ITEM_PER_THREAD);
+            long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (n <= 50)
-                    object.append(oid);
+                    object.append(iid);
                 else
-                    object.remove(oid);
+                    object.remove(iid);
             } else {
-                object.contains(oid);
+                object.contains(iid);
             }
         }
     }
