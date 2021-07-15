@@ -4,11 +4,11 @@ import org.javatuples.Pair;
 
 public class CounterSnapshotV2 extends AbstractCounter{
 
-    private final SnapshotV2<Counter> snapobject;
+    private final SnapshotSRMW<Counter> snapobject;
     private final ThreadLocal<Counter> counterThreadLocal;
 
     public CounterSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+        snapobject = new SnapshotSRMW<>();
         counterThreadLocal = ThreadLocal.withInitial(() -> {
             Counter counter = new Counter();
             snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new Counter(), 0),

@@ -13,11 +13,11 @@ public class Factory {
     public AbstractCounter createCounterSnapshot() { return new CounterSnapshot(); }
     public AbstractCounter createCounterSnapshotSRMW(){ return new CounterSnapshotSRMW();}
     public AbstractSet createSetSnapshot () { return new SetSnapshot(); }
-    public AbstractSet createSetSnapshotV2 () { return new SetSnapshotV2(); }
+    public AbstractSet createSetSnapshotSRMW () { return new SetSnapshotSRMW(); }
     public AbstractList createListSnapshot () { return  new ListSnapshot(); }
-    public AbstractList createListSnapshotSRMW() { return  new ListSnapshotV2(); }
+    public AbstractList createListSnapshotSRMW() { return  new ListSnapshotSRMW(); }
     public AbstractList createLinkedListSnapshot () { return  new LinkedListSnapshot(); }
-    public AbstractList createLinkedListSnapshotSRMW() { return  new LinkedListSnapshotV2(); }
+    public AbstractList createLinkedListSnapshotSRMW() { return  new LinkedListSnapshotSRMW(); }
 
     public AbstractList createSecondDegradableList() {return new SecondDegradableList(); }
     public AbstractList createThirdDegradableList() {return new ThirdDegradableList(); }

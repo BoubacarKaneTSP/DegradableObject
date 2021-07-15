@@ -4,13 +4,13 @@ import org.javatuples.Pair;
 
 import java.util.HashSet;
 
-public class SetSnapshotV2<T> extends AbstractSet<T>{
+public class SetSnapshotSRMW<T> extends AbstractSet<T>{
 
-    private final SnapshotV2<eu.cloudbutton.dobj.types.Set<T>> snapobject;
+    private final SnapshotSRMW<Set<T>> snapobject;
     private final ThreadLocal<eu.cloudbutton.dobj.types.Set<T>> setThreadLocal;
 
-    public SetSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+    public SetSnapshotSRMW(){
+        snapobject = new SnapshotSRMW<>();
         setThreadLocal = ThreadLocal.withInitial(() -> {
             Set<T> set = new Set<>();
             snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new Set<>(), 0),

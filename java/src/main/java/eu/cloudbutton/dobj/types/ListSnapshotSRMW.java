@@ -5,13 +5,13 @@ import org.javatuples.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListSnapshotV2<T> extends AbstractList<T>{
+public class ListSnapshotSRMW<T> extends AbstractList<T>{
 
-    private final SnapshotV2<eu.cloudbutton.dobj.types.List<T>> snapobject;
+    private final SnapshotSRMW<eu.cloudbutton.dobj.types.List<T>> snapobject;
     private final ThreadLocal<eu.cloudbutton.dobj.types.List<T>> listThreadLocal;
 
-    public ListSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+    public ListSnapshotSRMW(){
+        snapobject = new SnapshotSRMW<>();
         listThreadLocal = ThreadLocal.withInitial(() -> {
             eu.cloudbutton.dobj.types.List<T> List = new eu.cloudbutton.dobj.types.List<>();
             snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.List<>(), 0),

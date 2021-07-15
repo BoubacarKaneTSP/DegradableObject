@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class SnapshotV2<T> {
+public class SnapshotSRMW<T> {
 
     private int curr_seq;
     protected final ConcurrentMap<Thread, Pair<Pair<T, Integer>, Pair<T, Integer>>> memory; //Value0 = low, Value1 = high
 
-    public SnapshotV2(){
+    public SnapshotSRMW(){
         curr_seq = 0;
         memory = new ConcurrentHashMap<>();
     }

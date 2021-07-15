@@ -5,13 +5,13 @@ import org.javatuples.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkedListSnapshotV2<T> extends AbstractList<T>{
+public class LinkedListSnapshotSRMW<T> extends AbstractList<T>{
 
-    private final SnapshotV2<LinkedList<T>> snapobject;
+    private final SnapshotSRMW<LinkedList<T>> snapobject;
     private final ThreadLocal<LinkedList<T>> listThreadLocal;
 
-    public LinkedListSnapshotV2(){
-        snapobject = new SnapshotV2<>();
+    public LinkedListSnapshotSRMW(){
+        snapobject = new SnapshotSRMW<>();
         listThreadLocal = ThreadLocal.withInitial(() -> {
             LinkedList<T> linkedList = new LinkedList<>();
             snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new LinkedList<>(), 0),
