@@ -125,6 +125,8 @@ public class Benchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
 
+                    eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
+                    System.out.println("Size of list : " + list.read().size());
                 }
                 Long sum = 0L;
                 for (Long val : nbOperations) {
@@ -218,7 +220,6 @@ public class Benchmark {
                 }
 
                 // compute
-                long start = System.nanoTime();
                 while (!flag.get()) {
                     test();
                     i++;
