@@ -126,7 +126,8 @@ public class Benchmark {
 
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
-                    if (type.equals("List") ){
+
+                   /* if (type.equals("List") ){
                         eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
                         sizes.add(list.read().size());
                         System.out.println("Size of List : " + list.read().size());
@@ -150,7 +151,7 @@ public class Benchmark {
                         eu.cloudbutton.dobj.types.DegradableSet set = (eu.cloudbutton.dobj.types.DegradableSet) object;
                         System.out.println("Size of DegradableSet : " + set.read().size());
                         sizes.add(set.read().size());
-                    }
+                    }*/
                 }
                 Long sum = 0L;
                 int sum2 = 0;
@@ -224,7 +225,6 @@ public class Benchmark {
         protected final int[] ratios;
         protected final CountDownLatch latch;
         protected final long nbOps;
-        public ConcurrentLinkedQueue<Integer> linkedQueue;
 
         public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
             this.random = ThreadLocalRandom.current();
@@ -232,7 +232,6 @@ public class Benchmark {
             this.ratios = ratios;
             this.latch = latch;
             this.nbOps = nbOps;
-            linkedQueue = new ConcurrentLinkedQueue<>();
         }
 
         @Override
@@ -316,7 +315,7 @@ public class Benchmark {
             int n = random.nextInt(ITEM_PER_THREAD);
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
-                if (n%101 <= 100) {
+                if (n%101 <= 50) {
                     object.add(iid);
                 }else{
                     object.remove(iid);
