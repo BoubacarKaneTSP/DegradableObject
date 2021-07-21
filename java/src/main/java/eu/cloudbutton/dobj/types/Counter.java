@@ -1,27 +1,25 @@
 package eu.cloudbutton.dobj.types;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Counter extends AbstractCounter {
 
-    private final AtomicInteger count;
+    private int count;
 
-    public Counter(Counter counter) { count = new AtomicInteger(counter.read()); }
-    public Counter(int i) { count = new AtomicInteger(i); }
-    public Counter() { count = new AtomicInteger(); }
+    public Counter(Counter counter) { count = counter.read(); }
+    public Counter(int i) { count = i ; }
+    public Counter() { count = 0; }
 
     @Override
     public void increment() {
-        count.incrementAndGet();
+        count++ ;
     }
 
     public void increment(int val) {
-        count.addAndGet(val);
+        count += val;
     }
 
     @Override
     public int read() {
-        return count.intValue();
+        return count;
     }
 
     @Override

@@ -299,7 +299,7 @@ public class Benchmark {
 
         @Override
         protected void test() {
-            int n = random.nextInt(ITEM_PER_THREAD);
+            int n = random.nextInt(Integer.MAX_VALUE);
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (n%101 <= 100) {

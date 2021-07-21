@@ -11,10 +11,10 @@ do
 #  for type in 'LinkedList' 'DegradableLinkedList' 'LinkedListSnapshot' 'LinkedListSnapshotSRMW'
 #  for type in 'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList' 'CounterSnapshot' 'SetSnapshot' 'ListSnapshot' 'LinkedListSnapshot' 'CounterSnapshotSRMW' 'SetSnapshotSRMW' 'ListSnapshotSRMW' 'LinkedListSnapshotSRMW'
 #for type in 'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList'
-for type in 'DegradableSet' 'Set'
+for type in 'Counter' 'List' 'Set'
   do
     echo $type $ratio
-    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 10 -wTime 5 #> "results_${type}_ratio_write_${ratio}_SR.txt"
+    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 10 -wTime 5 -nbThreads 1 #> "results_${type}_ratio_write_${ratio}_SR.txt"
     echo " "
   done
 done
