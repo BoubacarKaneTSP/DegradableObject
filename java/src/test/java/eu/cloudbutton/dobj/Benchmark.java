@@ -1,8 +1,6 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.types.AbstractCounter;
-import eu.cloudbutton.dobj.types.Noop;
-import eu.cloudbutton.dobj.types.Factory;
+import eu.cloudbutton.dobj.types.*;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -11,6 +9,8 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -124,9 +124,25 @@ public class Benchmark {
 
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
-
-                    eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
-                    System.out.println("Size of list : " + list.read().size());
+                    if (type.equals("List") ){
+                        eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
+                        System.out.println("Size of List : " + list.read().size());
+                    }else if (type.equals("DegradableList") ){
+                        eu.cloudbutton.dobj.types.DegradableList list = (eu.cloudbutton.dobj.types.DegradableList) object;
+                        System.out.println("Size of DegradableList : " + list.read().size());
+                    }else if (type.equals("Counter") ){
+                        Counter counter = (Counter) object;
+                        System.out.println("Size of Counter : " + counter.read());
+                    }else if (type.equals("DegradableCounter") ){
+                        DegradableCounter counter = (DegradableCounter) object;
+                        System.out.println("Size of DegradableCounter : " + counter.read());
+                    }else if (type.equals("Set") ){
+                        eu.cloudbutton.dobj.types.Set set = (eu.cloudbutton.dobj.types.Set) object;
+                        System.out.println("Size of Set : " + set.read().size());
+                    }else if (type.equals("DegradableSet") ){
+                        eu.cloudbutton.dobj.types.DegradableSet set = (eu.cloudbutton.dobj.types.DegradableSet) object;
+                        System.out.println("Size of DegradableSet : " + set.read().size());
+                    }
                 }
                 Long sum = 0L;
                 for (Long val : nbOperations) {

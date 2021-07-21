@@ -15,12 +15,12 @@ public class List<T> extends AbstractList<T> {
 
     @Override
     public void append(T val) {
-        if(size >= bound){
-            size = 1;
-            list.clear();
-        }else {
-            size ++;
-        }
+//        if(size >= bound){
+//            size = 1;
+//            list.clear();
+//        }else {
+//            size ++;
+//        }
         list.add(val);
     }
 
