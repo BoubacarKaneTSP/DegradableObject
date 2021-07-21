@@ -1,13 +1,14 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Set<T> extends AbstractSet<T> {
 
-    private final ConcurrentSkipListSet<T> set;
+    private final java.util.Set<T> set;
 
     public Set() {
-        set = new ConcurrentSkipListSet<>();
+        set = new HashSet<>();
     }
 
     @Override
