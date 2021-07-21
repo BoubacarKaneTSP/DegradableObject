@@ -161,6 +161,8 @@ public class Benchmark {
                 if (i > nbThreads && i != 2 * nbThreads) {
                     i = nbThreads;
                 }
+                if (nbThreads == 1);
+                    break;
             }
 
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
