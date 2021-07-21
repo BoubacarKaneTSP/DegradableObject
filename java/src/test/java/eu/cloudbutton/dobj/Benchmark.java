@@ -286,7 +286,7 @@ public class Benchmark {
             int n = random.nextInt(ITEM_PER_THREAD);
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
-                if (n%101 <= 50) {
+                if (n%101 <= 100) {
                     object.add(iid);
                 }else{
                     object.remove(iid);
@@ -308,7 +308,7 @@ public class Benchmark {
             int n = random.nextInt(ITEM_PER_THREAD);
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
-                if (n <= 50)
+                if (n%101 <= 100)
                     object.append(iid);
                 else
                     object.remove(iid);

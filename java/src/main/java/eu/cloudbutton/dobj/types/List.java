@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class List<T> extends AbstractList<T> {
 
     private final ConcurrentLinkedQueue<T> list;
+    private int size = 0;
+    private static int bound = 10000;
 
     public List() {
         list = new ConcurrentLinkedQueue<>();
@@ -13,6 +15,12 @@ public class List<T> extends AbstractList<T> {
 
     @Override
     public void append(T val) {
+        if(size >= bound){
+            size = 1;
+            list.clear();
+        }else {
+            size ++;
+        }
         list.add(val);
     }
 
