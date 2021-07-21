@@ -19,6 +19,8 @@ import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 public class Benchmark {
 
     private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
+    private static ConcurrentLinkedQueue<Integer> sizes = new ConcurrentLinkedQueue<>();
+
     private static AtomicBoolean flag;
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -126,31 +128,42 @@ public class Benchmark {
                     TimeUnit.SECONDS.sleep(1);
                     if (type.equals("List") ){
                         eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
+                        sizes.add(list.read().size());
                         System.out.println("Size of List : " + list.read().size());
                     }else if (type.equals("DegradableList") ){
                         eu.cloudbutton.dobj.types.DegradableList list = (eu.cloudbutton.dobj.types.DegradableList) object;
+                        sizes.add(list.read().size());
                         System.out.println("Size of DegradableList : " + list.read().size());
                     }else if (type.equals("Counter") ){
                         Counter counter = (Counter) object;
+                        sizes.add(counter.read());
                         System.out.println("Size of Counter : " + counter.read());
                     }else if (type.equals("DegradableCounter") ){
                         DegradableCounter counter = (DegradableCounter) object;
+                        sizes.add(counter.read());
                         System.out.println("Size of DegradableCounter : " + counter.read());
                     }else if (type.equals("Set") ){
                         eu.cloudbutton.dobj.types.Set set = (eu.cloudbutton.dobj.types.Set) object;
                         System.out.println("Size of Set : " + set.read().size());
+                        sizes.add(set.read().size());
                     }else if (type.equals("DegradableSet") ){
                         eu.cloudbutton.dobj.types.DegradableSet set = (eu.cloudbutton.dobj.types.DegradableSet) object;
                         System.out.println("Size of DegradableSet : " + set.read().size());
+                        sizes.add(set.read().size());
                     }
                 }
                 Long sum = 0L;
+                int sum2 = 0;
                 for (Long val : nbOperations) {
                     sum += val;
                 }
 
+                for (int val : sizes)
+                    sum2 += val;
+
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
+                System.out.println("Avg size : " + sum2/i);
                 nbOperations = new ConcurrentLinkedQueue<>();
 
                 i = 2 * i;
