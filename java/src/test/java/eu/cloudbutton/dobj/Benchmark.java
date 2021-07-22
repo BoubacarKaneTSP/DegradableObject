@@ -169,8 +169,9 @@ public class Benchmark {
 //                sizes = new ConcurrentLinkedQueue<>();
 
                 i = 2 * i;
-                if(i==2)
-                    i = nbThreads;
+
+               /* if(i==2)
+                    i = nbThreads;*/
 
                 if (i > nbThreads && i != 2 * nbThreads) {
                     i = nbThreads;
