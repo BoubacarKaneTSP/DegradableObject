@@ -158,15 +158,15 @@ public class Benchmark {
                 for (Long val : nbOperations) {
                     sum += val;
                 }
-
-                for (int val : sizes)
-                    sum2 += val;
+//
+//                for (int val : sizes)
+//                    sum2 += val;
 
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
-                System.out.println("Avg size : " + sum2/ sizes.size());
+//                System.out.println("Avg size : " + sum2/ sizes.size());
                 nbOperations = new ConcurrentLinkedQueue<>();
-                sizes = new ConcurrentLinkedQueue<>();
+//                sizes = new ConcurrentLinkedQueue<>();
 
                 i = 2 * i;
                 if(i==2)
