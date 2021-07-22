@@ -1,2 +1,1 @@
-1 Infinity
-80 Infinity
+1 1.791512892448664E-9
