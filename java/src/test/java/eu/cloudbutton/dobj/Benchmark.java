@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.*;
+import eu.cloudbutton.dobj.types.AbstractList;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -127,7 +128,7 @@ public class Benchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
 
-                   /* if (type.equals("List") ){
+                    if (type.equals("List") ){
                         eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
                         sizes.add(list.read().size());
                         System.out.println("Size of List : " + list.read().size());
@@ -151,27 +152,27 @@ public class Benchmark {
                         eu.cloudbutton.dobj.types.DegradableSet set = (eu.cloudbutton.dobj.types.DegradableSet) object;
                         System.out.println("Size of DegradableSet : " + set.read().size());
                         sizes.add(set.read().size());
-                    }*/
+                    }
                 }
                 Long sum = 0L;
                 int sum2 = 0;
                 for (Long val : nbOperations) {
                     sum += val;
                 }
-//
-//                for (int val : sizes)
-//                    sum2 += val;
+
+                for (int val : sizes)
+                    sum2 += val;
 
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
-//                System.out.println("Avg size : " + sum2/ sizes.size());
+                System.out.println("Avg size : " + sum2/ sizes.size());
                 nbOperations = new ConcurrentLinkedQueue<>();
-//                sizes = new ConcurrentLinkedQueue<>();
+                sizes = new ConcurrentLinkedQueue<>();
 
                 i = 2 * i;
 
-               /* if(i==2)
-                    i = nbThreads;*/
+                if(i==2)
+                    i = nbThreads;
 
                 if (i > nbThreads && i != 2 * nbThreads) {
                     i = nbThreads;
@@ -240,13 +241,17 @@ public class Benchmark {
 
             latch.countDown();
             long i = 0L;
+            AbstractList list = (AbstractList) object;
 
             try{
                 latch.await();
 
                 // warm up
                 while (flag.get()) {
-                    test();
+//                    test();
+                    int n = random.nextInt(ITEM_PER_THREAD);
+                    long iid = Thread.currentThread().getId()*1000000000L+n;
+                    list.append(iid);
                 }
 
                 // compute
