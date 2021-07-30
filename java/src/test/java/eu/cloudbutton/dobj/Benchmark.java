@@ -114,7 +114,7 @@ public class Benchmark {
 
                     List<Future<Void>> futures;
 
-                    System.err.println("Max JVM memory: " + Runtime.getRuntime().maxMemory());
+//                    System.out.println("Max JVM memory: " + Runtime.getRuntime().maxMemory());
 
                     // launch computation
                     futures = executor.invokeAll(callables);
@@ -138,6 +138,10 @@ public class Benchmark {
                         eu.cloudbutton.dobj.types.DegradableList list = (eu.cloudbutton.dobj.types.DegradableList) object;
                         sizes.add(list.read().size());
                         System.out.println("Size of DegradableList : " + list.read().size());
+                    }else if (type.equals("DegradableLinkedList") ){
+                        eu.cloudbutton.dobj.types.DegradableLinkedList list = (eu.cloudbutton.dobj.types.DegradableLinkedList) object;
+                        sizes.add(list.read().size());
+                        System.out.println("Size of DegradableLinkedList : " + list.read().size());
                     }else if (type.equals("Counter") ){
                         Counter counter = (Counter) object;
                         sizes.add(counter.read());
