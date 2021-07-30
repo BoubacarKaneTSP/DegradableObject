@@ -114,6 +114,8 @@ public class Benchmark {
 
                     List<Future<Void>> futures;
 
+                    System.err.println("Max JVM memory: " + Runtime.getRuntime().maxMemory());
+
                     // launch computation
                     futures = executor.invokeAll(callables);
                     try{
@@ -248,10 +250,7 @@ public class Benchmark {
 
                 // warm up
                 while (flag.get()) {
-//                    test();
-                    int n = random.nextInt(ITEM_PER_THREAD);
-                    long iid = Thread.currentThread().getId()*1000000000L+n;
-                    list.append(iid);
+                    test();
                 }
 
                 // compute
