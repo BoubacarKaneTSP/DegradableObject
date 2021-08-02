@@ -375,7 +375,7 @@ public class Benchmark {
                 flag.set(false);
 
                 for (int i = 0; i < time; i++) {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(500);
                     object.clear();
                 }
                 flag.set(true);
