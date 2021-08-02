@@ -51,4 +51,10 @@ public class DegradableList<T> extends AbstractList<T> {
         }
         return contained;
     }
+
+    public void clear(){
+        for (List<T> list : list.values()){
+            list.clear();
+        }
+    }
 }

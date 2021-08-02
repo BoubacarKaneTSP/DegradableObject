@@ -142,6 +142,10 @@ public class Benchmark {
                         eu.cloudbutton.dobj.types.DegradableLinkedList list = (eu.cloudbutton.dobj.types.DegradableLinkedList) object;
                         sizes.add(list.read().size());
                         System.out.println("Size of DegradableLinkedList : " + list.read().size());
+                    }else if (type.equals("LinkedList") ){
+                        eu.cloudbutton.dobj.types.LinkedList list = (eu.cloudbutton.dobj.types.LinkedList) object;
+                        sizes.add(list.read().size());
+                        System.out.println("Size of LinkedList : " + list.read().size());
                     }else if (type.equals("Counter") ){
                         Counter counter = (Counter) object;
                         sizes.add(counter.read());
@@ -364,6 +368,8 @@ public class Benchmark {
                 flag.set(false);
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
+
+
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
