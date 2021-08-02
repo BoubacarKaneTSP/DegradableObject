@@ -36,4 +36,9 @@ public class List<T> extends AbstractList<T> {
     public boolean contains(T val) {
         return list.contains(val);
     }
+
+    @Override
+    public void clear() {
+        list.clear();
+    }
 }

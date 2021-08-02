@@ -13,4 +13,5 @@ public abstract class AbstractList<T> {
      */
     public abstract boolean remove(T val);
     public abstract boolean contains(T val);
+    public abstract void clear();
 }

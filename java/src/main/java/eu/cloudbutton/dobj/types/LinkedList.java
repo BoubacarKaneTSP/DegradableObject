@@ -52,6 +52,23 @@ public class LinkedList <T> extends AbstractList<T>{
         return false;
     }
 
+    public void clear(){
+
+        AtomicReference<Node<T>> cur;
+        AtomicReference<Node<T>> tmp;
+
+        if (head != null){
+            cur = head.get().next;
+            head = null;
+
+            while(cur != null){
+                tmp = cur;
+                cur = cur.get().next;
+                tmp.set(null);
+            }
+        }
+    }
+
     public static class Node <T>{
 
         T data;

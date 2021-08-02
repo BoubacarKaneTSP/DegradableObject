@@ -77,4 +77,9 @@ public class SecondDegradableList<T> extends AbstractList<T> {
         return false;
     }
 
+    @Override
+    public void clear() {
+        throw new java.lang.Error("Remove not build yet");
+    }
+
 }

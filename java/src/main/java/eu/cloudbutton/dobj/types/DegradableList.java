@@ -57,4 +57,5 @@ public class DegradableList<T> extends AbstractList<T> {
             list.clear();
         }
     }
+
 }

@@ -110,7 +110,7 @@ public class Benchmark {
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
                     flag = new AtomicBoolean();
                     flag.set(true);
-                    executorService.submit(new Coordinator());
+                    executorService.submit(new Coordinator((AbstractList) object));
 
                     List<Future<Void>> futures;
 
@@ -361,12 +361,23 @@ public class Benchmark {
     }
 
     public class Coordinator implements Callable<Void> {
+
+        public AbstractList object;
+
+        public Coordinator(AbstractList object){
+            this.object = object;
+        }
+
         @Override
         public Void call() throws Exception {
             try {
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-                TimeUnit.SECONDS.sleep(time);
+
+                for (int i = 0; i < time; i++) {
+                    TimeUnit.SECONDS.sleep(1);
+                    object.clear();
+                }
                 flag.set(true);
 
 

@@ -68,4 +68,9 @@ public class ListSnapshot<T> extends AbstractList<T>{
 
         return contained;
     }
+
+    @Override
+    public void clear() {
+        throw new java.lang.Error("Remove not build yet");
+    }
 }
