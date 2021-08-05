@@ -21,12 +21,14 @@ public class Benchmark {
 
     private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
     private static ConcurrentLinkedQueue<Integer> sizes = new ConcurrentLinkedQueue<>();
+    private static int nbAppend = 0;
+    private static int nbRemove = 0;
 
     private static AtomicBoolean flag;
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
-    @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios;
+    @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
+    private String[] ratios = {"100"};
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     @Option(name = "-time", usage = "How long will the test last (seconds)")
@@ -79,6 +81,7 @@ public class Benchmark {
             String constructor = "create" + type;
 
             for (int i = 1; i <= nbThreads; ) {
+                System.out.println("Nb threads = " + i);
                 for (int a = 0; a < nbTest; a++) {
                     Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
                     Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
@@ -176,6 +179,9 @@ public class Benchmark {
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
                 System.out.println("Avg size : " + sum2/ sizes.size());
+                System.out.println("Nb append : "+nbAppend);
+                System.out.println("Nb remove : "+nbRemove);
+                nbAppend = nbRemove = 0;
                 nbOperations = new ConcurrentLinkedQueue<>();
                 sizes = new ConcurrentLinkedQueue<>();
 
@@ -230,7 +236,7 @@ public class Benchmark {
 
     public static abstract class Tester<T> implements Callable<Void> {
 
-        protected static final int ITEM_PER_THREAD =1000;
+        protected static final int ITEM_PER_THREAD = 1;
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -251,7 +257,6 @@ public class Benchmark {
 
             latch.countDown();
             long i = 0L;
-            AbstractList list = (AbstractList) object;
 
             try{
                 latch.await();
@@ -348,12 +353,16 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(ITEM_PER_THREAD);
+            int i = random.nextInt(2);
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
-                if (n%101 <= 100)
+                if (i == 0) {
                     object.append(iid);
-                else
+                    nbAppend++;
+                }else {
                     object.remove(iid);
+                    nbRemove++;
+                }
             } else {
                 object.contains(iid);
             }
@@ -374,10 +383,11 @@ public class Benchmark {
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
 
-                for (int i = 0; i < time; i++) {
+                /*for (int i = 0; i < time; i++) {
                     TimeUnit.MILLISECONDS.sleep(500);
                     object.clear();
-                }
+                }*/
+                TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
 
 

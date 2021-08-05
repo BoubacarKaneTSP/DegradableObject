@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class List<T> extends AbstractList<T> {
 
-    private final java.util.List<T> list;
+    private final ConcurrentLinkedQueue<T> list;
 
     public List() {
-        list = new ArrayList<>();
+        list = new ConcurrentLinkedQueue<>();
     }
 
     @Override

@@ -8,13 +8,13 @@ import java.util.concurrent.ConcurrentMap;
 
 public class DegradableList<T> extends AbstractList<T> {
 
-    private final ConcurrentMap<Thread, List<T>> list;
-    private final ThreadLocal<List<T>> local;
+    private final ConcurrentMap<Thread, ConcurrentLinkedQueue<T>> list;
+    private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
 
     public DegradableList() {
         this.list = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            List<T> l = new ArrayList<>();
+            ConcurrentLinkedQueue<T> l = new ConcurrentLinkedQueue<>();
             list.put(Thread.currentThread(),l);
             return l;
         });    }
@@ -27,7 +27,7 @@ public class DegradableList<T> extends AbstractList<T> {
     @Override
     public List<T> read() {
         List<T> result = new ArrayList<>();
-        for (List<T> val : list.values()){
+        for (ConcurrentLinkedQueue<T> val : list.values()){
             result.addAll(val);
         }
         return result;
@@ -44,7 +44,7 @@ public class DegradableList<T> extends AbstractList<T> {
 
         boolean contained = false;
 
-        for (List<T> s : list.values()){
+        for (ConcurrentLinkedQueue<T> s : list.values()){
             contained = s.contains(val);
             if (contained)
                 break;
@@ -53,7 +53,7 @@ public class DegradableList<T> extends AbstractList<T> {
     }
 
     public void clear(){
-        for (List<T> list : list.values()){
+        for (ConcurrentLinkedQueue<T> list : list.values()){
             list.clear();
         }
     }
