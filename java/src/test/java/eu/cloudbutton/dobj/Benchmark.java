@@ -358,10 +358,8 @@ public class Benchmark {
             if (n%101 <= ratios[0]) {
                 if (i == 0) {
                     object.append(iid);
-                    nbAppend++;
                 }else {
                     object.remove(iid);
-                    nbRemove++;
                 }
             } else {
                 object.contains(iid);
