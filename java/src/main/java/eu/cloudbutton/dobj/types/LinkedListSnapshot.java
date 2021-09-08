@@ -2,12 +2,12 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Triplet;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LinkedListSnapshot<T> extends AbstractList<T>{
+public class LinkedListSnapshot<T> extends AbstractQueue<T> implements Queue<T> {
 
     private final Snapshot<LinkedList<T>> snapobject;
     private final ThreadLocal<Triplet<LinkedList<T>, AtomicInteger, ArrayList<LinkedList<T>>>> tripletThreadLocal;
@@ -20,7 +20,17 @@ public class LinkedListSnapshot<T> extends AbstractList<T>{
     }
 
     @Override
-    public void append(T val) {
+    public Iterator<T> iterator() {
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public boolean add(T val) {
         if (name.get() == null)
             name.set(Thread.currentThread());
 
@@ -30,15 +40,15 @@ public class LinkedListSnapshot<T> extends AbstractList<T>{
         }
 
         java.util.List<LinkedList<T>> embedded_snap = snapobject.snap();
-        tripletThreadLocal.get().getValue0().append(val);
+        tripletThreadLocal.get().getValue0().add(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
 
         snapobject.obj.put(name.get(), new Triplet<>( tripletThreadLocal.get().getValue0(),
                 tripletThreadLocal.get().getValue1(),
                 embedded_snap));
+        return true;
     }
 
-    @Override
     public List<T> read() {
         java.util.List<LinkedList<T>> list = snapobject.snap();
 
@@ -51,7 +61,7 @@ public class LinkedListSnapshot<T> extends AbstractList<T>{
     }
 
     @Override
-    public boolean remove(T val) {
+    public boolean remove(Object val) {
         boolean removed = false;
 
         for ( Triplet<LinkedList<T>, AtomicInteger, java.util.List<LinkedList<T>>> triplet: snapobject.obj.values()){
@@ -64,7 +74,7 @@ public class LinkedListSnapshot<T> extends AbstractList<T>{
     }
 
     @Override
-    public boolean contains(T val) {
+    public boolean contains(Object val) {
         boolean contained = false;
 
         for ( Triplet<LinkedList<T>, AtomicInteger, java.util.List<LinkedList<T>>> triplet: snapobject.obj.values()){
@@ -79,5 +89,25 @@ public class LinkedListSnapshot<T> extends AbstractList<T>{
     @Override
     public void clear() {
         throw new java.lang.Error("Remove not build yet");
+    }
+
+    @Override
+    public boolean offer(T t) {
+        return false;
+    }
+
+    @Override
+    public T poll() {
+        return null;
+    }
+
+    @Override
+    public T peek() {
+        return null;
+    }
+
+    @Override
+    public String toString(){
+        return "method toString not build yet";
     }
 }

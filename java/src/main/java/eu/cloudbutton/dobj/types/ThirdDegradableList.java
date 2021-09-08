@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ThirdDegradableList<T> extends AbstractList<T>{
+public class ThirdDegradableList<T> extends AbstractQueue<T> implements Queue<T>{
     private final ConcurrentMap<Thread, ConcurrentSkipListMap<Integer,Pair<Integer, T>>> list;
     private final ConcurrentMap<Thread,Integer> last;
     private final ThreadLocal<ConcurrentSkipListMap<Integer, Pair<Integer, T>>> local_map;
@@ -35,11 +35,21 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
     }
 
     @Override
-    public void append(T val) {
-        local_map.get().put(local_num_add.get().incrementAndGet(), new Pair<>(count.incrementAndGet() ,val));
+    public Iterator<T> iterator() {
+        return null;
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public boolean add(T val) {
+        local_map.get().put(local_num_add.get().incrementAndGet(), new Pair<>(count.incrementAndGet() ,val));
+        return true;
+    }
+
     public java.util.List<T> read() {
         inter_list.clear();
         for (Thread key : this.list.keySet()) {
@@ -101,12 +111,12 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
 
 
     @Override
-    public boolean remove(T val){
+    public boolean remove(Object val){
         throw new java.lang.Error("Remove not build yet");
     }
 
     @Override
-    public boolean contains(T val) {
+    public boolean contains(Object val) {
 
         for ( ConcurrentSkipListMap<Integer, Pair<Integer, T>> map : list.values()){
             for (Pair<Integer, T> i : map.values())
@@ -121,5 +131,25 @@ public class ThirdDegradableList<T> extends AbstractList<T>{
     @Override
     public void clear() {
         throw new java.lang.Error("Remove not build yet");
+    }
+
+    @Override
+    public boolean offer(T t) {
+        return false;
+    }
+
+    @Override
+    public T poll() {
+        return null;
+    }
+
+    @Override
+    public T peek() {
+        return null;
+    }
+
+    @Override
+    public String toString(){
+        return "method toString not build yet";
     }
 }

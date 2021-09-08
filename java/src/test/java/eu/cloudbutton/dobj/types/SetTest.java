@@ -4,12 +4,13 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
+import java.util.AbstractList;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.*;
 
-class SetTest {
+public class SetTest {
 
     private Factory factory;
 
@@ -24,9 +25,9 @@ class SetTest {
         doAdd(factory.createSet());
     }
 
-    private static void doAdd(AbstractSet set) throws ExecutionException, InterruptedException {
+    private static void doAdd(AbstractSet<String> set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
-        List<Future<Void>> futures = new ArrayList<>();
+        AbstractList<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             set.add("v1");
             set.add("v2");
@@ -42,13 +43,17 @@ class SetTest {
             future.get();
         }
 
+        for (String s: set) {
+            System.out.println(s);
+        }
+
         java.util.Set<String> result = new HashSet<>();
         result.add("v1");
         result.add("v2");
         result.add("v3");
 
-        assertEquals(result, set.read(), "Failed adding elements in the set");
-
+        assertEquals(set.contains("v1"), true,"error in contains methods");
+        assertEquals(set.contains("v2"), true,"error in contains methods");
         assertEquals(set.contains("v3"), true,"error in contains methods");
     }
 }

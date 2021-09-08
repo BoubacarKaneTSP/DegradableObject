@@ -2,45 +2,57 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Pair;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ListSnapshotSRMW<T> extends AbstractList<T>{
+public class ListSnapshotSRMW<T> extends AbstractQueue<T> implements Queue<T> {
 
-    private final SnapshotSRMW<eu.cloudbutton.dobj.types.List<T>> snapobject;
-    private final ThreadLocal<eu.cloudbutton.dobj.types.List<T>> listThreadLocal;
+    private final SnapshotSRMW<AbstractQueue<T>> snapobject;
+    private final ThreadLocal<AbstractQueue<T>> listThreadLocal;
 
     public ListSnapshotSRMW(){
         snapobject = new SnapshotSRMW<>();
         listThreadLocal = ThreadLocal.withInitial(() -> {
-            eu.cloudbutton.dobj.types.List<T> List = new eu.cloudbutton.dobj.types.List<>();
-            snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new eu.cloudbutton.dobj.types.List<>(), 0),
-                    new Pair<>(new eu.cloudbutton.dobj.types.List<>(), 0)
+            AbstractQueue<T> List = new ConcurrentLinkedQueue<>();
+            snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new ConcurrentLinkedQueue<>(), 0),
+                    new Pair<>(new ConcurrentLinkedQueue<>(), 0)
             ));
             return List;
         });
     }
 
     @Override
-    public void append(T val) {
-
-        listThreadLocal.get().append(val);
-        snapobject.update(listThreadLocal.get());
+    public Iterator<T> iterator() {
+        return null;
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public boolean add(T val) {
+
+        listThreadLocal.get().add(val);
+        snapobject.update(listThreadLocal.get());
+
+        return true;
+    }
+
     public List<T> read() {
 
         List<T> result = new ArrayList<>();
 
-        for (eu.cloudbutton.dobj.types.List<T> l : snapobject.snap())
-            result.addAll(l.read());
+        for (AbstractQueue<T> l : snapobject.snap())
+            result.addAll(l);
 
         return result;
     }
 
     @Override
-    public boolean remove(T val) {
+    public boolean remove(Object val) {
 
         boolean removed;
         removed = listThreadLocal.get().remove(val);
@@ -50,11 +62,11 @@ public class ListSnapshotSRMW<T> extends AbstractList<T>{
     }
 
     @Override
-    public boolean contains(T val) {
+    public boolean contains(Object val) {
 
         boolean contained = false;
 
-        for (eu.cloudbutton.dobj.types.List<T> list : snapobject.snap()){
+        for (AbstractQueue<T> list : snapobject.snap()){
             contained = list.contains(val);
             if (contained)
                 break;
@@ -65,5 +77,20 @@ public class ListSnapshotSRMW<T> extends AbstractList<T>{
     @Override
     public void clear() {
         throw new java.lang.Error("Remove not build yet");
+    }
+
+    @Override
+    public boolean offer(T t) {
+        return false;
+    }
+
+    @Override
+    public T poll() {
+        return null;
+    }
+
+    @Override
+    public T peek() {
+        return null;
     }
 }

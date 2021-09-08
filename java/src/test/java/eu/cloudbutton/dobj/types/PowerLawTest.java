@@ -1,6 +1,8 @@
 package eu.cloudbutton.dobj.types;
 
 import nl.peterbloem.powerlaws.Continuous;
+import nl.peterbloem.powerlaws.Discrete;
+import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -19,9 +21,10 @@ public class PowerLawTest {
 
     @Test
     void add() throws ExecutionException, InterruptedException {
-        List<Double> data = new Continuous(1, 1.35).generate(1000);
+        List<Integer> data = new DiscreteApproximate(1, 1.35).generate(1000);
 
-//        System.out.println(data);
+
+        System.out.println(data);
     }
 
 }

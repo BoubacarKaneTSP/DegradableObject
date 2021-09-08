@@ -10,6 +10,7 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -113,7 +114,7 @@ public class Benchmark {
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
                     flag = new AtomicBoolean();
                     flag.set(true);
-                    executorService.submit(new Coordinator((AbstractList) object));
+                    executorService.submit(new Coordinator());
 
                     List<Future<Void>> futures;
 
@@ -132,7 +133,7 @@ public class Benchmark {
 
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
-
+/*
                     if (type.equals("List") ){
                         eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
                         sizes.add(list.read().size());
@@ -165,7 +166,7 @@ public class Benchmark {
                         eu.cloudbutton.dobj.types.DegradableSet set = (eu.cloudbutton.dobj.types.DegradableSet) object;
                         System.out.println("Size of DegradableSet : " + set.read().size());
                         sizes.add(set.read().size());
-                    }
+                    }*/
                 }
                 Long sum = 0L;
                 int sum2 = 0;
@@ -178,12 +179,9 @@ public class Benchmark {
 
                 double avg_op = sum / i;
                 System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
-                System.out.println("Avg size : " + sum2/ sizes.size());
-                System.out.println("Nb append : "+nbAppend);
-                System.out.println("Nb remove : "+nbRemove);
-                nbAppend = nbRemove = 0;
+//                System.out.println("Avg size : " + sum2/ sizes.size());
                 nbOperations = new ConcurrentLinkedQueue<>();
-                sizes = new ConcurrentLinkedQueue<>();
+//                sizes = new ConcurrentLinkedQueue<>();
 
                 i = 2 * i;
 
@@ -225,11 +223,12 @@ public class Benchmark {
         }
 
         public SetTester createAbstractSetTester() {
-            return new SetTester((eu.cloudbutton.dobj.types.AbstractSet) object, ratios, latch, nbOps);
+            return new SetTester((AbstractSet) object, ratios, latch, nbOps);
         }
 
-        public ListTester createAbstractListTester() {
-            return new ListTester((eu.cloudbutton.dobj.types.AbstractList) object, ratios, latch, nbOps);
+
+        public ListTester createAbstractQueueTester() {
+            return new ListTester((AbstractQueue) object, ratios, latch, nbOps);
         }
 
     }
@@ -322,9 +321,9 @@ public class Benchmark {
         }
     }
 
-    public static class SetTester extends Tester<eu.cloudbutton.dobj.types.AbstractSet> {
+    public static class SetTester extends Tester<AbstractSet> {
 
-        public SetTester(eu.cloudbutton.dobj.types.AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
+        public SetTester(AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
         }
 
@@ -344,9 +343,9 @@ public class Benchmark {
         }
     }
 
-    public static class ListTester extends Tester<eu.cloudbutton.dobj.types.AbstractList> {
+    public static class ListTester extends Tester<AbstractQueue> {
 
-        public ListTester(eu.cloudbutton.dobj.types.AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
+        public ListTester(AbstractQueue list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 
@@ -357,7 +356,7 @@ public class Benchmark {
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (i == 0) {
-                    object.append(iid);
+                    object.add(iid);
                 }else {
                     object.remove(iid);
                 }
@@ -369,22 +368,13 @@ public class Benchmark {
 
     public class Coordinator implements Callable<Void> {
 
-        public AbstractList object;
-
-        public Coordinator(AbstractList object){
-            this.object = object;
-        }
+        public Coordinator(){}
 
         @Override
         public Void call() throws Exception {
             try {
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-
-                /*for (int i = 0; i < time; i++) {
-                    TimeUnit.MILLISECONDS.sleep(500);
-                    object.clear();
-                }*/
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
 

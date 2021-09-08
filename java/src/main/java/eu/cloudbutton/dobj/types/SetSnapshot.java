@@ -2,23 +2,24 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Triplet;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
+import java.util.AbstractSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SetSnapshot<T> extends AbstractSet<T>{
+public class SetSnapshot<T> extends AbstractSet<T> {
 
-    private final Snapshot<Set<T>> snapobject;
-    private final ThreadLocal<Triplet<Set<T>, AtomicInteger, List<Set<T>>>> tripletThreadLocal;
-    private final ConcurrentMap<Thread, List<Set<T>>> embedded_snaps;
+    private final Snapshot<AbstractSet<T>> snapobject;
+    private final ThreadLocal<Triplet<AbstractSet<T>, AtomicInteger, List<AbstractSet<T>>>> tripletThreadLocal;
+    private final ConcurrentMap<Thread, List<AbstractSet<T>>> embedded_snaps;
 
     public SetSnapshot() {
         snapobject = new Snapshot<>(new ConcurrentHashMap<>());
         tripletThreadLocal = ThreadLocal.withInitial(() -> {
-            Triplet<Set<T>, AtomicInteger, List<Set<T>>> triplet = new Triplet<>(new Set<>(), new AtomicInteger(), new ArrayList<>());
+            Triplet<AbstractSet<T>, AtomicInteger, List<AbstractSet<T>>> triplet = new Triplet<>(new ConcurrentSkipListSet<>(), new AtomicInteger(), new ArrayList<>());
             snapobject.obj.put(Thread.currentThread(), triplet);
             return triplet;
         });
@@ -27,33 +28,45 @@ public class SetSnapshot<T> extends AbstractSet<T>{
         embedded_snaps.put(Thread.currentThread(), new ArrayList<>());
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
     public void write(T val) { add(val); }
 
     @Override
-    public void add(T val) {
+    public boolean add(T val) {
+        boolean b;
 
-        List<Set<T>> embedded_snap = snapobject.snap();
-        tripletThreadLocal.get().getValue0().add(val);
+        List<AbstractSet<T>> embedded_snap = snapobject.snap();
+        b = tripletThreadLocal.get().getValue0().add(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
+        return false;
     }
 
     public java.util.Set<T> read() {
-        List<Set<T>> list = snapobject.snap();
+        List<AbstractSet<T>> list = snapobject.snap();
 
         java.util.Set<T> result = new HashSet<>();
 
-        for (Set<T> ens : list)
-            result.addAll(ens.read());
+        for (AbstractSet<T> ens : list)
+            result.addAll(ens);
 
         return result;
     }
 
     @Override
-    public boolean contains(T val) {
+    public boolean contains(Object val) {
         boolean contained = false;
 
-        for ( Triplet<Set<T>, AtomicInteger, List<Set<T>>> triplet: snapobject.obj.values()){
+        for ( Triplet<AbstractSet<T>, AtomicInteger, List<AbstractSet<T>>> triplet: snapobject.obj.values()){
             contained = triplet.getValue0().contains(val);
             if (contained)
                 break;
@@ -63,15 +76,20 @@ public class SetSnapshot<T> extends AbstractSet<T>{
     }
 
     @Override
-    public boolean remove(T val) {
+    public boolean remove(Object val) {
 
         boolean removed;
 
-        List<Set<T>> embedded_snap = snapobject.snap();
+        List<AbstractSet<T>> embedded_snap = snapobject.snap();
         removed = tripletThreadLocal.get().getValue0().remove(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
 
         return removed;
+    }
+
+    @Override
+    public String toString(){
+        return "method toString not build yet";
     }
 }

@@ -1,8 +1,7 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.*;
-import eu.cloudbutton.dobj.types.AbstractList;
-import eu.cloudbutton.dobj.types.AbstractSet;
+import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -10,6 +9,8 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.AbstractList;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,13 @@ public class App {
     private static Set<String> users;
     private static Map<String, AbstractSet<String>> follower;
     private static Map<String, AbstractCounter> nbFollower;
-    private static Map<String, AbstractList<String>> timeline;
+    private static Map<String, AbstractQueue<String>> timeline;
+
+    private static Map<Thread, Integer> nbAdd;
+    private static Map<Thread, Integer> nbFollow;
+    private static Map<Thread, Integer> nbUnfollow;
+    private static Map<Thread, Integer> nbTweet;
+    private static Map<Thread, Integer> nbRead;
 
     public static void main(String[] args) throws InterruptedException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         new App().doMain(args);
@@ -115,6 +122,12 @@ public class App {
                 follower = new ConcurrentHashMap<>();
                 nbFollower = new ConcurrentHashMap<>();
                 timeline = new ConcurrentHashMap<>();
+
+                nbAdd = new ConcurrentHashMap<>();
+                nbFollow = new ConcurrentHashMap<>();
+                nbUnfollow = new ConcurrentHashMap<>();
+                nbTweet = new ConcurrentHashMap<>();
+                nbRead = new ConcurrentHashMap<>();
 
                 CountDownLatch latch = new CountDownLatch(i);
 
@@ -184,11 +197,11 @@ public class App {
             latch.countDown();
 
             try{
+
+                fill_database();
+
                 latch.await();
 
-                for (int j = 0; j < ITEM_PER_THREAD/2; j++) {
-                    addUser("user_"+Thread.currentThread().getName()+"_"+j);
-                }
                 System.out.println(users.size());
                 //warm up
                 while (flag.get()){
@@ -205,6 +218,38 @@ public class App {
             return null;
         }
 
+        public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+
+            int n;
+            String userA;
+            String userB = null;
+
+            //adding users
+            for (int j = 0; j < ITEM_PER_THREAD/2; j++) {
+                addUser("user_"+Thread.currentThread().getName()+"_"+j);
+            }
+
+            List<Integer> data = new DiscreteApproximate(1, 1.35).generate(1000);
+
+            //Following phase
+            for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
+                userA = "user_"+Thread.currentThread().getName()+"_"+i;
+
+                for(int x = 0; x < data.get(random.nextInt(1000)); x++){
+                    int j = 0;
+                    n = random.nextInt(users.size());
+                    for(String usr : users){
+                        if (j == n){
+                            userB = usr;
+                            break;
+                        }
+                        j++;
+                    }
+                    follow(userA, userB);
+                }
+            }
+        }
+
         public void compute() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
             int n = random.nextInt(ITEM_PER_THREAD);
@@ -212,11 +257,17 @@ public class App {
             String userA;
             String userB = null;
 
+            int add = 0;
+            int follow = 0;
+            int unfollow = 0;
+            int tweet = 0;
+            int read = 0;
+
             if(val < ratios[0]){
                 //add
 //                System.out.println("add");
                 addUser("user_"+Thread.currentThread().getName()+"_"+n);
-
+                add++;
             }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){
                 //follow or unfollow
 //                System.out.println("follow or unfollow");
@@ -233,28 +284,38 @@ public class App {
 
                 if (val%2 == 0){
                     follow(userA, userB);
+                    follow++;
 //                    System.out.println(follower.get(userB).read());
                 }else{
                     unfollow(userA, userB);
+                    unfollow++;
                 }
             }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){
                 //tweet
 //                System.out.println("tweet");
                 userA = "user_"+Thread.currentThread().getName()+"_"+n;
                 tweet(userA, "msg from " + userA);
+                tweet++;
             }else{
                 //read
 //                System.out.println("Show timeline");
                 userA = "user_"+Thread.currentThread().getName()+"_"+n;
                 showTimeline(userA);
+                read++;
             }
+
+            nbAdd.put(Thread.currentThread(), add);
+            nbFollow.put(Thread.currentThread(), follow);
+            nbUnfollow.put(Thread.currentThread(), unfollow);
+            nbTweet.put(Thread.currentThread(), tweet);
+            nbRead.put(Thread.currentThread(), read);
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             if(!users.contains(user)) {
                 follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
                 nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.put(user, (AbstractList) Factory.class.getDeclaredMethod(objectList).invoke(factory));
+                timeline.put(user, (AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory));
                 users.add(user);
             }
         }
@@ -275,9 +336,9 @@ public class App {
 
         public void tweet(String user, String msg){
             if(users.contains(user)) {
-                for (String u : follower.get(user).read()) {
+                for (String u : follower.get(user)) {
 //                    System.out.println("twit");
-                    timeline.get(u).append(msg);
+                    timeline.get(u).add(msg);
                 }
             }
         }
@@ -289,7 +350,7 @@ public class App {
             */
             if(users.contains(user)) {
 //                if(timeline.get(user).read().size() > 0)
-                    System.out.println(timeline.get(user).read());
+//                    System.out.println(timeline.get(user).read());
             }
         }
     }

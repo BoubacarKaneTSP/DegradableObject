@@ -4,6 +4,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertTrue;
 
+import java.util.AbstractList;
+import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
@@ -18,8 +20,8 @@ public class ListTest {
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-        doAppend(factory.createDegradableList());
         doAppend(factory.createList());
+        doAppend(factory.createDegradableList());
         doAppend(factory.createListSnapshot());
         doAppend(factory.createSecondDegradableList());
         doAppend(factory.createThirdDegradableList());
@@ -28,13 +30,13 @@ public class ListTest {
         doAppend(factory.createLinkedListSnapshot());
     }
 
-    private static void doAppend(AbstractList list) throws ExecutionException, InterruptedException {
+    private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
-        java.util.List<Future<Void>> futures = new ArrayList<>();
+        AbstractList<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
-            list.append(1);
-            list.append(2);
-            list.append(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             return null;
         };
 
@@ -46,12 +48,12 @@ public class ListTest {
             future.get();
         }
 
-        java.util.List<Integer> result = new ArrayList<>();
+        AbstractList<Integer> result = new ArrayList<>();
         result.add(1);
         result.add(2);
         result.add(3);
-        assertTrue(list.read().containsAll(result), "Failed adding elements in the list");
-
-        assertTrue(list.contains(3), "error in contains methods");
+        assertTrue(list.contains(1), "Failed adding elements in the list");
+        assertTrue(list.contains(2), "Failed adding elements in the list");
+        assertTrue(list.contains(3), "Failed adding elements in the list");
     }
 }

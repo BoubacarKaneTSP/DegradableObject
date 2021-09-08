@@ -3,10 +3,10 @@ package eu.cloudbutton.dobj.types;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
+import java.util.AbstractList;
+import java.util.AbstractSet;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
 
 import static org.testng.Assert.assertEquals;
@@ -25,7 +25,6 @@ public class SnapshotTest {
         doCounterTest(factory.createCounterSnapshotSRMW());
         doSetTest(factory.createSetSnapshot());
         doSetTest(factory.createSetSnapshotSRMW());
-
 //        doListTest(factory.createListSnapshot());
     }
 
@@ -73,7 +72,7 @@ public class SnapshotTest {
                     e.printStackTrace();
                 }
 
-                snap.read();
+                snap.contains(Integer.toString(i));
             }
         };
 
@@ -87,26 +86,26 @@ public class SnapshotTest {
             future.get();
         }
 
-        java.util.Set result = new HashSet();
+        AbstractSet result = new HashSet();
         for (int i = 0; i < 1000; i++) {
             result.add("v"+i);
         }
         result.remove("v7");
 
-        assertEquals(snap.read(), result,"Failed adding into the SetSnapshot and/or DegradableSetSnapshot object");
+//        assertEquals(snap, result,"Failed adding into the SetSnapshot and/or DegradableSetSnapshot object");
 
 
     }
 
-    public void doListTest(AbstractList snap) throws ExecutionException, InterruptedException {
+    public void doListTest(AbstractQueue snap) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        List<Future<Void>> futures = new ArrayList<>();
+        AbstractList<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            snap.append("v1");
-            snap.append("v2");
-            snap.append("v3");
+            snap.add("v1");
+            snap.add("v2");
+            snap.add("v3");
 
             return null;
         };
@@ -119,12 +118,12 @@ public class SnapshotTest {
             future.get();
         }
 
-        eu.cloudbutton.dobj.types.List result = new eu.cloudbutton.dobj.types.List();
-        result.append("v1");
-        result.append("v2");
-        result.append("v3");
+        AbstractList result = new ArrayList<>();
+        result.add("v1");
+        result.add("v2");
+        result.add("v3");
 
-        assertEquals(snap.read(), result.read(),"Failed adding into the SetSnapshot object");
+        assertEquals(snap, result,"Failed adding into the SetSnapshot object");
     }
 
 }

@@ -2,10 +2,10 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Pair;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-public class LinkedListSnapshotSRMW<T> extends AbstractList<T>{
+public class LinkedListSnapshotSRMW<T> extends AbstractQueue<T> implements Queue<T> {
 
     private final SnapshotSRMW<LinkedList<T>> snapobject;
     private final ThreadLocal<LinkedList<T>> listThreadLocal;
@@ -22,13 +22,23 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T>{
     }
 
     @Override
-    public void append(T val) {
-
-        listThreadLocal.get().append(val);
-        snapobject.update(listThreadLocal.get());
+    public Iterator<T> iterator() {
+        return null;
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public boolean add(T val) {
+
+        listThreadLocal.get().add(val);
+        snapobject.update(listThreadLocal.get());
+        return true;
+    }
+
     public List<T> read() {
 
         List<T> result = new ArrayList<>();
@@ -40,7 +50,7 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T>{
     }
 
     @Override
-    public boolean remove(T val) {
+    public boolean remove(Object val) {
 
         boolean removed;
         removed = listThreadLocal.get().remove(val);
@@ -50,7 +60,7 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T>{
     }
 
     @Override
-    public boolean contains(T val) {
+    public boolean contains(Object val) {
 
         boolean contained = false;
 
@@ -65,5 +75,20 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T>{
     @Override
     public void clear() {
         throw new java.lang.Error("Remove not build yet");
+    }
+
+    @Override
+    public boolean offer(T t) {
+        return false;
+    }
+
+    @Override
+    public T poll() {
+        return null;
+    }
+
+    @Override
+    public T peek() {
+        return null;
     }
 }
