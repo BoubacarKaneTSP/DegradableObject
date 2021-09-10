@@ -185,9 +185,9 @@ public class Benchmark {
 
                 i = 2 * i;
 
-                if(i==2)
+                /*if(i==2)
                     i = nbThreads;
-
+*/
                 if (i > nbThreads && i != 2 * nbThreads) {
                     i = nbThreads;
                 }
