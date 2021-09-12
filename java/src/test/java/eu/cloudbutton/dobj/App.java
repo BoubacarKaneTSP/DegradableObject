@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.*;
+import nl.peterbloem.powerlaws.Discrete;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -48,7 +49,6 @@ public class App {
     private int wTime = 0;
 
     private static AtomicBoolean flag;
-    private static Set<String> users;
     private static Map<String, AbstractSet<String>> follower;
     private static Map<String, AbstractCounter> nbFollower;
     private static Map<String, AbstractQueue<String>> timeline;
@@ -118,7 +118,6 @@ public class App {
                 java.util.List<Callable<Void>> callables = new ArrayList<>();
                 ExecutorService executor = Executors.newFixedThreadPool(i);
 
-                users = new ConcurrentSkipListSet<>();
                 follower = new ConcurrentHashMap<>();
                 nbFollower = new ConcurrentHashMap<>();
                 timeline = new ConcurrentHashMap<>();
@@ -144,7 +143,7 @@ public class App {
                 ExecutorService executorService = Executors.newFixedThreadPool(1);
                 flag = new AtomicBoolean();
                 flag.set(true);
-                executorService.submit(new Coordinator());
+                executorService.submit(new Coordinator(latch));
 
                 List<Future<Void>> futures;
                 futures = executor.invokeAll(callables);
@@ -158,6 +157,31 @@ public class App {
                     System.out.println(e);
                 }
                 System.out.println("done computing");
+
+                int totalAdd = 0, totalFollow = 0, totalUnfollow = 0, totalTweet = 0, totalRead = 0;
+
+                for(int n : nbAdd.values())
+                    totalAdd += n;
+
+                for(int n : nbFollow.values())
+                    totalFollow += n;
+
+                for(int n : nbUnfollow.values())
+                    totalUnfollow += n;
+
+                for(int n : nbTweet.values())
+                    totalTweet += n;
+
+                for(int n : nbRead.values())
+                    totalRead += n;
+
+
+
+                System.out.println("nb add : "+ totalAdd);
+                System.out.println("nb Follow : "+ totalFollow);
+                System.out.println("nb Unfollow : "+ totalUnfollow);
+                System.out.println("nb Tweet : "+ totalTweet);
+                System.out.println("nb Read : "+ totalRead);
                 TimeUnit.SECONDS.sleep(10);
                 executor.shutdown();
             }
@@ -172,7 +196,7 @@ public class App {
 
     public static class RetwisApp implements Callable<Void>{
 
-        protected static final int ITEM_PER_THREAD = 20;
+        protected static final int ITEM_PER_THREAD = 100;
         protected final ThreadLocalRandom random;
         private final String objectSet;
         private final String objectList;
@@ -180,6 +204,11 @@ public class App {
         private final int[] ratios;
         private final CountDownLatch latch;
         private final Factory factory;
+        int add = 0;
+        int follow = 0;
+        int unfollow = 0;
+        int tweet = 0;
+        int read = 0;
 
         public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             this.random = ThreadLocalRandom.current();
@@ -194,15 +223,22 @@ public class App {
         @Override
         public Void call(){
 
-            latch.countDown();
+            System.out.println("ratios : " + ratios[0]);
+            System.out.println("ratios : " + ratios[1]);
+            System.out.println("ratios : " + ratios[2]);
 
+            System.out.println(ratios[0]+ratios[1]);
+            System.out.println(ratios[0]+ratios[1]+ratios[2]);
             try{
 
                 fill_database();
 
+                latch.countDown();
+
                 latch.await();
 
-                System.out.println(users.size());
+//                System.out.println(follower.keySet().size());
+
                 //warm up
                 while (flag.get()){
                     compute();
@@ -225,26 +261,37 @@ public class App {
             String userB = null;
 
             //adding users
-            for (int j = 0; j < ITEM_PER_THREAD/2; j++) {
-                addUser("user_"+Thread.currentThread().getName()+"_"+j);
+            for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
+                addUser("user_"+Thread.currentThread().getName()+"_"+i);
             }
 
-            List<Integer> data = new DiscreteApproximate(1, 1.35).generate(1000);
-
+            List<Integer> data = new Discrete(1, 1.35).generate(200);
+            System.out.println(data);
+            int max = data.get(0);
+            int min = data.get(0);
+            for(int i : data){
+                if (i>= max)
+                    max = i;
+            }
+            for(int i : data){
+                if (i<= min)
+                    min = i;
+            }
+            System.out.println("nb follow max : " + max);
+            System.out.println("nb follow min : " + min);
             //Following phase
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
-                userA = "user_"+Thread.currentThread().getName()+"_"+i;
 
-                for(int x = 0; x < data.get(random.nextInt(1000)); x++){
-                    int j = 0;
-                    n = random.nextInt(users.size());
-                    for(String usr : users){
-                        if (j == n){
-                            userB = usr;
-                            break;
-                        }
-                        j++;
-                    }
+                userA = "user_"+Thread.currentThread().getName()+"_"+i;
+                int nbFollow = Math.min(data.get(random.nextInt(200)), follower.keySet().size());
+                System.out.println("nb follow du process '"+ userA +"' : " + nbFollow);
+
+                for(int j = 0; j < nbFollow; j++){
+
+                    n = random.nextInt(follower.keySet().size());
+
+                    userB = (String) follower.keySet().toArray()[n];
+
                     follow(userA, userB);
                 }
             }
@@ -257,30 +304,16 @@ public class App {
             String userA;
             String userB = null;
 
-            int add = 0;
-            int follow = 0;
-            int unfollow = 0;
-            int tweet = 0;
-            int read = 0;
-
             if(val < ratios[0]){
                 //add
-//                System.out.println("add");
                 addUser("user_"+Thread.currentThread().getName()+"_"+n);
                 add++;
             }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){
                 //follow or unfollow
-//                System.out.println("follow or unfollow");
                 userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                n = random.nextInt(users.size());
-                int i = 0;
-                for(String usr : users){
-                    if (i == n){
-                        userB = usr;
-                        break;
-                    }
-                    i++;
-                }
+                n = random.nextInt(follower.keySet().size());
+
+                userB = (String) follower.keySet().toArray()[n];
 
                 if (val%2 == 0){
                     follow(userA, userB);
@@ -292,13 +325,11 @@ public class App {
                 }
             }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){
                 //tweet
-//                System.out.println("tweet");
                 userA = "user_"+Thread.currentThread().getName()+"_"+n;
                 tweet(userA, "msg from " + userA);
                 tweet++;
             }else{
                 //read
-//                System.out.println("Show timeline");
                 userA = "user_"+Thread.currentThread().getName()+"_"+n;
                 showTimeline(userA);
                 read++;
@@ -312,30 +343,37 @@ public class App {
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-            if(!users.contains(user)) {
+//            System.out.println("add");
+
+            if(!follower.keySet().contains(user)) {
                 follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
                 nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
                 timeline.put(user, (AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory));
-                users.add(user);
             }
         }
 
         public void follow(String userA, String userB){
-            if(users.contains(userA)) {
+//            System.out.println("follow");
+
+            if(follower.keySet().contains(userA) && follower.keySet().contains(userB)) {
                 follower.get(userB).add(userA);
                 nbFollower.get(userB).increment();
             }
         }
 
         public void unfollow(String userA, String userB){
-            if(users.contains(userA)) {
+//            System.out.println("unfollow");
+
+            if(follower.keySet().contains(userA) && follower.keySet().contains(userB)) {
                 follower.get(userB).remove(userA);
                 nbFollower.get(userB).write(-1);
             }
         }
 
         public void tweet(String user, String msg){
-            if(users.contains(user)) {
+//            System.out.println("tweet");
+
+            if(follower.keySet().contains(user)) {
                 for (String u : follower.get(user)) {
 //                    System.out.println("twit");
                     timeline.get(u).add(msg);
@@ -344,11 +382,13 @@ public class App {
         }
 
         public void showTimeline(String user){
+//            System.out.println("Show timeline");
+
            /* for(AbstractList<String> l : timeline.values()){
                 System.out.println(l.read());
             }
             */
-            if(users.contains(user)) {
+            if(follower.keySet().contains(user)) {
 //                if(timeline.get(user).read().size() > 0)
 //                    System.out.println(timeline.get(user).read());
             }
@@ -356,9 +396,17 @@ public class App {
     }
 
     public class Coordinator implements Callable<Void> {
+
+        private final CountDownLatch latch;
+
+        public Coordinator(CountDownLatch latch) {
+            this.latch = latch;
+        }
+
         @Override
         public Void call() throws Exception {
             try {
+                latch.await();
                 System.out.println("warm up");
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
