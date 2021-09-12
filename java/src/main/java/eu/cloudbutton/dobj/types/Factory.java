@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -25,4 +26,7 @@ public class Factory {
     public SecondDegradableList createSecondDegradableList() {return new SecondDegradableList(); }
     public ThirdDegradableList createThirdDegradableList() {return new ThirdDegradableList(); }
     public Noop createNoop() {return new Noop(); }
+
+    public Queue createConcurrentLinkedQueue() { return new ConcurrentLinkedQueue<>(); }
+    public Queue createDegradableQueue() { return new DegradableQueue(); }
 }

@@ -62,8 +62,9 @@ public class Snapshot<T> {
 
             if (read1.get().equals(read2.get()))
                 flag = 1;
-            else
-                read2.set(Set.copyOf(read1.get()));
+            // FIXME
+//            else
+//                read2.set(Set.copyOf(read1.get()));
         }
 
         List<T> result = new ArrayList<>();

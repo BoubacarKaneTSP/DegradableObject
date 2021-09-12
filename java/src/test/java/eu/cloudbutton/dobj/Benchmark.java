@@ -79,13 +79,14 @@ public class Benchmark {
         try{
 
             Factory factory = new Factory();
-            String constructor = "create" + type;
+
+            Class clazz = Class.forName(type);
+            String constructor = "create" + clazz.getSimpleName();
 
             for (int i = 1; i <= nbThreads; ) {
                 System.out.println("Nb threads = " + i);
                 for (int a = 0; a < nbTest; a++) {
                     Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-                    Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
@@ -226,9 +227,12 @@ public class Benchmark {
             return new SetTester((AbstractSet) object, ratios, latch, nbOps);
         }
 
+        public ListTester createAbstractListTester() {
+            return new ListTester((AbstractList) object, ratios, latch, nbOps);
+        }
 
-        public ListTester createAbstractQueueTester() {
-            return new ListTester((AbstractQueue) object, ratios, latch, nbOps);
+        public QueueTester createAbstractQueueTester() {
+            return new QueueTester((AbstractQueue) object, ratios, latch, nbOps);
         }
 
     }
@@ -343,9 +347,9 @@ public class Benchmark {
         }
     }
 
-    public static class ListTester extends Tester<AbstractQueue> {
+    public static class ListTester extends Tester<AbstractList> {
 
-        public ListTester(AbstractQueue list, int[] ratios, CountDownLatch latch, long nbOps) {
+        public ListTester(AbstractList list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
         }
 
@@ -356,7 +360,7 @@ public class Benchmark {
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (i == 0) {
-                    object.add(iid);
+                    object.append(iid);
                 }else {
                     object.remove(iid);
                 }
@@ -365,6 +369,30 @@ public class Benchmark {
             }
         }
     }
+
+    public static class QueueTester extends Tester<AbstractQueue> {
+
+        public QueueTester(AbstractQueue queue, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(queue, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test() {
+            int n = random.nextInt(ITEM_PER_THREAD);
+            int i = random.nextInt(2);
+            long iid = Thread.currentThread().getId()*1000000000L+n;
+            if (n%101 <= ratios[0]) {
+                if (i == 0) {
+                    object.offer(iid);
+                }else {
+                    object.poll();
+                }
+            } else {
+                object.contains(iid);
+            }
+        }
+    }
+
 
     public class Coordinator implements Callable<Void> {
 
