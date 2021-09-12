@@ -1,0 +1,1 @@
+find . -iname "*.java" | grep -vi degradable | grep -iv test | xargs egrep "[a-z]+ = new ConcurrentSkipListSet" $1 | awk -F"=" '{print $1}' | awk '{print "echo \033[34m"$1"\033[0m; grep \" "$NF"\\.\" "$1}' | sed s/://g | sh
