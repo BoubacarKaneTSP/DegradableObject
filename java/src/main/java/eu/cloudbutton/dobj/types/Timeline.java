@@ -1,19 +1,37 @@
 package eu.cloudbutton.dobj.types;
 
-import org.javatuples.Pair;
+import java.util.AbstractQueue;
+import java.util.Iterator;
 
-import java.util.concurrent.ConcurrentMap;
+public class Timeline<T> {
 
-public class Timeline<T> extends ThirdDegradableList {
+    private final AbstractQueue<T> timeline;
+    private final AbstractCounter size;
 
-    private final T timeline;
-
-    public Timeline(T timeline) {
+    public Timeline(AbstractQueue<T> timeline, AbstractCounter size) {
         this.timeline = timeline;
-
+        this.size = size;
     }
 
-    public void add(String process, ConcurrentMap<Integer, Pair<Integer, T>> v){
+    public void add(T elt){
+        timeline.add(elt);
+        size.increment();
+   }
 
+   public String read(){
+
+       Iterator it = timeline.iterator();
+       String s = "[";
+       Object o;
+       for (int i = 0; i < 1000 && it.hasNext(); i++) {
+           o = it.next();
+           s = s + o.toString();
+           if(it.hasNext())
+               s += ", ";
+       }
+
+       s = s + "]";
+
+       return s;
    }
 }

@@ -31,7 +31,16 @@ public class ListSnapshot<T> extends AbstractQueue<T> implements Queue<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+
+        java.util.List<AbstractQueue<T>> list = snapobject.snap();
+
+        java.util.List<T> result = new ArrayList<>();
+
+        for (AbstractQueue<T> ens : list) {
+            result.addAll(ens);
+        }
+
+        return result.iterator();
     }
 
     @Override

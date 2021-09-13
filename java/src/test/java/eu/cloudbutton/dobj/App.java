@@ -51,7 +51,7 @@ public class App {
     private static AtomicBoolean flag;
     private static Map<String, AbstractSet<String>> follower;
     private static Map<String, AbstractCounter> nbFollower;
-    private static Map<String, AbstractQueue<String>> timeline;
+    private static Map<String, Timeline> timeline;
 
     private static Map<Thread, Integer> nbAdd;
     private static Map<Thread, Integer> nbFollow;
@@ -177,11 +177,16 @@ public class App {
 
 
 
-                System.out.println("nb add : "+ totalAdd);
+              /*  System.out.println("nb add : "+ totalAdd);
                 System.out.println("nb Follow : "+ totalFollow);
                 System.out.println("nb Unfollow : "+ totalUnfollow);
                 System.out.println("nb Tweet : "+ totalTweet);
-                System.out.println("nb Read : "+ totalRead);
+                System.out.println("nb Read : "+ totalRead);*/
+
+                double nbtotalOP = totalAdd + totalFollow + totalUnfollow + totalTweet + totalRead;
+
+                System.out.println(i +" "+ time/nbtotalOP);
+
                 TimeUnit.SECONDS.sleep(10);
                 executor.shutdown();
             }
@@ -223,12 +228,6 @@ public class App {
         @Override
         public Void call(){
 
-            System.out.println("ratios : " + ratios[0]);
-            System.out.println("ratios : " + ratios[1]);
-            System.out.println("ratios : " + ratios[2]);
-
-            System.out.println(ratios[0]+ratios[1]);
-            System.out.println(ratios[0]+ratios[1]+ratios[2]);
             try{
 
                 fill_database();
@@ -237,7 +236,6 @@ public class App {
 
                 latch.await();
 
-//                System.out.println(follower.keySet().size());
 
                 //warm up
                 while (flag.get()){
@@ -258,7 +256,7 @@ public class App {
 
             int n;
             String userA;
-            String userB = null;
+            String userB;
 
             //adding users
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
@@ -266,25 +264,13 @@ public class App {
             }
 
             List<Integer> data = new Discrete(1, 1.35).generate(200);
-            System.out.println(data);
-            int max = data.get(0);
-            int min = data.get(0);
-            for(int i : data){
-                if (i>= max)
-                    max = i;
-            }
-            for(int i : data){
-                if (i<= min)
-                    min = i;
-            }
-            System.out.println("nb follow max : " + max);
-            System.out.println("nb follow min : " + min);
+
             //Following phase
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
 
                 userA = "user_"+Thread.currentThread().getName()+"_"+i;
                 int nbFollow = Math.min(data.get(random.nextInt(200)), follower.keySet().size());
-                System.out.println("nb follow du process '"+ userA +"' : " + nbFollow);
+//                System.out.println("nb follow du process '"+ userA +"' : " + nbFollow);
 
                 for(int j = 0; j < nbFollow; j++){
 
@@ -300,9 +286,9 @@ public class App {
         public void compute() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
             int n = random.nextInt(ITEM_PER_THREAD);
-            int val = n%100;
+            int val = random.nextInt(101);
             String userA;
-            String userB = null;
+            String userB;
 
             if(val < ratios[0]){
                 //add
@@ -348,7 +334,9 @@ public class App {
             if(!follower.keySet().contains(user)) {
                 follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
                 nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.put(user, (AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory));
+                timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
+                                                (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
+                                                );
             }
         }
 
@@ -375,7 +363,6 @@ public class App {
 
             if(follower.keySet().contains(user)) {
                 for (String u : follower.get(user)) {
-//                    System.out.println("twit");
                     timeline.get(u).add(msg);
                 }
             }
@@ -383,14 +370,10 @@ public class App {
 
         public void showTimeline(String user){
 //            System.out.println("Show timeline");
-
-           /* for(AbstractList<String> l : timeline.values()){
-                System.out.println(l.read());
-            }
-            */
+            String s;
             if(follower.keySet().contains(user)) {
-//                if(timeline.get(user).read().size() > 0)
-//                    System.out.println(timeline.get(user).read());
+                s = timeline.get(user).read();
+//                System.out.println(s);
             }
         }
     }

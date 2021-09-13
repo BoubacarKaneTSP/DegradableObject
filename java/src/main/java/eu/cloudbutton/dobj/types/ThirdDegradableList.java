@@ -36,7 +36,8 @@ public class ThirdDegradableList<T> extends AbstractQueue<T> implements Queue<T>
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        readlist();
+        return list_final.iterator();
     }
 
     @Override
@@ -51,62 +52,9 @@ public class ThirdDegradableList<T> extends AbstractQueue<T> implements Queue<T>
     }
 
     public java.util.List<T> read() {
-        inter_list.clear();
-        for (Thread key : this.list.keySet()) {
-
-            int lastkey = list.get(key).lastKey();
-            if (!last.containsKey(key)) {
-                last.put(key, lastkey);
-                for (Map.Entry<Integer, Pair<Integer, T>> elem : list.get(key).headMap(lastkey).entrySet())
-                    inter_list.add(elem.getValue());
-            } else if (last.get(key) != lastkey) {
-                    int i;
-                    for (i = last.get(key) + 1; i <= lastkey; i++)
-                        inter_list.add(list.get(key).get(i));
-                    last.put(key, i);
-            }
-
-
-        }
-
-        SortedMap<Integer, T> sortedMap = new TreeMap<>();
-
-        for (Pair<Integer,T> pair : inter_list)
-            sortedMap.put(pair.getValue0(), pair.getValue1());
-
-        list_final.addAll(sortedMap.values());
+        readlist();
         return list_final;
 
-    }
-
-    public java.util.List<T> read(Set<Thread> following) {
-        inter_list.clear();
-        for (Thread key : this.list.keySet()){
-            if (following.contains(key)) {
-                int lastkey = list.get(key).lastKey();
-                if (!last.containsKey(key)) {
-                    last.put(key, lastkey);
-                    for (Map.Entry<Integer, Pair<Integer, T>> elem : list.get(key).headMap(lastkey).entrySet())
-                        inter_list.add(elem.getValue());
-                } else {
-                    if (last.get(key) != lastkey) {
-                        int i;
-                        for (i = last.get(key) + 1; i <= lastkey; i++)
-                            inter_list.add(list.get(key).get(i));
-                        last.put(key, i);
-                    }
-                }
-            }
-        }
-
-        SortedMap<Integer, T> sortedMap = new TreeMap<>();
-
-        for (Pair<Integer,T> pair : inter_list)
-            sortedMap.put(pair.getValue0(), pair.getValue1());
-
-        list_final.addAll(sortedMap.values());
-
-        return list_final;
     }
 
 
@@ -130,7 +78,7 @@ public class ThirdDegradableList<T> extends AbstractQueue<T> implements Queue<T>
 
     @Override
     public void clear() {
-        throw new java.lang.Error("Remove not build yet");
+        throw new java.lang.Error("Clear method not build yet");
     }
 
     @Override
@@ -150,6 +98,34 @@ public class ThirdDegradableList<T> extends AbstractQueue<T> implements Queue<T>
 
     @Override
     public String toString(){
-        return "method toString not build yet";
+        readlist();
+        return list_final.toString();
+    }
+
+    private void readlist() {
+        inter_list.clear();
+        for (Thread key : this.list.keySet()) {
+
+            int lastkey = list.get(key).lastKey();
+            if (!last.containsKey(key)) {
+                last.put(key, lastkey);
+                for (Map.Entry<Integer, Pair<Integer, T>> elem : list.get(key).headMap(lastkey).entrySet())
+                    inter_list.add(elem.getValue());
+            } else if (last.get(key) != lastkey) {
+                int i;
+                for (i = last.get(key) + 1; i <= lastkey; i++)
+                    inter_list.add(list.get(key).get(i));
+                last.put(key, i);
+            }
+
+
+        }
+
+        SortedMap<Integer, T> sortedMap = new TreeMap<>();
+
+        for (Pair<Integer,T> pair : inter_list)
+            sortedMap.put(pair.getValue0(), pair.getValue1());
+
+        list_final.addAll(sortedMap.values());
     }
 }

@@ -21,7 +21,14 @@ public class LinkedListSnapshot<T> extends AbstractQueue<T> implements Queue<T> 
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        java.util.List<LinkedList<T>> list = snapobject.snap();
+
+        java.util.List<T> result = new ArrayList<>();
+
+        for (LinkedList<T> ens : list) {
+            result.addAll(ens.read());
+        }
+        return result.iterator();
     }
 
     @Override

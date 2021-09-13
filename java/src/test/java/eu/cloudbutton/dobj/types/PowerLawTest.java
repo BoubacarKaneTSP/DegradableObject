@@ -24,7 +24,7 @@ public class PowerLawTest {
         List<Integer> data = new DiscreteApproximate(1, 1.35).generate(1000);
 
 
-        System.out.println(data);
+//        System.out.println(data);
     }
 
 }

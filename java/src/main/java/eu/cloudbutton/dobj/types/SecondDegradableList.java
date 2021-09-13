@@ -29,7 +29,8 @@ public class SecondDegradableList<T> extends AbstractQueue<T> implements Queue<T
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        readlist();
+        return list_final.iterator();
     }
 
     @Override
@@ -45,27 +46,7 @@ public class SecondDegradableList<T> extends AbstractQueue<T> implements Queue<T
 
     public java.util.List<T> read() {
 
-        for (Thread key : this.list.keySet()){
-            int lastkey = list.get(key).lastKey();
-            if (!last.containsKey(key)){
-                try{
-                    last.put(key, lastkey);
-                    for (Map.Entry<Integer, T> elem : list.get(key).headMap(lastkey).entrySet())
-                        list_final.add(elem.getValue());
-                } catch (NoSuchElementException e) {
-                    e.printStackTrace();
-                }
-
-
-            } else{
-                if (last.get(key) != lastkey){
-                    int i;
-                    for ( i = last.get(key)+1; i <= lastkey ; i++)
-                        list_final.add(list.get(key).get(i));
-                    last.put(key, i);
-                }
-            }
-        }
+        readlist();
         return list_final;
     }
 
@@ -108,5 +89,29 @@ public class SecondDegradableList<T> extends AbstractQueue<T> implements Queue<T
     @Override
     public String toString(){
         return "method toString not build yet";
+    }
+
+    private void readlist() {
+        for (Thread key : this.list.keySet()){
+            int lastkey = list.get(key).lastKey();
+            if (!last.containsKey(key)){
+                try{
+                    last.put(key, lastkey);
+                    for (Map.Entry<Integer, T> elem : list.get(key).headMap(lastkey).entrySet())
+                        list_final.add(elem.getValue());
+                } catch (NoSuchElementException e) {
+                    e.printStackTrace();
+                }
+
+
+            } else{
+                if (last.get(key) != lastkey){
+                    int i;
+                    for ( i = last.get(key)+1; i <= lastkey ; i++)
+                        list_final.add(list.get(key).get(i));
+                    last.put(key, i);
+                }
+            }
+        }
     }
 }

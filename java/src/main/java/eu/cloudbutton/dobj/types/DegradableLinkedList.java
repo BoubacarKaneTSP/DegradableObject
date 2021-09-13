@@ -21,7 +21,11 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        List<T> result = new ArrayList<>();
+        for (LinkedList<T> val : list.values()){
+            result.addAll(val.read());
+        }
+        return result.iterator();
     }
 
     @Override

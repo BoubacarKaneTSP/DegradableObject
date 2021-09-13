@@ -64,4 +64,14 @@ public class List<T> extends AbstractQueue<T> implements Queue<T> {
     public T peek() {
         return list.peek();
     }
+
+    @Override
+    public Object[] toArray(){
+        return list.toArray();
+    }
+
+    @Override
+    public String toString(){
+        return list.toString();
+    }
 }

@@ -13,7 +13,12 @@ public class LinkedList <T> extends AbstractQueue<T> implements Queue<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        List<T> result = new ArrayList();
+
+        for(AtomicReference<Node<T>> cur = this.head ; cur != null ; cur = cur.get().next){
+            result.add(cur.get().data);
+        }
+        return result.iterator();
     }
 
     @Override
