@@ -82,7 +82,7 @@ public class Benchmark {
             String constructor = "create" + type;
 
             for (int i = 1; i <= nbThreads; ) {
-                System.out.println("Nb threads = " + i);
+//                System.out.println("Nb threads = " + i);
                 for (int a = 0; a < nbTest; a++) {
                     Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
                     Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
