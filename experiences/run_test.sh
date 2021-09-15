@@ -14,6 +14,6 @@ do
 for type in 'Counter' 'DegradableCounter' 'List' 'DegradableList' 'Set' 'DegradableSet'
   do
     echo $type $ratio
-    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 10 -wTime 5 #> "results_${type}_ratio_write_${ratio}_SR.txt"
+    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark -type $type -ratios $ratio -nbTest 1 -time 10 -wTime 5 > "results_${type}_ratio_write_${ratio}_SR2.txt"
   done
 done

@@ -235,7 +235,7 @@ public class Benchmark {
 
     public static abstract class Tester<T> implements Callable<Void> {
 
-        protected static final int ITEM_PER_THREAD = 1000;
+        protected static final int ITEM_PER_THREAD = 1;
 
         protected final ThreadLocalRandom random;
         protected final T object;
