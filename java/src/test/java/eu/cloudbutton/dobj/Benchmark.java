@@ -356,9 +356,9 @@ public class Benchmark {
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
                 if (i == 0) {
-                    object.add(iid);
+                    object.offer(iid);
                 }else {
-                    object.remove(iid);
+                    object.poll();
                 }
             } else {
                 object.contains(iid);

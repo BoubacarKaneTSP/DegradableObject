@@ -54,8 +54,5 @@ public class TimelineTest {
         for (Future<Void> future :futures){
             future.get();
         }
-
-        System.out.println(timeline.read());
-
     }
 }

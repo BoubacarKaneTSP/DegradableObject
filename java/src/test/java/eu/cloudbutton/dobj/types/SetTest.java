@@ -43,10 +43,6 @@ public class SetTest {
             future.get();
         }
 
-        for (String s: set) {
-            System.out.println(s);
-        }
-
         java.util.Set<String> result = new HashSet<>();
         result.add("v1");
         result.add("v2");

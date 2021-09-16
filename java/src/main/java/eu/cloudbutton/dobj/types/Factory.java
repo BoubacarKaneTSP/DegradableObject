@@ -25,4 +25,6 @@ public class Factory {
     public SecondDegradableList createSecondDegradableList() {return new SecondDegradableList(); }
     public ThirdDegradableList createThirdDegradableList() {return new ThirdDegradableList(); }
     public Noop createNoop() {return new Noop(); }
+
+    public DegradableQueue createDegradableQueue() {return new DegradableQueue(); }
 }
