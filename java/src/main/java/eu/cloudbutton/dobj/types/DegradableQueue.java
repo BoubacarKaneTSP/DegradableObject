@@ -115,16 +115,13 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     public E poll() {
         restartFromHead:
         for (;;) {
-            for (Node<E> h = head, p = h, q;;) {
-                E item = p.item;
-
-                if (item != null && p.casItem(item, null)) {
+            for (Node<E> h = head, p = h, q;; p = q) {
+                final E item;
+                if ((item = p.item) != null && p.casItem(item, null)) {
                     // Successful CAS is the linearization point
                     // for item to be removed from this queue.
-//					if (p != h) // hop two nodes at a time
-//						updateHead(h, ((q = p.next) != null) ? q : p);
-                    if (p != h && p.next != null)
-                        head.lazySetNext(p.next);
+                    if (p != h) // hop two nodes at a time
+                        updateHead(h, ((q = p.next) != null) ? q : p);
                     return item;
                 }
                 else if ((q = p.next) == null) {
@@ -133,12 +130,9 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                 }
                 else if (p == q)
                     continue restartFromHead;
-                else
-                    p = q;
             }
         }
     }
-
     @Override
     public E peek() {
         throw new IllegalArgumentException();

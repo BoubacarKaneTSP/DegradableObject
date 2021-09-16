@@ -379,10 +379,9 @@ public class Benchmark {
         @Override
         protected void test() {
             int n = random.nextInt(ITEM_PER_THREAD);
-            int i = random.nextInt(2);
             long iid = Thread.currentThread().getId()*1000000000L+n;
             if (n%101 <= ratios[0]) {
-                if (i == 0) {
+                if (n%2 == 0) {
                     object.offer(iid);
                 }else {
                     object.poll();
