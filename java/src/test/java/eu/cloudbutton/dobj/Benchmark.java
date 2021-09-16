@@ -259,6 +259,7 @@ public class Benchmark {
 
             try{
                 latch.await();
+                System.out.println("debut de computing");
 
                 // warm up
                 while (flag.get()) {
@@ -276,7 +277,6 @@ public class Benchmark {
             }
 
             nbOperations.add(i);
-
             return null;
         }
 
