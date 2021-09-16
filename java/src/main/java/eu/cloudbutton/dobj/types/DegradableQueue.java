@@ -93,21 +93,15 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                     // Successful CAS is the linearization point
                     // for e to become an element of this queue,
                     // and for newNode to become "live".
-                    if (p != t) // hop two nodes at a time
-                        lazySetTail(newNode);
+		    tail = newNode;
+		    // lazySetTail(newNode);
                     return true;
-                }
-                // Lost CAS race to another thread; re-read next
+                } else {
+		    // Lost CAS race to another thread; re-read next
+		    q = p.next;
+		}
             }
-            else if (p == q)
-                // We have fallen off list.  If tail is unchanged, it
-                // will also be off-list, in which case we need to
-                // jump to head, from which all live nodes are always
-                // reachable.  Else the new tail is a better bet.
-                p = (t != (t = tail)) ? t : head;
-            else
-                // Check for tail updates after two hops.
-                p = (p != t && t != (t = tail)) ? t : q;
+	    p = q;
         }
     }
 
@@ -115,21 +109,20 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     public E poll() {
         restartFromHead:
         for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
+            for (Node<E> h = head, p = h;;) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
                     // Successful CAS is the linearization point
                     // for item to be removed from this queue.
-                    if (p != h) // hop two nodes at a time
-                        updateHead(h, ((q = p.next) != null) ? q : p);
+                    // if (p != h) // hop two nodes at a time
+                    //     updateHead(h, ((q = p.next) != null) ? q : p);
+		    head = p.next;
+		    // head.lazySetNext(p.next);
                     return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
+                }else if (p.next == null) {
+		    return null;
+		}
+		p = p.next;
             }
         }
     }
