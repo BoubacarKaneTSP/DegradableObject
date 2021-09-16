@@ -30,11 +30,23 @@ for file in files:
 #print(numprocesses)
 
 for numprocess, resultat, name in zip(numprocesses,resultats,sys.argv[1:]):
-    plt.plot(numprocess, resultat, marker = "o", label=name[7:len(name)-4].replace("_", " "))
+    plt.plot(numprocess, resultat, marker = "o", linewidth=6, markersize=22, label=name[:len(name)-4].replace("_", " "))
 
 
-plt.ylabel("time/ope (s)")
-plt.xlabel("# processes")
+SIZE = 40
+
+plt.rcParams.update({'font.size': SIZE})
+plt.xticks(fontsize=SIZE)
+plt.yticks(fontsize=SIZE)
+
+
+plt.gca().invert_yaxis()
+plt.gca().spines['right'].set_visible(False)
+plt.gca().spines['top'].set_visible(False)
+plt.gca().tick_params(axis='both', which='major', labelsize=SIZE, length=SIZE/2)
+plt.gca().tick_params(axis='both', which='minor', labelsize=SIZE, length=SIZE/2)
+plt.ylabel("time/ope (s)", fontsize=SIZE)
+plt.xlabel("# processes", fontsize=SIZE)
 plt.legend(bbox_to_anchor=(0., 1.04, 1., 1.), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
 plt.yscale("log")
 plt.show()
