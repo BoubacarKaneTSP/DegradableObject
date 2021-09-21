@@ -107,7 +107,6 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
 
     @Override
     public E poll() {
-        restartFromHead:
         for (;;) {
             for (Node<E> h = head, p = h;;) {
                 final E item;
@@ -116,7 +115,10 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                     // for item to be removed from this queue.
                     // if (p != h) // hop two nodes at a time
                     //     updateHead(h, ((q = p.next) != null) ? q : p);
-		    head = p.next;
+		    if (p.next!=null)
+			head = p.next;
+		    else
+			head = p;
 		    // head.lazySetNext(p.next);
                     return item;
                 }else if (p.next == null) {
@@ -126,11 +128,18 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
             }
         }
     }
+    
     @Override
     public E peek() {
         throw new IllegalArgumentException();
     }
 
+    public void clear() {
+        while(this.poll() != null) {
+        }
+    }
+
+    
     /**
      * Tries to CAS head to p. If successful, repoint old head to itself
      * as sentinel for succ(), below.
