@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.*;
-import eu.cloudbutton.dobj.types.AbstractList;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
