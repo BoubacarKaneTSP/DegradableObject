@@ -5,14 +5,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 
 import static java.lang.Math.round;
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -25,6 +19,8 @@ public class Analyse {
     private boolean _private = false;
     @Option(name = "-file", required = true, usage = "File's name")
     private String _file;
+    @Option(name = "-limit", usage = "number of methods analyzed")
+    private int _limit = 10;
 
     public static void main(String[] args) throws IOException {
         new Analyse().doMain(args);
@@ -75,6 +71,11 @@ public class Analyse {
             }
         }
 
+        for(String obj : mapObj.keySet()) {
+            for (String ignored : mapObj.get(obj).keySet())
+                mapObj.put(obj, sortByValue((HashMap<String, Integer>) mapObj.get(obj)));
+        }
+
         String op;
 
         for (String obj : mapObj.keySet()){
@@ -89,12 +90,65 @@ public class Analyse {
                 System.out.println("-" + method +": "+ op);
             }
         }
-        bufferedReader.close();
 
+        for (String obj: mapObj.keySet()){
+            String[] arrayMethod = mapObj.get(obj).keySet().toArray(new String[mapObj.get(obj).size()]);
+            Integer[] tmp = mapObj.get(obj).values().toArray(new Integer[mapObj.get(obj).size()]);
+            Double[] arrayPercentage = new Double[mapObj.get(obj).size()];
+
+            for (int i = 0; i < tmp.length; i++) {
+                arrayPercentage[i] = this.round(tmp[i] / (double) sumMethodsObj.get(obj) * 100, 2);
+            }
+
+            FileWriter fileWriter = new FileWriter(obj+"_graph.tex");
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print("\\begin{tikzpicture}\n" +
+                    "\\begin{axis} [xbar, xmin=0, xmax=100, axis x line=bottom, axis y line=left, enlarge y limits=true, grid=major, xlabel={usage \\%}, ytick=data, yticklabels={");
+
+            for (int i = 0; i< arrayPercentage.length && i < _limit; i++) {
+                printWriter.print(arrayMethod[i]);
+                if (i+1 < arrayPercentage.length && i+1 < _limit)
+                    printWriter.print(",");
+            }
+
+            printWriter.printf("}, title={%s}]\n", obj);
+
+            printWriter.print("\\addplot ");
+            printWriter.print("coordinates {");
+            String coordinates = "";
+            for (int i = 0; i < arrayPercentage.length && i < _limit; i++) {
+                coordinates = "("+arrayPercentage[i].toString()+","+i+")" + coordinates;
+            }
+            printWriter.print(coordinates);
+            printWriter.println("};");
+            printWriter.println("\\end{axis}\n" +
+                    "\\end{tikzpicture}");
+
+            printWriter.close();
+        }
+
+        bufferedReader.close();
     }
 
     private double round(double r, int places){
         double scale = Math.pow(10, places);
         return Math.round(r * scale) / scale;
+    }
+
+    // function to sort hashmap by values
+    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm)
+    {
+        // Create a list from elements of HashMap
+        List<Map.Entry<String, Integer> > list = new LinkedList<>(hm.entrySet());
+
+        // Sort the list
+        Collections.sort(list, Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+        // put data from sorted list to hashmap
+        HashMap<String, Integer> temp = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
     }
 }
