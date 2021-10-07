@@ -166,7 +166,7 @@ public class Analyse {
                         int i = 0;
 
                         begin = "\\begin{tikzpicture}\n" +
-                                "\\begin{axis}[scatter/classes={U={mark=+,red}, NU={mark=x,blue}}, " +
+                                "\\begin{axis}[scatter/classes={U={mark=+,red}, NU={mark=x,blue}}, legend pos=outer north east," +
                                 "axis x line=bottom, axis y line=left, enlarge x limits=true, " +
                                 "enlarge y limits=true, ytick=data, yticklabels={";
 
@@ -179,7 +179,10 @@ public class Analyse {
                             for (String method : mapProject.get(project).get(obj).get(clazz)) {
                                 if (!methodsUsed.contains(method))
                                     methodsUsed.add(method);
-                                coordinates += "(" + i + "," + methodsUsed.indexOf(method) + ") [U]\n";
+                                if (method.charAt(0) == '+')
+                                    coordinates += "(" + i + "," + methodsUsed.indexOf(method) + ") [U]\n";
+                                else
+                                    coordinates += "(" + i + "," + methodsUsed.indexOf(method) + ") [NU]\n";
                             }
 
                             i++;
@@ -192,6 +195,8 @@ public class Analyse {
                         }
 
                         end = "};\n" +
+                                "\\addlegendentry{Used}\n" +
+                                "\\addlegendentry{Not used}\n" +
                                 "\\end{axis}\n" +
                                 "\\end{tikzpicture}";
 
