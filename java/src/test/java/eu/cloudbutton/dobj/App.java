@@ -423,9 +423,8 @@ public class App {
 
         public void showTimeline(String user){
 //            System.out.println("Show timeline");
-            String s;
             if(follower.keySet().contains(user)) {
-                s = timeline.get(user).read();
+                timeline.get(user).read();
 //                System.out.println(s);
             }
         }

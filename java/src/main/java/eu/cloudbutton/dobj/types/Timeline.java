@@ -2,6 +2,8 @@ package eu.cloudbutton.dobj.types;
 
 import java.util.AbstractQueue;
 import java.util.Iterator;
+import java.util.Collection;
+import java.util.ArrayList;
 
 public class Timeline<T> {
 
@@ -18,20 +20,15 @@ public class Timeline<T> {
         size.increment();
    }
 
-   public String read(){
+   public Collection<T> read(){
 
-       Iterator it = timeline.iterator();
-       String s = "[";
-       Object o;
-       for (int i = 0; i < 1000 && it.hasNext(); i++) {
-           o = it.next();
-           s = s + o.toString();
+       Collection<T> ret = new ArrayList<>();
+       Iterator<T> it = timeline.iterator();
+       for (int i = 0; i < 50 && it.hasNext(); i++) {
            if(it.hasNext())
-               s += ", ";
+	       ret.add(it.next());
        }
 
-       s = s + "]";
-
-       return s;
+       return ret;
    }
 }
