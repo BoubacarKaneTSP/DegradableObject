@@ -222,7 +222,7 @@ public class App {
 
             try{
 
-//                fill_database();
+                fill_database();
 
                 latch.countDown();
 
@@ -301,6 +301,10 @@ public class App {
                 }
 
                 nbAdd.increment(add);
+                nbFollow.increment(follow);
+                nbUnfollow.increment(unfollow);
+                nbTweet.increment(tweet);
+                nbRead.increment(read);
 
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
