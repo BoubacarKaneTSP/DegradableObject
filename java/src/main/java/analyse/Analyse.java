@@ -21,8 +21,8 @@ public class Analyse {
     private boolean _public = false;
     @Option(name = "-file", required = true, usage = "File's name")
     private String _file;
-    @Option(name = "-limit", usage = "number of methods analyzed")
-    private int _limit = 10;
+    @Option(name = "-dlimit", usage = "distribution minimum")
+    private int _dlimit = 0;
     @Option(name = "-tuple", handler = ExplicitBooleanOptionHandler.class, usage = "Generate graph to see tuples")
     private boolean _tuple = false;
     @Option(name = "-stack", handler = ExplicitBooleanOptionHandler.class, usage = "Generate stack histogram to see distribution")
@@ -73,7 +73,7 @@ public class Analyse {
         while ((s = bufferedReader.readLine()) != null) {
             elements = s.split(" ");
 
-            if (_projects.isEmpty() || _projects.contains(elements[0])){
+            if ((_projects.isEmpty() || _projects.contains(elements[0])) && elements.length >= 5){
                 mapAllObj.putIfAbsent(elements[1], new HashMap<>());
                 sumMethodsObj.putIfAbsent(elements[1], 0);
 
@@ -87,6 +87,7 @@ public class Analyse {
                         mapProject.get(elements[0]).get(elements[1]).put(elements[2], new HashSet<>());
                     }
                     for (String method : Arrays.copyOfRange(elements, 4, elements.length)) {
+                        method = method.charAt(0) == '+' ? method.substring(1) : method;
                         mapAllObj.get(elements[1]).putIfAbsent(method, new HashMap<>());
                         mapAllObj.get(elements[1]).get(method).compute(elements[0], (key, val) -> (val == null) ? 1 : val + 1);
                         sumMethodsObj.compute(elements[1], (key, val) -> (val == 0) ? 1 : val + 1 );
@@ -97,59 +98,75 @@ public class Analyse {
             }
         }
 
-/*        for(String obj : mapAllObj.keySet()) {
-            for (String ignored : mapAllObj.get(obj).keySet())
-                mapAllObj.put(obj, sortByValue((HashMap<String, Integer>) mapAllObj.get(obj)));
-        }
-
-        String op;
-        for (String obj : mapAllObj.keySet()){
-            System.out.println("-"+obj);
-            for (String method: mapAllObj.get(obj).keySet()) {
-                System.out.print("    ");
-                if(_percentage)
-                    op = String.valueOf(this.round(mapAllObj.get(obj).get(method) / (double) sumMethodsObj.get(obj) * 100, 2));
-                else
-                    op = String.valueOf(mapAllObj.get(obj).get(method));
-
-                System.out.println("-" + method +": "+ op);
-            }
-        }*/
-
         if (_d){
-            for (String obj: mapAllObj.keySet()){
-                String[] arrayMethod = mapAllObj.get(obj).keySet().toArray(new String[mapAllObj.get(obj).size()]);
-                Integer[] tmp = mapAllObj.get(obj).values().toArray(new Integer[mapAllObj.get(obj).size()]);
-                Double[] arrayPercentage = new Double[mapAllObj.get(obj).size()];
 
-                for (int i = 0; i < tmp.length; i++) {
-                    arrayPercentage[i] = this.round(tmp[i] / (double) sumMethodsObj.get(obj) * 100, 2);
+            AbstractList<String> projectsPresent = new ArrayList<>();
+
+            for (String object : mapAllObj.keySet()){
+                for (String method : mapAllObj.get(object).keySet()) {
+                    for (String project : mapAllObj.get(object).get(method).keySet()) {
+                        if (!projectsPresent.contains(project)){
+                            projectsPresent.add(project);
+                        }
+                    }
                 }
+            }
 
-                FileWriter fileWriter = new FileWriter(obj+"_graph.tex");
+            for (String object : mapAllObj.keySet()){
+                FileWriter fileWriter = new FileWriter(object+"_graph.tex");
                 PrintWriter printWriter = new PrintWriter(fileWriter);
-                printWriter.print("\\begin{tikzpicture}\n" +
-                        "\\begin{axis} [xbar, xmin=0, xmax=100, axis x line=bottom, axis y line=left, enlarge y limits=true, grid=major, xlabel={usage \\%}, ytick=data, yticklabels={");
+                Double[] distribution = new Double[mapAllObj.get(object).keySet().size()];
+                int nbMethods = 0;
+                String begin, end, label = "", title, plot = "";
+                begin = "\\begin{tikzpicture}\n" +
+                        "\\begin{axis} [xbar, xmin=0, xmax=100, axis x line=bottom, axis y line=left, " +
+                        "enlarge y limits=true, grid=major, xlabel={usage \\%}, ytick=data, " +
+                        "yticklabels={";
+                title = ", title={"+object+"}]\n";
+                plot += "\\addplot coordinates { ";
+                for (String method : mapAllObj.get(object).keySet()){
 
-                for (int i = 0; i< arrayPercentage.length && i < _limit; i++) {
-                    printWriter.print(arrayMethod[i]);
-                    if (i+1 < arrayPercentage.length && i+1 < _limit)
-                        printWriter.print(",");
+                    int sumMethods = 0;
+                    for (String project : projectsPresent){
+
+                        for (String m : mapAllObj.get(object).keySet()){
+                            if (mapAllObj.get(object).get(m).containsKey(project)) {
+                                sumMethods += mapAllObj.get(object).get(m).get(project);
+                            }
+                        }
+                    }
+
+                    int methodquantity = 0;
+
+                    for (String project : projectsPresent){
+                        if (mapAllObj.get(object).get(method).containsKey(project))
+                            methodquantity += mapAllObj.get(object).get(method).get(project);
+                    }
+
+                    double d = round( methodquantity /(double) sumMethods * 100,2);
+                    if (d>=_dlimit) {
+                        distribution[nbMethods] = d;
+
+                        label += method;
+                        if (nbMethods + 1 < mapAllObj.get(object).keySet().size())
+                            label += ", ";
+                    }
+                    nbMethods ++;
                 }
 
-                printWriter.printf("}, title={%s}]\n", obj);
-
-                printWriter.print("\\addplot ");
-                printWriter.print("coordinates {");
-                String coordinates = "";
-                for (int i = 0; i < arrayPercentage.length && i < _limit; i++) {
-                    coordinates = "("+arrayPercentage[i].toString()+","+i+")" + coordinates;
+//                Arrays.sort(distribution);
+                for (int j = 0, i = 0; i < distribution.length; i++) {
+                    if (distribution[i] != null) {
+                        plot += "(" + distribution[i] + "," + j + ")";
+                        j++;
+                    }
                 }
-                printWriter.print(coordinates);
-                printWriter.println("};");
-                printWriter.println("\\end{axis}\n" +
-                        "\\end{tikzpicture}");
+                label += "}";
+                end = "};\n" +
+                        "\\end{axis}\n" +
+                        "\\end{tikzpicture}\n";
 
+                printWriter.print(begin+label+title+plot+end);
                 printWriter.close();
             }
         }
@@ -162,41 +179,92 @@ public class Analyse {
                         FileWriter fileWriter = new FileWriter(obj+"_"+project+"_graph.tex");
                         PrintWriter printWriter = new PrintWriter(fileWriter);
                         AbstractList<String> methodsUsed = new ArrayList<>();
+                        String methodName;
                         String coordinates = "", begin, label = "", title, end;
                         int i = 0;
 
                         begin = "\\begin{tikzpicture}\n" +
                                 "\\begin{axis}[scatter/classes={U={mark=+,red}, NU={mark=x,blue}}, legend pos=outer north east," +
                                 "axis x line=bottom, axis y line=left, enlarge x limits=true, " +
-                                "enlarge y limits=true, ytick=data, yticklabels={";
+                                "xlabel = {Classes}, ylabel = {Methods}, " +
+                                "enlarge y limits=true, xtick = data, xticklabels = {,,}," +
+                                "ytick=data, yticklabels={";
 
                         title = "}, title={Use of "+obj+" in "+project+"}]\n" +
                                 "\\addplot[scatter,only marks, scatter src=explicit symbolic]\n" +
                                 "coordinates {\n";
 
-                        for (String clazz :  mapProject.get(project).get(obj).keySet()){
+                        int nbtuple = 0;
+                        int nbclass = 0;
+                        String method1, method2;
 
-                            for (String method : mapProject.get(project).get(obj).get(clazz)) {
-                                if (!methodsUsed.contains(method))
-                                    methodsUsed.add(method);
-                                if (method.charAt(0) == '+')
-                                    coordinates += "(" + i + "," + methodsUsed.indexOf(method) + ") [U]\n";
-                                else
-                                    coordinates += "(" + i + "," + methodsUsed.indexOf(method) + ") [NU]\n";
-                            }
-
-                            i++;
+                        switch (obj){
+                            case "ConcurrentSkipListSet" :
+                                method1 = "add";
+                                method2 = "clear";
+                                break;
+                            case "AtomicLong" :
+                                method1 = "get";
+                                method2 = "incrementAndGet";
+                                break;
+                            case "ConcurrentHashMap" :
+                                method1 = "get";
+                                method2 = "put";
+                                break;
+                            case "ConcurrentLinkedQueue" :
+                                method1 = "add";
+                                method2 = "poll";
+                                break;
+                            default:
+                                method1 = method2 = "";
                         }
 
+
+                        for (String clazz :  mapProject.get(project).get(obj).keySet()){
+
+                            nbclass++;
+                            boolean flag = false;
+                            boolean presenceMethod1 = false, presenceMethod2 = false; // TBD
+
+//                            System.out.println(method1 + " " + method2);
+                            for (String method : mapProject.get(project).get(obj).get(clazz)) {
+                                flag = true;
+                                methodName = method.charAt(0) == '+' ? method.substring(1): method ;
+
+                                if (methodName.equals(method1))
+                                    presenceMethod1 = true;
+                                else if (methodName.equals(method2))
+                                    presenceMethod2 = true;
+
+                                if (!methodsUsed.contains(methodName))
+                                    methodsUsed.add(methodName);
+                                if (method.charAt(0) == '+')
+                                    coordinates += "(" + i + "," + methodsUsed.indexOf(methodName) + ") [U]\n";
+                                else
+                                    coordinates += "(" + i + "," + methodsUsed.indexOf(methodName) + ") [NU]\n";
+                            }
+
+                            if (presenceMethod1 && presenceMethod2)
+                                nbtuple++;
+
+                            if (flag)
+                                i++;
+                        }
+
+                        System.out.println(project);
+                        System.out.println("    "+obj);
+                        System.out.println("        nb tuples : " + nbtuple);
+                        System.out.println("        nb class : " + nbclass);
+                        System.out.println("        ratio : " + round(nbtuple/(double)nbclass, 2) * 100);
                         for (int j = 0; j < methodsUsed.size(); j++) {
-                            label+=methodsUsed.get(j);
+                            label+= methodsUsed.get(j);
                             if (j+1<methodsUsed.size())
                                 label+=",";
                         }
 
                         end = "};\n" +
-                                "\\addlegendentry{Used}\n" +
-                                "\\addlegendentry{Not used}\n" +
+//                                "\\addlegendentry{Used}\n" +
+//                                "\\addlegendentry{Not used}\n" +
                                 "\\end{axis}\n" +
                                 "\\end{tikzpicture}";
 
@@ -209,7 +277,7 @@ public class Analyse {
 
         if (_stack){
 
-            AbstractList<String> colorList = new ArrayList<>(Arrays.asList("black", "blue", "brown", "cyan", "darkgray", "gray", "green", "lightgray", "lime", "magenta", "olive", "orange", "pink", "purple", "red", "teal", "violet", "yellow"));
+            AbstractList<String> colorList = new ArrayList<>(Arrays.asList("BurntOrange", "TealBlue", "Brown", "Dandelion", "brown", "cyan", "darkgray", "gray", "teal", "lime", "magenta", "olive", "orange", "pink", "purple", "violet", "yellow", "Apricot", "Bittersweet", "BrickRed", "Red", "Tan", "Sepia", "Goldenrod", "GreenYellow", "YellowGreen", "RubineRed", "Thistle", "Rhodamine", "DarkOrchid", "Mulberry", "RoyalBlue", "PineGreen", "RawSienna", "Mahogany", "Salmon", "YellowOrange"));
             AbstractList<String> projectsPresent = new ArrayList<>();
             String label = "";
             for (String object : mapAllObj.keySet()){
@@ -224,21 +292,31 @@ public class Analyse {
             }
 
             for (String object : mapAllObj.keySet()){
+                System.out.println(object);
+                System.out.println(mapAllObj.get(object));
+                System.out.println();
                 FileWriter fileWriter = new FileWriter(object+"_stack_graph.tex");
                 PrintWriter printWriter = new PrintWriter(fileWriter);
+                AbstractList<String> methodsUsed = new ArrayList<>();
+                String methodName;
                 int nbMethods = 0, color = 0;
                 String begin, legend, end, plot = "";
                 begin = "\\begin{tikzpicture}\n" +
                         "\\begin{axis}[ybar stacked, axis x line=bottom, axis y line=left, " +
                         "enlarge x limits=true, enlarge y limits=true, grid=minor, xlabel={Projects}, " +
-                        "ylabel={usage \\%},legend columns=2, legend pos=outer north east, xtick=data, xticklabels={" +
+                        "ylabel={Usage \\%},legend columns=2, legend pos=outer north east, xtick=data, xticklabels={" +
                         label.substring(0, label.length() - 1) +
                         "}, title={"+object+"}]\n";
                 legend = "\\legend{";
                 for (String method : mapAllObj.get(object).keySet()){
+
                     legend += method;
                     if (nbMethods+1 < mapAllObj.get(object).keySet().size())
-                        legend += ",";
+                        legend += ", ";
+                    methodName = method.charAt(0) == '+' ? method.substring(1): method ;
+                    if (!methodsUsed.contains(methodName))
+                        methodsUsed.add(methodName);
+
                     plot += "\\addplot[fill, color=" + colorList.get(color%colorList.size()) +"] coordinates\n    { ";
                     for (String project : projectsPresent){
                         int sumMethods = 0;
@@ -252,8 +330,8 @@ public class Analyse {
                                 "("+projectsPresent.indexOf(project)+","+ round( mapAllObj.get(object).get(method).get(project) /(double) sumMethods * 100,2)+") " ;
                     }
                     plot += "};\n";
-                    nbMethods ++;
                     color++;
+                    nbMethods ++;
                 }
 
                 end = "};\n" +

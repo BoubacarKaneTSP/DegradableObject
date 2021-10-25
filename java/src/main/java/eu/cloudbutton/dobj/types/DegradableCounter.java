@@ -12,7 +12,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            AtomicInteger l = new AtomicInteger();
+            AtomicInteger l = new AtomicInteger(0);
             count.put(Thread.currentThread(), l);
             return l;
         });

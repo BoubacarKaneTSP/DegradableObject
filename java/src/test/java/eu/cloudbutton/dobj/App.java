@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.types.*;
 import nl.peterbloem.powerlaws.Discrete;
-import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -10,17 +9,16 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class App {
 
@@ -42,10 +40,10 @@ public class App {
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
 
-    @Option(name = "-time", usage = "How long will the test last (seconds)")
+    @Option(name = "-time", usage = "test time (seconds)")
     private int time = 300;
 
-    @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
+    @Option(name = "-wTime", usage = "warming time (seconds)")
     private int wTime = 0;
 
     private static AtomicBoolean flag;
@@ -53,28 +51,30 @@ public class App {
     private static Map<String, AbstractCounter> nbFollower;
     private static Map<String, Timeline> timeline;
 
-    private static Map<Thread, Integer> nbAdd;
-    private static Map<Thread, Integer> nbFollow;
-    private static Map<Thread, Integer> nbUnfollow;
-    private static Map<Thread, Integer> nbTweet;
-    private static Map<Thread, Integer> nbRead;
+    private static DegradableCounter nbAdd;
+    private static DegradableCounter nbFollow;
+    private static DegradableCounter nbUnfollow;
+    private static DegradableCounter nbTweet;
+    private static DegradableCounter nbRead;
 
-    public static void main(String[] args) throws InterruptedException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    private static AtomicLong timeAdd;
+    private static AtomicLong timeFollow;
+    private static AtomicLong timeUnfollow;
+    private static AtomicLong timeTweet;
+    private static AtomicLong timeRead;
+
+    private static AtomicLong timeTotal;
+
+    public static void main(String[] args) throws InterruptedException {
         new App().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public void doMain(String[] args) throws InterruptedException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{
-            // parse the arguments.
             parser.parseArgument(args);
 
-            // you can parse additional arguments if you want.
-            // parser.parseArgument("more","args");
-
-            // after parsing arguments, you should check
-            // if enough arguments are given.
             if (args.length < 1)
                 throw new CmdLineException(parser, "No argument is given");
 
@@ -92,9 +92,6 @@ public class App {
             }
 
         } catch (CmdLineException e) {
-            // if there's a problem in the command line,
-            // you'll get this exception. this will report
-            // an error message.
             System.err.println(e.getMessage());
             System.err.println("java SampleMain [options...] arguments...");
             // print the list of available options
@@ -113,7 +110,7 @@ public class App {
         String objectCounter = "create" + typeCounter;
 
         for (int i = 1; i <= nbThreads;) {
-            for (int a = 0; a < nbTest; a++) {
+            for (int a = 1; a <= nbTest; a++) {
                 System.out.println("test numero "+ a +" pour " + i + " thread(s)");
                 java.util.List<Callable<Void>> callables = new ArrayList<>();
                 ExecutorService executor = Executors.newFixedThreadPool(i);
@@ -122,13 +119,21 @@ public class App {
                 nbFollower = new ConcurrentHashMap<>();
                 timeline = new ConcurrentHashMap<>();
 
-                nbAdd = new ConcurrentHashMap<>();
-                nbFollow = new ConcurrentHashMap<>();
-                nbUnfollow = new ConcurrentHashMap<>();
-                nbTweet = new ConcurrentHashMap<>();
-                nbRead = new ConcurrentHashMap<>();
+                nbAdd = new DegradableCounter();
+                nbFollow = new DegradableCounter();
+                nbUnfollow = new DegradableCounter();
+                nbTweet = new DegradableCounter();
+                nbRead = new DegradableCounter();
 
-                CountDownLatch latch = new CountDownLatch(i);
+                timeAdd = new AtomicLong(0);
+                timeFollow = new AtomicLong(0);
+                timeUnfollow = new AtomicLong(0);
+                timeTweet = new AtomicLong(0);
+                timeRead = new AtomicLong(0);
+
+                timeTotal = new AtomicLong(0);
+
+                CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
 
                 for (int j = 0; j < i; j++) {
                     RetwisApp retwisApp = new RetwisApp(
@@ -158,36 +163,18 @@ public class App {
                 }
                 System.out.println("done computing");
 
-                int totalAdd = 0, totalFollow = 0, totalUnfollow = 0, totalTweet = 0, totalRead = 0;
+                double nbtotalOP = nbAdd.read() + nbFollow.read() + nbUnfollow.read() + nbTweet.read() + nbRead.read();
 
-                for(int n : nbAdd.values())
-                    totalAdd += n;
-
-                for(int n : nbFollow.values())
-                    totalFollow += n;
-
-                for(int n : nbUnfollow.values())
-                    totalUnfollow += n;
-
-                for(int n : nbTweet.values())
-                    totalTweet += n;
-
-                for(int n : nbRead.values())
-                    totalRead += n;
-
-
-
-              /*  System.out.println("nb add : "+ totalAdd);
-                System.out.println("nb Follow : "+ totalFollow);
-                System.out.println("nb Unfollow : "+ totalUnfollow);
-                System.out.println("nb Tweet : "+ totalTweet);
-                System.out.println("nb Read : "+ totalRead);*/
-
-                double nbtotalOP = totalAdd + totalFollow + totalUnfollow + totalTweet + totalRead;
-
+                System.out.println((double)(timeAdd.get()+timeFollow.get()+timeUnfollow.get()+timeTweet.get()+timeRead.get())/1_000_000_000);
+//                System.out.println((double) timeTotal.get()/1_000_000_000);
                 System.out.println(i +" "+ time/nbtotalOP);
+                System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
+                System.out.println("    -time/follow : " + ((double)timeFollow.get()/1_000_000_000)/(double)nbFollow.read());
+                System.out.println("    -time/unfollow : " + ((double)timeUnfollow.get()/1_000_000_000)/(double)nbUnfollow.read());
+                System.out.println("    -time/tweet : " + ((double)timeTweet.get()/1_000_000_000)/(double)nbTweet.read());
+                System.out.println("    -time/read : " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
 
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(5);
                 executor.shutdown();
             }
 
@@ -214,8 +201,9 @@ public class App {
         int unfollow = 0;
         int tweet = 0;
         int read = 0;
+        boolean flagWarmUp = false;
 
-        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory) {
             this.random = ThreadLocalRandom.current();
             this.objectSet = objectSet;
             this.objectList = objectList;
@@ -228,9 +216,13 @@ public class App {
         @Override
         public Void call(){
 
+            int val;
+            char type;
+            long startTime, endTime;
+
             try{
 
-                fill_database();
+//                fill_database();
 
                 latch.countDown();
 
@@ -239,17 +231,85 @@ public class App {
 
                 //warm up
                 while (flag.get()){
-                    compute();
+                    val = random.nextInt(100);
+
+                    if(val < ratios[0]){ // add
+                        type = 'a';
+                    }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){ //follow or unfollow
+                        if (val%2 == 0){ //follow
+                            type = 'f';
+                        }else{ //unfollow
+                            type = 'u';
+                        }
+                    }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){ //tweet
+                        type = 't';
+                    }else{ //read
+                        type = 'r';
+                    }
+
+                    compute(type);
                 }
 
+                flagWarmUp = true;
+
                 while (!flag.get()){
-                    compute();
+                    val = random.nextInt(100);
+
+                    if(val < ratios[0]){ // add
+                        type = 'a';
+                    }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){ //follow or unfollow
+                        if (val%2 == 0){ //follow
+                            type = 'f';
+                        }else{ //unfollow
+                            type = 'u';
+                        }
+                    }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){ //tweet
+                        type = 't';
+                    }else{ //read
+                        type = 'r';
+                    }
+
+//                    type = 'a';
+
+                    startTime = System.nanoTime();
+//                    dummyFunction();
+                    compute(type);
+                    endTime = System.nanoTime();
+
+                    switch (type){
+                        case 'a':
+                            add++;
+                            timeAdd.addAndGet(endTime-startTime);
+                            break;
+                        case 'f':
+                            follow++;
+                            timeFollow.addAndGet(endTime-startTime);
+                            break;
+                        case 'u':
+                            unfollow++;
+                            timeUnfollow.addAndGet(endTime-startTime);
+                            break;
+                        case 't':
+                            tweet++;
+                            timeTweet.addAndGet(endTime-startTime);
+                            break;
+                        case 'r':
+                            read++;
+                            timeRead.addAndGet(endTime-startTime);
+                            break;
+                    }
                 }
+
+                nbAdd.increment(add);
 
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        public void dummyFunction() throws InterruptedException {
+            TimeUnit.MICROSECONDS.sleep(10000);
         }
 
         public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -283,55 +343,44 @@ public class App {
             }
         }
 
-        public void compute() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        public void compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-            int n = random.nextInt(ITEM_PER_THREAD);
-            int val = random.nextInt(101);
+            int n = random.nextInt(ITEM_PER_THREAD);;
             String userA;
             String userB;
 
-            if(val < ratios[0]){
-                //add
-                addUser("user_"+Thread.currentThread().getName()+"_"+n);
-                add++;
-            }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){
-                //follow or unfollow
-                userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                n = random.nextInt(follower.keySet().size());
-
-                userB = (String) follower.keySet().toArray()[n];
-
-                if (val%2 == 0){
+            switch (type){
+                case 'a':
+                    addUser("user_"+Thread.currentThread().getName()+"_"+n);
+                break;
+                case 'f':
+                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    n = random.nextInt(follower.keySet().size());
+                    userB = (String) follower.keySet().toArray()[n];
                     follow(userA, userB);
-                    follow++;
-//                    System.out.println(follower.get(userB).read());
-                }else{
+                break;
+                case 'u':
+                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    n = random.nextInt(follower.keySet().size());
+                    userB = (String) follower.keySet().toArray()[n];
                     unfollow(userA, userB);
-                    unfollow++;
-                }
-            }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){
-                //tweet
-                userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                tweet(userA, "msg from " + userA);
-                tweet++;
-            }else{
-                //read
-                userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                showTimeline(userA);
-                read++;
+                break;
+                case 't':
+                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    tweet(userA, "msg from " + userA);
+                break;
+                case 'r':
+                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    showTimeline(userA);
+                break;
             }
-
-            nbAdd.put(Thread.currentThread(), add);
-            nbFollow.put(Thread.currentThread(), follow);
-            nbUnfollow.put(Thread.currentThread(), unfollow);
-            nbTweet.put(Thread.currentThread(), tweet);
-            nbRead.put(Thread.currentThread(), read);
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
 
             if(!follower.keySet().contains(user)) {
+//                System.out.println(objectCounter + " " + objectList + " " + objectSet);
                 follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
                 nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
                 timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
@@ -389,6 +438,7 @@ public class App {
         @Override
         public Void call() throws Exception {
             try {
+                latch.countDown();
                 latch.await();
                 System.out.println("warm up");
                 TimeUnit.SECONDS.sleep(wTime);
@@ -396,7 +446,6 @@ public class App {
                 System.out.println("computing");
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
-                System.out.println("done");
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
