@@ -29,7 +29,7 @@ public class LinkedList <T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public boolean add(T data){
 
-        this.head = new AtomicReference<>(new Node<T>(data, head));
+        this.head = new AtomicReference<>(new Node<>(data, head));
         return true;
     }
 

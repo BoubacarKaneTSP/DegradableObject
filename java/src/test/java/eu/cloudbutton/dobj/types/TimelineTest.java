@@ -3,9 +3,8 @@ package eu.cloudbutton.dobj.types;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.*;
 import java.util.AbstractList;
-import java.util.AbstractQueue;
-import java.util.ArrayList;
 import java.util.concurrent.*;
 
 import static org.testng.Assert.*;
@@ -21,19 +20,21 @@ public class TimelineTest {
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-        doAppend(factory.createList());
-        doAppend(factory.createDegradableList());
-        doAppend(factory.createListSnapshot());
-        doAppend(factory.createDegradableLinkedList());
-        doAppend(factory.createLinkedListSnapshot());
-        doAppend(factory.createLinkedList());
-        doAppend(factory.createSecondDegradableList());
-        doAppend(factory.createThirdDegradableList());
+//        doAppend(factory.createList());
+//        doAppend(factory.createDegradableList());
+//        doAppend(factory.createListSnapshot());
+//        doAppend(factory.createDegradableLinkedList());
+//        doAppend(factory.createLinkedListSnapshot());
+//        doAppend(factory.createLinkedList());
+//        doAppend(factory.createSecondDegradableList());
+//        doAppend(factory.createThirdDegradableList());
+        doAppend(factory.createConcurrentLinkedDeque());
+        doAppend(factory.createTimelineQueue());
     }
 
-    private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
+    private static void doAppend(AbstractCollection list) throws ExecutionException, InterruptedException {
 
-        Timeline timeline = new Timeline(list, new Counter());
+        Timeline timeline = new Timeline(list, 50);
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
         AbstractList<Future<Void>> futures = new ArrayList<>();
@@ -44,15 +45,18 @@ public class TimelineTest {
             return null;
         };
 
-        timeline.add(4);
-        timeline.add(4);
-        timeline.add(4);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             futures.add(executor.submit(callable));
         }
 
         for (Future<Void> future :futures){
             future.get();
         }
+
+        timeline.add(4);
+        timeline.add(4);
+        timeline.add(4);
+
+        System.out.println(timeline.read());
     }
 }

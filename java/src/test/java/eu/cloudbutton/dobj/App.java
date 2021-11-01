@@ -62,6 +62,7 @@ public class App {
     private static AtomicLong timeUnfollow;
     private static AtomicLong timeTweet;
     private static AtomicLong timeRead;
+    private static AtomicLong timeT;
 
     private static AtomicLong timeTotal;
 
@@ -165,8 +166,8 @@ public class App {
 
                 double nbtotalOP = nbAdd.read() + nbFollow.read() + nbUnfollow.read() + nbTweet.read() + nbRead.read();
 
-                System.out.println((double)(timeAdd.get()+timeFollow.get()+timeUnfollow.get()+timeTweet.get()+timeRead.get())/1_000_000_000);
-//                System.out.println((double) timeTotal.get()/1_000_000_000);
+//                System.out.println((double)(timeAdd.get()+timeFollow.get()+timeUnfollow.get()+timeTweet.get()+timeRead.get())/1_000_000_000 / i);
+//                System.out.println((double) timeTotal.get()/1_000_000_000 / nbtotalOP);
                 System.out.println(i +" "+ time/nbtotalOP);
                 System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
                 System.out.println("    -time/follow : " + ((double)timeFollow.get()/1_000_000_000)/(double)nbFollow.read());
@@ -201,7 +202,6 @@ public class App {
         int unfollow = 0;
         int tweet = 0;
         int read = 0;
-        boolean flagWarmUp = false;
 
         public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory) {
             this.random = ThreadLocalRandom.current();
@@ -250,9 +250,8 @@ public class App {
                     compute(type);
                 }
 
-                flagWarmUp = true;
-
                 while (!flag.get()){
+
                     val = random.nextInt(100);
 
                     if(val < ratios[0]){ // add
@@ -269,10 +268,7 @@ public class App {
                         type = 'r';
                     }
 
-//                    type = 'a';
-
                     startTime = System.nanoTime();
-//                    dummyFunction();
                     compute(type);
                     endTime = System.nanoTime();
 
@@ -383,12 +379,11 @@ public class App {
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
 
-            if(!follower.keySet().contains(user)) {
-//                System.out.println(objectCounter + " " + objectList + " " + objectSet);
+            if(!follower.containsKey(user)) {
                 follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
                 nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
-                                                (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
+                timeline.put(user, new Timeline((AbstractCollection) Factory.class.getDeclaredMethod(objectList).invoke(factory),
+                                                50)
                                                 );
             }
         }

@@ -14,17 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Benchmark {
 
     private static ConcurrentLinkedQueue<Long> nbOperations = new ConcurrentLinkedQueue<>();
-    private static ConcurrentLinkedQueue<Integer> sizes = new ConcurrentLinkedQueue<>();
-    private static int nbAppend = 0;
-    private static int nbRemove = 0;
-
+    public static AtomicLong timeAdd;
+    public static AtomicLong timeRemove;
+    public static AtomicLong timeRead;
+    public static DegradableCounter nbAdd;
+    public static DegradableCounter nbRemove;
+    public static DegradableCounter nbRead;
     private static AtomicBoolean flag;
+
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
     @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
@@ -81,10 +85,23 @@ public class Benchmark {
             String constructor = "create" + type;
 
             for (int i = 1; i <= nbThreads; ) {
-//                System.out.println("Nb threads = " + i);
                 for (int a = 0; a < nbTest; a++) {
+
+                    nbAdd = new DegradableCounter();
+                    nbRemove = new DegradableCounter();
+                    nbRead = new DegradableCounter();
+
+                    timeAdd = new AtomicLong(0);
+                    timeRemove = new AtomicLong(0);
+                    timeRead = new AtomicLong(0);
+
                     Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-                    Class clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
+                    Class clazz;
+                    try{
+                        clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
+                    }catch (ClassNotFoundException e){
+                        clazz = Class.forName("java.util.concurrent."+type);
+                    }
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
@@ -132,57 +149,21 @@ public class Benchmark {
 
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
-/*
-                    if (type.equals("List") ){
-                        eu.cloudbutton.dobj.types.List list = (eu.cloudbutton.dobj.types.List) object;
-                        sizes.add(list.read().size());
-                        System.out.println("Size of List : " + list.read().size());
-                    }else if (type.equals("DegradableList") ){
-                        eu.cloudbutton.dobj.types.DegradableList list = (eu.cloudbutton.dobj.types.DegradableList) object;
-                        sizes.add(list.read().size());
-                        System.out.println("Size of DegradableList : " + list.read().size());
-                    }else if (type.equals("DegradableLinkedList") ){
-                        eu.cloudbutton.dobj.types.DegradableLinkedList list = (eu.cloudbutton.dobj.types.DegradableLinkedList) object;
-                        sizes.add(list.read().size());
-                        System.out.println("Size of DegradableLinkedList : " + list.read().size());
-                    }else if (type.equals("LinkedList") ){
-                        eu.cloudbutton.dobj.types.LinkedList list = (eu.cloudbutton.dobj.types.LinkedList) object;
-                        sizes.add(list.read().size());
-                        System.out.println("Size of LinkedList : " + list.read().size());
-                    }else if (type.equals("Counter") ){
-                        Counter counter = (Counter) object;
-                        sizes.add(counter.read());
-                        System.out.println("Size of Counter : " + counter.read());
-                    }else if (type.equals("DegradableCounter") ){
-                        DegradableCounter counter = (DegradableCounter) object;
-                        sizes.add(counter.read());
-                        System.out.println("Size of DegradableCounter : " + counter.read());
-                    }else if (type.equals("Set") ){
-                        eu.cloudbutton.dobj.types.Set set = (eu.cloudbutton.dobj.types.Set) object;
-                        System.out.println("Size of Set : " + set.read().size());
-                        sizes.add(set.read().size());
-                    }else if (type.equals("DegradableSet") ){
-                        eu.cloudbutton.dobj.types.DegradableSet set = (eu.cloudbutton.dobj.types.DegradableSet) object;
-                        System.out.println("Size of DegradableSet : " + set.read().size());
-                        sizes.add(set.read().size());
-                    }*/
                 }
-                Long sum = 0L;
-                int sum2 = 0;
-                for (Long val : nbOperations) {
-                    sum += val;
-                }
+                int sum;
+                long timeTotal;
+                timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
-                for (int val : sizes)
-                    sum2 += val;
-
+                sum = nbAdd.read() + nbRemove.read() + nbRead.read();
                 double avg_op = sum / i;
-                System.out.println(i + " " + (time) / avg_op); // printing the avg time per op for i thread(s)
-//                System.out.println("Avg size : " + sum2/ sizes.size());
-                nbOperations = new ConcurrentLinkedQueue<>();
-//                sizes = new ConcurrentLinkedQueue<>();
+                System.out.println(i + " " + (timeTotal/1_000_000_000) / avg_op); // printing the avg time per op for i thread(s)
+                System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
+                System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.read());
+                System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
 
-                i = 2 * i;
+                nbOperations = new ConcurrentLinkedQueue<>();
+
+                i *= 2;
 
                 /*if(i==2)
                     i = nbThreads;
@@ -230,11 +211,15 @@ public class Benchmark {
             return new ListTester((AbstractQueue) object, ratios, latch, nbOps);
         }
 
+        public DequeTester createAbstractCollectionTester() {
+            return new DequeTester((Deque) object, ratios, latch, nbOps);
+        }
+
     }
 
     public static abstract class Tester<T> implements Callable<Void> {
 
-        protected static final int ITEM_PER_THREAD = 1;
+        protected static final int ITEM_PER_THREAD = 1000;
 
         protected final ThreadLocalRandom random;
         protected final T object;
@@ -254,32 +239,76 @@ public class Benchmark {
         public Void call() {
 
             latch.countDown();
-            long i = 0L;
+            long i = 0L, startTime, endTime;
+
+            int n, add = 0, remove = 0, read = 0;
+            char type;
 
             try{
                 latch.await();
-                System.out.println("debut de computing");
 
                 // warm up
                 while (flag.get()) {
-                    test();
+
+                    n = this.random.nextInt(101);
+
+                    if (n <= ratios[0]){
+                        if (n%2 == 0)
+                            type = 'a';
+                        else
+                            type = 'r';
+                    }else {
+                        type = 'c';
+                    }
+
+                    test(type);
                 }
 
                 // compute
                 while (!flag.get()) {
-                    test();
-                    i++;
+                    n = this.random.nextInt(101);
+
+                    if (n <= ratios[0]){
+//                        if (n%2 == 0)
+                            type = 'a';/*
+                        else
+                            type = 'r';*/
+                    }else {
+                        type = 'c';
+                    }
+
+                    startTime = System.nanoTime();
+                    test(type);
+                    endTime = System.nanoTime();
+
+                    switch (type){
+                        case 'a':
+                            add++;
+                            timeAdd.addAndGet(endTime-startTime);
+                            break;/*
+                        case 'r':
+                            remove++;
+                            timeRemove.addAndGet(endTime-startTime);
+                            break;*/
+                        case 'c':
+                            read++;
+                            timeRead.addAndGet(endTime-startTime);
+                            break;
+                    }
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            nbOperations.add(i);
+            nbAdd.increment(add);
+            nbRemove.increment(remove);
+            nbRead.increment(read);
+
             return null;
         }
 
-        protected abstract void test();
+        protected abstract void test(char type);
     }
 
     public static class NoopTester extends Tester<Noop> {
@@ -289,17 +318,19 @@ public class Benchmark {
         }
 
         @Override
-        protected void test(){
+        protected void test(char type){
             // no-op
             int n = random.nextInt(ITEM_PER_THREAD);
-            if (n%101 <= ratios[0]) {
-                if (n%101 <= 50) {
+            switch (type){
+                case 'a':
                     n++;
-                } else {
+                    break;
+                case 'r':
                     n--;
-                }
-            } else {
-                n+=2;
+                    break;
+                case 'c':
+                    n+=2;
+                    break;
             }
         }
     }
@@ -311,11 +342,16 @@ public class Benchmark {
         }
 
         @Override
-        protected void test() {
-            if (random.nextInt(101) <= ratios[0]) {
-                object.increment();
-            } else {
-                object.read();
+        protected void test(char type) {
+
+            switch (type){
+                case 'a':
+                case 'r':
+                    object.increment();
+                    break;
+                case 'c':
+                    object.read();
+                    break;
             }
         }
     }
@@ -327,17 +363,20 @@ public class Benchmark {
         }
 
         @Override
-        protected void test() {
+        protected void test(char type) {
+
             int n = random.nextInt(ITEM_PER_THREAD);
             long iid = Thread.currentThread().getId()*1000000000L+n;
-            if (n%101 <= ratios[0]) {
-                if (n%101 <= 50) {
+            switch (type){
+                case 'a':
                     object.add(iid);
-                }else{
+                    break;
+                case 'r':
                     object.remove(iid);
-                }
-            } else {
-                object.contains(iid);
+                    break;
+                case 'c':
+                    object.contains(iid);
+                    break;
             }
         }
     }
@@ -349,18 +388,57 @@ public class Benchmark {
         }
 
         @Override
-        protected void test() {
+        protected void test(char type) {
             int n = random.nextInt(ITEM_PER_THREAD);
-            int i = random.nextInt(2);
             long iid = Thread.currentThread().getId()*1000000000L+n;
-            if (n%101 <= ratios[0]) {
-                if (i == 0) {
+
+            switch (type){
+                case 'a':
                     object.offer(iid);
-                }else {
-                    object.poll();
-                }
-            } else {
-                object.contains(iid);
+                    break;
+                case 'r':
+//                    object.poll();
+                    break;
+                case 'c':
+//                    object.contains(iid);
+                    Collection<Long> ret = new ArrayList<>();
+
+                    Iterator<Long> it = object.iterator();
+                    int i = 0;
+
+                    while (it.hasNext() && i < 50) {
+                        ret.add(it.next());
+                        i++;
+                    }
+                    break;
+            }
+        }
+    }
+
+    public static class DequeTester extends Tester<Deque> {
+
+        public DequeTester(Deque list, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(list, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test(char type) {
+            int n = random.nextInt(ITEM_PER_THREAD);
+            long iid = Thread.currentThread().getId()*1000000000L+n;
+
+            switch (type) {
+                case 'a':
+                    object.addFirst(iid);
+                    break;
+                case 'r':
+                    try{
+                        object.removeLast();
+                    } catch (NoSuchElementException e) {
+                    }
+                    break;
+                case 'c':
+                    object.toArray();
+                    break;
             }
         }
     }

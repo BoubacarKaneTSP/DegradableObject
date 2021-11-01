@@ -7,6 +7,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.AbstractList;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.*;
 
 public class ListTest {
@@ -20,17 +21,18 @@ public class ListTest {
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-        doAppend(factory.createList());
+       /* doAppend(factory.createList());
         doAppend(factory.createDegradableList());
         doAppend(factory.createListSnapshot());
         doAppend(factory.createSecondDegradableList());
         doAppend(factory.createThirdDegradableList());
         doAppend(factory.createDegradableLinkedList());
         doAppend(factory.createLinkedList());
-        doAppend(factory.createLinkedListSnapshot());
+        doAppend(factory.createLinkedListSnapshot());*/
+        doAppend(factory.createAddOnlyQueue());
     }
 
-    private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
+    private static void doAppend(AbstractQueue<Integer> list) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         AbstractList<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
@@ -48,12 +50,23 @@ public class ListTest {
             future.get();
         }
 
-        AbstractList<Integer> result = new ArrayList<>();
-        result.add(1);
-        result.add(2);
-        result.add(3);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+
+        Iterator<Integer> it = list.iterator();
+        int i = 0;
+
+        while (it.hasNext()) {
+            System.out.println(it.next());
+            i++;
+        }
+
+        System.out.println("size : " + i);
+        /*
         assertTrue(list.contains(1), "Failed adding elements in the list");
         assertTrue(list.contains(2), "Failed adding elements in the list");
         assertTrue(list.contains(3), "Failed adding elements in the list");
+        */
     }
 }
