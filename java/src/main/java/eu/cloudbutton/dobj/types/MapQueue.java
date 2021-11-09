@@ -1,25 +1,23 @@
 package eu.cloudbutton.dobj.types;
 
-import java.util.AbstractCollection;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TimelineQueue<T> extends AbstractCollection<T> implements Deque<T> {
+public class MapQueue<T> extends AbstractQueue<T> implements Deque<T> {
 
     private AtomicInteger head, tail;
-    private ConcurrentHashMap<Integer, T> map;
+    private ConcurrentSkipListMap<Integer, T> map;
 
-    public TimelineQueue() {
+    public MapQueue() {
         this.head = new AtomicInteger(0);
         this.tail = new AtomicInteger(0);
-        this.map = new ConcurrentHashMap<>();
+        this.map = new ConcurrentSkipListMap<>(Comparator.reverseOrder());
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return map.values().iterator();
     }
 
     @Override
@@ -114,12 +112,13 @@ public class TimelineQueue<T> extends AbstractCollection<T> implements Deque<T> 
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean offer(T t) {
-        return false;
+        addFirst(t);
+        return true;
     }
 
     @Override
@@ -129,7 +128,7 @@ public class TimelineQueue<T> extends AbstractCollection<T> implements Deque<T> 
 
     @Override
     public T poll() {
-        return null;
+        return removeLast();
     }
 
     @Override

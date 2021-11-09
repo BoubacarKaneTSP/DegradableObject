@@ -30,7 +30,7 @@ public class Factory {
     public SecondDegradableList createSecondDegradableList() { return new SecondDegradableList(); }
     public ThirdDegradableList createThirdDegradableList() { return new ThirdDegradableList(); }
 
-    public TimelineQueue createTimelineQueue() { return  new TimelineQueue(); }
+    public MapQueue createMapQueue() { return  new MapQueue(); }
     public ConcurrentLinkedDeque createConcurrentLinkedDeque() { return  new ConcurrentLinkedDeque(); }
     public DegradableQueue createDegradableQueue() {return new DegradableQueue(); }
     public AddOnlyQueue createAddOnlyQueue() { return new AddOnlyQueue(); }

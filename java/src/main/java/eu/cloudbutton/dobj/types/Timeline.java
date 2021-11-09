@@ -1,26 +1,37 @@
 package eu.cloudbutton.dobj.types;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Timeline<T> {
 
-    private final AbstractCollection<T> timeline;
-    private final Integer size;
+    private final AbstractQueue<T> timeline;
+    private final AbstractCounter size;
+    private AtomicBoolean flag = new AtomicBoolean();
 
-    public Timeline(AbstractCollection<T> timeline, Integer size) {
+    public Timeline(AbstractQueue<T> timeline, AbstractCounter size) {
         this.timeline = timeline;
         this.size = size;
-
+        this.flag.set(true);
     }
 
     public void add(T elt){
-        timeline.add(elt);
+        if (flag.get()){
+            size.increment();
+            if (size.read() >= 50) {
+                flag.set(false);
+                System.out.println("on passe les 50 messages");
+            }
+            timeline.offer(elt);
+        }else{
+            timeline.offer(elt);
+            timeline.poll();
+        }
    }
 
-   public Collection<T> read(){
+   public AbstractQueue<T> read(){
 
-       Collection<T> ret = new ArrayList<>();
+       /*Collection<T> ret = new ArrayList<>();
 
        Iterator<T> it = timeline.iterator();
        int i = 0;
@@ -28,7 +39,11 @@ public class Timeline<T> {
        while (it.hasNext() && i < 50) {
            ret.add(it.next());
            i++;
-       }
-       return ret;
+       }*/
+       return timeline;
+   }
+
+   public AbstractQueue queue(){
+        return timeline;
    }
 }

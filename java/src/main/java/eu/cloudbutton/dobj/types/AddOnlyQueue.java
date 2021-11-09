@@ -59,7 +59,6 @@ public class AddOnlyQueue<E> extends AbstractQueue<E> {
         }
     }
 
-
     private transient volatile Node<E> head;
 
     private transient volatile Node<E> tail;
@@ -99,7 +98,6 @@ public class AddOnlyQueue<E> extends AbstractQueue<E> {
         public E next() {
             final Node<E> pred = nextNode;
             if (pred == null) throw new NoSuchElementException();
-            // assert nextItem != null;
             E item;
 
             for (Node<E> p = pred.pred; ;) {
@@ -126,10 +124,10 @@ public class AddOnlyQueue<E> extends AbstractQueue<E> {
     @Override
     public int size() {
         int ret = 0;
-        for (Node<E> p = tail;;) {
+        for (Node<E> p = head;;) {
             if (p.item != null) ret++;
-            if (p.next==null) break;
-            p = p.next;
+            if (p.pred==null) break;
+            p = p.pred;
         }
         return ret;
     }
@@ -161,36 +159,24 @@ public class AddOnlyQueue<E> extends AbstractQueue<E> {
 
     @Override
     public E poll() {
-        /*
-        restartFromHead:
-        for (;;) {
-            for (Node<E> h = head, p = h, q;;) {
-                E item = p.item;
 
-                if (item != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-//					if (p != h) // hop two nodes at a time
-//						updateHead(h, ((q = p.next) != null) ? q : p);
-                    if (p != h && p.next != null)
-                        head.lazySetNext(p.next);
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-                else
-                    p = q;
+        for (Node<E> t = tail.next;;t = tail.next){
+
+            if (t == null)
+                return null;
+
+            E deletedItem = t.item;
+
+            if (casTail(t.pred, t)){
+                t.item = null;
+                t.pred = null;
+                return deletedItem;
             }
+        }
+    }
 
-
-
-        }*/
-
-        return null;
+    public E remove(){
+        return poll();
     }
 
     @Override

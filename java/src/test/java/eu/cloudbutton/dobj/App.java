@@ -5,8 +5,12 @@ import nl.peterbloem.powerlaws.Discrete;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.AbstractSet;
@@ -46,6 +50,9 @@ public class App {
     @Option(name = "-wTime", usage = "warming time (seconds)")
     private int wTime = 0;
 
+    @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
+    private boolean _s = false;
+
     private static AtomicBoolean flag;
     private static Map<String, AbstractSet<String>> follower;
     private static Map<String, AbstractCounter> nbFollower;
@@ -66,11 +73,11 @@ public class App {
 
     private static AtomicLong timeTotal;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         new App().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException {
+    public void doMain(String[] args) throws InterruptedException, IOException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{
@@ -166,6 +173,37 @@ public class App {
 
                 double nbtotalOP = nbAdd.read() + nbFollow.read() + nbUnfollow.read() + nbTweet.read() + nbRead.read();
 
+                if (_s){
+                    FileWriter fileWriter = new FileWriter("retwis_all_operations.txt", true);
+                    PrintWriter printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ time/nbtotalOP);
+                    printWriter.flush();
+
+                    fileWriter = new FileWriter("retwis_add_operations.txt", true);
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
+                    printWriter.flush();
+
+                    fileWriter = new FileWriter("retwis_follow_operations.txt", true);
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ ((double)timeFollow.get()/1_000_000_000)/(double)nbFollow.read());
+                    printWriter.flush();
+
+                    fileWriter = new FileWriter("retwis_unfollow_operations.txt", true);
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ ((double)timeUnfollow.get()/1_000_000_000)/(double)nbUnfollow.read());
+                    printWriter.flush();
+
+                    fileWriter = new FileWriter("retwis_tweet_operations.txt", true);
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ ((double)timeTweet.get()/1_000_000_000)/(double)nbTweet.read());
+                    printWriter.flush();
+
+                    fileWriter = new FileWriter("retwis_read_operations.txt", true);
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
+                    printWriter.flush();
+                }
 //                System.out.println((double)(timeAdd.get()+timeFollow.get()+timeUnfollow.get()+timeTweet.get()+timeRead.get())/1_000_000_000 / i);
 //                System.out.println((double) timeTotal.get()/1_000_000_000 / nbtotalOP);
                 System.out.println(i +" "+ time/nbtotalOP);
@@ -218,7 +256,7 @@ public class App {
 
             int val;
             char type;
-            long startTime, endTime;
+            long startTime, endTime, tAdd = 0, tFollow = 0, tUnfollow = 0, tTweet = 0, tRead = 0;
 
             try{
 
@@ -275,23 +313,23 @@ public class App {
                     switch (type){
                         case 'a':
                             add++;
-                            timeAdd.addAndGet(endTime-startTime);
+                            tAdd += endTime - startTime;
                             break;
                         case 'f':
                             follow++;
-                            timeFollow.addAndGet(endTime-startTime);
+                            tFollow += endTime - startTime;
                             break;
                         case 'u':
                             unfollow++;
-                            timeUnfollow.addAndGet(endTime-startTime);
+                            tUnfollow += endTime - startTime;
                             break;
                         case 't':
                             tweet++;
-                            timeTweet.addAndGet(endTime-startTime);
+                            tTweet += endTime - startTime;
                             break;
                         case 'r':
                             read++;
-                            timeRead.addAndGet(endTime-startTime);
+                            tRead += endTime - startTime;
                             break;
                     }
                 }
@@ -301,6 +339,12 @@ public class App {
                 nbUnfollow.increment(unfollow);
                 nbTweet.increment(tweet);
                 nbRead.increment(read);
+
+                timeAdd.addAndGet(tAdd);
+                timeFollow.addAndGet(tFollow);
+                timeUnfollow.addAndGet(tUnfollow);
+                timeTweet.addAndGet(tTweet);
+                timeRead.addAndGet(tRead);
 
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -382,8 +426,8 @@ public class App {
             if(!follower.containsKey(user)) {
                 follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
                 nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.put(user, new Timeline((AbstractCollection) Factory.class.getDeclaredMethod(objectList).invoke(factory),
-                                                50)
+                timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
+                                (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
                                                 );
             }
         }
