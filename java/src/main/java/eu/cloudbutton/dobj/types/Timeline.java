@@ -20,7 +20,6 @@ public class Timeline<T> {
             size.increment();
             if (size.read() >= 50) {
                 flag.set(false);
-                System.out.println("on passe les 50 messages");
             }
             timeline.offer(elt);
         }else{
