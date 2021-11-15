@@ -4,6 +4,7 @@ import eu.cloudbutton.dobj.types.*;
 import nl.peterbloem.powerlaws.Discrete;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Localizable;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
@@ -53,25 +54,20 @@ public class App {
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
 
-    private static AtomicBoolean flag;
-    private static Map<String, AbstractSet<String>> follower;
-    private static Map<String, AbstractCounter> nbFollower;
-    private static Map<String, Timeline> timeline;
+    @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
+    private boolean _p = false;
 
-    private static DegradableCounter nbAdd;
-    private static DegradableCounter nbFollow;
-    private static DegradableCounter nbUnfollow;
-    private static DegradableCounter nbTweet;
-    private static DegradableCounter nbRead;
+    private AtomicBoolean flag;
+    private Map<String, AbstractSet<String>> follower;
+    private Map<String, AbstractCounter> nbFollower;
+    private Map<String, Timeline> timeline;
 
-    private static AtomicLong timeAdd;
-    private static AtomicLong timeFollow;
-    private static AtomicLong timeUnfollow;
-    private static AtomicLong timeTweet;
-    private static AtomicLong timeRead;
-    private static AtomicLong timeT;
+    private Map<String, DegradableCounter> nbOperations;
+    private Map<String, AtomicLong> timeOperations;
 
-    private static AtomicLong timeTotal;
+    private String[] listOperations = new String[]{"add", "follow", "unfollow", "tweet", "read"};
+
+    int nbSign = 5;
 
     public static void main(String[] args) throws InterruptedException, IOException {
         new App().doMain(args);
@@ -119,7 +115,6 @@ public class App {
 
         for (int i = 1; i <= nbThreads;) {
             for (int a = 1; a <= nbTest; a++) {
-                System.out.println("test numero "+ a +" pour " + i + " thread(s)");
                 java.util.List<Callable<Void>> callables = new ArrayList<>();
                 ExecutorService executor = Executors.newFixedThreadPool(i);
 
@@ -127,19 +122,13 @@ public class App {
                 nbFollower = new ConcurrentHashMap<>();
                 timeline = new ConcurrentHashMap<>();
 
-                nbAdd = new DegradableCounter();
-                nbFollow = new DegradableCounter();
-                nbUnfollow = new DegradableCounter();
-                nbTweet = new DegradableCounter();
-                nbRead = new DegradableCounter();
+                nbOperations = new ConcurrentHashMap<>();
+                timeOperations = new ConcurrentHashMap<>();
 
-                timeAdd = new AtomicLong(0);
-                timeFollow = new AtomicLong(0);
-                timeUnfollow = new AtomicLong(0);
-                timeTweet = new AtomicLong(0);
-                timeRead = new AtomicLong(0);
-
-                timeTotal = new AtomicLong(0);
+                for (String op: listOperations){
+                    nbOperations.put(op, new DegradableCounter());
+                    timeOperations.put(op, new AtomicLong(0));
+                }
 
                 CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
 
@@ -169,49 +158,65 @@ public class App {
                     //ignore
                     System.out.println(e);
                 }
-                System.out.println("done computing");
 
-                double nbtotalOP = nbAdd.read() + nbFollow.read() + nbUnfollow.read() + nbTweet.read() + nbRead.read();
+                double nbTotalOperations = 0;
+                long timeTotalOperations = 0L;
+
+                for (String op : listOperations){
+                    nbTotalOperations += nbOperations.get(op).read();
+                    timeTotalOperations += timeOperations.get(op).get();
+                }
 
                 if (_s){
-                    FileWriter fileWriter = new FileWriter("retwis_all_operations.txt", true);
+
+                    if (_p){
+                        System.out.println();
+                        for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                        System.out.print( " Results for ["+i+"] threads ");
+                        for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                        System.out.println();
+                    }
+
+                    FileWriter fileWriter;
+                    if (i == 1)
+                        fileWriter = new FileWriter("retwis_all_operations.txt", false);
+                    else
+                        fileWriter = new FileWriter("retwis_all_operations.txt", true);
+
                     PrintWriter printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ time/nbtotalOP);
+                    printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+
+                    if (_p){
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.print(" Time per operations for all type of operations ");
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.println();
+                        System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+
+                    }
                     printWriter.flush();
 
-                    fileWriter = new FileWriter("retwis_add_operations.txt", true);
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
-                    printWriter.flush();
+                    for (String op: listOperations){
+                        if (i == 1)
+                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                        else
+                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                        printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
 
-                    fileWriter = new FileWriter("retwis_follow_operations.txt", true);
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ ((double)timeFollow.get()/1_000_000_000)/(double)nbFollow.read());
-                    printWriter.flush();
+                        if (_p){
+                            for (int j = 0; j < nbSign; j++) System.out.print("-");
+                            System.out.print(" Time per operations for "+op+" operations ");
+                            for (int j = 0; j < nbSign; j++) System.out.print("-");
+                            System.out.println();
+                            System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                        }
 
-                    fileWriter = new FileWriter("retwis_unfollow_operations.txt", true);
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ ((double)timeUnfollow.get()/1_000_000_000)/(double)nbUnfollow.read());
-                    printWriter.flush();
-
-                    fileWriter = new FileWriter("retwis_tweet_operations.txt", true);
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ ((double)timeTweet.get()/1_000_000_000)/(double)nbTweet.read());
-                    printWriter.flush();
-
-                    fileWriter = new FileWriter("retwis_read_operations.txt", true);
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
-                    printWriter.flush();
+                        printWriter.flush();
+                    }
+                    System.out.println();
+                    printWriter.close();
                 }
-//                System.out.println((double)(timeAdd.get()+timeFollow.get()+timeUnfollow.get()+timeTweet.get()+timeRead.get())/1_000_000_000 / i);
-//                System.out.println((double) timeTotal.get()/1_000_000_000 / nbtotalOP);
-                System.out.println(i +" "+ time/nbtotalOP);
-                System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
-                System.out.println("    -time/follow : " + ((double)timeFollow.get()/1_000_000_000)/(double)nbFollow.read());
-                System.out.println("    -time/unfollow : " + ((double)timeUnfollow.get()/1_000_000_000)/(double)nbUnfollow.read());
-                System.out.println("    -time/tweet : " + ((double)timeTweet.get()/1_000_000_000)/(double)nbTweet.read());
-                System.out.println("    -time/read : " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
 
                 TimeUnit.SECONDS.sleep(5);
                 executor.shutdown();
@@ -225,7 +230,7 @@ public class App {
         System.exit(0);
     }
 
-    public static class RetwisApp implements Callable<Void>{
+    public class RetwisApp implements Callable<Void>{
 
         protected static final int ITEM_PER_THREAD = 100;
         protected final ThreadLocalRandom random;
@@ -235,11 +240,6 @@ public class App {
         private final int[] ratios;
         private final CountDownLatch latch;
         private final Factory factory;
-        int add = 0;
-        int follow = 0;
-        int unfollow = 0;
-        int tweet = 0;
-        int read = 0;
 
         public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory) {
             this.random = ThreadLocalRandom.current();
@@ -254,9 +254,17 @@ public class App {
         @Override
         public Void call(){
 
-            int val;
             char type;
-            long startTime, endTime, tAdd = 0, tFollow = 0, tUnfollow = 0, tTweet = 0, tRead = 0;
+            int val;
+            long startTime, endTime;
+
+            Map<String, Integer> nbLocalOperations = new HashMap<>();
+            Map<String, Long> timeLocalOperations = new HashMap<>();
+
+            for (String op: listOperations){
+                nbLocalOperations.put(op, 0);
+                timeLocalOperations.put(op, 0L);
+            }
 
             try{
 
@@ -310,41 +318,37 @@ public class App {
                     compute(type);
                     endTime = System.nanoTime();
 
+                    long finalEndTime = endTime;
+                    long finalStartTime = startTime;
+
                     switch (type){
                         case 'a':
-                            add++;
-                            tAdd += endTime - startTime;
+                            nbLocalOperations.compute("add", (key, value) -> value + 1);
+                            timeLocalOperations.compute("add", (key, value) -> value + finalEndTime - finalStartTime);
                             break;
                         case 'f':
-                            follow++;
-                            tFollow += endTime - startTime;
+                            nbLocalOperations.compute("follow", (key, value) -> value + 1);
+                            timeLocalOperations.compute("follow", (key, value) -> value + finalEndTime - finalStartTime);
                             break;
                         case 'u':
-                            unfollow++;
-                            tUnfollow += endTime - startTime;
+                            nbLocalOperations.compute("unfollow", (key, value) -> value + 1);
+                            timeLocalOperations.compute("unfollow", (key, value) -> value + finalEndTime - finalStartTime);
                             break;
                         case 't':
-                            tweet++;
-                            tTweet += endTime - startTime;
+                            nbLocalOperations.compute("tweet", (key, value) -> value + 1);
+                            timeLocalOperations.compute("tweet", (key, value) -> value + finalEndTime - finalStartTime);
                             break;
                         case 'r':
-                            read++;
-                            tRead += endTime - startTime;
+                            nbLocalOperations.compute("read", (key, value) -> value + 1);
+                            timeLocalOperations.compute("read", (key, value) -> value + finalEndTime - finalStartTime);
                             break;
                     }
                 }
 
-                nbAdd.increment(add);
-                nbFollow.increment(follow);
-                nbUnfollow.increment(unfollow);
-                nbTweet.increment(tweet);
-                nbRead.increment(read);
-
-                timeAdd.addAndGet(tAdd);
-                timeFollow.addAndGet(tFollow);
-                timeUnfollow.addAndGet(tUnfollow);
-                timeTweet.addAndGet(tTweet);
-                timeRead.addAndGet(tRead);
+                for (String op: listOperations){
+                    nbOperations.get(op).increment(nbLocalOperations.get(op));
+                    timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
+                }
 
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -482,10 +486,15 @@ public class App {
             try {
                 latch.countDown();
                 latch.await();
-                System.out.println("warm up");
+
+                if (_p){
+                    System.out.println("warming up");
+                }
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-                System.out.println("computing");
+                if (_p){
+                    System.out.println();
+                }
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
             } catch (InterruptedException e) {
