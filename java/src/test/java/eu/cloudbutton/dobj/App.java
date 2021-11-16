@@ -441,7 +441,7 @@ public class App {
 
             if(follower.keySet().contains(userA) && follower.keySet().contains(userB)) {
                 follower.get(userB).add(userA);
-                nbFollower.get(userB).increment();
+//                nbFollower.get(userB).increment();
             }
         }
 
@@ -450,7 +450,7 @@ public class App {
 
             if(follower.keySet().contains(userA) && follower.keySet().contains(userB)) {
                 follower.get(userB).remove(userA);
-                nbFollower.get(userB).write(-1);
+//                nbFollower.get(userB).write(-1);
             }
         }
 
