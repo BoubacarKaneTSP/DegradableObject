@@ -427,19 +427,19 @@ public class App {
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
 
-            if(!follower.containsKey(user)) {
-                follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
-                nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
+//            if(!follower.containsKey(user)) {
+                follower.putIfAbsent(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
+                nbFollower.putIfAbsent(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
+                timeline.putIfAbsent(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
                                 (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
                                                 );
-            }
+//            }
         }
 
         public void follow(String userA, String userB){
 //            System.out.println("follow");
 
-            if(follower.keySet().contains(userA) && follower.keySet().contains(userB)) {
+            if(follower.containsKey(userA) && follower.containsKey(userB)) {
                 follower.get(userB).add(userA);
 //                nbFollower.get(userB).increment();
             }
@@ -448,7 +448,7 @@ public class App {
         public void unfollow(String userA, String userB){
 //            System.out.println("unfollow");
 
-            if(follower.keySet().contains(userA) && follower.keySet().contains(userB)) {
+            if(follower.containsKey(userA) && follower.containsKey(userB)) {
                 follower.get(userB).remove(userA);
 //                nbFollower.get(userB).write(-1);
             }
@@ -457,7 +457,7 @@ public class App {
         public void tweet(String user, String msg){
 //            System.out.println("tweet");
 
-            if(follower.keySet().contains(user)) {
+            if(follower.containsKey(user)) {
                 for (String u : follower.get(user)) {
                     timeline.get(u).add(msg);
                 }
@@ -466,7 +466,7 @@ public class App {
 
         public void showTimeline(String user){
 //            System.out.println("Show timeline");
-            if(follower.keySet().contains(user)) {
+            if(follower.containsKey(user)) {
                 timeline.get(user).read();
 //                System.out.println(s);
             }
