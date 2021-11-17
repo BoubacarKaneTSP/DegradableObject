@@ -108,6 +108,10 @@ public class App {
             return;
         }
 
+        if (_p)
+            System.out.println("Launching test from App.java, a clone of Retwis...");
+
+
         Factory factory = new Factory();
         String objectSet = "create" + typeSet;
         String objectList = "create" + typeList;
@@ -167,56 +171,66 @@ public class App {
                     timeTotalOperations += timeOperations.get(op).get();
                 }
 
+                PrintWriter printWriter = null;
+                FileWriter fileWriter = null;
+
+                if (_p){
+                    System.out.println();
+                    for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                    System.out.print( " Results for ["+i+"] threads ");
+                    for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                    System.out.println();
+                }
+
                 if (_s){
 
-                    if (_p){
-                        System.out.println();
-                        for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                        System.out.print( " Results for ["+i+"] threads ");
-                        for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                        System.out.println();
-                    }
-
-                    FileWriter fileWriter;
                     if (i == 1)
                         fileWriter = new FileWriter("retwis_all_operations.txt", false);
                     else
                         fileWriter = new FileWriter("retwis_all_operations.txt", true);
 
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
+                    printWriter = new PrintWriter(fileWriter);
                     printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                }
 
-                    if (_p){
-                        for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.print(" Time per operations for all type of operations ");
-                        for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.println();
-                        System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                if (_p){
+                    for (int j = 0; j < nbSign; j++) System.out.print("-");
+                    System.out.print(" Time per operations for all type of operations ");
+                    for (int j = 0; j < nbSign; j++) System.out.print("-");
+                    System.out.println();
+                    System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
 
-                    }
+                }
+
+                if (_s)
                     printWriter.flush();
 
-                    for (String op: listOperations){
+                for (String op: listOperations){
+                    if (_s){
                         if (i == 1)
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
                         printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
-
-                        if (_p){
-                            for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.print(" Time per operations for "+op+" operations ");
-                            for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.println();
-                            System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
-                        }
-
-                        printWriter.flush();
                     }
-                    System.out.println();
-                    printWriter.close();
+
+                    if (_p){
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.print(" Time per operations for "+op+" operations ");
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.println();
+                        System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                    }
+
+                    if (_s)
+                        printWriter.flush();
                 }
+                if(_p)
+                    System.out.println();
+                if (_s)
+                    printWriter.close();
+
 
                 TimeUnit.SECONDS.sleep(5);
                 executor.shutdown();
@@ -427,13 +441,13 @@ public class App {
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
 
-//            if(!follower.containsKey(user)) {
-                follower.putIfAbsent(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
-                nbFollower.putIfAbsent(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.putIfAbsent(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
+            if(!follower.containsKey(user)) {
+                follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
+                nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
+                timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
                                 (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
                                                 );
-//            }
+            }
         }
 
         public void follow(String userA, String userB){
