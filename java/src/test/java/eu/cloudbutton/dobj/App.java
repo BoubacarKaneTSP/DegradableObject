@@ -474,10 +474,10 @@ public class App {
         public void follow(String userA, String userB){
 //            System.out.println("follow");
 
-//            if(follower.containsKey(userA)) {
-//                follower.get(userB).add(userA);
-////                nbFollower.get(userB).increment();
-//            }
+            if(follower.containsKey(userA)) {
+                follower.get(userB).add(userA);
+//                nbFollower.get(userB).increment();
+            }
         }
 
         public void unfollow(String userA, String userB){
