@@ -127,12 +127,14 @@ public class App {
                 nbFollower = new ConcurrentHashMap<>();
                 timeline = new ConcurrentHashMap<>();
 
-                nbOperations = new ConcurrentHashMap<>();
-                timeOperations = new ConcurrentHashMap<>();
+                if (a == 1) {
+                    nbOperations = new ConcurrentHashMap<>();
+                    timeOperations = new ConcurrentHashMap<>();
 
-                for (String op: listOperations){
-                    nbOperations.put(op, new DegradableCounter());
-                    timeOperations.put(op, new AtomicLong(0));
+                    for (String op : listOperations) {
+                        nbOperations.put(op, new DegradableCounter());
+                        timeOperations.put(op, new AtomicLong(0));
+                    }
                 }
 
                 CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
@@ -163,80 +165,77 @@ public class App {
                     //ignore
                     System.out.println(e);
                 }
-
-                double nbTotalOperations = 0;
-                long timeTotalOperations = 0L;
-
-                for (String op : listOperations){
-                    nbTotalOperations += nbOperations.get(op).read();
-                    timeTotalOperations += timeOperations.get(op).get();
-                }
-
-                PrintWriter printWriter = null;
-                FileWriter fileWriter = null;
-
-                if (_p){
-                    System.out.println();
-                    for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                    System.out.print( " Results for ["+i+"] threads ");
-                    for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                    System.out.println();
-                }
-
-                if (_s){
-
-                    if (i == 1)
-                        fileWriter = new FileWriter("retwis_all_operations.txt", false);
-                    else
-                        fileWriter = new FileWriter("retwis_all_operations.txt", true);
-
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
-                }
-
-                if (_p){
-                    for (int j = 0; j < nbSign; j++) System.out.print("-");
-                    System.out.print(" Time per operations for all type of operations ");
-                    for (int j = 0; j < nbSign; j++) System.out.print("-");
-                    System.out.println();
-                    System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
-
-                }
-
-                if (_s)
-                    printWriter.flush();
-
-                for (String op: listOperations){
-                    if (_s){
-                        if (i == 1)
-                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
-                        else
-                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
-                        printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
-                    }
-
-                    if (_p){
-                        for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.print(" Time per operations for "+op+" operations ");
-                        for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.println();
-                        System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
-                    }
-
-                    if (_s)
-                        printWriter.flush();
-                }
-                if(_p)
-                    System.out.println();
-                if (_s)
-                    printWriter.close();
-
-
                 TimeUnit.SECONDS.sleep(5);
                 executor.shutdown();
             }
 
+            double nbTotalOperations = 0;
+            long timeTotalOperations = 0L;
+
+            for (String op : listOperations){
+                nbTotalOperations += nbOperations.get(op).read();
+                timeTotalOperations += timeOperations.get(op).get();
+            }
+
+            PrintWriter printWriter = null;
+            FileWriter fileWriter;
+
+            if (_p){
+                System.out.println();
+                for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                System.out.print( " Results for ["+i+"] threads ");
+                for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                System.out.println();
+            }
+
+            if (_s){
+
+                if (i == 1)
+                    fileWriter = new FileWriter("retwis_all_operations.txt", false);
+                else
+                    fileWriter = new FileWriter("retwis_all_operations.txt", true);
+
+                printWriter = new PrintWriter(fileWriter);
+                printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+            }
+
+            if (_p){
+                for (int j = 0; j < nbSign; j++) System.out.print("-");
+                System.out.print(" Time per operations for all type of operations ");
+                for (int j = 0; j < nbSign; j++) System.out.print("-");
+                System.out.println();
+                System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+
+            }
+
+            if (_s)
+                printWriter.flush();
+
+            for (String op: listOperations){
+                if (_s){
+                    if (i == 1)
+                        fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                    else
+                        fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                }
+
+                if (_p){
+                    for (int j = 0; j < nbSign; j++) System.out.print("-");
+                    System.out.print(" Time per operations for "+op+" operations ");
+                    for (int j = 0; j < nbSign; j++) System.out.print("-");
+                    System.out.println();
+                    System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                }
+
+                if (_s)
+                    printWriter.flush();
+            }
+            if(_p)
+                System.out.println();
+            if (_s)
+                printWriter.close();
 
             i *= 2;
             if (i > nbThreads && i != 2 * nbThreads)
