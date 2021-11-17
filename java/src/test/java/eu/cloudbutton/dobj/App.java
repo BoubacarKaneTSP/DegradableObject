@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -288,7 +289,6 @@ public class App {
 
                 latch.await();
 
-
                 //warm up
                 while (flag.get()){
                     val = random.nextInt(100);
@@ -407,7 +407,7 @@ public class App {
 
         public void compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-            int n = random.nextInt(ITEM_PER_THREAD);;
+            int i, n = random.nextInt(ITEM_PER_THREAD);
             String userA;
             String userB;
 
@@ -417,14 +417,34 @@ public class App {
                 break;
                 case 'f':
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                    n = random.nextInt(follower.keySet().size());
-                    userB = (String) follower.keySet().toArray()[n];
+                    userB = null;
+                    n = random.nextInt(follower.size());
+                    i = 0;
+                    for(Object obj : follower.keySet())
+                    {
+                        if (i == n){
+                            userB = (String) obj;
+                            break;
+                        }
+                        i++;
+                    }
+//                    userB = (String) follower.keySet().toArray()[n];
+//                    userB = (String) follower.keySet().toArray()[n];
                     follow(userA, userB);
                 break;
                 case 'u':
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                    n = random.nextInt(follower.keySet().size());
-                    userB = (String) follower.keySet().toArray()[n];
+                    userB = null;
+                    n = random.nextInt(follower.size());
+                    i = 0;
+                    for(Object obj : follower.keySet())
+                    {
+                        if (i == n){
+                            userB = (String) obj;
+                            break;
+                        }
+                        i++;
+                    }
                     unfollow(userA, userB);
                 break;
                 case 't':
@@ -450,19 +470,21 @@ public class App {
             }
         }
 
+        // userA may not have been added yet
+
         public void follow(String userA, String userB){
 //            System.out.println("follow");
 
-            if(follower.containsKey(userA) && follower.containsKey(userB)) {
-                follower.get(userB).add(userA);
-//                nbFollower.get(userB).increment();
-            }
+//            if(follower.containsKey(userA)) {
+//                follower.get(userB).add(userA);
+////                nbFollower.get(userB).increment();
+//            }
         }
 
         public void unfollow(String userA, String userB){
 //            System.out.println("unfollow");
 
-            if(follower.containsKey(userA) && follower.containsKey(userB)) {
+            if(follower.containsKey(userA)) {
                 follower.get(userB).remove(userA);
 //                nbFollower.get(userB).write(-1);
             }
