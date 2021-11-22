@@ -52,6 +52,15 @@ public class App {
     @Option(name = "-wTime", usage = "warming time (seconds)")
     private int wTime = 0;
 
+    @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
+    private double _alphaInit = 1.315;
+
+    @Option(name = "-alphaMax", usage = "max value tested for alpha (powerlaw settings)")
+    private double _alphaMax = 1.315;
+
+    @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
+    private double _alphaStep = 0.025;
+
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
 
@@ -118,64 +127,13 @@ public class App {
         String objectList = "create" + typeList;
         String objectCounter = "create" + typeCounter;
 
-        for (int i = 1; i <= nbThreads;) {
-            for (int a = 1; a <= nbTest; a++) {
-                java.util.List<Callable<Void>> callables = new ArrayList<>();
-                ExecutorService executor = Executors.newFixedThreadPool(i);
+        List<Double> listAlpha = new ArrayList<>();
 
-                follower = new ConcurrentHashMap<>();
-                nbFollower = new ConcurrentHashMap<>();
-                timeline = new ConcurrentHashMap<>();
+        for (double i = _alphaInit ; i <= _alphaMax; i+=_alphaStep) {
+            listAlpha.add(i);
+        }
 
-                if (a == 1) {
-                    nbOperations = new ConcurrentHashMap<>();
-                    timeOperations = new ConcurrentHashMap<>();
-
-                    for (String op : listOperations) {
-                        nbOperations.put(op, new DegradableCounter());
-                        timeOperations.put(op, new AtomicLong(0));
-                    }
-                }
-
-                CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
-
-                for (int j = 0; j < i; j++) {
-                    RetwisApp retwisApp = new RetwisApp(
-                            objectSet,
-                            objectList,
-                            objectCounter,
-                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
-                            latch, factory);
-                    callables.add(retwisApp);
-                }
-
-                ExecutorService executorService = Executors.newFixedThreadPool(1);
-                flag = new AtomicBoolean();
-                flag.set(true);
-                executorService.submit(new Coordinator(latch));
-
-                List<Future<Void>> futures;
-                futures = executor.invokeAll(callables);
-
-                try{
-                    for (Future<Void> future : futures) {
-                        future.get();
-                    }
-                } catch (CancellationException | ExecutionException e) {
-                    //ignore
-                    System.out.println(e);
-                }
-                TimeUnit.SECONDS.sleep(5);
-                executor.shutdown();
-            }
-
-            double nbTotalOperations = 0;
-            long timeTotalOperations = 0L;
-
-            for (String op : listOperations){
-                nbTotalOperations += nbOperations.get(op).read();
-                timeTotalOperations += timeOperations.get(op).get();
-            }
+        for (int i = nbThreads; i <= nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -188,54 +146,128 @@ public class App {
                 System.out.println();
             }
 
-            if (_s){
+            for (double alpha :listAlpha) {
 
-                if (i == 1)
-                    fileWriter = new FileWriter("retwis_all_operations.txt", false);
-                else
-                    fileWriter = new FileWriter("retwis_all_operations.txt", true);
+                if (_p){
+                    System.out.println();
+                    for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
+                    System.out.print( " Results for alpha = ["+alpha+"] ");
+                    for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
+                    System.out.println();
+                }
 
-                printWriter = new PrintWriter(fileWriter);
-                printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
-            }
+                for (int a = 1; a <= nbTest; a++) {
+                    java.util.List<Callable<Void>> callables = new ArrayList<>();
+                    ExecutorService executor = Executors.newFixedThreadPool(i);
 
-            if (_p){
-                for (int j = 0; j < nbSign; j++) System.out.print("-");
-                System.out.print(" Time per operations for all type of operations ");
-                for (int j = 0; j < nbSign; j++) System.out.print("-");
-                System.out.println();
-                System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                    follower = new ConcurrentHashMap<>();
+                    nbFollower = new ConcurrentHashMap<>();
+                    timeline = new ConcurrentHashMap<>();
 
-            }
+                    if (a == 1) {
+                        nbOperations = new ConcurrentHashMap<>();
+                        timeOperations = new ConcurrentHashMap<>();
 
-            if (_s)
-                printWriter.flush();
+                        for (String op : listOperations) {
+                            nbOperations.put(op, new DegradableCounter());
+                            timeOperations.put(op, new AtomicLong(0));
+                        }
+                    }
 
-            for (String op: listOperations){
+                    CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
+
+                    for (int j = 0; j < i; j++) {
+                        RetwisApp retwisApp = new RetwisApp(
+                                objectSet,
+                                objectList,
+                                objectCounter,
+                                Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
+                                alpha,
+                                latch,
+                                factory);
+                        callables.add(retwisApp);
+                    }
+
+                    ExecutorService executorService = Executors.newFixedThreadPool(1);
+                    flag = new AtomicBoolean();
+                    flag.set(true);
+                    executorService.submit(new Coordinator(latch));
+
+                    List<Future<Void>> futures;
+                    futures = executor.invokeAll(callables);
+
+                    try{
+                        for (Future<Void> future : futures) {
+                            future.get();
+                        }
+                    } catch (CancellationException | ExecutionException e) {
+                        //ignore
+                        System.out.println(e);
+                    }
+                    TimeUnit.SECONDS.sleep(5);
+                    executor.shutdown();
+                }
+
+                double nbTotalOperations = 0;
+                long timeTotalOperations = 0L;
+
+                for (String op : listOperations){
+                    nbTotalOperations += nbOperations.get(op).read();
+                    timeTotalOperations += timeOperations.get(op).get();
+                }
+
                 if (_s){
+
                     if (i == 1)
-                        fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                        fileWriter = new FileWriter("retwis_all_operations.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                        fileWriter = new FileWriter("retwis_all_operations.txt", true);
+
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                    printWriter.println(alpha +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
                 }
 
                 if (_p){
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
-                    System.out.print(" Time per operations for "+op+" operations ");
+                    System.out.print(" Time per operations for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                    System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+
                 }
 
                 if (_s)
                     printWriter.flush();
+
+                for (String op: listOperations){
+                    if (_s){
+                        if (i == 1)
+                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                        else
+                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                        printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(alpha +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                    }
+
+                    if (_p){
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.print(" Time per operations for "+op+" operations ");
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.println();
+                        System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                    }
+
+                    if (_s)
+                        printWriter.flush();
+                }
+                if(_p)
+                    System.out.println();
+                if (_s)
+                    printWriter.close();
+
             }
-            if(_p)
-                System.out.println();
-            if (_s)
-                printWriter.close();
+
+
 
             i *= 2;
             if (i > nbThreads && i != 2 * nbThreads)
@@ -246,21 +278,23 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        protected static final int ITEM_PER_THREAD = 100;
+        protected static final int ITEM_PER_THREAD = 1000;
         protected final ThreadLocalRandom random;
         private final String objectSet;
         private final String objectList;
         private final String objectCounter;
         private final int[] ratios;
+        private final double alpha;
         private final CountDownLatch latch;
         private final Factory factory;
 
-        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, CountDownLatch latch, Factory factory) {
+        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, double alpha, CountDownLatch latch, Factory factory) {
             this.random = ThreadLocalRandom.current();
             this.objectSet = objectSet;
             this.objectList = objectList;
             this.objectCounter = objectCounter;
             this.ratios = ratios;
+            this.alpha =alpha;
             this.latch = latch;
             this.factory = factory;
         }
@@ -384,24 +418,27 @@ public class App {
                 addUser("user_"+Thread.currentThread().getName()+"_"+i);
             }
 
-            List<Integer> data = new Discrete(1, 1.35).generate(200);
+            List<Integer> data = new Discrete(1, alpha).generate(1000);
+
+//            System.out.println("fill");
 
             //Following phase
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
 
                 userA = "user_"+Thread.currentThread().getName()+"_"+i;
-                int nbFollow = Math.min(data.get(random.nextInt(200)), follower.keySet().size());
+                int nbFollow = Math.min(Math.max(data.get(random.nextInt(1000)), 0), follower.keySet().size());
 //                System.out.println("nb follow du process '"+ userA +"' : " + nbFollow);
 
                 for(int j = 0; j < nbFollow; j++){
+//                    System.out.println("follow");
 
                     n = random.nextInt(follower.keySet().size());
 
                     userB = (String) follower.keySet().toArray()[n];
-
                     follow(userA, userB);
                 }
             }
+
         }
 
         public void compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -427,8 +464,6 @@ public class App {
                         }
                         i++;
                     }
-//                    userB = (String) follower.keySet().toArray()[n];
-//                    userB = (String) follower.keySet().toArray()[n];
                     follow(userA, userB);
                 break;
                 case 'u':
