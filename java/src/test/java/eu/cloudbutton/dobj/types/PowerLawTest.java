@@ -43,7 +43,7 @@ public class PowerLawTest {
                 i++;
             }
             Collections.sort(data);
-//            System.out.println(data);
+            System.out.println(data);
             System.out.println();
             System.out.println("======= " + alpha + " =======");
             System.out.println("max : " + Collections.max(data));

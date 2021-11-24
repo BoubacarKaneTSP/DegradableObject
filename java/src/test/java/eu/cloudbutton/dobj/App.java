@@ -55,11 +55,11 @@ public class App {
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
     private double _alphaInit = 1.315;
 
-    @Option(name = "-alphaMax", usage = "max value tested for alpha (powerlaw settings)")
-    private double _alphaMax = 1.315;
+    @Option(name = "-alphaMax", usage = "min value tested for alpha (powerlaw settings)")
+    private double _alphaMin = 1.315;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
-    private double _alphaStep = 0.025;
+    private double _alphaStep = 0.05;
 
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
@@ -129,11 +129,11 @@ public class App {
 
         List<Double> listAlpha = new ArrayList<>();
 
-        for (double i = _alphaInit ; i <= _alphaMax; i+=_alphaStep) {
+        for (double i = _alphaInit ; i >= _alphaMin; i-=_alphaStep) {
             listAlpha.add(i);
         }
 
-        for (int i = nbThreads; i <= nbThreads;) {
+        for (int i = 1; i <= nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -175,6 +175,7 @@ public class App {
                     }
 
                     CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
+                    CountDownLatch latchFillDatabase = new CountDownLatch(i); // Additional count for the coordinator
 
                     for (int j = 0; j < i; j++) {
                         RetwisApp retwisApp = new RetwisApp(
@@ -184,6 +185,7 @@ public class App {
                                 Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                                 alpha,
                                 latch,
+                                latchFillDatabase,
                                 factory);
                         callables.add(retwisApp);
                     }
@@ -278,7 +280,7 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        protected static final int ITEM_PER_THREAD = 1000;
+        protected static final int ITEM_PER_THREAD = 10000;
         protected final ThreadLocalRandom random;
         private final String objectSet;
         private final String objectList;
@@ -286,9 +288,10 @@ public class App {
         private final int[] ratios;
         private final double alpha;
         private final CountDownLatch latch;
+        private final CountDownLatch latchFillDatabase;
         private final Factory factory;
 
-        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, double alpha, CountDownLatch latch, Factory factory) {
+        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory) {
             this.random = ThreadLocalRandom.current();
             this.objectSet = objectSet;
             this.objectList = objectList;
@@ -296,6 +299,7 @@ public class App {
             this.ratios = ratios;
             this.alpha =alpha;
             this.latch = latch;
+            this.latchFillDatabase = latchFillDatabase;
             this.factory = factory;
         }
 
@@ -304,7 +308,6 @@ public class App {
 
             char type;
             int val;
-            long startTime, endTime;
 
             Map<String, Integer> nbLocalOperations = new HashMap<>();
             Map<String, Long> timeLocalOperations = new HashMap<>();
@@ -361,33 +364,28 @@ public class App {
                         type = 'r';
                     }
 
-                    startTime = System.nanoTime();
-                    compute(type);
-                    endTime = System.nanoTime();
-
-                    long finalEndTime = endTime;
-                    long finalStartTime = startTime;
+                    long elapsedTime = compute(type);
 
                     switch (type){
                         case 'a':
                             nbLocalOperations.compute("add", (key, value) -> value + 1);
-                            timeLocalOperations.compute("add", (key, value) -> value + finalEndTime - finalStartTime);
+                            timeLocalOperations.compute("add", (key, value) -> value + elapsedTime);
                             break;
                         case 'f':
                             nbLocalOperations.compute("follow", (key, value) -> value + 1);
-                            timeLocalOperations.compute("follow", (key, value) -> value + finalEndTime - finalStartTime);
+                            timeLocalOperations.compute("follow", (key, value) -> value + elapsedTime);
                             break;
                         case 'u':
                             nbLocalOperations.compute("unfollow", (key, value) -> value + 1);
-                            timeLocalOperations.compute("unfollow", (key, value) -> value + finalEndTime - finalStartTime);
+                            timeLocalOperations.compute("unfollow", (key, value) -> value + elapsedTime);
                             break;
                         case 't':
                             nbLocalOperations.compute("tweet", (key, value) -> value + 1);
-                            timeLocalOperations.compute("tweet", (key, value) -> value + finalEndTime - finalStartTime);
+                            timeLocalOperations.compute("tweet", (key, value) -> value + elapsedTime);
                             break;
                         case 'r':
                             nbLocalOperations.compute("read", (key, value) -> value + 1);
-                            timeLocalOperations.compute("read", (key, value) -> value + finalEndTime - finalStartTime);
+                            timeLocalOperations.compute("read", (key, value) -> value + elapsedTime);
                             break;
                     }
                 }
@@ -407,17 +405,23 @@ public class App {
             TimeUnit.MICROSECONDS.sleep(10000);
         }
 
-        public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException {
 
             int n;
             String userA;
-            String userB;
+            String userB = null;
 
             //adding users
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
                 addUser("user_"+Thread.currentThread().getName()+"_"+i);
             }
 
+            latchFillDatabase.countDown();
+
+            latchFillDatabase.await();
+            
+            int nbUsers = follower.keySet().size();
+            
             List<Integer> data = new Discrete(1, alpha).generate(1000);
 
 //            System.out.println("fill");
@@ -426,31 +430,44 @@ public class App {
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
 
                 userA = "user_"+Thread.currentThread().getName()+"_"+i;
-                int nbFollow = Math.min(Math.max(data.get(random.nextInt(1000)), 0), follower.keySet().size());
-//                System.out.println("nb follow du process '"+ userA +"' : " + nbFollow);
-
+                
+                int nbFollow = Math.min(Math.max(data.get(random.nextInt(1000)), 0), nbUsers);
+                
                 for(int j = 0; j < nbFollow; j++){
 //                    System.out.println("follow");
 
-                    n = random.nextInt(follower.keySet().size());
-
-                    userB = (String) follower.keySet().toArray()[n];
+                    n = random.nextInt(nbUsers);
+                    i = 0;
+                    for(Object obj : follower.keySet())
+                    {
+                        if (i == n){
+                            userB = (String) obj;
+                            break;
+                        }
+                        i++;
+                    }
+                    
                     follow(userA, userB);
                 }
             }
 
         }
 
-        public void compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        public long compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
+            long startTime = 0L, endTime= 0L;
             int i, n = random.nextInt(ITEM_PER_THREAD);
             String userA;
             String userB;
 
             switch (type){
                 case 'a':
-                    addUser("user_"+Thread.currentThread().getName()+"_"+n);
-                break;
+                    if (!follower.containsKey("user_"+Thread.currentThread().getName()+"_"+n)) {
+                        startTime = System.nanoTime();
+                        addUser("user_"+Thread.currentThread().getName()+"_"+n);
+                        endTime = System.nanoTime();
+                    }
+                    break;
                 case 'f':
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
                     userB = null;
@@ -464,7 +481,13 @@ public class App {
                         }
                         i++;
                     }
-                    follow(userA, userB);
+
+                    if (follower.containsKey(userA)){
+                        startTime = System.nanoTime();
+                        follow(userA, userB);
+                        endTime = System.nanoTime();
+                    }
+
                 break;
                 case 'u':
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
@@ -479,29 +502,43 @@ public class App {
                         }
                         i++;
                     }
-                    unfollow(userA, userB);
+                    if (follower.containsKey(userA)){
+                        startTime = System.nanoTime();
+                        unfollow(userA, userB);
+                        endTime = System.nanoTime();
+                    }
                 break;
                 case 't':
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                    tweet(userA, "msg from " + userA);
+                    if (follower.containsKey(userA)){
+                        startTime = System.nanoTime();
+                        tweet(userA, "msg from " + userA);
+                        endTime = System.nanoTime();
+                    }
                 break;
                 case 'r':
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                    showTimeline(userA);
+                    if (follower.containsKey(userA)){
+                        startTime = System.nanoTime();
+                        showTimeline(userA);
+                        endTime = System.nanoTime();
+                    }
                 break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + type);
             }
+            return endTime - startTime;
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
 
-            if(!follower.containsKey(user)) {
-                follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
-                nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-                timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
-                                (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
-                                                );
-            }
+            follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(objectSet).invoke(factory));
+//            nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
+            timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(objectList).invoke(factory),
+                    (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory))
+            );
+
         }
 
         // userA may not have been added yet
@@ -509,37 +546,31 @@ public class App {
         public void follow(String userA, String userB){
 //            System.out.println("follow");
 
-            if(follower.containsKey(userA)) {
-                follower.get(userB).add(userA);
-//                nbFollower.get(userB).increment();
-            }
+            follower.get(userB).add(userA);
+//          nbFollower.get(userB).increment();
+
         }
 
         public void unfollow(String userA, String userB){
-//            System.out.println("unfollow");
+//          System.out.println("unfollow");
 
-            if(follower.containsKey(userA)) {
-                follower.get(userB).remove(userA);
-//                nbFollower.get(userB).write(-1);
-            }
+            follower.get(userB).remove(userA);
+//          nbFollower.get(userB).write(-1);
+
         }
 
         public void tweet(String user, String msg){
 //            System.out.println("tweet");
 
-            if(follower.containsKey(user)) {
-                for (String u : follower.get(user)) {
-                    timeline.get(u).add(msg);
-                }
+            for (String u : follower.get(user)) {
+                timeline.get(u).add(msg);
             }
+
         }
 
         public void showTimeline(String user){
 //            System.out.println("Show timeline");
-            if(follower.containsKey(user)) {
-                timeline.get(user).read();
-//                System.out.println(s);
-            }
+            timeline.get(user).read();
         }
     }
 
