@@ -226,7 +226,7 @@ public class App {
                         fileWriter = new FileWriter("retwis_all_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(alpha +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                    printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
                 }
 
                 if (_p){
@@ -248,7 +248,7 @@ public class App {
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(alpha +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                        printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
                     }
 
                     if (_p){
