@@ -175,7 +175,7 @@ public class App {
                     }
 
                     CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
-                    CountDownLatch latchFillDatabase = new CountDownLatch(i); // Additional count for the coordinator
+                    CountDownLatch latchFillDatabase = new CountDownLatch(i);
 
                     for (int j = 0; j < i; j++) {
                         RetwisApp retwisApp = new RetwisApp(
@@ -297,7 +297,7 @@ public class App {
             this.objectList = objectList;
             this.objectCounter = objectCounter;
             this.ratios = ratios;
-            this.alpha =alpha;
+            this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             this.factory = factory;
@@ -421,6 +421,8 @@ public class App {
             latchFillDatabase.await();
             
             int nbUsers = follower.keySet().size();
+            String[] users = follower.keySet().toArray(new String[nbUsers]);
+
             
             List<Integer> data = new Discrete(1, alpha).generate(1000);
 
@@ -437,15 +439,7 @@ public class App {
 //                    System.out.println("follow");
 
                     n = random.nextInt(nbUsers);
-                    i = 0;
-                    for(Object obj : follower.keySet())
-                    {
-                        if (i == n){
-                            userB = (String) obj;
-                            break;
-                        }
-                        i++;
-                    }
+                    userB = users[n];
                     
                     follow(userA, userB);
                 }
