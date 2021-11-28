@@ -280,7 +280,7 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        protected static final int ITEM_PER_THREAD = 10000;
+        protected static final int ITEM_PER_THREAD = 1000;
         protected final ThreadLocalRandom random;
         private final String objectSet;
         private final String objectList;
