@@ -55,7 +55,7 @@ public class App {
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
     private double _alphaInit = 1.315;
 
-    @Option(name = "-alphaMax", usage = "min value tested for alpha (powerlaw settings)")
+    @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
     private double _alphaMin = 1.315;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
