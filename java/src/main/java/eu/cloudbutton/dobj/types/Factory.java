@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -34,6 +35,8 @@ public class Factory {
     public ConcurrentLinkedDeque createConcurrentLinkedDeque() { return  new ConcurrentLinkedDeque(); }
     public DegradableQueue createDegradableQueue() {return new DegradableQueue(); }
     public AddOnlyQueue createAddOnlyQueue() { return new AddOnlyQueue(); }
+
+    public ConcurrentHashMap createConcurrentHashMap() { return new ConcurrentHashMap(); }
 
     public Noop createNoop() {return new Noop(); }
 

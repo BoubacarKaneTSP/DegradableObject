@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.types.*;
 import nl.peterbloem.powerlaws.Discrete;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Localizable;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
@@ -17,7 +16,6 @@ import java.util.*;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -280,7 +278,7 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        protected static final int ITEM_PER_THREAD = 1000;
+        protected static final int ITEM_PER_THREAD = 5000;
         protected final ThreadLocalRandom random;
         private final String objectSet;
         private final String objectList;
@@ -409,17 +407,21 @@ public class App {
 
             int n;
             String userA;
-            String userB = null;
+            String userB;
 
+            System.out.println(Thread.currentThread().getName() + " is starting to fill...");
             //adding users
             for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
                 addUser("user_"+Thread.currentThread().getName()+"_"+i);
             }
 
+            System.out.println(Thread.currentThread().getName() + " is done to fill...");
+
             latchFillDatabase.countDown();
 
             latchFillDatabase.await();
-            
+
+            System.out.println(Thread.currentThread().getName() + " is starting to follow...");
             int nbUsers = follower.keySet().size();
             String[] users = follower.keySet().toArray(new String[nbUsers]);
 
@@ -441,9 +443,11 @@ public class App {
                     n = random.nextInt(nbUsers);
                     userB = users[n];
                     
-                    follow(userA, userB);
+//                    follow(userA, userB);
                 }
             }
+
+            System.out.println(Thread.currentThread().getName() + " is done to follow...");
 
         }
 

@@ -32,7 +32,7 @@ public class Benchmark {
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
     @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios = {"100"};
+    private String[] ratios;
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     @Option(name = "-time", usage = "How long will the test last (seconds)")
@@ -109,19 +109,22 @@ public class Benchmark {
                     CountDownLatch latch = new CountDownLatch(i);
                     FactoryTester factoryTester = new FactoryTester(
                             object,
-                            new int[] {100},
-                            latch, nbOps / i);
+                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
+                            latch,
+                            nbOps / i);
                     for (int j = 0; j < i-1; j++) {
                         Method m = factoryTester.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                         Tester tester = (Tester) m.invoke(factoryTester);
                         callables.add(tester);
                     }
 
+
                     FactoryTester factoryT = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                             latch,
-                            nbOps/i);
+                            nbOps/i
+                    );
 
                     Method m1 = factoryT.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                     Tester t = (Tester) m1.invoke(factoryT);
@@ -156,7 +159,7 @@ public class Benchmark {
 
                 sum = nbAdd.read() + nbRemove.read() + nbRead.read();
                 double avg_op = sum / i;
-                System.out.println(i + " " + (timeTotal/1_000_000_000) / avg_op); // printing the avg time per op for i thread(s)
+                System.out.println(i + " " + (timeTotal/1_000_000_000) / (double) sum); // printing the avg time per op for i thread(s)
                 System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
                 System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.read());
                 System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
@@ -211,6 +214,10 @@ public class Benchmark {
             return new ListTester((AbstractQueue) object, ratios, latch, nbOps);
         }
 
+        public MapTester createAbstractMapTester() {
+            return new MapTester((AbstractMap) object, ratios, latch, nbOps);
+        }
+
         public DequeTester createAbstractCollectionTester() {
             return new DequeTester((Deque) object, ratios, latch, nbOps);
         }
@@ -239,7 +246,7 @@ public class Benchmark {
         public Void call() {
 
             latch.countDown();
-            long i = 0L, startTime, endTime;
+            long startTime, endTime;
 
             int n, add = 0, remove = 0, read = 0;
             char type;
@@ -268,11 +275,11 @@ public class Benchmark {
                 while (!flag.get()) {
                     n = this.random.nextInt(101);
 
-                    if (n <= ratios[0]){
-//                        if (n%2 == 0)
-                            type = 'a';/*
+                    if (n < ratios[0]){
+                        if (n%2 == 0)
+                            type = 'a';
                         else
-                            type = 'r';*/
+                            type = 'r';
                     }else {
                         type = 'c';
                     }
@@ -285,11 +292,11 @@ public class Benchmark {
                         case 'a':
                             add++;
                             timeAdd.addAndGet(endTime-startTime);
-                            break;/*
+                            break;
                         case 'r':
                             remove++;
                             timeRemove.addAndGet(endTime-startTime);
-                            break;*/
+                            break;
                         case 'c':
                             read++;
                             timeRead.addAndGet(endTime-startTime);
@@ -376,6 +383,31 @@ public class Benchmark {
                     break;
                 case 'c':
                     object.contains(iid);
+                    break;
+            }
+        }
+    }
+
+    public static class MapTester extends Tester<AbstractMap> {
+
+        public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, long nbOps) {
+            super(object, ratios, latch, nbOps);
+        }
+
+        @Override
+        protected void test(char type) {
+
+            int n = random.nextInt(ITEM_PER_THREAD);
+            long iid = Thread.currentThread().getId()*1000000000L+n;
+            switch (type){
+                case 'a':
+                    object.put(iid,iid);
+                    break;
+                case 'r':
+                    object.remove(iid);
+                    break;
+                case 'c':
+                    object.get(iid);
                     break;
             }
         }
