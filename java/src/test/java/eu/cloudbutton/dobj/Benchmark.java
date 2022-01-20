@@ -103,6 +103,12 @@ public class Benchmark {
                         clazz = Class.forName("java.util.concurrent."+type);
                     }
 
+                    FactoryFiller factoryFiller = new FactoryFiller(object, 1_000_000);
+
+                    Method method = factoryFiller.getClass().getDeclaredMethod("create"+ clazz.getSuperclass().getSimpleName() + "Filler");
+                    Filler filler = (Filler) method.invoke(factoryFiller);
+                    filler.fill();
+
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
@@ -183,7 +189,9 @@ public class Benchmark {
         System.exit(0);
     }
 
-    public static class FactoryTester {
+
+
+    public class FactoryTester {
 
         private final Object object;
         private final int[] ratios;
@@ -224,10 +232,38 @@ public class Benchmark {
 
     }
 
-    public static abstract class Tester<T> implements Callable<Void> {
+    public class FactoryFiller {
+
+        private final Object object;
+        private final long nbOps;
+
+        public FactoryFiller(Object object, long nbOps){
+            this.object = object;
+            this.nbOps = nbOps;
+        }
+
+        public MapFiller createAbstractMapFiller(){
+            return new MapFiller((AbstractMap) object, nbOps);
+        }
+    }
+
+    public abstract class Filler<T> {
+
+        protected final T object;
+        protected final long nbOps;
+
+        public Filler(T object, long nbOps){
+            this.object = object;
+            this.nbOps = nbOps;
+        }
+
+
+        protected abstract void fill();
+    }
+
+    public abstract class Tester<T> implements Callable<Void> {
 
         protected static final int ITEM_PER_THREAD = 1000;
-
         protected final ThreadLocalRandom random;
         protected final T object;
         protected final int[] ratios;
@@ -318,7 +354,7 @@ public class Benchmark {
         protected abstract void test(char type);
     }
 
-    public static class NoopTester extends Tester<Noop> {
+    public class NoopTester extends Tester<Noop> {
 
         public NoopTester(Noop nope, int[] ratios, CountDownLatch latch, long nbOps){
             super(nope, ratios, latch, nbOps);
@@ -342,7 +378,7 @@ public class Benchmark {
         }
     }
 
-    public static class CounterTester extends Tester<AbstractCounter> {
+    public class CounterTester extends Tester<AbstractCounter> {
 
         public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, long nbOps) {
             super(counter, ratios, latch, nbOps);
@@ -363,7 +399,7 @@ public class Benchmark {
         }
     }
 
-    public static class SetTester extends Tester<AbstractSet> {
+    public class SetTester extends Tester<AbstractSet> {
 
         public SetTester(AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
@@ -388,10 +424,11 @@ public class Benchmark {
         }
     }
 
-    public static class MapTester extends Tester<AbstractMap> {
+    public class MapTester extends Tester<AbstractMap> {
 
         public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, long nbOps) {
             super(object, ratios, latch, nbOps);
+            System.out.println(object.keySet().size());
         }
 
         @Override
@@ -413,7 +450,7 @@ public class Benchmark {
         }
     }
 
-    public static class ListTester extends Tester<AbstractQueue> {
+    public class ListTester extends Tester<AbstractQueue> {
 
         public ListTester(AbstractQueue list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
@@ -447,7 +484,7 @@ public class Benchmark {
         }
     }
 
-    public static class DequeTester extends Tester<Deque> {
+    public class DequeTester extends Tester<Deque> {
 
         public DequeTester(Deque list, int[] ratios, CountDownLatch latch, long nbOps) {
             super(list, ratios, latch, nbOps);
@@ -471,6 +508,23 @@ public class Benchmark {
                 case 'c':
                     object.toArray();
                     break;
+            }
+        }
+    }
+
+    public class MapFiller extends Filler<AbstractMap> {
+
+        public MapFiller(AbstractMap map, long nbOps) {
+            super(map, nbOps);
+        }
+
+        @Override
+        protected void fill() {
+
+            Random random = new Random();
+
+            for (int i = 0; i < nbOps; i++) {
+                object.put(random.nextInt(), Integer.toString(i));
             }
         }
     }
