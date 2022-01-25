@@ -291,7 +291,7 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        private  final int NB_USERS = 1000000;
+        private  final int NB_USERS = 500000;
         protected int ITEM_PER_THREAD = 0;
         protected final ThreadLocalRandom random;
         private final String objectSet;
