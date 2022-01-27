@@ -132,7 +132,7 @@ public class App {
             listAlpha.add(i);
         }
 
-        for (int i = 1; i <= nbThreads;) {
+        for (int i = nbThreads; i <= nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
