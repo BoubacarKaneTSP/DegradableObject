@@ -30,7 +30,6 @@ public class TimelineTest {
 //        doAppend(factory.createThirdDegradableList());
         doAppend(new ConcurrentLinkedQueue());
         doAppend(factory.createMapQueue());
-        doAppend(factory.createAddOnlyQueue());
     }
 
     private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
@@ -56,11 +55,6 @@ public class TimelineTest {
             future.get();
         }
 
-        AddOnlyQueue t = new AddOnlyQueue();
-
-        t.offer(1);
-        t.offer(2);
-        t.offer(3);
 
         timeline.add(10);
         timeline.add(11);

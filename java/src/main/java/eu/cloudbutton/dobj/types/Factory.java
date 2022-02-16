@@ -28,16 +28,8 @@ public class Factory {
     public SetSnapshotSRMW createSetSnapshotSRMW () { return new SetSnapshotSRMW(); }
 
 
-
-    public SecondDegradableList createSecondDegradableList() { return new SecondDegradableList(); }
-    public ThirdDegradableList createThirdDegradableList() { return new ThirdDegradableList(); }
-
     public AbstractQueue createMapQueue() { return  new MapQueue<>(); }
-//    public AbstractQueue createConcurrentLinkedDeque() { return  new ConcurrentLinkedDeque(); }
     public AbstractQueue createDegradableQueue() {return new DegradableQueue(); }
-    public AbstractQueue createAddOnlyQueue() { return new AddOnlyQueue(); }
-
-    public ConcurrentHashMap createConcurrentHashMap() { return new ConcurrentHashMap(); }
 
     public Noop createNoop() {return new Noop(); }
 
