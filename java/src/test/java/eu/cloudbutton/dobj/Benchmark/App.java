@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj;
+package eu.cloudbutton.dobj.Benchmark;
 
 import eu.cloudbutton.dobj.types.*;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -112,7 +111,7 @@ public class App {
             System.err.println();
 
             // print option sample. This is useful some time
-            System.err.println("  Example: java eu.cloudbutton.dobj.App" + parser.printExample(ALL));
+            System.err.println("  Example: java eu.cloudbutton.dobj.Benchmark.App" + parser.printExample(ALL));
 
             return;
         }
