@@ -8,12 +8,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * This class build a Counter on top of a Snapshot object.
+ *
+ * @author Boubacar Kane
+ * */
 public class CounterSnapshot extends AbstractCounter{
 
     private final Snapshot<Counter> snapobject;
     private final ThreadLocal<Triplet<Counter, AtomicInteger, List<Counter>>> tripletThreadLocal;
     private final ConcurrentMap<Thread, List<Counter>> embedded_snaps;
 
+    /**
+     * Creates a new Counter initialized with the initial value 0.
+     */
     public CounterSnapshot() {
         snapobject = new Snapshot<>(new ConcurrentHashMap<>());
         tripletThreadLocal = ThreadLocal.withInitial(() -> {
@@ -26,6 +34,9 @@ public class CounterSnapshot extends AbstractCounter{
 
     }
 
+    /**
+     * Increments the current value of the Counter.
+     */
     @Override
     public void increment() {
         List<Counter> embedded_snap = snapobject.snap();
@@ -34,19 +45,23 @@ public class CounterSnapshot extends AbstractCounter{
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
     }
 
-    public void increment(int val) {
+    /**
+     * Adds the given value to the current value of the Counter.
+     * @param delta the value added to the Counter.
+     */
+    @Override
+    public void increment(int delta) {
         List<Counter> embedded_snap = snapobject.snap();
-        tripletThreadLocal.get().getValue0().increment(val);
+        tripletThreadLocal.get().getValue0().increment(delta);
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
     }
 
-    @Override
-    public void write(){ increment(); }
 
-    @Override
-    public void write(int val) { increment(val); }
-
+    /**
+     * Returns the current value of the Counter.
+     * @return the current value stored by this object.
+     */
     @Override
     public int read(){
 

@@ -7,6 +7,13 @@ import java.util.AbstractQueue;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * This class provide a Queue.
+ * WIP.
+ *
+ * @param <E>
+ * @author Boubacar Kane
+ */
 public class DegradableQueue<E> extends AbstractQueue<E> {
 
     private static class Node<E> {
@@ -60,15 +67,26 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
 
     private transient volatile Node<E> tail;
 
+    /**
+     * Create an empty queue.
+     */
     public DegradableQueue() {
         tail = head = new Node<>(null);
     }
 
+    /**
+     * Returns an iterator over the elements in this queue in proper sequence.
+     * @return an iterator over the elements in this queue in proper sequence.
+     */
     @Override
     public Iterator<E> iterator() {
         throw new IllegalArgumentException();
     }
 
+    /**
+     * Returns the number of element present in the queue.
+     * @return the number of element present in the queue.
+     */
     @Override
     public int size() {
         int ret = 0;
@@ -80,6 +98,11 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         return ret;
     }
 
+    /**
+     * Inserts the specified element into this queue.
+     * @param e
+     * @return true if the element was added to this queue, else false.
+     */
     @Override
     public boolean offer(E e) {
         checkNotNull(e);
@@ -111,6 +134,10 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         }
     }
 
+    /**
+     * Retrieves and removes the head of this queue, or returns null if this queue is empty.
+     * @return the head of this queue, or null if this queue is empty.
+     */
     @Override
     public E poll() {
         restartFromHead:

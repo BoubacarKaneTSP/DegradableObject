@@ -5,11 +5,20 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * This class provide a LinkedList.
+ * WIP.
+ *
+ * @author Boubacar Kane
+ * */
 public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T> {
 
     private final ConcurrentMap<Thread, LinkedList<T>> list;
     private final ThreadLocal<LinkedList<T>> local;
 
+    /**
+     * Create an empty LinkedList.
+     */
     public DegradableLinkedList() {
         this.list = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
@@ -20,24 +29,23 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
     }
 
     @Override
-    public Iterator<T> iterator() {
-        List<T> result = new ArrayList<>();
-        for (LinkedList<T> val : list.values()){
-            result.addAll(val.read());
-        }
-        return result.iterator();
-    }
-
-    @Override
     public int size() {
         return 0;
     }
 
+    /**
+     * Appends the specified element to this list.
+     * @param element element to be appended to this list
+     */
     @Override
-    public boolean add(T val) {
-        return local.get().add(val);
+    public boolean add(T element) {
+        return local.get().add(element);
     }
 
+    /**
+     * Returns a java.util.List that contains all elements
+     * @return all elements stored in the object.
+     */
     public List<T> read() {
         List<T> result = new ArrayList<>();
         for (LinkedList<T> val : list.values()){
@@ -46,12 +54,18 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
         return result;
     }
 
+    /**
+     * Removes a single instance of the specified element from this List.
+     * Each process can only delete an element that it has previously added.
+     * @param o
+     * @return true if the element has been removed.
+     */
     @Override
-    public boolean remove(Object val) {
+    public boolean remove(Object o) {
         boolean removed = false;
 
         for (LinkedList<T> l : list.values()){
-            removed = l.remove(val);
+            removed = l.remove(o);
             if (removed) {
                 break;
             }
@@ -59,12 +73,17 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
         return removed;
     }
 
+    /**
+     * Returns true if this List contains the specified element.
+     * @param o
+     * @return true if this List contains the specified element.
+     */
     @Override
-    public boolean contains(Object val) {
+    public boolean contains(Object o) {
         boolean contained = false;
 
         for (LinkedList<T> l : list.values()){
-            contained = l.contains(val);
+            contained = l.contains(o);
             if (contained) {
                 break;
             }
@@ -72,9 +91,12 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
         return contained;
     }
 
+    /**
+     * Removes all of the elements from this List.
+     */
     @Override
     public void clear() {
-        throw new java.lang.Error("Remove not build yet");
+        throw new java.lang.Error("clear not build yet");
     }
 
     @Override
@@ -92,8 +114,26 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
         return null;
     }
 
+    /**
+     * Returns a string representation of this List.
+     * @return a string representation of this List.
+     */
     @Override
     public String toString(){
         return "method toString not build yet";
+    }
+
+
+    /**
+     * Returns an iterator over the elements in this list in proper sequence.
+     * @return an iterator over the elements in this list in proper sequence.
+     */
+    @Override
+    public Iterator<T> iterator() {
+        List<T> result = new ArrayList<>();
+        for (LinkedList<T> val : list.values()){
+            result.addAll(val.read());
+        }
+        return result.iterator();
     }
 }

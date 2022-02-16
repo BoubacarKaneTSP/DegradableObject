@@ -113,6 +113,10 @@ public class LinkedListSnapshot<T> extends AbstractQueue<T> implements Queue<T> 
         return null;
     }
 
+    /**
+     * Returns a string representation of this List.
+     * @return a string representation of this List.
+     */
     @Override
     public String toString(){
         return "method toString not build yet";

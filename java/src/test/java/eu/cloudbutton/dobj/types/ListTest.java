@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.types;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertTrue;
 
 import java.util.AbstractList;
 import java.util.AbstractQueue;
@@ -29,7 +28,6 @@ public class ListTest {
         doAppend(factory.createDegradableLinkedList());
         doAppend(factory.createLinkedList());
         doAppend(factory.createLinkedListSnapshot());*/
-        doAppend(factory.createAddOnlyQueue());
     }
 
     private static void doAppend(AbstractQueue<Integer> list) throws ExecutionException, InterruptedException {
@@ -50,6 +48,7 @@ public class ListTest {
             future.get();
         }
 
+        list.poll();
         list.add(1);
         list.add(2);
         list.add(3);
