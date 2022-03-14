@@ -13,19 +13,19 @@ public class ListTester extends Tester<AbstractQueue> {
     }
 
     @Override
-    protected void test(char type) {
+    protected void test(opType type) {
         int n = random.nextInt(ITEM_PER_THREAD);
         long iid = Thread.currentThread().getId() * 1000000000L + n;
 
         switch (type) {
-            case 'a':
+            case ADD:
                 object.offer(iid);
                 break;
-            case 'r':
-//                    object.poll();
+            case REMOVE:
+                    object.poll();
                 break;
-            case 'c':
-//                    object.contains(iid);
+            case READ:
+                    object.contains(iid);
                 Collection<Long> ret = new ArrayList<>();
 
                 Iterator<Long> it = object.iterator();

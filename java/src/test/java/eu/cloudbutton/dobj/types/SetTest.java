@@ -22,7 +22,6 @@ public class SetTest {
     @Test
     void add() throws ExecutionException, InterruptedException {
         doAdd(factory.createDegradableSet());
-        doAdd(factory.createSet());
     }
 
     private static void doAdd(AbstractSet<String> set) throws ExecutionException, InterruptedException {

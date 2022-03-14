@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -26,9 +27,9 @@ public class Benchmark {
     public static AtomicLong timeAdd;
     public static AtomicLong timeRemove;
     public static AtomicLong timeRead;
-    public static DegradableCounter nbAdd;
-    public static DegradableCounter nbRemove;
-    public static DegradableCounter nbRead;
+    public static AtomicInteger nbAdd;
+    public static AtomicInteger nbRemove;
+    public static AtomicInteger nbRead;
     public static AtomicBoolean flag;
 
     @Option(name = "-type", required = true, usage = "type to test")
@@ -89,15 +90,14 @@ public class Benchmark {
             for (int i = 1; i <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
 
-                    nbAdd = new DegradableCounter();
-                    nbRemove = new DegradableCounter();
-                    nbRead = new DegradableCounter();
+                    nbAdd = new AtomicInteger();
+                    nbRemove = new AtomicInteger();
+                    nbRead = new AtomicInteger();
 
                     timeAdd = new AtomicLong(0);
                     timeRemove = new AtomicLong(0);
                     timeRead = new AtomicLong(0);
 
-                    Object object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
                     Class clazz;
                     try{
                         clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
@@ -105,29 +105,46 @@ public class Benchmark {
                         clazz = Class.forName("java.util.concurrent."+type);
                     }
 
-                    FactoryFiller factoryFiller = new FactoryFiller(this, object, 1_000_000);
+                    Object object;
+                    try{
+                        object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
+                    }catch (NoSuchMethodException e){
+                        object = clazz.getConstructor().newInstance();
+                    }
+
+
+
+
+                    FactoryFiller factoryFiller = new FactoryFiller(object, 100);
 
                     Method method = factoryFiller.getClass().getDeclaredMethod("create"+ clazz.getSuperclass().getSimpleName() + "Filler");
                     Filler filler = (Filler) method.invoke(factoryFiller);
                     filler.fill();
 
+
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
                     CountDownLatch latch = new CountDownLatch(i);
-                    FactoryTester factoryTester = new FactoryTester(this,
+                    FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
                             latch,
-                            nbOps / i);
-                    for (int j = 0; j < i-1; j++) {
+                            nbOps / i
+                    );
+
+                    for (int j = 0; j < i; j++) {
                         Method m = factoryTester.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                         Tester tester = (Tester) m.invoke(factoryTester);
                         callables.add(tester);
                     }
 
 
-                    FactoryTester factoryT = new FactoryTester(this,
+                   /*
+
+                   Code if one reader is needed
+
+                   FactoryTester factoryT = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                             latch,
@@ -137,15 +154,13 @@ public class Benchmark {
                     Method m1 = factoryT.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                     Tester t = (Tester) m1.invoke(factoryT);
                     callables.add(t);
-
-                    ExecutorService executorService = Executors.newFixedThreadPool(1);
+*/
+                    ExecutorService executorCoordinator = Executors.newFixedThreadPool(1);
                     flag = new AtomicBoolean();
                     flag.set(true);
-                    executorService.submit(new Coordinator());
+                    executorCoordinator.submit(new Coordinator());
 
                     List<Future<Void>> futures;
-
-//                    System.out.println("Max JVM memory: " + Runtime.getRuntime().maxMemory());
 
                     // launch computation
                     futures = executor.invokeAll(callables);
@@ -165,12 +180,11 @@ public class Benchmark {
                 long timeTotal;
                 timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
-                sum = nbAdd.read() + nbRemove.read() + nbRead.read();
-                double avg_op = sum / i;
+                sum = nbAdd.get() + nbRemove.get() + nbRead.get();
                 System.out.println(i + " " + (timeTotal/1_000_000_000) / (double) sum); // printing the avg time per op for i thread(s)
-                System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.read());
-                System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.read());
-                System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.read());
+                System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.get());
+                System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.get());
+                System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.get());
 
                 i *= 2;
 
@@ -182,7 +196,7 @@ public class Benchmark {
                 }
             }
 
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
             e.printStackTrace();
             System.exit(-1);
         }

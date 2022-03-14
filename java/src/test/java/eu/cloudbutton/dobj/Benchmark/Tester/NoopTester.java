@@ -11,17 +11,17 @@ public class NoopTester extends Tester<Noop> {
     }
 
     @Override
-    protected void test(char type) {
+    protected void test(opType type) {
         // no-op
         int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {
-            case 'a':
+            case ADD:
                 n++;
                 break;
-            case 'r':
+            case REMOVE:
                 n--;
                 break;
-            case 'c':
+            case READ:
                 n += 2;
                 break;
         }

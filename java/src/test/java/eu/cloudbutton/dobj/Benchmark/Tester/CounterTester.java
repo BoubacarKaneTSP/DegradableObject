@@ -11,14 +11,14 @@ public class CounterTester extends Tester<AbstractCounter> {
     }
 
     @Override
-    protected void test(char type) {
+    protected void test(opType type) {
 
         switch (type) {
-            case 'a':
-            case 'r':
+            case ADD:
+            case REMOVE:
                 object.increment();
                 break;
-            case 'c':
+            case READ:
                 object.read();
                 break;
         }

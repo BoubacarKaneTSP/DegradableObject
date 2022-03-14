@@ -34,7 +34,7 @@ public class SnapshotTest {
         List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            snap.write();
+            snap.increment();
 //            System.out.println(snap.read());
             return null;
         };

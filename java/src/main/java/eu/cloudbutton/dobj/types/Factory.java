@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.AbstractMap;
 import java.util.AbstractQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -8,12 +9,15 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Factory {
 
+    /* Counter */
+
     public Counter createCounter() { return new Counter(); }
     public DegradableCounter createDegradableCounter() { return new DegradableCounter(); }
     public CounterSnapshot createCounterSnapshot() { return new CounterSnapshot(); }
     public CounterSnapshotSRMW createCounterSnapshotSRMW(){ return new CounterSnapshotSRMW(); }
 
-    public ConcurrentLinkedQueue createList() { return new ConcurrentLinkedQueue(); }
+    /* List */
+
     public DegradableList createDegradableList() { return new DegradableList(); }
     public LinkedList createLinkedList() { return new LinkedList(); }
     public DegradableLinkedList createDegradableLinkedList() { return new DegradableLinkedList(); }
@@ -22,14 +26,20 @@ public class Factory {
     public LinkedListSnapshot createLinkedListSnapshot () { return  new LinkedListSnapshot(); }
     public LinkedListSnapshotSRMW createLinkedListSnapshotSRMW() { return  new LinkedListSnapshotSRMW(); }
 
-    public ConcurrentSkipListSet createSet() { return new ConcurrentSkipListSet(); }
+    /* Set */
+
     public DegradableSet createDegradableSet() { return new DegradableSet(); }
     public SetSnapshot createSetSnapshot () { return new SetSnapshot(); }
     public SetSnapshotSRMW createSetSnapshotSRMW () { return new SetSnapshotSRMW(); }
 
+    /* Queue */
 
     public AbstractQueue createMapQueue() { return  new MapQueue<>(); }
     public AbstractQueue createDegradableQueue() {return new DegradableQueue(); }
+
+    /* Map */
+
+    public AbstractMap createDegradableMap() {return new DegradableMap(); }
 
     public Noop createNoop() {return new Noop(); }
 

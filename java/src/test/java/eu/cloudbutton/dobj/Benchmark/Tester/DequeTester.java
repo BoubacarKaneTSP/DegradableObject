@@ -11,21 +11,21 @@ public class DequeTester extends Tester<Deque> {
     }
 
     @Override
-    protected void test(char type) {
+    protected void test(opType type) {
         int n = random.nextInt(ITEM_PER_THREAD);
         long iid = Thread.currentThread().getId() * 1000000000L + n;
 
         switch (type) {
-            case 'a':
+            case ADD:
                 object.addFirst(iid);
                 break;
-            case 'r':
+            case REMOVE:
                 try{
                     object.removeLast();
                 } catch (NoSuchElementException e) {
                 }
                 break;
-            case 'c':
+            case READ:
                 object.toArray();
                 break;
         }

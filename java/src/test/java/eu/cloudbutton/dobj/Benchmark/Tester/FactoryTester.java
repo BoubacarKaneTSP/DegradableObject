@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.Benchmark.Benchmark;
 import eu.cloudbutton.dobj.types.AbstractCounter;
 
 import java.util.AbstractMap;
@@ -11,14 +10,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class FactoryTester {
 
-    private final Benchmark benchmark;
     private final Object object;
     private final int[] ratios;
     private final CountDownLatch latch;
     private final long nbOps;
 
-    public FactoryTester(Benchmark benchmark, Object object, int[] ratios, CountDownLatch latch, long nbOps) {
-        this.benchmark = benchmark;
+    public FactoryTester(Object object, int[] ratios, CountDownLatch latch, long nbOps) {
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;

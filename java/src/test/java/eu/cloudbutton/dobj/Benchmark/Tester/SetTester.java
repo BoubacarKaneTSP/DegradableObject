@@ -10,18 +10,18 @@ public class SetTester extends Tester<AbstractSet> {
     }
 
     @Override
-    protected void test(char type) {
+    protected void test(opType type) {
 
         int n = random.nextInt(ITEM_PER_THREAD);
-        long iid = Thread.currentThread().getId() * 1000000000L + n;
+        long iid = (Thread.currentThread().getId() * 1000000000 + n);
         switch (type) {
-            case 'a':
+            case ADD:
                 object.add(iid);
                 break;
-            case 'r':
+            case REMOVE:
                 object.remove(iid);
                 break;
-            case 'c':
+            case READ:
                 object.contains(iid);
                 break;
         }

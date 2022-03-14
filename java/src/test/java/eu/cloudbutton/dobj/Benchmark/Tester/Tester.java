@@ -8,6 +8,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Tester<T> implements Callable<Void> {
 
+    enum opType{
+        ADD,
+        REMOVE,
+        READ
+    }
+
     protected static final int ITEM_PER_THREAD = 1000;
     protected final ThreadLocalRandom random;
     protected final T object;
@@ -30,7 +36,7 @@ public abstract class Tester<T> implements Callable<Void> {
         long startTime, endTime;
 
         int n, add = 0, remove = 0, read = 0;
-        char type;
+        opType type;
 
         try{
             latch.await();
@@ -38,15 +44,15 @@ public abstract class Tester<T> implements Callable<Void> {
             // warm up
             while (Benchmark.flag.get()) {
 
-                n = this.random.nextInt(101);
+                n = this.random.nextInt(100);
 
                 if (n <= ratios[0]) {
                     if (n % 2 == 0)
-                        type = 'a';
+                        type = opType.ADD;
                     else
-                        type = 'r';
+                        type = opType.REMOVE;
                 } else {
-                    type = 'c';
+                    type = opType.READ;
                 }
 
                 test(type);
@@ -54,15 +60,15 @@ public abstract class Tester<T> implements Callable<Void> {
 
             // compute
             while (!Benchmark.flag.get()) {
-                n = this.random.nextInt(101);
+                n = this.random.nextInt(100);
 
                 if (n < ratios[0]) {
                     if (n % 2 == 0)
-                        type = 'a';
+                        type = opType.ADD;
                     else
-                        type = 'r';
+                        type = opType.REMOVE;
                 } else {
-                    type = 'c';
+                    type = opType.READ;
                 }
 
                 startTime = System.nanoTime();
@@ -70,15 +76,15 @@ public abstract class Tester<T> implements Callable<Void> {
                 endTime = System.nanoTime();
 
                 switch (type) {
-                    case 'a':
+                    case ADD:
                         add++;
                         Benchmark.timeAdd.addAndGet(endTime - startTime);
                         break;
-                    case 'r':
+                    case REMOVE:
                         remove++;
                         Benchmark.timeRemove.addAndGet(endTime - startTime);
                         break;
-                    case 'c':
+                    case READ:
                         read++;
                         Benchmark.timeRead.addAndGet(endTime - startTime);
                         break;
@@ -89,12 +95,12 @@ public abstract class Tester<T> implements Callable<Void> {
             e.printStackTrace();
         }
 
-        Benchmark.nbAdd.increment(add);
-        Benchmark.nbRemove.increment(remove);
-        Benchmark.nbRead.increment(read);
+        Benchmark.nbAdd.addAndGet(add);
+        Benchmark.nbRemove.addAndGet(remove);
+        Benchmark.nbRead.addAndGet(read);
 
         return null;
     }
 
-    protected abstract void test(char type);
+    protected abstract void test(opType type);
 }
