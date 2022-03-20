@@ -116,7 +116,7 @@ public class Benchmark {
                         try{
                             clazz = Class.forName("java.util.concurrent."+type);
                         }catch (ClassNotFoundException classNotFoundException){
-                            clazz = Class.forName("java.util.concurrent.atomic"+type);
+                            clazz = Class.forName("java.util.concurrent.atomic."+type);
                         }
                     }
 
