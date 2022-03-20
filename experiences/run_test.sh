@@ -14,7 +14,7 @@ do
 for type in 'Counter' 'DegradableCounter' 'ConcurrentSkipListSet' 'DegradableSet' 'ConcurrentHashMap' 'DegradableMap' 'ConcurrentLinkedQueue' 'MapQueue' 'DegradableQueue'
   do
     echo $type $ratio
-    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest 5 -time 10 -wTime 5 > "results_${type}_ratio_write_${ratio}.txt"
+    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest 5 -time 10 -wTime 5 -s -p
     echo " "
   done
 done
