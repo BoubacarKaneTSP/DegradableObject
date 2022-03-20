@@ -102,7 +102,11 @@ public class Benchmark {
                     try{
                         clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
                     }catch (ClassNotFoundException e){
-                        clazz = Class.forName("java.util.concurrent."+type);
+                        try{
+                            clazz = Class.forName("java.util.concurrent."+type);
+                        }catch (ClassNotFoundException classNotFoundException){
+                            clazz = Class.forName("java.util.concurrent.atomic"+type);
+                        }
                     }
 
                     Object object;
@@ -117,9 +121,13 @@ public class Benchmark {
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, 100);
 
-                    Method method = factoryFiller.getClass().getDeclaredMethod("create"+ clazz.getSuperclass().getSimpleName() + "Filler");
-                    Filler filler = (Filler) method.invoke(factoryFiller);
-                    filler.fill();
+                    try{
+                        Method method = factoryFiller.getClass().getDeclaredMethod("create"+ clazz.getSuperclass().getSimpleName() + "Filler");
+                        Filler filler = (Filler) method.invoke(factoryFiller);
+                        filler.fill();
+                    }catch (NoSuchMethodException e){
+                        System.out.println(clazz.getSuperclass().getSimpleName() + " object doesn't need to be filled");
+                    }
 
 
                     List<Callable<Void>> callables = new ArrayList<>();
