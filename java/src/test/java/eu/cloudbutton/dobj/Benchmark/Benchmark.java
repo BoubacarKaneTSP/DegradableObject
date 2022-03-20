@@ -8,8 +8,12 @@ import eu.cloudbutton.dobj.types.*;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -46,6 +50,10 @@ public class Benchmark {
     private long nbOps = 100_000_000;
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
+    @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
+    private boolean _s = false;
+    @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
+    private boolean _p = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
@@ -83,6 +91,9 @@ public class Benchmark {
         }
 
         try{
+
+            PrintWriter printWriter = null;
+            FileWriter fileWriter;
 
             Factory factory = new Factory();
             String constructor = "create" + type;
@@ -126,7 +137,7 @@ public class Benchmark {
                         Filler filler = (Filler) method.invoke(factoryFiller);
                         filler.fill();
                     }catch (NoSuchMethodException e){
-                        System.out.println(clazz.getSuperclass().getSimpleName() + " object doesn't need to be filled");
+                        System.out.println(clazz.getSuperclass().getSimpleName() + " object may not need to be filled");
                     }
 
 
@@ -189,10 +200,24 @@ public class Benchmark {
                 timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
                 sum = nbAdd.get() + nbRemove.get() + nbRead.get();
-                System.out.println(i + " " + (timeTotal/1_000_000_000) / (double) sum); // printing the avg time per op for i thread(s)
-                System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.get());
-                System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.get());
-                System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.get());
+
+                if (_s){
+
+                    if (i == 1)
+                        fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", false);
+                    else
+                        fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
+
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(i + " " + (timeTotal/1_000_000_000) / (double) sum);
+                }
+
+                if (_p){
+                    System.out.println(i + " " + (timeTotal/1_000_000_000) / (double) sum); // printing the avg time per op for i thread(s)
+                    System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.get());
+                    System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.get());
+                    System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.get());
+                }
 
                 i *= 2;
 
@@ -202,9 +227,14 @@ public class Benchmark {
                 if (i > nbThreads && i != 2 * nbThreads) {
                     i = nbThreads;
                 }
+
+                if(_p)
+                    System.out.println();
+                if (_s)
+                    printWriter.close();
             }
 
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException | IOException e) {
             e.printStackTrace();
             System.exit(-1);
         }

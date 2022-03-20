@@ -35,8 +35,8 @@ public class FactoryTester {
     }
 
 
-    public ListTester createAbstractQueueTester() {
-        return new ListTester((AbstractQueue) object, ratios, latch, nbOps);
+    public QueueTester createAbstractQueueTester() {
+        return new QueueTester((AbstractQueue) object, ratios, latch, nbOps);
     }
 
     public MapTester createAbstractMapTester() {

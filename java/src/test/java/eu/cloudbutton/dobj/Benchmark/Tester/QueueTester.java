@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 
-public class ListTester extends Tester<AbstractQueue> {
+public class QueueTester extends Tester<AbstractQueue> {
 
-    public ListTester(AbstractQueue list, int[] ratios, CountDownLatch latch, long nbOps) {
+    public QueueTester(AbstractQueue list, int[] ratios, CountDownLatch latch, long nbOps) {
         super(list, ratios, latch, nbOps);
     }
 
