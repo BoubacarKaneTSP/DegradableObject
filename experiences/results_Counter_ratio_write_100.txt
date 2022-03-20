@@ -1,0 +1,45 @@
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+1 2.7713532612893727E-8
+    -time/add : 3.083692567607971E-8
+    -time/remove : 3.084369782166063E-8
+    -time/read: NaN
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+2 1.7703637044046146E-7
+    -time/add : 1.8789128872543002E-7
+    -time/remove : 1.8774391741390562E-7
+    -time/read: NaN
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+4 4.785083435481157E-7
+    -time/add : 4.90148313440454E-7
+    -time/remove : 4.904062019599978E-7
+    -time/read: NaN
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+8 9.925983731505668E-7
+    -time/add : 9.92780167019627E-7
+    -time/remove : 9.92673318174258E-7
+    -time/read: NaN
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+AbstractCounter object doesn't need to be filled
+16 2.1776837814321256E-6
+    -time/add : 2.1801291292907875E-6
+    -time/remove : 2.180082314075431E-6
+    -time/read: NaN
