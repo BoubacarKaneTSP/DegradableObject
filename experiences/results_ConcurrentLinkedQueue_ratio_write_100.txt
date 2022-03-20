@@ -1,45 +1,5 @@
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-1 4.5612697531374214E-8
-    -time/add : 5.489036918503587E-8
-    -time/remove : 5.079296805102513E-8
-    -time/read: NaN
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-2 3.658871952214547E-7
-    -time/add : 3.6868595594379295E-7
-    -time/remove : 3.6590063775602306E-7
-    -time/read: NaN
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-4 7.821979657009413E-7
-    -time/add : 8.47764388489457E-7
-    -time/remove : 7.466637769697987E-7
-    -time/read: NaN
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-8 2.5426509625405955E-6
-    -time/add : 2.7612705841033352E-6
-    -time/remove : 2.33084448150957E-6
-    -time/read: NaN
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-AbstractQueue object doesn't need to be filled
-16 7.391854678411439E-6
-    -time/add : 9.055400336260094E-6
-    -time/remove : 5.801038703180781E-6
-    -time/read: NaN
+1 4.4721020702559005E-8
+2 3.4356511978680115E-7
+4 7.926009489205055E-7
+8 2.4032176048085095E-6
+16 7.473289457459306E-6

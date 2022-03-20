@@ -11,7 +11,7 @@ do
 #  for type in 'LinkedList' 'DegradableLinkedList' 'LinkedListSnapshot' 'LinkedListSnapshotSRMW'
 #  for type in 'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList' 'CounterSnapshot' 'SetSnapshot' 'ListSnapshot' 'LinkedListSnapshot' 'CounterSnapshotSRMW' 'SetSnapshotSRMW' 'ListSnapshotSRMW' 'LinkedListSnapshotSRMW'
 #for type in 'Counter' 'DegradableCounter' 'Set' 'DegradableSet' 'List' 'DegradableList' 'LinkedList' 'DegradableLinkedList'
-for type in 'Counter' 'DegradableCounter' 'ConcurrentSkipListSet' 'DegradableSet' 'ConcurrentHashMap' 'DegradableMap' 'ConcurrentLinkedQueue' 'MapQueue' 'DegradableQueue'
+for type in 'Counter' 'DegradableCounter' 'ConcurrentLinkedQueue' 'MapQueue' 'DegradableQueue'
   do
     echo $type $ratio
     CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest 5 -time 10 -wTime 5 -s -p
