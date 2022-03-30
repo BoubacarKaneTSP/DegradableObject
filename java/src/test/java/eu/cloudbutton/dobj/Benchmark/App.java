@@ -67,9 +67,6 @@ public class App {
     private boolean _p = false;
 
     private AtomicBoolean flag;
-    private Map<String, AbstractSet<String>> follower;
-    private Map<String, AbstractCounter> nbFollower;
-    private Map<String, Timeline> timeline;
 
     private Map<String, AtomicInteger> nbOperations;
     private Map<String, AtomicLong> timeOperations;
@@ -163,10 +160,6 @@ public class App {
                     java.util.List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(i);
 
-                    follower = new ConcurrentHashMap<>();
-                    nbFollower = new ConcurrentHashMap<>();
-                    timeline = new ConcurrentHashMap<>();
-
                     if (a == 1) {
                         nbOperations = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
@@ -195,8 +188,8 @@ public class App {
                     }
 
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
-                    flag = new AtomicBoolean();
-                    flag.set(true);
+                    flag = new AtomicBoolean(true);
+
                     executorService.submit(new Coordinator(latch));
 
                     List<Future<Void>> futures;
@@ -207,17 +200,6 @@ public class App {
                             future.get();
                         }
                     } catch (OutOfMemoryError | CancellationException | ExecutionException e) {
-                        //ignore
-                        int x = 0, y = 0;
-                        for (AbstractSet<String> set : follower.values()){
-                            if (set.isEmpty()){
-                                x++;
-                            }else if (set.size() == 50000){
-                                y++;
-                            }
-                        }
-                        System.out.println("nb de user qui ne follow personne : " + x);
-                        System.out.println("nb de user qui follow le max de personne : " + y);
                         e.printStackTrace();
                         System.exit(0);
                     }
@@ -242,7 +224,7 @@ public class App {
                         fileWriter = new FileWriter("retwis_all_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                    printWriter.println(i +" "+ nbTotalOperations / ((double)timeTotalOperations/1_000_000_000));
                 }
 
                 if (_p){
@@ -250,7 +232,7 @@ public class App {
                     System.out.print(" Time per operations for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                    System.out.println(" - "+ nbTotalOperations / ((double)timeTotalOperations/1_000_000_000));
 
                 }
 
@@ -264,7 +246,7 @@ public class App {
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).get());
+                        printWriter.println(i +" "+  (double)nbOperations.get(op).get()/((double)timeOperations.get(op).get()/1_000_000_000));
                     }
 
                     if (_p){
@@ -272,7 +254,7 @@ public class App {
                         System.out.print(" Time per operations for "+op+" operations ");
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
                         System.out.println();
-                        System.out.println(" - "+(double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).get());
+                        System.out.println(" - "+ (double)nbOperations.get(op).get() / ((double)timeOperations.get(op).get()/1_000_000_000));
                     }
 
                     if (_s)
@@ -307,6 +289,9 @@ public class App {
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private final Factory factory;
+        private Map<String, AbstractSet<String>> follower;
+        private Map<String, AbstractCounter> nbFollower;
+        private Map<String, Timeline> timeline;
 
         public RetwisApp(String objectSet, String objectQueue, String objectCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory, int nbThread) {
             this.random = ThreadLocalRandom.current();
@@ -319,6 +304,9 @@ public class App {
             this.latchFillDatabase = latchFillDatabase;
             this.factory = factory;
             this.ITEM_PER_THREAD = NB_USERS / nbThread; // the loop start with j=0
+            this.follower = new ConcurrentHashMap<>();
+            this.nbFollower = new ConcurrentHashMap<>();
+            this.timeline = new ConcurrentHashMap<>();
         }
 
         @Override
@@ -343,9 +331,8 @@ public class App {
 
                 latch.await();
 
-                System.out.println(follower.size());
-
                 //warm up
+
                 while (flag.get()){
                     val = random.nextInt(100);
 
@@ -427,23 +414,22 @@ public class App {
 
         public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException, ClassNotFoundException, InstantiationException {
 
+            if (_p)
+                System.out.println("Filling the database");
+
             int n;
             String userA;
             String userB;
 
-            System.out.println(Thread.currentThread().getName() + " is starting to fill...");
             //adding users
             for (int i = 0; i < ITEM_PER_THREAD; i++) {
                 addUser("user_"+Thread.currentThread().getName()+"_"+i);
             }
 
-            System.out.println(Thread.currentThread().getName() + " is done to fill...");
-
             latchFillDatabase.countDown();
 
             latchFillDatabase.await();
 
-            System.out.println(Thread.currentThread().getName() + " is starting to follow...");
             int nbUsers = follower.keySet().size();
             String[] users = follower.keySet().toArray(new String[nbUsers]);
 
@@ -451,8 +437,7 @@ public class App {
             
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
 
-            int i = 0, max = 100000/(175000000/nbUsers);
-
+            int i = 0, max = 100000/(175000000/nbUsers); //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
 
             for (int val: data){
                 if (val >= max) {
@@ -470,24 +455,17 @@ public class App {
 
                 userA = "user_"+Thread.currentThread().getName()+"_"+i;
                 
-                int nbFollow = data.get(random.nextInt(bound)); //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+                int nbFollow = data.get(random.nextInt(bound));
 //                System.out.println(nbFollow);
 
                     for(int j = 0; j < nbFollow; j++){
 
-
-//                    if (nbFollow >= nbUsers)
-//                        System.out.println("Nb follow max : " + nbUsers);
-
                         n = random.nextInt(nbUsers);
-//                    userB = users[j];
                         userB = users[n];
 
                         follow(userA, userB);
                     }
             }
-
-            System.out.println(Thread.currentThread().getName() + " is done to follow...");
 
         }
 
@@ -653,12 +631,13 @@ public class App {
                 latch.await();
 
                 if (_p){
-                    System.out.println("warming up");
+                    System.out.println("Warming up");
                 }
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
                 if (_p){
                     System.out.println();
+                    System.out.println("Computing");
                 }
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
