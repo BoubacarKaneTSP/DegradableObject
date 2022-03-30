@@ -219,9 +219,9 @@ public class App {
                 if (_s){
 
                     if (i == 1)
-                        fileWriter = new FileWriter("retwis_all_operations.txt", false);
+                        fileWriter = new FileWriter("retwis_all_operations_juc.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_all_operations.txt", true);
+                        fileWriter = new FileWriter("retwis_all_operations_juc.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(i +" "+ nbTotalOperations / ((double)timeTotalOperations/1_000_000_000));
@@ -242,9 +242,9 @@ public class App {
                 for (String op: listOperations){
                     if (_s){
                         if (i == 1)
-                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                            fileWriter = new FileWriter("retwis_"+op+"_operations_juc.txt", false);
                         else
-                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                            fileWriter = new FileWriter("retwis_"+op+"_operations_juc.txt", true);
                         printWriter = new PrintWriter(fileWriter);
                         printWriter.println(i +" "+  (double)nbOperations.get(op).get()/((double)timeOperations.get(op).get()/1_000_000_000));
                     }
@@ -413,9 +413,6 @@ public class App {
         }
 
         public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException, ClassNotFoundException, InstantiationException {
-
-            if (_p)
-                System.out.println("Filling the database");
 
             int n;
             String userA;
@@ -627,6 +624,9 @@ public class App {
         @Override
         public Void call() throws Exception {
             try {
+                if (_p)
+                    System.out.println("Filling the database");
+
                 latch.countDown();
                 latch.await();
 
