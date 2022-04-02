@@ -195,7 +195,7 @@ public class Benchmark {
                 }
                 int sum;
                 long avgTimeTotal;
-                avgTimeTotal = ((timeAdd.get() + timeRemove.get() + timeRead.get()) / nbTest) / nbCurrentThread;
+                avgTimeTotal = (timeAdd.get() + timeRemove.get() + timeRead.get()) / nbTest;
 
                 sum = (nbAdd.get() + nbRemove.get() + nbRead.get()) / nbTest ;
 
@@ -212,9 +212,9 @@ public class Benchmark {
 
                 if (_p){
                     System.out.println(nbCurrentThread + " " + (double)sum / (avgTimeTotal/1_000_000_000)); // printing the throughput per op for nbCurrentThread thread(s)
-                    System.out.println("    -time/add : " + (double)nbAdd.get() / ((timeAdd.get() / nbCurrentThread) /1_000_000_000));
-                    System.out.println("    -time/remove : " + (double)nbRemove.get() / ((timeRemove.get() / nbCurrentThread) /1_000_000_000));
-                    System.out.println("    -time/read: " + (double)nbRead.get() / ((timeRead.get() / nbCurrentThread) /1_000_000_000));
+                    System.out.println("    -time/add : " + (double)nbAdd.get() / (timeAdd.get() /1_000_000_000));
+                    System.out.println("    -time/remove : " + (double)nbRemove.get() / (timeRemove.get() /1_000_000_000));
+                    System.out.println("    -time/read: " + (double)nbRead.get() / (timeRead.get() /1_000_000_000));
                 }
 
                 nbCurrentThread *= 2;
