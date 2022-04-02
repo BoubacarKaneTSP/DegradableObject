@@ -99,15 +99,14 @@ public class Benchmark {
             String constructor = "create" + type;
 
             for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
+                nbAdd = new AtomicInteger(0);
+                nbRemove = new AtomicInteger(0);
+                nbRead = new AtomicInteger(0);
+
+                timeAdd = new AtomicLong(0);
+                timeRemove = new AtomicLong(0);
+                timeRead = new AtomicLong(0);
                 for (int a = 0; a < nbTest; a++) {
-
-                    nbAdd = new AtomicInteger();
-                    nbRemove = new AtomicInteger();
-                    nbRead = new AtomicInteger();
-
-                    timeAdd = new AtomicLong(0);
-                    timeRemove = new AtomicLong(0);
-                    timeRead = new AtomicLong(0);
 
                     Class clazz;
                     try{
@@ -196,9 +195,9 @@ public class Benchmark {
                 }
                 int sum;
                 long avgTimeTotal;
-                avgTimeTotal = (timeAdd.get() + timeRemove.get() + timeRead.get()) / nbCurrentThread;
+                avgTimeTotal = ((timeAdd.get() + timeRemove.get() + timeRead.get()) / nbTest) / nbCurrentThread;
 
-                sum = nbAdd.get() + nbRemove.get() + nbRead.get();
+                sum = (nbAdd.get() + nbRemove.get() + nbRead.get()) / nbTest ;
 
                 if (_s){
 
