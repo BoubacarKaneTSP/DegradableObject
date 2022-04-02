@@ -106,7 +106,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     @Override
     public boolean offer(E e) {
         checkNotNull(e);
-        final Node<E> newNode = new Node<E>(e);
+        final Node<E> newNode = new Node<>(e);
 
         for (Node<E> t = tail, p = t;;) {
             Node<E> q = p.next;

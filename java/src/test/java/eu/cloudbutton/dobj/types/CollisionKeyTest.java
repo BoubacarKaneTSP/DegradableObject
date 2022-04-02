@@ -48,6 +48,7 @@ public class CollisionKeyTest {
         System.out.println("Time elapsed filling the hashmap => " + timeElapsed + " seconds.");
         System.out.println("Current map size => " + map.size());
         System.out.println("Current collisionMap size => " + collisionMap.size());
+
     }
 
 }

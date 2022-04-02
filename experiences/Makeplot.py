@@ -40,9 +40,9 @@ plt.xticks(fontsize=SIZE)
 plt.yticks(fontsize=SIZE)
 
 
-plt.gca().set_ylim([10000,10000000])
+# plt.gca().set_ylim([10000,10000000])
 # plt.gca().set_ylim([0.00000001,0.001])
-# plt.gca().invert_yaxis()
+plt.gca().invert_yaxis()
 plt.gca().spines['right'].set_visible(False)
 plt.gca().spines['top'].set_visible(False)
 plt.gca().tick_params(axis='both', which='major', labelsize=SIZE, length=SIZE)

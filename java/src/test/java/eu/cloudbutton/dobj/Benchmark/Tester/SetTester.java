@@ -5,15 +5,13 @@ import java.util.concurrent.CountDownLatch;
 
 public class SetTester extends Tester<AbstractSet> {
 
-    public SetTester(AbstractSet object, int[] ratios, CountDownLatch latch, long nbOps) {
-        super(object, ratios, latch, nbOps);
+    public SetTester(AbstractSet object, int[] ratios, CountDownLatch latch) {
+        super(object, ratios, latch);
     }
 
     @Override
-    protected void test(opType type) {
+    protected void test(opType type, long iid) {
 
-        int n = random.nextInt(ITEM_PER_THREAD);
-        long iid = (Thread.currentThread().getId() * 1000000000 + n);
         switch (type) {
             case ADD:
                 object.add(iid);

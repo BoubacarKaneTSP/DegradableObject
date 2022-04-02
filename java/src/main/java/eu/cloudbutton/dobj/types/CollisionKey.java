@@ -12,7 +12,7 @@ public class CollisionKey /*implements Comparable<CollisionKey>*/{
 
      String value;
      List<Integer> listHashCode = new ArrayList<>();
-    protected final ThreadLocalRandom random;
+     protected final ThreadLocalRandom random;
 
 
 

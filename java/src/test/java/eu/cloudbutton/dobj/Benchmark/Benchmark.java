@@ -148,8 +148,7 @@ public class Benchmark {
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
-                            latch,
-                            nbOps / i
+                            latch
                     );
 
                     for (int j = 0; j < i; j++) {
@@ -209,14 +208,14 @@ public class Benchmark {
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i + " " + (timeTotal/1_000_000_000) / (double) sum);
+                    printWriter.println(i + " " + (double)sum / (timeTotal/1_000_000_000));
                 }
 
                 if (_p){
-                    System.out.println(i + " " + (timeTotal/1_000_000_000) / (double) sum); // printing the avg time per op for i thread(s)
-                    System.out.println("    -time/add : " + ((double) timeAdd.get()/1_000_000_000)/(double)nbAdd.get());
-                    System.out.println("    -time/remove : " + ((double)timeRemove.get()/1_000_000_000)/(double)nbRemove.get());
-                    System.out.println("    -time/read: " + ((double)timeRead.get()/1_000_000_000)/(double)nbRead.get());
+                    System.out.println(i + " " + (double)sum / (timeTotal/1_000_000_000)); // printing the avg time per op for i thread(s)
+                    System.out.println("    -time/add : " + (double)nbAdd.get() / (timeAdd.get()/1_000_000_000));
+                    System.out.println("    -time/remove : " + (double)nbRemove.get() / (timeRemove.get()/1_000_000_000));
+                    System.out.println("    -time/read: " + (double)nbRead.get() / (timeRead.get()/1_000_000_000));
                 }
 
                 i *= 2;

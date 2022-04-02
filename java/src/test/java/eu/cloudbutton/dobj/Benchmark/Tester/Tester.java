@@ -19,34 +19,37 @@ public abstract class Tester<T> implements Callable<Void> {
     protected final T object;
     protected final int[] ratios;
     protected final CountDownLatch latch;
-    protected final long nbOps;
 
-    public Tester(T object, int[] ratios, CountDownLatch latch, long nbOps) {
+    public Tester(T object, int[] ratios, CountDownLatch latch) {
         this.random = ThreadLocalRandom.current();
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
-        this.nbOps = nbOps;
     }
 
     @Override
     public Void call() {
 
-        latch.countDown();
         long startTime, endTime;
 
         int n, add = 0, remove = 0, read = 0;
+        long timeAdd = 0, timeRemove = 0, timeRead = 0;
+
         opType type;
+
+        latch.countDown();
 
         try{
             latch.await();
+
+            // TRY WITH ONLY ONE RANDOM NUMBER AND DO % 100 FOR THE OTHER
 
             // warm up
             while (Benchmark.flag.get()) {
 
                 n = this.random.nextInt(100);
 
-                if (n <= ratios[0]) {
+                if (n < ratios[0]) {
                     if (n % 2 == 0)
                         type = opType.ADD;
                     else
@@ -55,7 +58,9 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                test(type);
+                int rand = random.nextInt(ITEM_PER_THREAD);
+                long iid = Thread.currentThread().getId() * 1000000000L + rand;
+                test(type, iid);
             }
 
             // compute
@@ -71,22 +76,25 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
+                int rand = random.nextInt(ITEM_PER_THREAD);
+                long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+
                 startTime = System.nanoTime();
-                test(type);
+                test(type, iid);
                 endTime = System.nanoTime();
 
                 switch (type) {
                     case ADD:
                         add++;
-                        Benchmark.timeAdd.addAndGet(endTime - startTime);
+                        timeAdd += endTime - startTime;
                         break;
                     case REMOVE:
                         remove++;
-                        Benchmark.timeRemove.addAndGet(endTime - startTime);
+                        timeRemove += endTime - startTime;
                         break;
                     case READ:
                         read++;
-                        Benchmark.timeRead.addAndGet(endTime - startTime);
+                        timeRead += endTime - startTime;
                         break;
                 }
             }
@@ -99,8 +107,12 @@ public abstract class Tester<T> implements Callable<Void> {
         Benchmark.nbRemove.addAndGet(remove);
         Benchmark.nbRead.addAndGet(read);
 
+        Benchmark.timeAdd.addAndGet(timeAdd);
+        Benchmark.timeRemove.addAndGet(timeRemove);
+        Benchmark.timeRead.addAndGet(timeRead);
+
         return null;
     }
 
-    protected abstract void test(opType type);
+    protected abstract void test(opType type, long iid);
 }

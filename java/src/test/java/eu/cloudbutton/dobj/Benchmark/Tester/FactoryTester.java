@@ -13,38 +13,36 @@ public class FactoryTester {
     private final Object object;
     private final int[] ratios;
     private final CountDownLatch latch;
-    private final long nbOps;
 
-    public FactoryTester(Object object, int[] ratios, CountDownLatch latch, long nbOps) {
+    public FactoryTester(Object object, int[] ratios, CountDownLatch latch) {
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
-        this.nbOps = nbOps;
     }
 
     public NoopTester createNoopTester() {
-        return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch, nbOps);
+        return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch);
     }
 
     public CounterTester createAbstractCounterTester() {
-        return new CounterTester((AbstractCounter) object, ratios, latch, nbOps);
+        return new CounterTester((AbstractCounter) object, ratios, latch);
     }
 
     public SetTester createAbstractSetTester() {
-        return new SetTester((AbstractSet) object, ratios, latch, nbOps);
+        return new SetTester((AbstractSet) object, ratios, latch);
     }
 
 
     public QueueTester createAbstractQueueTester() {
-        return new QueueTester((AbstractQueue) object, ratios, latch, nbOps);
+        return new QueueTester((AbstractQueue) object, ratios, latch);
     }
 
     public MapTester createAbstractMapTester() {
-        return new MapTester((AbstractMap) object, ratios, latch, nbOps);
+        return new MapTester((AbstractMap) object, ratios, latch);
     }
 
     public DequeTester createAbstractCollectionTester() {
-        return new DequeTester((Deque) object, ratios, latch, nbOps);
+        return new DequeTester((Deque) object, ratios, latch);
     }
 
 }

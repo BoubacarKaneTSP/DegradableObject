@@ -6,12 +6,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class NoopTester extends Tester<Noop> {
 
-    public NoopTester(Noop nope, int[] ratios, CountDownLatch latch, long nbOps) {
-        super(nope, ratios, latch, nbOps);
+    public NoopTester(Noop nope, int[] ratios, CountDownLatch latch) {
+        super(nope, ratios, latch);
     }
 
     @Override
-    protected void test(opType type) {
+    protected void test(opType type, long iid) {
         // no-op
         int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {

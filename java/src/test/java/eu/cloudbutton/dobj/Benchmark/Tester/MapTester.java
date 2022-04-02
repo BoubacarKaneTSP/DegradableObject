@@ -7,15 +7,13 @@ import java.util.concurrent.CountDownLatch;
 
 public class MapTester extends Tester<AbstractMap> {
 
-    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, long nbOps) {
-        super(object, ratios, latch, nbOps);
+    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch) {
+        super(object, ratios, latch);
     }
 
     @Override
-    protected void test(opType type) {
+    protected void test(opType type, long iid) {
 
-        int n = random.nextInt(ITEM_PER_THREAD);
-        long iid = Thread.currentThread().getId() * 1000000000L + n;
         CollisionKey collisionKey = new CollisionKey(Long.toString(iid));
 
         switch (type) {

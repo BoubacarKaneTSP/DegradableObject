@@ -6,12 +6,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class CounterTester extends Tester<AbstractCounter> {
 
-    public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch, long nbOps) {
-        super(counter, ratios, latch, nbOps);
+    public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch) {
+        super(counter, ratios, latch);
     }
 
     @Override
-    protected void test(opType type) {
+    protected void test(opType type, long iid) {
 
         switch (type) {
             case ADD:

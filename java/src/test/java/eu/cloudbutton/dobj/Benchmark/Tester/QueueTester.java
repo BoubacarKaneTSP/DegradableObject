@@ -8,21 +8,19 @@ import java.util.concurrent.CountDownLatch;
 
 public class QueueTester extends Tester<AbstractQueue> {
 
-    public QueueTester(AbstractQueue list, int[] ratios, CountDownLatch latch, long nbOps) {
-        super(list, ratios, latch, nbOps);
+    public QueueTester(AbstractQueue list, int[] ratios, CountDownLatch latch) {
+        super(list, ratios, latch);
     }
 
     @Override
-    protected void test(opType type) {
-        int n = random.nextInt(ITEM_PER_THREAD);
-        long iid = Thread.currentThread().getId() * 1000000000L + n;
+    protected void test(opType type, long iid) {
 
         switch (type) {
             case ADD:
                 object.offer(iid);
                 break;
             case REMOVE:
-                    object.poll();
+                object.poll();
                 break;
             case READ:
                     object.contains(iid);
