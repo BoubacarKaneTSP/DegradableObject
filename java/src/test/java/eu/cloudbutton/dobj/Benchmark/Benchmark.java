@@ -98,7 +98,7 @@ public class Benchmark {
             Factory factory = new Factory();
             String constructor = "create" + type;
 
-            for (int i = 1; i <= nbThreads; ) {
+            for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
                 for (int a = 0; a < nbTest; a++) {
 
                     nbAdd = new AtomicInteger();
@@ -142,16 +142,16 @@ public class Benchmark {
 
 
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(i);
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
-                    CountDownLatch latch = new CountDownLatch(i);
+                    CountDownLatch latch = new CountDownLatch(nbCurrentThread);
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
                             latch
                     );
 
-                    for (int j = 0; j < i; j++) {
+                    for (int j = 0; j < nbCurrentThread; j++) {
                         Method m = factoryTester.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
                         Tester tester = (Tester) m.invoke(factoryTester);
                         callables.add(tester);
@@ -166,7 +166,7 @@ public class Benchmark {
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                             latch,
-                            nbOps/i
+                            nbOps/nbCurrentThread
                     );
 
                     Method m1 = factoryT.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
@@ -195,36 +195,36 @@ public class Benchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
                 int sum;
-                long timeTotal;
-                timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
+                long avgTimeTotal;
+                avgTimeTotal = (timeAdd.get() + timeRemove.get() + timeRead.get()) / nbCurrentThread;
 
                 sum = nbAdd.get() + nbRemove.get() + nbRead.get();
 
                 if (_s){
 
-                    if (i == 1)
+                    if (nbCurrentThread == 1)
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", false);
                     else
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i + " " + (double)sum / (timeTotal/1_000_000_000));
+                    printWriter.println(nbCurrentThread + " " + (double)sum / (avgTimeTotal/1_000_000_000));
                 }
 
                 if (_p){
-                    System.out.println(i + " " + (double)sum / (timeTotal/1_000_000_000)); // printing the avg time per op for i thread(s)
-                    System.out.println("    -time/add : " + (double)nbAdd.get() / (timeAdd.get()/1_000_000_000));
-                    System.out.println("    -time/remove : " + (double)nbRemove.get() / (timeRemove.get()/1_000_000_000));
-                    System.out.println("    -time/read: " + (double)nbRead.get() / (timeRead.get()/1_000_000_000));
+                    System.out.println(nbCurrentThread + " " + (double)sum / (avgTimeTotal/1_000_000_000)); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println("    -time/add : " + (double)nbAdd.get() / ((timeAdd.get() / nbCurrentThread) /1_000_000_000));
+                    System.out.println("    -time/remove : " + (double)nbRemove.get() / ((timeRemove.get() / nbCurrentThread) /1_000_000_000));
+                    System.out.println("    -time/read: " + (double)nbRead.get() / ((timeRead.get() / nbCurrentThread) /1_000_000_000));
                 }
 
-                i *= 2;
+                nbCurrentThread *= 2;
 
-                /*if(i==2)
-                    i = nbThreads;
+                /*if(nbCurrentThread==2)
+                    nbCurrentThread = nbThreads;
 */
-                if (i > nbThreads && i != 2 * nbThreads) {
-                    i = nbThreads;
+                if (nbCurrentThread > nbThreads && nbCurrentThread != 2 * nbThreads) {
+                    nbCurrentThread = nbThreads;
                 }
 
                 if(_p)
