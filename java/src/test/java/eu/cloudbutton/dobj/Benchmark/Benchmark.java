@@ -193,11 +193,11 @@ public class Benchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
                 }
-                int sum;
+                long sum;
                 long avgTimeTotal;
-                avgTimeTotal = (timeAdd.get() + timeRemove.get() + timeRead.get()) / nbTest;
+                avgTimeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
-                sum = (nbAdd.get() + nbRemove.get() + nbRead.get()) / nbTest ;
+                sum = nbAdd.get() + nbRemove.get() + nbRead.get();
 
                 if (_s){
 
@@ -207,14 +207,14 @@ public class Benchmark {
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread + " " + (double)sum / (avgTimeTotal/1_000_000_000));
+                    printWriter.println(nbCurrentThread + " " + (sum / (double) avgTimeTotal) * 1_000_000_000);
                 }
 
                 if (_p){
-                    System.out.println(nbCurrentThread + " " + (double)sum / (avgTimeTotal/1_000_000_000)); // printing the throughput per op for nbCurrentThread thread(s)
-                    System.out.println("    -time/add : " + (double)nbAdd.get() / (timeAdd.get() /1_000_000_000));
-                    System.out.println("    -time/remove : " + (double)nbRemove.get() / (timeRemove.get() /1_000_000_000));
-                    System.out.println("    -time/read: " + (double)nbRead.get() / (timeRead.get() /1_000_000_000));
+                    System.out.println(nbCurrentThread + " " + (sum / (double) avgTimeTotal) * 1_000_000_000); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println("    -time/add : " + (nbAdd.get() / (double) timeAdd.get()) * 1_000_000_000);
+                    System.out.println("    -time/remove : " + (nbRemove.get() / (double) timeRemove.get()) * 1_000_000_000);
+                    System.out.println("    -time/read: " + (nbRead.get() / (double)timeRead.get()) * 1_000_000_000);
                 }
 
                 nbCurrentThread *= 2;

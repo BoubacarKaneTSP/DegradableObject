@@ -139,13 +139,13 @@ public class DegradableList<T> extends AbstractQueue<T> implements Queue<T> {
     }
 
     @Override
-    public boolean offer(T t) {
-        return false;
+    public boolean offer(T element) {
+        return local.get().offer(element);
     }
 
     @Override
     public T remove() {
-        return null;
+        return local.get().remove();
     }
 
     @Override
