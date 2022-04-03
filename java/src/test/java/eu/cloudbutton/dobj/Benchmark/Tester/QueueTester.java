@@ -20,7 +20,7 @@ public class QueueTester extends Tester<AbstractQueue> {
                 object.offer(iid);
                 break;
             case REMOVE:
-                object.poll();
+                object.remove(iid);
                 break;
             case READ:
                     object.contains(iid);
