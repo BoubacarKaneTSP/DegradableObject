@@ -2,9 +2,12 @@ package eu.cloudbutton.dobj.types;
 
 import sun.misc.Unsafe;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.AbstractQueue;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -76,11 +79,89 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
 
     /**
      * Returns an iterator over the elements in this queue in proper sequence.
-     * @return an iterator over the elements in this queue in proper sequence.
+     * The elements will be returned in order from first (head) to last (tail).
+     *
+     * <p>The returned iterator is
+     * <a href="package-summary.html#Weakly"><i>weakly consistent</i></a>.
+     *
+     * @return an iterator over the elements in this queue in proper sequence
      */
-    @Override
     public Iterator<E> iterator() {
-        throw new IllegalArgumentException();
+        return new Itr();
+    }
+
+    private class Itr implements Iterator<E> {
+        /**
+         * Next node to return item for.
+         */
+        private Node<E> nextNode;
+
+        /**
+         * nextItem holds on to item fields because once we claim
+         * that an element exists in hasNext(), we must return it in
+         * the following next() call even if it was in the process of
+         * being removed when hasNext() was called.
+         */
+        private E nextItem;
+
+        /**
+         * Node of the last returned item, to support remove.
+         */
+        private Node<E> lastRet;
+
+        Itr() {
+            restartFromHead: for (;;) {
+                Node<E> h, p, q;
+                for (p = h = head;; p = q) {
+                    final E item;
+                    if ((item = p.item) != null) {
+                        nextNode = p;
+                        nextItem = item;
+                        break;
+                    }
+                    else if ((q = p.next) == null)
+                        break;
+                    else if (p == q)
+                        continue restartFromHead;
+                }
+                updateHead(h, p);
+                return;
+            }
+        }
+
+        public boolean hasNext() {
+            return nextItem != null;
+        }
+
+        public E next() {
+            final Node<E> pred = nextNode;
+            if (pred == null) throw new NoSuchElementException();
+            // assert nextItem != null;
+            lastRet = pred;
+            E item = null;
+
+            for (Node<E> p = succ(pred), q;; p = q) {
+                if (p == null || (item = p.item) != null) {
+                    nextNode = p;
+                    E x = nextItem;
+                    nextItem = item;
+                    return x;
+                }
+                // unlink deleted nodes
+                if ((q = succ(p)) != null)
+                    NEXT.compareAndSet(pred, p, q);
+            }
+        }
+
+        // Default implementation of forEachRemaining is "good enough".
+
+        public void remove() {
+            Node<E> l = lastRet;
+            if (l == null) throw new IllegalStateException();
+            // rely on a future traversal to relink.
+            l.item = null;
+            lastRet = null;
+        }
     }
 
     /**
@@ -197,6 +278,37 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     private static void checkNotNull(Object v) {
         if (v == null)
             throw new NullPointerException();
+    }
+
+
+    /**
+     * Returns the successor of p, or the head node if p.next has been
+     * linked to self, which will only be true if traversing with a
+     * stale pointer that is now off the list.
+     */
+    final Node<E> succ(Node<E> p) {
+        if (p == (p = p.next))
+            p = head;
+        return p;
+    }
+
+    // VarHandle mechanics
+    private static final VarHandle HEAD;
+    private static final VarHandle TAIL;
+    static final VarHandle ITEM;
+    static final VarHandle NEXT;
+    static {
+        try {
+            MethodHandles.Lookup l = MethodHandles.lookup();
+            HEAD = l.findVarHandle(DegradableQueue.class, "head",
+                    Node.class);
+            TAIL = l.findVarHandle(DegradableQueue.class, "tail",
+                   Node.class);
+            ITEM = l.findVarHandle(Node.class, "item", Object.class);
+            NEXT = l.findVarHandle(Node.class, "next", Node.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
     // Unsafe mechanics

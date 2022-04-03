@@ -5,8 +5,8 @@ import java.util.concurrent.CountDownLatch;
 
 public class SetTester extends Tester<AbstractSet> {
 
-    public SetTester(AbstractSet object, int[] ratios, CountDownLatch latch) {
-        super(object, ratios, latch);
+    public SetTester(AbstractSet set, int[] ratios, CountDownLatch latch) {
+        super(set, ratios, latch);
     }
 
     @Override
