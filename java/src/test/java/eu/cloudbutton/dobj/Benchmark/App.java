@@ -119,14 +119,9 @@ public class App {
 
 
         Factory factory = new Factory();
-        String objectSet = "create" + typeSet;
-        String objectQueue = "create" + typeQueue;
-        String objectCounter = "create" + typeCounter;
-
-        /*
-        String objectSet = "create" + typeSet;
-        String objectQueue = "create" + typeQueue;
-        String objectCounter = "create" + typeCounter;*/
+        String methodSet = "create" + typeSet;
+        String methodeQueue = "create" + typeQueue;
+        String methodCounter = "create" + typeCounter;
 
         List<Double> listAlpha = new ArrayList<>();
 
@@ -134,7 +129,7 @@ public class App {
             listAlpha.add(i);
         }
 
-        for (int i = 1; i <= nbThreads;) {
+        for (int nbCurrThread = 1; nbCurrThread <= nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -142,7 +137,7 @@ public class App {
             if (_p){
                 System.out.println();
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                System.out.print( " Results for ["+i+"] threads ");
+                System.out.print( " Results for ["+nbCurrThread+"] threads ");
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
                 System.out.println();
             }
@@ -156,34 +151,34 @@ public class App {
                     System.out.println();
                 }
 
-                for (int a = 1; a <= nbTest; a++) {
+                for (int nbCurrTest = 1; nbCurrTest <= nbTest; nbCurrTest++) {
                     java.util.List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(i);
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
 
-                    if (a == 1) {
+                    if (nbCurrTest == 1) {
                         nbOperations = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
 
                         for (String op : listOperations) {
-                            nbOperations.put(op, new AtomicInteger());
+                            nbOperations.put(op, new AtomicInteger(0));
                             timeOperations.put(op, new AtomicLong(0));
                         }
                     }
 
-                    CountDownLatch latch = new CountDownLatch(i+1); // Additional count for the coordinator
-                    CountDownLatch latchFillDatabase = new CountDownLatch(i);
+                    CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional count for the coordinator
+                    CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
 
-                    for (int j = 0; j < i; j++) {
+                    for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
-                                objectSet,
-                                objectQueue,
-                                objectCounter,
+                                methodSet,
+                                methodeQueue,
+                                methodCounter,
                                 Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                                 alpha,
                                 latch,
                                 latchFillDatabase,
                                 factory,
-                                i);
+                                nbCurrThread);
                         callables.add(retwisApp);
                     }
 
@@ -208,23 +203,25 @@ public class App {
                     executor.shutdown();
                 }
 
-                double nbTotalOperations = 0;
-                long timeTotalOperations = 0L;
+                long nbOpTotal = 0;
+                long avgTimeTotal = 0L;
 
                 for (String op : listOperations){
-                    nbTotalOperations += nbOperations.get(op).get();
-                    timeTotalOperations += timeOperations.get(op).get();
+                    nbOpTotal += nbOperations.get(op).get();
+                    avgTimeTotal += timeOperations.get(op).get();
                 }
+
+                avgTimeTotal = avgTimeTotal / nbCurrThread;
 
                 if (_s){
 
-                    if (i == 1)
+                    if (nbCurrThread == 1)
                         fileWriter = new FileWriter("retwis_all_operations.txt", false);
                     else
                         fileWriter = new FileWriter("retwis_all_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(i +" "+ nbTotalOperations / ((double)timeTotalOperations/1_000_000_000));
+                    printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
                 }
 
                 if (_p){
@@ -232,7 +229,7 @@ public class App {
                     System.out.print(" Time per operations for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+ nbTotalOperations / ((double)timeTotalOperations/1_000_000_000));
+                    System.out.println(" - "+ (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
 
                 }
 
@@ -240,13 +237,16 @@ public class App {
                     printWriter.flush();
 
                 for (String op: listOperations){
+
+                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
+
                     if (_s){
-                        if (i == 1)
+                        if (nbCurrThread == 1)
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(i +" "+  (double)nbOperations.get(op).get()/((double)timeOperations.get(op).get()/1_000_000_000));
+                        printWriter.println(nbCurrThread +" "+  (nbOperations.get(op).get() / (double) timeOperations.get(op).get()) * 1_000_000_000);
                     }
 
                     if (_p){
@@ -254,7 +254,7 @@ public class App {
                         System.out.print(" Time per operations for "+op+" operations ");
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
                         System.out.println();
-                        System.out.println(" - "+ (double)nbOperations.get(op).get() / ((double)timeOperations.get(op).get()/1_000_000_000));
+                        System.out.println(" - "+ (nbOperations.get(op).get() / (double) timeOperations.get(op).get()) * 1_000_000_000);
                     }
 
                     if (_s)
@@ -269,9 +269,9 @@ public class App {
 
 
 
-            i *= 2;
-            if (i > nbThreads && i != 2 * nbThreads)
-                i = nbThreads;
+            nbCurrThread *= 2;
+            if (nbCurrThread > nbThreads && nbCurrThread != 2 * nbThreads)
+                nbCurrThread = nbThreads;
         }
         System.exit(0);
     }
@@ -281,9 +281,9 @@ public class App {
         private  final int NB_USERS = 500000;
         protected int ITEM_PER_THREAD;
         protected final ThreadLocalRandom random;
-        private final String objectSet;
-        private final String objectQueue;
-        private final String objectCounter;
+        private final String methodSet;
+        private final String methodQueue;
+        private final String methodCounter;
         private final int[] ratios;
         private final double alpha;
         private final CountDownLatch latch;
@@ -293,11 +293,11 @@ public class App {
         private Map<String, AbstractCounter> nbFollower;
         private Map<String, Timeline> timeline;
 
-        public RetwisApp(String objectSet, String objectQueue, String objectCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory, int nbThread) {
+        public RetwisApp(String methodSet, String methodQueue, String methodCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory, int nbThread) {
             this.random = ThreadLocalRandom.current();
-            this.objectSet = objectSet;
-            this.objectQueue = objectQueue;
-            this.objectCounter = objectCounter;
+            this.methodSet = methodSet;
+            this.methodQueue = methodQueue;
+            this.methodCounter = methodCounter;
             this.ratios = ratios;
             this.alpha = alpha;
             this.latch = latch;
@@ -543,40 +543,14 @@ public class App {
             return endTime - startTime;
         }
 
-        public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+        public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
 
-            AbstractQueue queue;
-            AbstractCounter counter;
-            AbstractSet set;
-            Class classQueue, classSet, classCounter;
-
-            try{
-                classQueue = Class.forName("eu.cloudbutton.dobj.types."+typeQueue);
-            }catch (ClassNotFoundException e){
-                classQueue = Class.forName("java.util.concurrent."+typeQueue);
-            }
-
-            try{
-                classSet = Class.forName("eu.cloudbutton.dobj.types."+typeSet);
-            }catch (ClassNotFoundException e){
-                classSet = Class.forName("java.util.concurrent."+typeSet);
-            }
-
-            try{
-                classCounter = Class.forName("eu.cloudbutton.dobj.types."+typeCounter);
-            }catch (ClassNotFoundException e){
-                classCounter = Class.forName("java.util.concurrent."+typeCounter);
-            }
-
-
-            queue = (AbstractQueue) classQueue.getConstructor().newInstance();
-            set = (AbstractSet) classSet.getConstructor().newInstance();
-            counter = (AbstractCounter) classCounter.getConstructor().newInstance();
-
-            follower.put(user, set);
+            follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(methodSet).invoke(factory));
 //            nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-            timeline.put(user, new Timeline(queue, counter));
+            timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(methodQueue).invoke(factory),
+                    (AbstractCounter) Factory.class.getDeclaredMethod(methodCounter).invoke(factory))
+            );
 
         }
 

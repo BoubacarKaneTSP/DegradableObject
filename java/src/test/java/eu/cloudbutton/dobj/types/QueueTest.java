@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.*;
 
-public class ListTest {
+public class QueueTest {
 
     private Factory factory;
 

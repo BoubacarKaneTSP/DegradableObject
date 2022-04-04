@@ -4,6 +4,7 @@ import org.javatuples.Pair;
 
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ListSnapshotSRMW<T> extends AbstractQueue<T> implements Queue<T> {

@@ -193,11 +193,12 @@ public class Benchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
                 }
-                long sum;
+
+                long nbOpTotal;
                 long avgTimeTotal;
                 avgTimeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
-                sum = nbAdd.get() + nbRemove.get() + nbRead.get();
+                nbOpTotal = nbAdd.get() + nbRemove.get() + nbRead.get();
 
                 if (_s){
 
@@ -207,11 +208,11 @@ public class Benchmark {
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread + " " + (sum / (double) avgTimeTotal) * 1_000_000_000);
+                    printWriter.println(nbCurrentThread + " " + (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
                 }
 
                 if (_p){
-                    System.out.println(nbCurrentThread + " " + (sum / (double) avgTimeTotal) * 1_000_000_000); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println(nbCurrentThread + " " + (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000); // printing the throughput per op for nbCurrentThread thread(s)
                     System.out.println("    -time/add : " + (nbAdd.get() / (double) timeAdd.get()) * 1_000_000_000);
                     System.out.println("    -time/remove : " + (nbRemove.get() / (double) timeRemove.get()) * 1_000_000_000);
                     System.out.println("    -time/read: " + (nbRead.get() / (double)timeRead.get()) * 1_000_000_000);

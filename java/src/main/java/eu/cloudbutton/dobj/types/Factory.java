@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.types;
 
 import java.util.AbstractMap;
 import java.util.AbstractQueue;
+import java.util.AbstractSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -28,12 +29,14 @@ public class Factory {
 
     /* Set */
 
-    public DegradableSet createDegradableSet() { return new DegradableSet(); }
-    public SetSnapshot createSetSnapshot () { return new SetSnapshot(); }
-    public SetSnapshotSRMW createSetSnapshotSRMW () { return new SetSnapshotSRMW(); }
+    public AbstractSet createSet() {return new ConcurrentSkipListSet();}
+    public AbstractSet createDegradableSet() { return new DegradableSet(); }
+    public AbstractSet createSetSnapshot () { return new SetSnapshot(); }
+    public AbstractSet createSetSnapshotSRMW () { return new SetSnapshotSRMW(); }
 
     /* Queue */
 
+    public AbstractQueue createQueue() {return new ConcurrentLinkedQueue();}
     public AbstractQueue createMapQueue() { return  new MapQueue<>(); }
     public AbstractQueue createDegradableQueue() {return new DegradableQueue(); }
 
