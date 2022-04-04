@@ -211,7 +211,7 @@ public class App {
                     avgTimeTotal += timeOperations.get(op).get();
                 }
 
-                avgTimeTotal = avgTimeTotal / nbCurrThread;
+//                avgTimeTotal = avgTimeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
                 if (_s){
 
@@ -226,7 +226,7 @@ public class App {
 
                 if (_p){
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
-                    System.out.print(" Time per operations for all type of operations ");
+                    System.out.print(" Throughput for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
                     System.out.println(" - "+ (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
@@ -238,7 +238,7 @@ public class App {
 
                 for (String op: listOperations){
 
-                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
+//                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
                     if (_s){
                         if (nbCurrThread == 1)
@@ -251,7 +251,7 @@ public class App {
 
                     if (_p){
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.print(" Time per operations for "+op+" operations ");
+                        System.out.print(" Throughput for "+op+" operations ");
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
                         System.out.println();
                         System.out.println(" - "+ (nbOperations.get(op).get() / (double) timeOperations.get(op).get()) * 1_000_000_000);
