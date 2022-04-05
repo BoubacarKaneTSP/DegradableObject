@@ -27,6 +27,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class App {
 
+    enum opType{
+        ADD,
+        FOLLOW,
+        UNFOLLOW,
+        TWEET,
+        READ
+    }
+
     @Option(name="-set", required = true, usage = "type of Set")
     private String typeSet;
 
@@ -68,10 +76,8 @@ public class App {
 
     private AtomicBoolean flag;
 
-    private Map<String, AtomicInteger> nbOperations;
-    private Map<String, AtomicLong> timeOperations;
-
-    private String[] listOperations = new String[]{"add", "follow", "unfollow", "tweet", "read"};
+    private Map<opType, AtomicInteger> nbOperations;
+    private Map<opType, AtomicLong> timeOperations;
 
     int nbSign = 5;
 
@@ -117,12 +123,6 @@ public class App {
         if (_p)
             System.out.println("Launching test from App.java, a clone of Retwis...");
 
-
-        Factory factory = new Factory();
-        String methodSet = "create" + typeSet;
-        String methodeQueue = "create" + typeQueue;
-        String methodCounter = "create" + typeCounter;
-
         List<Double> listAlpha = new ArrayList<>();
 
         for (double i = _alphaInit ; i >= _alphaMin; i-=_alphaStep) {
@@ -159,7 +159,7 @@ public class App {
                         nbOperations = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
 
-                        for (String op : listOperations) {
+                        for (opType op : opType.values()) {
                             nbOperations.put(op, new AtomicInteger(0));
                             timeOperations.put(op, new AtomicLong(0));
                         }
@@ -170,14 +170,9 @@ public class App {
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
-                                methodSet,
-                                methodeQueue,
-                                methodCounter,
-                                Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                                 alpha,
                                 latch,
                                 latchFillDatabase,
-                                factory,
                                 nbCurrThread);
                         callables.add(retwisApp);
                     }
@@ -206,7 +201,7 @@ public class App {
                 long nbOpTotal = 0;
                 long avgTimeTotal = 0L;
 
-                for (String op : listOperations){
+                for (opType op : opType.values()){
                     nbOpTotal += nbOperations.get(op).get();
                     avgTimeTotal += timeOperations.get(op).get();
                 }
@@ -236,7 +231,7 @@ public class App {
                 if (_s)
                     printWriter.flush();
 
-                for (String op: listOperations){
+                for (opType op: opType.values()){
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
@@ -278,47 +273,48 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        private  final int NB_USERS = 500000;
-        protected int ITEM_PER_THREAD;
+        private  final int NB_USERS = 500000; //Number of users initially added to the database
+        protected int USER_PER_THREAD;
         protected final ThreadLocalRandom random;
         private final String methodSet;
         private final String methodQueue;
         private final String methodCounter;
-        private final int[] ratios;
+        private final int[] ratiosArray;
         private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private final Factory factory;
-        private Map<String, AbstractSet<String>> follower;
-        private Map<String, AbstractCounter> nbFollower;
-        private Map<String, Timeline> timeline;
+        private AbstractMap<String, AbstractSet<String>> mapFollowers;
+        private AbstractMap<String, Timeline> mapTimelines;
+//        private Map<String, AbstractCounter> nbFollower;
 
-        public RetwisApp(String methodSet, String methodQueue, String methodCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory, int nbThread) {
+
+        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) {
             this.random = ThreadLocalRandom.current();
-            this.methodSet = methodSet;
-            this.methodQueue = methodQueue;
-            this.methodCounter = methodCounter;
-            this.ratios = ratios;
+            this.methodSet = "create" + typeSet;
+            this.methodQueue =  "create" + typeQueue;
+            this.methodCounter =  "create" + typeCounter;
+            this.ratiosArray = Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray();
             this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
-            this.factory = factory;
-            this.ITEM_PER_THREAD = NB_USERS / nbThread; // the loop start with j=0
-            this.follower = new ConcurrentHashMap<>();
-            this.nbFollower = new ConcurrentHashMap<>();
-            this.timeline = new ConcurrentHashMap<>();
+            this.factory = new Factory();
+            this.USER_PER_THREAD = NB_USERS / nbThread;
+            this.mapFollowers = new ConcurrentHashMap<>();
+            this.mapTimelines = new ConcurrentHashMap<>();
+//            this.nbFollower = new ConcurrentHashMap<>();
         }
 
         @Override
         public Void call(){
 
-            char type;
+            opType type;
             int val;
 
-            Map<String, Integer> nbLocalOperations = new HashMap<>();
-            Map<String, Long> timeLocalOperations = new HashMap<>();
+            AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
+            AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
 
-            for (String op: listOperations){
+            for (opType op: opType.values()){
                 nbLocalOperations.put(op, 0);
                 timeLocalOperations.put(op, 0L);
             }
@@ -331,23 +327,23 @@ public class App {
 
                 latch.await();
 
-                //warm up
 
-                while (flag.get()){
+                while (flag.get()){     // warm up
+
                     val = random.nextInt(100);
 
-                    if(val < ratios[0]){ // add
-                        type = 'a';
-                    }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){ //follow or unfollow
-                        if (val%2 == 0){ //follow
-                            type = 'f';
-                        }else{ //unfollow
-                            type = 'u';
+                    if(val < ratiosArray[0]){ // add
+                        type = opType.ADD;
+                    }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
+                        if (val%2 == 0){ // follow
+                            type = opType.FOLLOW;
+                        }else{ // unfollow
+                            type = opType.UNFOLLOW;
                         }
-                    }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){ //tweet
-                        type = 't';
-                    }else{ //read
-                        type = 'r';
+                    }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ // tweet
+                        type = opType.TWEET;
+                    }else{ // read
+                        type = opType.READ;
                     }
 
                     compute(type);
@@ -357,47 +353,27 @@ public class App {
 
                     val = random.nextInt(100);
 
-                    if(val < ratios[0]){ // add
-                        type = 'a';
-                    }else if (val >= ratios[0] && val < ratios[0]+ratios[1]){ //follow or unfollow
+                    if(val < ratiosArray[0]){ // add
+                        type = opType.ADD;
+                    }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
                         if (val%2 == 0){ //follow
-                            type = 'f';
+                            type = opType.FOLLOW;
                         }else{ //unfollow
-                            type = 'u';
+                            type = opType.UNFOLLOW;
                         }
-                    }else if (val >= ratios[0]+ratios[1] && val < ratios[0]+ratios[1]+ratios[2]){ //tweet
-                        type = 't';
+                    }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ //tweet
+                        type = opType.TWEET;
                     }else{ //read
-                        type = 'r';
+                        type = opType.READ;
                     }
 
                     long elapsedTime = compute(type);
 
-                    switch (type){
-                        case 'a':
-                            nbLocalOperations.compute("add", (key, value) -> value + 1);
-                            timeLocalOperations.compute("add", (key, value) -> value + elapsedTime);
-                            break;
-                        case 'f':
-                            nbLocalOperations.compute("follow", (key, value) -> value + 1);
-                            timeLocalOperations.compute("follow", (key, value) -> value + elapsedTime);
-                            break;
-                        case 'u':
-                            nbLocalOperations.compute("unfollow", (key, value) -> value + 1);
-                            timeLocalOperations.compute("unfollow", (key, value) -> value + elapsedTime);
-                            break;
-                        case 't':
-                            nbLocalOperations.compute("tweet", (key, value) -> value + 1);
-                            timeLocalOperations.compute("tweet", (key, value) -> value + elapsedTime);
-                            break;
-                        case 'r':
-                            nbLocalOperations.compute("read", (key, value) -> value + 1);
-                            timeLocalOperations.compute("read", (key, value) -> value + elapsedTime);
-                            break;
-                    }
+                    nbLocalOperations.compute(type, (key, value) -> value + 1);
+                    timeLocalOperations.compute(type, (key, value) -> value + elapsedTime);
                 }
 
-                for (String op: listOperations){
+                for (opType op: opType.values()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
                 }
@@ -419,22 +395,21 @@ public class App {
             String userB;
 
             //adding users
-            for (int i = 0; i < ITEM_PER_THREAD; i++) {
-                addUser("user_"+Thread.currentThread().getName()+"_"+i);
+            for (int id = 0; id < USER_PER_THREAD; id++) {
+                addUser("user_"+Thread.currentThread().getName()+"_"+id);
             }
 
             latchFillDatabase.countDown();
 
             latchFillDatabase.await();
 
-            int nbUsers = follower.keySet().size();
-            String[] users = follower.keySet().toArray(new String[nbUsers]);
+            String[] users = mapFollowers.keySet().toArray(new String[NB_USERS]);
 
             int bound = 1000;
             
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
 
-            int i = 0, max = 100000/(175000000/nbUsers); //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+            int i = 0, max = (100000 * NB_USERS) / 175000000; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
 
             for (int val: data){
                 if (val >= max) {
@@ -448,16 +423,16 @@ public class App {
 //            System.out.println("fill");
 
             //Following phase
-            for (i = 0; i < ITEM_PER_THREAD; i++) {
+            for (int id = 0; id < USER_PER_THREAD; id++) {
 
-                userA = "user_"+Thread.currentThread().getName()+"_"+i;
+                userA = "user_"+Thread.currentThread().getName()+"_"+id;
                 
                 int nbFollow = data.get(random.nextInt(bound));
 //                System.out.println(nbFollow);
 
                     for(int j = 0; j < nbFollow; j++){
 
-                        n = random.nextInt(nbUsers);
+                        n = random.nextInt(NB_USERS);
                         userB = users[n];
 
                         follow(userA, userB);
@@ -466,27 +441,27 @@ public class App {
 
         }
 
-        public long compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+        public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
-            int i, n = random.nextInt(ITEM_PER_THREAD*2);
+            int i, n = random.nextInt(USER_PER_THREAD * 2); // times 2 because we need to add new users that have not been already added
             String userA;
             String userB;
 
             switch (type){
-                case 'a':
-                    if (!follower.containsKey("user_"+Thread.currentThread().getName()+"_"+n)) {
+                case ADD:
+                    if (!mapFollowers.containsKey("user_"+Thread.currentThread().getName()+"_"+n)) {
                         startTime = System.nanoTime();
                         addUser("user_"+Thread.currentThread().getName()+"_"+n);
                         endTime = System.nanoTime();
                     }
                     break;
-                case 'f':
+                case FOLLOW:
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
                     userB = null;
-                    n = random.nextInt(follower.size());
+                    n = random.nextInt(mapFollowers.size());
                     i = 0;
-                    for(Object obj : follower.keySet())
+                    for(Object obj : mapFollowers.keySet())
                     {
                         if (i == n){
                             userB = (String) obj;
@@ -495,19 +470,19 @@ public class App {
                         i++;
                     }
 
-                    if (follower.containsKey(userA)){
+                    if (mapFollowers.containsKey(userA)){
                         startTime = System.nanoTime();
                         follow(userA, userB);
                         endTime = System.nanoTime();
                     }
 
                 break;
-                case 'u':
+                case UNFOLLOW:
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
                     userB = null;
-                    n = random.nextInt(follower.size());
+                    n = random.nextInt(mapFollowers.size());
                     i = 0;
-                    for(Object obj : follower.keySet())
+                    for(Object obj : mapFollowers.keySet())
                     {
                         if (i == n){
                             userB = (String) obj;
@@ -515,23 +490,23 @@ public class App {
                         }
                         i++;
                     }
-                    if (follower.containsKey(userA)){
+                    if (mapFollowers.containsKey(userA)){
                         startTime = System.nanoTime();
                         unfollow(userA, userB);
                         endTime = System.nanoTime();
                     }
                 break;
-                case 't':
+                case TWEET:
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                    if (follower.containsKey(userA)){
+                    if (mapFollowers.containsKey(userA)){
                         startTime = System.nanoTime();
                         tweet(userA, "msg from " + userA);
                         endTime = System.nanoTime();
                     }
                 break;
-                case 'r':
+                case READ:
                     userA = "user_"+Thread.currentThread().getName()+"_"+n;
-                    if (follower.containsKey(userA)){
+                    if (mapFollowers.containsKey(userA)){
                         startTime = System.nanoTime();
                         showTimeline(userA);
                         endTime = System.nanoTime();
@@ -540,15 +515,19 @@ public class App {
                 default:
                     throw new IllegalStateException("Unexpected value: " + type);
             }
+
+            startTime = System.nanoTime();
+            dummyFunction();
+            endTime = System.nanoTime();
+
             return endTime - startTime;
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
-
-            follower.put(user, (AbstractSet) Factory.class.getDeclaredMethod(methodSet).invoke(factory));
 //            nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
-            timeline.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(methodQueue).invoke(factory),
+            mapFollowers.put(user, (AbstractSet) Factory.class.getDeclaredMethod(methodSet).invoke(factory));
+            mapTimelines.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(methodQueue).invoke(factory),
                     (AbstractCounter) Factory.class.getDeclaredMethod(methodCounter).invoke(factory))
             );
 
@@ -559,7 +538,7 @@ public class App {
         public void follow(String userA, String userB){
 //            System.out.println("follow");
 
-            follower.get(userB).add(userA);
+            mapFollowers.get(userB).add(userA);
 //          nbFollower.get(userB).increment();
 
         }
@@ -567,7 +546,7 @@ public class App {
         public void unfollow(String userA, String userB){
 //          System.out.println("unfollow");
 
-            follower.get(userB).remove(userA);
+            mapFollowers.get(userB).remove(userA);
 //          nbFollower.get(userB).write(-1);
 
         }
@@ -575,15 +554,15 @@ public class App {
         public void tweet(String user, String msg){
 //            System.out.println("tweet");
 
-            for (String u : follower.get(user)) {
-                timeline.get(u).add(msg);
+            for (String follower : mapFollowers.get(user)) {
+                mapTimelines.get(follower).add(msg);
             }
 
         }
 
         public void showTimeline(String user){
 //            System.out.println("Show timeline");
-            timeline.get(user).read();
+            mapTimelines.get(user).read();
         }
     }
 

@@ -41,8 +41,4 @@ public class Timeline<T> {
        }*/
        return timeline;
    }
-
-   public AbstractQueue queue(){
-        return timeline;
-   }
 }
