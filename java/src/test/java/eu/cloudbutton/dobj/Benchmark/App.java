@@ -44,6 +44,9 @@ public class App {
     @Option(name="-counter", required = true, usage = "type of Counter")
     private String typeCounter;
 
+    @Option(name="-map", required = true, usage = "type of Map")
+    private String typeMap;
+
     @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
     private String[] ratios;
 
@@ -81,11 +84,11 @@ public class App {
 
     int nbSign = 5;
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException, IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         new App().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException, IOException {
+    public void doMain(String[] args) throws InterruptedException, IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{
@@ -286,10 +289,9 @@ public class App {
         private final Factory factory;
         private AbstractMap<String, AbstractSet<String>> mapFollowers;
         private AbstractMap<String, Timeline> mapTimelines;
-//        private Map<String, AbstractCounter> nbFollower;
 
 
-        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) {
+        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             this.random = ThreadLocalRandom.current();
             this.methodSet = "create" + typeSet;
             this.methodQueue =  "create" + typeQueue;
@@ -300,9 +302,8 @@ public class App {
             this.latchFillDatabase = latchFillDatabase;
             this.factory = new Factory();
             this.USER_PER_THREAD = NB_USERS / nbThread;
-            this.mapFollowers = new ConcurrentHashMap<>();
-            this.mapTimelines = new ConcurrentHashMap<>();
-//            this.nbFollower = new ConcurrentHashMap<>();
+            this.mapFollowers = (AbstractMap<String, AbstractSet<String>>) Factory.class.getDeclaredMethod("create" + typeMap).invoke(factory);
+            this.mapTimelines = (AbstractMap<String, Timeline>) Factory.class.getDeclaredMethod("create" + typeMap).invoke(factory);
         }
 
         @Override
@@ -385,7 +386,7 @@ public class App {
         }
 
         public void dummyFunction() throws InterruptedException {
-            TimeUnit.MICROSECONDS.sleep(10000);
+            TimeUnit.MICROSECONDS.sleep(1000);
         }
 
         public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException, ClassNotFoundException, InstantiationException {
@@ -516,16 +517,11 @@ public class App {
                     throw new IllegalStateException("Unexpected value: " + type);
             }
 
-            startTime = System.nanoTime();
-            dummyFunction();
-            endTime = System.nanoTime();
-
             return endTime - startTime;
         }
 
         public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //            System.out.println("add");
-//            nbFollower.put(user, (AbstractCounter) Factory.class.getDeclaredMethod(objectCounter).invoke(factory));
             mapFollowers.put(user, (AbstractSet) Factory.class.getDeclaredMethod(methodSet).invoke(factory));
             mapTimelines.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(methodQueue).invoke(factory),
                     (AbstractCounter) Factory.class.getDeclaredMethod(methodCounter).invoke(factory))

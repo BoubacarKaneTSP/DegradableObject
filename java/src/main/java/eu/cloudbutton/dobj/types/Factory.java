@@ -42,6 +42,7 @@ public class Factory {
 
     /* Map */
 
+    public AbstractMap createMap() {return new ConcurrentHashMap();}
     public AbstractMap createDegradableMap() {return new DegradableMap(); }
 
     public Noop createNoop() {return new Noop(); }
