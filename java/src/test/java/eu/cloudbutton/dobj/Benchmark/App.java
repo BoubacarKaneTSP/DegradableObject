@@ -214,9 +214,9 @@ public class App {
                 if (_s){
 
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_all_operations.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_all_operations.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
