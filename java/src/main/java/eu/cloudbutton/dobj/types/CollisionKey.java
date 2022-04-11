@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import lombok.Data;
+import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,9 +20,24 @@ public class CollisionKey /*implements Comparable<CollisionKey>*/{
     public CollisionKey(String value){
         this.value = value;
         this.random = ThreadLocalRandom.current();
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j <= i; j++) {
-                listHashCode.add(i);
+        int bound = 1000;
+
+        List<Integer> data = new DiscreteApproximate(1, 1.315).generate(bound);
+
+        int i = 0, max = 1000; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+
+        for (int val: data){
+            if (val >= max) {
+                data.set(i,max);
+            }
+            if (val < 0)
+                data.set(i, 0);
+            i++;
+        }
+
+        for (int j = 0; j < bound; j++) {
+            for (int k = 0; k < data.get(j); k++) {
+                listHashCode.add(j);
             }
         }
     }

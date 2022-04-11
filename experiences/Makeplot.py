@@ -4,7 +4,9 @@ import numpy as np
 import sys
 
 files = []
-
+linestyle_tuple = ['-', '--', '-.', ':', 'solid', 'dashed', 'dashdot', 'dotted']
+linestyles = ['solid', 'dotted', 'dashdot', 'dashed']
+markers = ["o", "s", "*", "P", "d", "v", "<", ">", "^", "p", "D", "1", "h", "X"]
 for arg in sys.argv[1:]:
     print(arg)
     files.append(open(arg,"r"))
@@ -29,8 +31,8 @@ for file in files:
 #print(resultats)
 #print(numprocesses)
 
-for numprocess, resultat, name in zip(numprocesses,resultats,sys.argv[1:]):
-    plt.plot(numprocess, resultat, marker = "o", linewidth=2, markersize=12, label=name[:len(name)-4].replace("_", " "))
+for numprocess, resultat, name, linestyle, marker in zip(numprocesses,resultats,sys.argv[1:], linestyle_tuple, markers):
+    plt.plot(numprocess, resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label=name[:len(name)-4].replace("_", " "))
 
 
 SIZE = 15
@@ -40,7 +42,7 @@ plt.xticks(fontsize=SIZE)
 plt.yticks(fontsize=SIZE)
 
 
-plt.gca().set_ylim([10000,10000000])
+plt.gca().set_ylim([1000,100000])
 # plt.gca().set_ylim([0.00000001,0.001])
 # plt.gca().invert_yaxis()
 plt.gca().spines['right'].set_visible(False)
