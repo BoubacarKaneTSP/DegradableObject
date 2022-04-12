@@ -590,14 +590,16 @@ public class App {
                     }
 
                     TimeUnit.SECONDS.sleep(wTime);
+
+                    flagComputing.set(false);
                 }
                 else{
+                    flagComputing.set(false);
                     latch.countDown();
                     latch.await();
                 }
 
                 if (_p){
-                    System.out.println();
                     System.out.println("Computing");
                 }
                 TimeUnit.SECONDS.sleep(time);
