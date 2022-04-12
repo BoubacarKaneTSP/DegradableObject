@@ -23,26 +23,12 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Itr();
-    }
+        AbstractSet<T> iteratorSet = new HashSet<>();
 
-    private class Itr implements Iterator<T>{
-
-        @Override
-        public boolean hasNext() {
-            boolean b = false;
-            int i = 0;
-            for(AbstractSet abstractSet: set.values()){
-                if (abstractSet.isEmpty())
-                    i++;
-            }
-            return b;
+        for (ConcurrentSkipListSet<T> s: set.values()){
+            iteratorSet.addAll(s);
         }
-
-        @Override
-        public T next() {
-            return null;
-        }
+        return iteratorSet.iterator();
     }
 
     @Override

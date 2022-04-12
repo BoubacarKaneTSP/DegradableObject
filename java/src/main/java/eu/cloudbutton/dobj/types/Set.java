@@ -14,7 +14,7 @@ public class Set<T> extends AbstractSet<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return set.iterator();
     }
 
     @Override

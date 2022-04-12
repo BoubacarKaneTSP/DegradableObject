@@ -77,10 +77,12 @@ public class App {
     @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
     private boolean _p = false;
 
-    private AtomicBoolean flag;
+    private AtomicBoolean flagComputing,flagWarmingUp;
 
     private Map<opType, AtomicInteger> nbOperations;
     private Map<opType, AtomicLong> timeOperations;
+    private AbstractMap<String, AbstractSet<String>> mapFollowers;
+    private AbstractMap<String, Timeline> mapTimelines;
 
     int nbSign = 5;
 
@@ -181,7 +183,9 @@ public class App {
                     }
 
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
-                    flag = new AtomicBoolean(true);
+
+                    flagComputing = new AtomicBoolean(true);
+                    flagWarmingUp = (nbCurrThread == 1 ? new AtomicBoolean(true) : new AtomicBoolean(false));
 
                     executorService.submit(new Coordinator(latch));
 
@@ -279,13 +283,11 @@ public class App {
         private  final int NB_USERS = 500000; //Number of users initially added to the database
         protected int USER_PER_THREAD;
         protected final ThreadLocalRandom random;
+        private ThreadLocal<Integer> numUser;
         private final int[] ratiosArray;
         private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private AbstractMap<String, AbstractSet<String>> mapFollowers;
-        private AbstractMap<String, Timeline> mapTimelines;
-
 
         public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) throws ClassNotFoundException {
             this.random = ThreadLocalRandom.current();
@@ -294,8 +296,12 @@ public class App {
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             this.USER_PER_THREAD = NB_USERS / nbThread;
-            this.mapFollowers = Factory.createMap(typeMap);
-            this.mapTimelines = Factory.createMap(typeMap);
+            this.numUser = ThreadLocal.withInitial(() -> USER_PER_THREAD);
+
+            if (nbThread == 1){
+                mapFollowers = Factory.createMap(typeMap);
+                mapTimelines = Factory.createMap(typeMap);
+            }
         }
 
         @Override
@@ -314,35 +320,41 @@ public class App {
 
             try{
 
-                fill_database();
+                if (flagWarmingUp.get()) {
+                    fill_database();
 
-                latch.countDown();
+                    latch.countDown();
 
-                latch.await();
+                    latch.await();
 
 
-                while (flag.get()){     // warm up
+                    while (flagComputing.get()) {     // warm up
 
-                    val = random.nextInt(100);
+                        val = random.nextInt(100);
 
-                    if(val < ratiosArray[0]){ // add
-                        type = opType.ADD;
-                    }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
-                        if (val%2 == 0){ // follow
-                            type = opType.FOLLOW;
-                        }else{ // unfollow
-                            type = opType.UNFOLLOW;
+                        if (val < ratiosArray[0]) { // add
+                            type = opType.ADD;
+                        } else if (val >= ratiosArray[0] && val < ratiosArray[0] + ratiosArray[1]) { //follow or unfollow
+                            if (val % 2 == 0) { // follow
+                                type = opType.FOLLOW;
+                            } else { // unfollow
+                                type = opType.UNFOLLOW;
+                            }
+                        } else if (val >= ratiosArray[0] + ratiosArray[1] && val < ratiosArray[0] + ratiosArray[1] + ratiosArray[2]) { // tweet
+                            type = opType.TWEET;
+                        } else { // read
+                            type = opType.READ;
                         }
-                    }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ // tweet
-                        type = opType.TWEET;
-                    }else{ // read
-                        type = opType.READ;
-                    }
 
-                    compute(type);
+                        compute(type);
+                    }
+                } else {
+                    latch.countDown();
+
+                    latch.await();
                 }
 
-                while (!flag.get()){
+                while (!flagComputing.get()){
 
                     val = random.nextInt(100);
 
@@ -384,12 +396,11 @@ public class App {
         public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException, ClassNotFoundException, InstantiationException {
 
             int n;
-            String userA;
-            String userB;
+            String userA, userB, threadName = Thread.currentThread().getName();
 
             //adding users
             for (int id = 0; id < USER_PER_THREAD; id++) {
-                addUser("user_"+Thread.currentThread().getName()+"_"+id);
+                addUser("user_"+threadName+"_"+id);
             }
 
             latchFillDatabase.countDown();
@@ -418,7 +429,7 @@ public class App {
             //Following phase
             for (int id = 0; id < USER_PER_THREAD; id++) {
 
-                userA = "user_"+Thread.currentThread().getName()+"_"+id;
+                userA = "user_"+threadName+"_"+id;
                 
                 int nbFollow = data.get(random.nextInt(bound));
 //                System.out.println(nbFollow);
@@ -437,20 +448,19 @@ public class App {
         public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
-            int i, n = random.nextInt(USER_PER_THREAD * 2); // times 2 because we need to add new users that have not been already added
-            String userA;
-            String userB;
+            int i, n = random.nextInt(numUser.get());
+            String userA, userB, threadName = Thread.currentThread().getName();
 
             switch (type){
                 case ADD:
-                    if (!mapFollowers.containsKey("user_"+Thread.currentThread().getName()+"_"+n)) {
-                        startTime = System.nanoTime();
-                        addUser("user_"+Thread.currentThread().getName()+"_"+n);
-                        endTime = System.nanoTime();
-                    }
+                    startTime = System.nanoTime();
+                    addUser("user_"+threadName+"_"+numUser.get());
+                    endTime = System.nanoTime();
+
+                    numUser.set(numUser.get() + 1);
                     break;
                 case FOLLOW:
-                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    userA = "user_"+threadName+"_"+n;
                     userB = null;
                     n = random.nextInt(mapFollowers.size());
                     i = 0;
@@ -463,15 +473,14 @@ public class App {
                         i++;
                     }
 
-                    if (mapFollowers.containsKey(userA)){
-                        startTime = System.nanoTime();
-                        follow(userA, userB);
-                        endTime = System.nanoTime();
-                    }
+                    startTime = System.nanoTime();
+                    follow(userA, userB);
+                    endTime = System.nanoTime();
+
 
                 break;
                 case UNFOLLOW:
-                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    userA = "user_"+threadName+"_"+n;
                     userB = null;
                     n = random.nextInt(mapFollowers.size());
                     i = 0;
@@ -490,7 +499,7 @@ public class App {
                     }
                 break;
                 case TWEET:
-                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    userA = "user_"+threadName+"_"+n;
                     if (mapFollowers.containsKey(userA)){
                         startTime = System.nanoTime();
                         tweet(userA, "msg from " + userA);
@@ -498,7 +507,7 @@ public class App {
                     }
                 break;
                 case READ:
-                    userA = "user_"+Thread.currentThread().getName()+"_"+n;
+                    userA = "user_"+threadName+"_"+n;
                     if (mapFollowers.containsKey(userA)){
                         startTime = System.nanoTime();
                         showTimeline(userA);
@@ -568,23 +577,31 @@ public class App {
         @Override
         public Void call() throws Exception {
             try {
-                if (_p)
-                    System.out.println("Filling the database");
 
-                latch.countDown();
-                latch.await();
+                if (flagWarmingUp.get()){
+                    if (_p)
+                        System.out.println("Filling the database");
 
-                if (_p){
-                    System.out.println("Warming up");
+                    latch.countDown();
+                    latch.await();
+
+                    if (_p){
+                        System.out.println("Warming up");
+                    }
+
+                    TimeUnit.SECONDS.sleep(wTime);
                 }
-                TimeUnit.SECONDS.sleep(wTime);
-                flag.set(false);
+                else{
+                    latch.countDown();
+                    latch.await();
+                }
+
                 if (_p){
                     System.out.println();
                     System.out.println("Computing");
                 }
                 TimeUnit.SECONDS.sleep(time);
-                flag.set(true);
+                flagComputing.set(true);
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
