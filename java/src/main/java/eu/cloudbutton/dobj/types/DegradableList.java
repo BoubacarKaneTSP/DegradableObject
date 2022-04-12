@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.types;
 
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -13,7 +12,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Boubacar Kane
  * */
-public class DegradableList<T> extends AbstractQueue<T> implements Queue<T> {
+public class DegradableList<T> extends AbstractList<T>{
 
     private final ConcurrentMap<Thread, ConcurrentLinkedQueue<T>> list;
     private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
@@ -120,6 +119,11 @@ public class DegradableList<T> extends AbstractQueue<T> implements Queue<T> {
     }
 
     @Override
+    public T get(int index) {
+        return null;
+    }
+
+    @Override
     public boolean containsAll(Collection<?> c) {
         return false;
     }
@@ -137,31 +141,6 @@ public class DegradableList<T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public boolean retainAll(Collection<?> c) {
         return false;
-    }
-
-    @Override
-    public boolean offer(T element) {
-        return local.get().offer(element);
-    }
-
-    @Override
-    public T remove() {
-        return local.get().remove();
-    }
-
-    @Override
-    public T poll() {
-        return null;
-    }
-
-    @Override
-    public T element() {
-        return null;
-    }
-
-    @Override
-    public T peek() {
-        return null;
     }
 
     @Override

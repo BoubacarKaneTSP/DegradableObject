@@ -11,25 +11,28 @@ import static org.testng.Assert.*;
 
 public class TimelineTest {
 
-    private Factory factory;
+    private Factory.FactoryBuilder factory;
 
     @BeforeTest
     void setUp() {
-        factory = new Factory();
+        factory = Factory.builder();
     }
+
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-//        doAppend(factory.createList());
-//        doAppend(factory.createDegradableList());
-//        doAppend(factory.createListSnapshot());
-//        doAppend(factory.createDegradableLinkedList());
-//        doAppend(factory.createLinkedListSnapshot());
-//        doAppend(factory.createLinkedList());
-//        doAppend(factory.createSecondDegradableList());
-//        doAppend(factory.createThirdDegradableList());
-        doAppend(new ConcurrentLinkedQueue());
-        doAppend(factory.createMapQueue());
+
+        doAppend(factory
+                .queue(new ConcurrentLinkedQueue())
+                .build()
+                .getQueue()
+        );
+
+        doAppend(factory
+                .queue(new MapQueue())
+                .build()
+                .getQueue()
+        );
     }
 
     private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {

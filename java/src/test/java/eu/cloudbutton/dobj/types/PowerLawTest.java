@@ -1,9 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 
-import nl.peterbloem.powerlaws.Discrete;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -11,14 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class PowerLawTest {
-
-
-    private Factory factory;
-
-    @BeforeTest
-    void setUp() {
-        factory = new Factory();
-    }
 
     @Test
     void add() {

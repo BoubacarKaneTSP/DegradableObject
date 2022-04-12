@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.types;
 
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -11,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Boubacar Kane
  * */
-public class LinkedList <T> extends AbstractQueue<T> implements Queue<T> {
+public class LinkedList <T> extends AbstractList<T> {
     AtomicReference<Node<T>> head; // head of list
 
     /**
@@ -49,6 +48,11 @@ public class LinkedList <T> extends AbstractQueue<T> implements Queue<T> {
 
         this.head = new AtomicReference<>(new Node<>(element, head));
         return true;
+    }
+
+    @Override
+    public T get(int index) {
+        return null;
     }
 
     /**
@@ -119,21 +123,6 @@ public class LinkedList <T> extends AbstractQueue<T> implements Queue<T> {
                 tmp.set(null);
             }
         }
-    }
-
-    @Override
-    public boolean offer(T t) {
-        return false;
-    }
-
-    @Override
-    public T poll() {
-        return null;
-    }
-
-    @Override
-    public T peek() {
-        return null;
     }
 
     public static class Node <T>{

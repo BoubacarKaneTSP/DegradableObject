@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
+import java.util.AbstractSet;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Set<T> extends AbstractSet<T> {
@@ -11,22 +13,32 @@ public class Set<T> extends AbstractSet<T> {
     }
 
     @Override
-    public void add(T val) {
-        set.add(val);
+    public Iterator<T> iterator() {
+        return null;
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public boolean add(T val) {
+        set.add(val);
+        return true;
+    }
+
     public java.util.Set<T> read() {
         return set;
     }
 
     @Override
-    public boolean remove(T s) {
+    public boolean remove(Object s) {
         return set.remove(s);
     }
 
     @Override
-    public boolean contains(T val) {
+    public boolean contains(Object val) {
         return set.contains(val);
     }
 

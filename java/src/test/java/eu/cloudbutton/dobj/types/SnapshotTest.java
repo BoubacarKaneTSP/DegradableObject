@@ -13,19 +13,41 @@ import static org.testng.Assert.assertEquals;
 
 public class SnapshotTest {
 
-    private Factory factory;
+    private Factory.FactoryBuilder factory;
 
     @BeforeTest
-    public void setUp(){ factory = new Factory(); }
+    void setUp() {
+        factory = Factory.builder();
+    }
 
     @Test
     public void test() throws ExecutionException, InterruptedException {
 
-        doCounterTest(factory.createCounterSnapshot());
-        doCounterTest(factory.createCounterSnapshotSRMW());
-        doSetTest(factory.createSetSnapshot());
-        doSetTest(factory.createSetSnapshotSRMW());
-//        doListTest(factory.createListSnapshot());
+        doCounterTest(factory
+                .counter(new CounterSnapshot())
+                .build()
+                .getCounter()
+        );
+
+        doCounterTest(factory
+                .counter(new CounterSnapshotSRMW())
+                .build()
+                .getCounter()
+        );
+
+        doSetTest(factory
+                .set(new SetSnapshot())
+                .build()
+                .getSet()
+        );
+
+        doSetTest(factory
+                .set(new SetSnapshotSRMW())
+                .build()
+                .getSet()
+        );
+
+        //        doListTest(factory.createListSnapshot());
     }
 
     public void doCounterTest(AbstractCounter snap) throws ExecutionException, InterruptedException {

@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.List;
 import java.util.Queue;
 
-public class LinkedListSnapshotSRMW<T> extends AbstractQueue<T> implements Queue<T> {
+public class LinkedListSnapshotSRMW<T> extends AbstractList<T> {
 
     private final SnapshotSRMW<LinkedList<T>> snapobject;
     private final ThreadLocal<LinkedList<T>> listThreadLocal;
@@ -38,6 +38,11 @@ public class LinkedListSnapshotSRMW<T> extends AbstractQueue<T> implements Queue
         listThreadLocal.get().add(val);
         snapobject.update(listThreadLocal.get());
         return true;
+    }
+
+    @Override
+    public T get(int index) {
+        return null;
     }
 
     public List<T> read() {
@@ -78,18 +83,4 @@ public class LinkedListSnapshotSRMW<T> extends AbstractQueue<T> implements Queue
         throw new java.lang.Error("Remove not build yet");
     }
 
-    @Override
-    public boolean offer(T t) {
-        return false;
-    }
-
-    @Override
-    public T poll() {
-        return null;
-    }
-
-    @Override
-    public T peek() {
-        return null;
-    }
 }

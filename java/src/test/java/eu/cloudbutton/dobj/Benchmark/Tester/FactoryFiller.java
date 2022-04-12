@@ -16,10 +16,17 @@ public class FactoryFiller {
         this.nbOps = nbOps;
     }
 
-    public MapFiller createAbstractMapFiller() {
-        return new MapFiller((AbstractMap) object, nbOps);
+    public Filler createFiller() throws ClassNotFoundException {
+
+        if (object instanceof AbstractMap)
+            return new MapFiller((AbstractMap) object, nbOps);
+        else if (object instanceof AbstractSet)
+            return new SetFiller((AbstractSet) object, nbOps);
+        else if (object instanceof AbstractQueue)
+            return new QueueFiller((AbstractQueue) object, nbOps);
+        else if (object instanceof AbstractCounter)
+            return new CounterFiller((AbstractCounter) object, nbOps);
+        else
+            throw new ClassNotFoundException("This Filler may not exists");
     }
-    public SetFiller createAbstractSetFiller() { return new SetFiller((AbstractSet) object, nbOps); }
-    public QueueFiller createAbstractQueueFiller() { return new QueueFiller((AbstractQueue) object,nbOps); }
-    public CounterFiller createAbstractCounterFiller() { return new CounterFiller((AbstractCounter) object, nbOps); }
 }

@@ -84,11 +84,11 @@ public class App {
 
     int nbSign = 5;
 
-    public static void main(String[] args) throws InterruptedException, IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
         new App().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException, IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{
@@ -286,12 +286,11 @@ public class App {
         private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private final Factory factory;
         private AbstractMap<String, AbstractSet<String>> mapFollowers;
         private AbstractMap<String, Timeline> mapTimelines;
 
 
-        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) throws ClassNotFoundException {
             this.random = ThreadLocalRandom.current();
             this.methodSet = "create" + typeSet;
             this.methodQueue =  "create" + typeQueue;
@@ -300,10 +299,9 @@ public class App {
             this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
-            this.factory = new Factory();
             this.USER_PER_THREAD = NB_USERS / nbThread;
-            this.mapFollowers = (AbstractMap<String, AbstractSet<String>>) Factory.class.getDeclaredMethod("create" + typeMap).invoke(factory);
-            this.mapTimelines = (AbstractMap<String, Timeline>) Factory.class.getDeclaredMethod("create" + typeMap).invoke(factory);
+            this.mapFollowers = Factory.createMap(typeMap);
+            this.mapTimelines = Factory.createMap(typeMap);
         }
 
         @Override
@@ -520,11 +518,14 @@ public class App {
             return endTime - startTime;
         }
 
-        public void addUser(String user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        public void addUser(String user) throws ClassNotFoundException {
 //            System.out.println("add");
-            mapFollowers.put(user, (AbstractSet) Factory.class.getDeclaredMethod(methodSet).invoke(factory));
-            mapTimelines.put(user, new Timeline((AbstractQueue) Factory.class.getDeclaredMethod(methodQueue).invoke(factory),
-                    (AbstractCounter) Factory.class.getDeclaredMethod(methodCounter).invoke(factory))
+            mapFollowers.put(user,
+                    Factory.createSet(typeSet));
+            mapTimelines.put(user,
+                    new Timeline(Factory.createQueue(typeQueue),
+                            Factory.createCounter(typeCounter)
+                    )
             );
 
         }

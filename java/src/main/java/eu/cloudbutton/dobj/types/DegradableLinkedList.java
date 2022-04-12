@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Boubacar Kane
  * */
-public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T> {
+public class DegradableLinkedList<T> extends AbstractList<T> {
 
     private final ConcurrentMap<Thread, LinkedList<T>> list;
     private final ThreadLocal<LinkedList<T>> local;
@@ -41,6 +41,11 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
     @Override
     public boolean add(T element) {
         return local.get().add(element);
+    }
+
+    @Override
+    public T get(int index) {
+        return null;
     }
 
     /**
@@ -98,21 +103,6 @@ public class DegradableLinkedList<T> extends AbstractQueue<T> implements Queue<T
     @Override
     public void clear() {
         throw new java.lang.Error("clear not build yet");
-    }
-
-    @Override
-    public boolean offer(T t) {
-        return false;
-    }
-
-    @Override
-    public T poll() {
-        return null;
-    }
-
-    @Override
-    public T peek() {
-        return null;
     }
 
     /**

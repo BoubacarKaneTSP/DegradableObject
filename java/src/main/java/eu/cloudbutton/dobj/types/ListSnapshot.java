@@ -2,16 +2,13 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Triplet;
 
-import java.util.AbstractQueue;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ListSnapshot<T> extends AbstractQueue<T> implements Queue<T> {
+public class ListSnapshot<T> extends AbstractList<T> {
 
     private final Snapshot<AbstractQueue<T>> snapobject;
     private final ThreadLocal<Triplet<AbstractQueue<T>, AtomicInteger, java.util.List<AbstractQueue<T>>>> tripletThreadLocal;
@@ -60,6 +57,11 @@ public class ListSnapshot<T> extends AbstractQueue<T> implements Queue<T> {
         return true;
     }
 
+    @Override
+    public T get(int index) {
+        return null;
+    }
+
     public java.util.List<T> read() {
         java.util.List<AbstractQueue<T>> list = snapobject.snap();
 
@@ -95,21 +97,6 @@ public class ListSnapshot<T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public void clear() {
         throw new java.lang.Error("Remove not build yet");
-    }
-
-    @Override
-    public boolean offer(T t) {
-        return false;
-    }
-
-    @Override
-    public T poll() {
-        return null;
-    }
-
-    @Override
-    public T peek() {
-        return null;
     }
 
     @Override

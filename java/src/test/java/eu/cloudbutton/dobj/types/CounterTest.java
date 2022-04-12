@@ -10,18 +10,26 @@ import java.util.concurrent.*;
 
 public class CounterTest {
 
-    private Factory factory;
+    private Factory.FactoryBuilder factory;
 
     @BeforeTest
     public void setUp(){
-        factory = new Factory();
+        factory = Factory.builder();
     }
-
     @Test
     public void increment() throws ExecutionException, InterruptedException {
 
-        doIncrement(factory.createDegradableCounter());
-        doIncrement(factory.createCounter());
+        doIncrement(factory
+                .counter(new DegradableCounter())
+                .build()
+                .getCounter()
+        );
+
+        doIncrement(factory
+                .counter(new Counter())
+                .build()
+                .getCounter()
+        );
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {

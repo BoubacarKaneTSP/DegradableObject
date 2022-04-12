@@ -8,7 +8,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LinkedListSnapshot<T> extends AbstractQueue<T> implements Queue<T> {
+public class LinkedListSnapshot<T> extends AbstractList<T> {
 
     private final Snapshot<LinkedList<T>> snapobject;
     private final ThreadLocal<Triplet<LinkedList<T>, AtomicInteger, ArrayList<LinkedList<T>>>> tripletThreadLocal;
@@ -57,6 +57,11 @@ public class LinkedListSnapshot<T> extends AbstractQueue<T> implements Queue<T> 
         return true;
     }
 
+    @Override
+    public T get(int index) {
+        return null;
+    }
+
     public List<T> read() {
         java.util.List<LinkedList<T>> list = snapobject.snap();
 
@@ -97,21 +102,6 @@ public class LinkedListSnapshot<T> extends AbstractQueue<T> implements Queue<T> 
     @Override
     public void clear() {
         throw new java.lang.Error("Remove not build yet");
-    }
-
-    @Override
-    public boolean offer(T t) {
-        return false;
-    }
-
-    @Override
-    public T poll() {
-        return null;
-    }
-
-    @Override
-    public T peek() {
-        return null;
     }
 
     /**

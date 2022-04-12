@@ -9,16 +9,20 @@ import static org.testng.Assert.*;
 
 public class DegradableQueueTest {
 
-    private Factory factory;
+    private Factory.FactoryBuilder factory;
 
     @BeforeTest
     void setUp() {
-        factory = new Factory();
+        factory = Factory.builder();
     }
 
     @Test
     void offer(){
-        doOffer(factory.createDegradableQueue());
+        doOffer(factory
+                .queue(new DegradableQueue())
+                .build()
+                .getQueue()
+        );
     }
 
     private static void doOffer(AbstractQueue queue){

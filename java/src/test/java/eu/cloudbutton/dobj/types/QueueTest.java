@@ -11,11 +11,11 @@ import java.util.concurrent.*;
 
 public class QueueTest {
 
-    private Factory factory;
+    private Factory.FactoryBuilder factory;
 
     @BeforeTest
     void setUp() {
-        factory = new Factory();
+        factory = Factory.builder();
     }
 
     @Test

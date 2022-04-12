@@ -1,11 +1,11 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
 import eu.cloudbutton.dobj.types.AbstractCounter;
+import eu.cloudbutton.dobj.types.Noop;
 
 import java.util.AbstractMap;
 import java.util.AbstractQueue;
 import java.util.AbstractSet;
-import java.util.Deque;
 import java.util.concurrent.CountDownLatch;
 
 public class FactoryTester {
@@ -20,29 +20,20 @@ public class FactoryTester {
         this.latch = latch;
     }
 
-    public NoopTester createNoopTester() {
-        return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch);
-    }
+    public Tester createTester() throws ClassNotFoundException{
 
-    public CounterTester createAbstractCounterTester() {
-        return new CounterTester((AbstractCounter) object, ratios, latch);
-    }
-
-    public SetTester createAbstractSetTester() {
-        return new SetTester((AbstractSet) object, ratios, latch);
-    }
-
-
-    public QueueTester createAbstractQueueTester() {
-        return new QueueTester((AbstractQueue) object, ratios, latch);
-    }
-
-    public MapTester createAbstractMapTester() {
-        return new MapTester((AbstractMap) object, ratios, latch);
-    }
-
-    public DequeTester createAbstractCollectionTester() {
-        return new DequeTester((Deque) object, ratios, latch);
+        if (object instanceof AbstractMap)
+            return new MapTester((AbstractMap) object, ratios, latch);
+        else if (object instanceof AbstractSet)
+            return new SetTester((AbstractSet) object, ratios, latch);
+        else if (object instanceof AbstractQueue)
+            return new QueueTester((AbstractQueue) object, ratios, latch);
+        else if (object instanceof AbstractCounter)
+            return new CounterTester((AbstractCounter) object, ratios, latch);
+        else if (object instanceof Noop)
+            return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch);
+        else
+            throw new ClassNotFoundException("This Tester may not exists");
     }
 
 }

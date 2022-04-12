@@ -95,9 +95,6 @@ public class Benchmark {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
 
-            Factory factory = new Factory();
-            String constructor = "create" + type;
-
             for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicInteger(0);
                 nbRemove = new AtomicInteger(0);
@@ -108,36 +105,12 @@ public class Benchmark {
                 timeRead = new AtomicLong(0);
                 for (int a = 0; a < nbTest; a++) {
 
-                    Class clazz;
-                    try{
-                        clazz = Class.forName("eu.cloudbutton.dobj.types."+type);
-                    }catch (ClassNotFoundException e){
-                        try{
-                            clazz = Class.forName("java.util.concurrent."+type);
-                        }catch (ClassNotFoundException classNotFoundException){
-                            clazz = Class.forName("java.util.concurrent.atomic."+type);
-                        }
-                    }
-
-                    Object object;
-                    try{
-                        object = Factory.class.getDeclaredMethod(constructor).invoke(factory);
-                    }catch (NoSuchMethodException e){
-                        object = clazz.getConstructor().newInstance();
-                    }
-
-
-
+                    Object object = Factory.createObject(type);
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, 100);
 
-                    try{
-                        Method method = factoryFiller.getClass().getDeclaredMethod("create"+ clazz.getSuperclass().getSimpleName() + "Filler");
-                        Filler filler = (Filler) method.invoke(factoryFiller);
-                        filler.fill();
-                    }catch (NoSuchMethodException e){
-                        System.out.println(clazz.getSuperclass().getSimpleName() + " object may not need to be filled");
-                    }
+                    Filler filler = factoryFiller.createFiller();
+                    filler.fill();
 
 
                     List<Callable<Void>> callables = new ArrayList<>();
@@ -151,8 +124,7 @@ public class Benchmark {
                     );
 
                     for (int j = 0; j < nbCurrentThread; j++) {
-                        Method m = factoryTester.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
-                        Tester tester = (Tester) m.invoke(factoryTester);
+                        Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
 
@@ -233,7 +205,7 @@ public class Benchmark {
                     printWriter.close();
             }
 
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException | IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
             System.exit(-1);
         }
