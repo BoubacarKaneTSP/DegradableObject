@@ -81,8 +81,8 @@ public class App {
 
     private Map<opType, AtomicInteger> nbOperations;
     private Map<opType, AtomicLong> timeOperations;
-    private AbstractMap<String, AbstractSet<String>> mapFollowers;
-    private AbstractMap<String, Timeline> mapTimelines;
+
+    private Database database;
 
     int nbSign = 5;
 
@@ -160,6 +160,13 @@ public class App {
                     java.util.List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
 
+                    flagComputing = new AtomicBoolean(true);
+                    flagWarmingUp = new AtomicBoolean(false);
+
+                    if (nbCurrThread == 1){
+                        database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha);
+                        flagWarmingUp = new AtomicBoolean(true);
+                    }
                     if (nbCurrTest == 1) {
                         nbOperations = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
@@ -184,8 +191,6 @@ public class App {
 
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-                    flagComputing = new AtomicBoolean(true);
-                    flagWarmingUp = (nbCurrThread == 1 ? new AtomicBoolean(true) : new AtomicBoolean(false));
 
                     executorService.submit(new Coordinator(latch));
 
@@ -297,11 +302,6 @@ public class App {
             this.latchFillDatabase = latchFillDatabase;
             this.USER_PER_THREAD = NB_USERS / nbThread;
             this.numUser = ThreadLocal.withInitial(() -> USER_PER_THREAD);
-
-            if (nbThread == 1){
-                mapFollowers = Factory.createMap(typeMap);
-                mapTimelines = Factory.createMap(typeMap);
-            }
         }
 
         @Override
@@ -321,7 +321,7 @@ public class App {
             try{
 
                 if (flagWarmingUp.get()) {
-                    fill_database();
+                    database.fill(USER_PER_THREAD, NB_USERS, alpha, latchFillDatabase);
 
                     latch.countDown();
 
@@ -393,58 +393,6 @@ public class App {
             TimeUnit.MICROSECONDS.sleep(1000);
         }
 
-        public void fill_database() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException, ClassNotFoundException, InstantiationException {
-
-            int n;
-            String userA, userB, threadName = Thread.currentThread().getName();
-
-            //adding users
-            for (int id = 0; id < USER_PER_THREAD; id++) {
-                addUser("user_"+threadName+"_"+id);
-            }
-
-            latchFillDatabase.countDown();
-
-            latchFillDatabase.await();
-
-            String[] users = mapFollowers.keySet().toArray(new String[NB_USERS]);
-
-            int bound = 1000;
-            
-            List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
-
-            int i = 0, max = (100000 * NB_USERS) / 175000000; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
-
-            for (int val: data){
-                if (val >= max) {
-                    data.set(i,max);
-                }
-                if (val < 0)
-                    data.set(i, 0);
-                i++;
-            }
-
-//            System.out.println("fill");
-
-            //Following phase
-            for (int id = 0; id < USER_PER_THREAD; id++) {
-
-                userA = "user_"+threadName+"_"+id;
-                
-                int nbFollow = data.get(random.nextInt(bound));
-//                System.out.println(nbFollow);
-
-                    for(int j = 0; j < nbFollow; j++){
-
-                        n = random.nextInt(NB_USERS);
-                        userB = users[n];
-
-                        follow(userA, userB);
-                    }
-            }
-
-        }
-
         public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
@@ -454,7 +402,7 @@ public class App {
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
-                    addUser("user_"+threadName+"_"+numUser.get());
+                    database.addUser("user_"+threadName+"_"+numUser.get());
                     endTime = System.nanoTime();
 
                     numUser.set(numUser.get() + 1);
@@ -462,9 +410,9 @@ public class App {
                 case FOLLOW:
                     userA = "user_"+threadName+"_"+n;
                     userB = null;
-                    n = random.nextInt(mapFollowers.size());
+                    n = random.nextInt(database.getMapFollowers().size());
                     i = 0;
-                    for(Object obj : mapFollowers.keySet())
+                    for(Object obj : database.getMapFollowers().keySet())
                     {
                         if (i == n){
                             userB = (String) obj;
@@ -474,7 +422,7 @@ public class App {
                     }
 
                     startTime = System.nanoTime();
-                    follow(userA, userB);
+                    database.followUser(userA, userB);
                     endTime = System.nanoTime();
 
 
@@ -482,9 +430,9 @@ public class App {
                 case UNFOLLOW:
                     userA = "user_"+threadName+"_"+n;
                     userB = null;
-                    n = random.nextInt(mapFollowers.size());
+                    n = random.nextInt(numUser.get());
                     i = 0;
-                    for(Object obj : mapFollowers.keySet())
+                    for(Object obj : database.getMapFollowers().keySet())
                     {
                         if (i == n){
                             userB = (String) obj;
@@ -492,25 +440,25 @@ public class App {
                         }
                         i++;
                     }
-                    if (mapFollowers.containsKey(userA)){
+                    if (database.getMapFollowers().containsKey(userA)){
                         startTime = System.nanoTime();
-                        unfollow(userA, userB);
+                        database.unfollowUser(userA, userB);
                         endTime = System.nanoTime();
                     }
                 break;
                 case TWEET:
                     userA = "user_"+threadName+"_"+n;
-                    if (mapFollowers.containsKey(userA)){
+                    if (database.getMapFollowers().containsKey(userA)){
                         startTime = System.nanoTime();
-                        tweet(userA, "msg from " + userA);
+                        database.tweet(userA, "msg from " + userA);
                         endTime = System.nanoTime();
                     }
                 break;
                 case READ:
                     userA = "user_"+threadName+"_"+n;
-                    if (mapFollowers.containsKey(userA)){
+                    if (database.getMapFollowers().containsKey(userA)){
                         startTime = System.nanoTime();
-                        showTimeline(userA);
+                        database.showTimeline(userA);
                         endTime = System.nanoTime();
                     }
                 break;
@@ -519,50 +467,6 @@ public class App {
             }
 
             return endTime - startTime;
-        }
-
-        public void addUser(String user) throws ClassNotFoundException {
-//            System.out.println("add");
-            mapFollowers.put(user,
-                    Factory.createSet(typeSet));
-            mapTimelines.put(user,
-                    new Timeline(Factory.createQueue(typeQueue),
-                            Factory.createCounter(typeCounter)
-                    )
-            );
-
-        }
-
-        // userA may not have been added yet
-
-        public void follow(String userA, String userB){
-//            System.out.println("follow");
-
-            mapFollowers.get(userB).add(userA);
-//          nbFollower.get(userB).increment();
-
-        }
-
-        public void unfollow(String userA, String userB){
-//          System.out.println("unfollow");
-
-            mapFollowers.get(userB).remove(userA);
-//          nbFollower.get(userB).write(-1);
-
-        }
-
-        public void tweet(String user, String msg){
-//            System.out.println("tweet");
-
-            for (String follower : mapFollowers.get(user)) {
-                mapTimelines.get(follower).add(msg);
-            }
-
-        }
-
-        public void showTimeline(String user){
-//            System.out.println("Show timeline");
-            mapTimelines.get(user).read();
         }
     }
 

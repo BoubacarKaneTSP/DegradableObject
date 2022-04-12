@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -40,6 +41,15 @@ public class Set<T> extends AbstractSet<T> {
     @Override
     public boolean contains(Object val) {
         return set.contains(val);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends T> values){
+
+        for (T val: values){
+            set.add(val);
+        }
+        return true;
     }
 
 }
