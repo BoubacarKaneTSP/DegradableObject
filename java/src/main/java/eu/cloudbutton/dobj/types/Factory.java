@@ -37,7 +37,7 @@ public class Factory {
         else if (object.contains("Map"))
             return createMap(object);
         else
-            throw new ClassNotFoundException("The object may not exists");
+            throw new ClassNotFoundException("The object : "+ object +" may not exists");
     }
     /* Counter */
 

@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.Benchmark.Tester;
 import eu.cloudbutton.dobj.types.AbstractCounter;
 import eu.cloudbutton.dobj.types.Noop;
 
+import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractQueue;
 import java.util.AbstractSet;
@@ -28,12 +29,14 @@ public class FactoryTester {
             return new SetTester((AbstractSet) object, ratios, latch);
         else if (object instanceof AbstractQueue)
             return new QueueTester((AbstractQueue) object, ratios, latch);
+        else if (object instanceof AbstractList)
+            return new ListTester((AbstractList) object, ratios, latch);
         else if (object instanceof AbstractCounter)
             return new CounterTester((AbstractCounter) object, ratios, latch);
         else if (object instanceof Noop)
             return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch);
         else
-            throw new ClassNotFoundException("This Tester may not exists");
+            throw new ClassNotFoundException("The Tester for"+ object.getClass() +" may not exists");
     }
 
 }

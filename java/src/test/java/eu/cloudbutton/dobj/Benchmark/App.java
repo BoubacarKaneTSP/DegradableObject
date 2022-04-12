@@ -279,9 +279,6 @@ public class App {
         private  final int NB_USERS = 500000; //Number of users initially added to the database
         protected int USER_PER_THREAD;
         protected final ThreadLocalRandom random;
-        private final String methodSet;
-        private final String methodQueue;
-        private final String methodCounter;
         private final int[] ratiosArray;
         private final double alpha;
         private final CountDownLatch latch;
@@ -292,9 +289,6 @@ public class App {
 
         public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) throws ClassNotFoundException {
             this.random = ThreadLocalRandom.current();
-            this.methodSet = "create" + typeSet;
-            this.methodQueue =  "create" + typeQueue;
-            this.methodCounter =  "create" + typeCounter;
             this.ratiosArray = Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray();
             this.alpha = alpha;
             this.latch = latch;
