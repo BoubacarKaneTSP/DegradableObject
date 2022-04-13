@@ -1,7 +1,5 @@
 package eu.cloudbutton.dobj.Benchmark;
 
-import eu.cloudbutton.dobj.types.*;
-import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -47,8 +44,8 @@ public class App {
     @Option(name="-map", required = true, usage = "type of Map")
     private String typeMap;
 
-    @Option(name = "-ratios", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios;
+    @Option(name = "-distribution", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
+    private String[] distribution;
 
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
@@ -99,12 +96,12 @@ public class App {
             if (args.length < 1)
                 throw new CmdLineException(parser, "No argument is given");
 
-            if (ratios.length != 4){
+            if (distribution.length != 4){
                 throw new java.lang.Error("Number of ratios must be 4 (% add, % follow or unfollow, % tweet, % read)");
             }
 
             int total = 0;
-            for (int ratio: Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()) {
+            for (int ratio: Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray()) {
                 total += ratio;
             }
 
@@ -293,10 +290,11 @@ public class App {
         private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
+        private ThreadLocal<Database> localDatabase;
 
-        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) throws ClassNotFoundException {
+        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) {
             this.random = ThreadLocalRandom.current();
-            this.ratiosArray = Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray();
+            this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
@@ -354,6 +352,15 @@ public class App {
                     latch.await();
                 }
 
+                localDatabase = ThreadLocal.withInitial(() -> {
+                    try{
+                        return database.localCopy();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                });
+
                 while (!flagComputing.get()){
 
                     val = random.nextInt(100);
@@ -409,42 +416,33 @@ public class App {
                     break;
                 case FOLLOW:
                     userA = "user_"+threadName+"_"+n;
-                    userB = null;
-                    n = random.nextInt(database.getMapFollowers().size());
-                    i = 0;
-                    for(Object obj : database.getMapFollowers().keySet())
-                    {
-                        if (i == n){
-                            userB = (String) obj;
-                            break;
-                        }
-                        i++;
+                    n = random.nextInt(database.getUsersProbability().size());
+                    userB = database.getUsersProbability().get(n);
+
+                    while (localDatabase.get().getMapFollowers().get(userB).contains(userA)){
+                        n = random.nextInt(database.getUsersProbability().size());
+                        userB = database.getUsersProbability().get(n);
                     }
 
                     startTime = System.nanoTime();
                     database.followUser(userA, userB);
                     endTime = System.nanoTime();
 
-
                 break;
                 case UNFOLLOW:
                     userA = "user_"+threadName+"_"+n;
-                    userB = null;
-                    n = random.nextInt(numUser.get());
-                    i = 0;
-                    for(Object obj : database.getMapFollowers().keySet())
-                    {
-                        if (i == n){
-                            userB = (String) obj;
-                            break;
-                        }
-                        i++;
+                    n = random.nextInt(database.getUsersProbability().size());
+                    userB = database.getUsersProbability().get(n);
+
+                    while (!localDatabase.get().getMapFollowers().get(userB).contains(userA)){
+                        n = random.nextInt(database.getUsersProbability().size());
+                        userB = database.getUsersProbability().get(n);
                     }
-                    if (database.getMapFollowers().containsKey(userA)){
-                        startTime = System.nanoTime();
-                        database.unfollowUser(userA, userB);
-                        endTime = System.nanoTime();
-                    }
+
+                    startTime = System.nanoTime();
+                    database.unfollowUser(userA, userB);
+                    endTime = System.nanoTime();
+
                 break;
                 case TWEET:
                     userA = "user_"+threadName+"_"+n;

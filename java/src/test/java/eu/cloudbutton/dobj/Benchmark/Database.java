@@ -8,6 +8,9 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,6 +25,7 @@ public class Database {
     private final ThreadLocalRandom random;
     private final AbstractMap<String, AbstractSet<String>> mapFollowers;
     private final AbstractMap<String, Timeline<String>> mapTimelines;
+    private final List<String> usersProbability;
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha) throws ClassNotFoundException {
@@ -33,6 +37,7 @@ public class Database {
         this.random = ThreadLocalRandom.current();
         mapFollowers = Factory.createMap(typeMap);
         mapTimelines = Factory.createMap(typeMap);
+        usersProbability = new CopyOnWriteArrayList<>();
     }
 
     public void fill(int USER_PER_THREAD, int NB_USERS, double alpha, CountDownLatch latch) throws InterruptedException, ClassNotFoundException {
@@ -54,17 +59,19 @@ public class Database {
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
 
-        int i = 0, max = (100000 * NB_USERS) / 175000000; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+        int i = 0;
+
+        double ratio = 100000/ 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+        long max = (long) ((long) NB_USERS * ratio);
 
         for (int val: data){
             if (val >= max) {
-                data.set(i,max);
+                data.set(i, (int) max);
             }
             if (val < 0)
                 data.set(i, 0);
             i++;
         }
-
 
         //Following phase
         for (int id = 0; id < USER_PER_THREAD; id++) {
@@ -79,6 +86,7 @@ public class Database {
                 userB = users[n];
 
                 followUser(userA, userB);
+                usersProbability.add(userA);
             }
         }
     }
