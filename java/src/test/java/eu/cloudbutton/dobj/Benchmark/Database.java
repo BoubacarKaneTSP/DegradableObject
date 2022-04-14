@@ -1,18 +1,16 @@
 package eu.cloudbutton.dobj.Benchmark;
 
+import eu.cloudbutton.dobj.types.AbstractCounter;
 import eu.cloudbutton.dobj.types.Factory;
 import eu.cloudbutton.dobj.types.Timeline;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
-import java.util.AbstractMap;
-import java.util.AbstractSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public class Database {
@@ -25,6 +23,7 @@ public class Database {
     private final ThreadLocalRandom random;
     private final AbstractMap<String, AbstractSet<String>> mapFollowers;
     private final AbstractMap<String, Timeline<String>> mapTimelines;
+    private final AbstractCounter userID;
     private final List<String> usersProbability;
 
 
@@ -37,28 +36,17 @@ public class Database {
         this.random = ThreadLocalRandom.current();
         mapFollowers = Factory.createMap(typeMap);
         mapTimelines = Factory.createMap(typeMap);
+        userID = Factory.createCounter(typeCounter);
         usersProbability = new CopyOnWriteArrayList<>();
     }
 
-    public void fill(int USER_PER_THREAD, int NB_USERS, double alpha, CountDownLatch latch) throws InterruptedException, ClassNotFoundException {
+    public void fill(int NB_USERS, double alpha, CountDownLatch latchDatabase, Map<String, List<String>> mapFollow) throws InterruptedException, ClassNotFoundException {
         int n;
-        String userA, userB, threadName = Thread.currentThread().getName();
-
-        //adding users
-        for (int id = 0; id < USER_PER_THREAD; id++) {
-            addUser("user_"+threadName+"_"+id);
-        }
-
-        latch.countDown();
-
-        latch.await();
-
-        String[] users = mapFollowers.keySet().toArray(new String[NB_USERS]);
+        String userA, userB;
 
         int bound = 1000;
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
-
         int i = 0;
 
         double ratio = 100000/ 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
@@ -68,27 +56,42 @@ public class Database {
             if (val >= max) {
                 data.set(i, (int) max);
             }
-            if (val < 0)
-                data.set(i, 0);
+            if (val < 1)
+                data.set(i, 1);
             i++;
         }
 
-        //Following phase
-        for (int id = 0; id < USER_PER_THREAD; id++) {
+        //adding users
+        for (int id = 0; id < NB_USERS; id++) {
+            userID.increment();
+            mapFollow.put("User_"+id, new ArrayList<>());
 
-            userA = "user_"+threadName+"_"+id;
+            for (int j = 0 ; j < data.get(random.nextInt(bound)); j++)
+                usersProbability.add("User_"+id);
+
+        }
+
+        TimeUnit.SECONDS.sleep(2);
+
+        latchDatabase.countDown();
+        latchDatabase.await();
+
+
+        //Following phase
+        for (int id = 0; id < NB_USERS; id++) {
+
+            userA = "User_"+id;
 
             int nbFollow = data.get(random.nextInt(bound));
-
-            for(int j = 0; j < nbFollow; j++){
-
-                n = random.nextInt(NB_USERS);
-                userB = users[n];
+            for(int j = 0; j <= nbFollow; j++){
+                n = random.nextInt(usersProbability.size());
+                userB = usersProbability.get(n);
 
                 followUser(userA, userB);
-                usersProbability.add(userA);
+                mapFollow.get(userA).add(userB);
             }
         }
+
     }
 
     public void addUser(String user) throws ClassNotFoundException {

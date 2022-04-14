@@ -44,7 +44,7 @@ public class App {
     @Option(name="-map", required = true, usage = "type of Map")
     private String typeMap;
 
-    @Option(name = "-distribution", required = true, handler = StringArrayOptionHandler.class, usage = "ratios")
+    @Option(name = "-distribution", required = true, handler = StringArrayOptionHandler.class, usage = "distribution")
     private String[] distribution;
 
     @Option(name = "-nbThreads", usage = "Number of threads")
@@ -77,9 +77,13 @@ public class App {
     private AtomicBoolean flagComputing,flagWarmingUp;
 
     private Map<opType, AtomicInteger> nbOperations;
+    private Map<opType, AtomicInteger> nbOperationsFailed;
     private Map<opType, AtomicLong> timeOperations;
 
     private Database database;
+    private Map<String,List<String>> mapFollow;
+
+    int NB_USERS = 100000;
 
     int nbSign = 5;
 
@@ -154,42 +158,44 @@ public class App {
                 }
 
                 for (int nbCurrTest = 1; nbCurrTest <= nbTest; nbCurrTest++) {
-                    java.util.List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
+                    List<Callable<Void>> callables = new ArrayList<>();
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread+1); // Additional count for the UserAdder
+                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
 
                     if (nbCurrThread == 1){
                         database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha);
+                        mapFollow = new ConcurrentHashMap<>();
                         flagWarmingUp = new AtomicBoolean(true);
                     }
                     if (nbCurrTest == 1) {
                         nbOperations = new ConcurrentHashMap<>();
+                        nbOperationsFailed = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
 
                         for (opType op : opType.values()) {
                             nbOperations.put(op, new AtomicInteger(0));
+                            nbOperationsFailed.put(op, new AtomicInteger(0));
                             timeOperations.put(op, new AtomicLong(0));
                         }
                     }
 
-                    CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional count for the coordinator
-                    CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
+                    CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
+                    CountDownLatch latchFillDatabase = new CountDownLatch(2); // Additional count for the UserAdder
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 alpha,
                                 latch,
-                                latchFillDatabase,
-                                nbCurrThread);
+                                latchFillDatabase
+                        );
                         callables.add(retwisApp);
                     }
+                    callables.add(new UserAdder(latchFillDatabase));
 
-                    ExecutorService executorService = Executors.newFixedThreadPool(1);
-
-
-                    executorService.submit(new Coordinator(latch));
+                    executorServiceCoordinator.submit(new Coordinator(latch));
 
                     List<Future<Void>> futures;
                     futures = executor.invokeAll(callables);
@@ -208,13 +214,16 @@ public class App {
                 }
 
                 long nbOpTotal = 0;
+                long nbOpTotalFailed = 0;
                 long avgTimeTotal = 0L;
 
                 for (opType op : opType.values()){
                     nbOpTotal += nbOperations.get(op).get();
+                    nbOpTotalFailed += nbOperationsFailed.get(op).get();
                     avgTimeTotal += timeOperations.get(op).get();
                 }
 
+                long nbOp = nbOpTotal - nbOpTotalFailed;
 //                avgTimeTotal = avgTimeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
                 if (_s){
@@ -225,7 +234,7 @@ public class App {
                         fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
+                    printWriter.println(nbCurrThread +" "+ (nbOp / (double) avgTimeTotal) * 1_000_000_000);
                 }
 
                 if (_p){
@@ -233,7 +242,8 @@ public class App {
                     System.out.print(" Throughput for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+ (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
+                    System.out.println(" - "+ (nbOp / (double) avgTimeTotal) * 1_000_000_000);
+                    System.out.println("* Proportion of failed operations : " + (nbOpTotalFailed / (double) nbOpTotal) * 100);
 
                 }
 
@@ -241,6 +251,8 @@ public class App {
                     printWriter.flush();
 
                 for (opType op: opType.values()){
+
+                    nbOp = nbOperations.get(op).get() - nbOperationsFailed.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
@@ -250,7 +262,7 @@ public class App {
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrThread +" "+  (nbOperations.get(op).get() / (double) timeOperations.get(op).get()) * 1_000_000_000);
+                        printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOperations.get(op).get()) * 1_000_000_000);
                     }
 
                     if (_p){
@@ -258,7 +270,8 @@ public class App {
                         System.out.print(" Throughput for "+op+" operations ");
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
                         System.out.println();
-                        System.out.println(" - "+ (nbOperations.get(op).get() / (double) timeOperations.get(op).get()) * 1_000_000_000);
+                        System.out.println(" - "+ (nbOp / (double) timeOperations.get(op).get()) * 1_000_000_000);
+                        System.out.println("* Proportion of failed " + op + " operations : " + (nbOperationsFailed.get(op).get() / (double) nbOperations.get(op).get()) * 100);
                     }
 
                     if (_s)
@@ -282,24 +295,18 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        private  final int NB_USERS = 500000; //Number of users initially added to the database
-        protected int USER_PER_THREAD;
         protected final ThreadLocalRandom random;
-        private ThreadLocal<Integer> numUser;
         private final int[] ratiosArray;
         private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private ThreadLocal<Database> localDatabase;
 
-        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, int nbThread) {
+        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
-            this.USER_PER_THREAD = NB_USERS / nbThread;
-            this.numUser = ThreadLocal.withInitial(() -> USER_PER_THREAD);
         }
 
         @Override
@@ -309,22 +316,23 @@ public class App {
             int val;
 
             AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
+            AbstractMap<opType, Integer> nbLocalOperationsFailed = new HashMap<>();
             AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
 
             for (opType op: opType.values()){
                 nbLocalOperations.put(op, 0);
+                nbLocalOperationsFailed.put(op, 0);
                 timeLocalOperations.put(op, 0L);
             }
 
             try{
 
                 if (flagWarmingUp.get()) {
-                    database.fill(USER_PER_THREAD, NB_USERS, alpha, latchFillDatabase);
+                    database.fill(NB_USERS, alpha, latchFillDatabase, mapFollow);
 
                     latch.countDown();
 
                     latch.await();
-
 
                     while (flagComputing.get()) {     // warm up
 
@@ -352,15 +360,6 @@ public class App {
                     latch.await();
                 }
 
-                localDatabase = ThreadLocal.withInitial(() -> {
-                    try{
-                        return database.localCopy();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                });
-
                 while (!flagComputing.get()){
 
                     val = random.nextInt(100);
@@ -383,10 +382,13 @@ public class App {
 
                     nbLocalOperations.compute(type, (key, value) -> value + 1);
                     timeLocalOperations.compute(type, (key, value) -> value + elapsedTime);
+                    if (elapsedTime == 0)
+                        nbLocalOperationsFailed.compute(type, (key, value) -> value + 1);
                 }
 
                 for (opType op: opType.values()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
+                    nbOperationsFailed.get(op).addAndGet(nbLocalOperationsFailed.get(op));
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
                 }
 
@@ -403,68 +405,95 @@ public class App {
         public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
-            int i, n = random.nextInt(numUser.get());
-            String userA, userB, threadName = Thread.currentThread().getName();
-
+            int n = random.nextInt(NB_USERS);
+            String userA, userB;
+            userA = "User_"+n;
+            List<String> listFollow = mapFollow.get(userA);
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
-                    database.addUser("user_"+threadName+"_"+numUser.get());
+                    database.getUserID().increment();
                     endTime = System.nanoTime();
 
-                    numUser.set(numUser.get() + 1);
                     break;
                 case FOLLOW:
-                    userA = "user_"+threadName+"_"+n;
                     n = random.nextInt(database.getUsersProbability().size());
                     userB = database.getUsersProbability().get(n);
 
-                    while (localDatabase.get().getMapFollowers().get(userB).contains(userA)){
-                        n = random.nextInt(database.getUsersProbability().size());
-                        userB = database.getUsersProbability().get(n);
+                    try{
+                        if (!listFollow.contains(userB)){
+                            startTime = System.nanoTime();
+                            database.followUser(userA, userB);
+                            endTime = System.nanoTime();
+                        }
+                    }catch (NullPointerException e){
+                        System.out.println(userA + " may not have a list of follow (Follow method): " + mapFollow);
                     }
-
-                    startTime = System.nanoTime();
-                    database.followUser(userA, userB);
-                    endTime = System.nanoTime();
 
                 break;
                 case UNFOLLOW:
-                    userA = "user_"+threadName+"_"+n;
-                    n = random.nextInt(database.getUsersProbability().size());
-                    userB = database.getUsersProbability().get(n);
+                    try{
+                        if (listFollow.size() != 0){
+                            userB = listFollow.remove(0);
 
-                    while (!localDatabase.get().getMapFollowers().get(userB).contains(userA)){
-                        n = random.nextInt(database.getUsersProbability().size());
-                        userB = database.getUsersProbability().get(n);
+                            startTime = System.nanoTime();
+                            database.unfollowUser(userA, userB);
+                            endTime = System.nanoTime();
+                        }
+                    }catch (NullPointerException e){
+                        System.out.println(userA + " may not have a list of follow (Unfollow method): " + mapFollow.get(userA));
                     }
-
-                    startTime = System.nanoTime();
-                    database.unfollowUser(userA, userB);
-                    endTime = System.nanoTime();
 
                 break;
                 case TWEET:
-                    userA = "user_"+threadName+"_"+n;
-                    if (database.getMapFollowers().containsKey(userA)){
-                        startTime = System.nanoTime();
-                        database.tweet(userA, "msg from " + userA);
-                        endTime = System.nanoTime();
-                    }
+                    startTime = System.nanoTime();
+                    database.tweet(userA, "msg from " + userA);
+                    endTime = System.nanoTime();
+
                 break;
                 case READ:
-                    userA = "user_"+threadName+"_"+n;
-                    if (database.getMapFollowers().containsKey(userA)){
-                        startTime = System.nanoTime();
-                        database.showTimeline(userA);
-                        endTime = System.nanoTime();
-                    }
+                    startTime = System.nanoTime();
+                    database.showTimeline(userA);
+                    endTime = System.nanoTime();
+
                 break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + type);
             }
 
             return endTime - startTime;
+        }
+    }
+
+    public class UserAdder implements Callable<Void>{
+
+        int lastIDAdded = 0;
+        private final CountDownLatch latch;
+
+        public UserAdder(CountDownLatch latch) {
+            this.latch = latch;
+        }
+
+        @Override
+        public Void call() throws ClassNotFoundException {
+
+            while (flagWarmingUp.get() && lastIDAdded != NB_USERS ) {
+                add();
+            }
+            latch.countDown();
+
+            while (!flagComputing.get()) add();
+
+            return null;
+        }
+
+        public void add() throws ClassNotFoundException {
+            int lastID = database.getUserID().read();
+
+            for (int i = lastIDAdded ; i < lastID; i++) {
+                database.addUser("User_" + i);
+            }
+            lastIDAdded = lastID;
         }
     }
 
