@@ -220,20 +220,10 @@ public class Benchmark {
         @Override
         public Void call() throws Exception {
             try {
-                if (_p)
-                    System.out.println("Warming up.");
-
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-
-                if (_p)
-                    System.out.println("Computing.");
-
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
-
-                System.out.println("Done computing.");
-
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
