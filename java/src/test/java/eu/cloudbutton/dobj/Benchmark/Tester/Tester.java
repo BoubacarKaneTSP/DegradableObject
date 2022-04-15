@@ -40,8 +40,6 @@ public abstract class Tester<T> implements Callable<Void> {
         latch.countDown();
 
         try{
-            latch.await();
-
             // TRY WITH ONLY ONE RANDOM NUMBER AND DO % 100 FOR THE OTHER
 
             // warm up
@@ -62,6 +60,8 @@ public abstract class Tester<T> implements Callable<Void> {
                 long iid = Thread.currentThread().getId() * 1000000000L + rand;
                 test(type, iid);
             }
+
+            latch.await();
 
             // compute
             while (!Benchmark.flag.get()) {

@@ -2,7 +2,7 @@ package eu.cloudbutton.dobj.types;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class build a Counter on top of a Snapshot object.
@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final ConcurrentMap<Thread, AtomicInteger> count;
-    private final ThreadLocal<AtomicInteger> local;
+    private final ConcurrentMap<Thread, AtomicLong> count;
+    private final ThreadLocal<AtomicLong> local;
 
     /**
      * Creates a new Counter initialized with the initial value 0.
@@ -20,7 +20,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            AtomicInteger l = new AtomicInteger(0);
+            AtomicLong l = new AtomicLong(0);
             count.put(Thread.currentThread(), l);
             return l;
         });
@@ -52,9 +52,9 @@ public class DegradableCounter extends AbstractCounter {
      * @return the current value stored by this object.
      */
     @Override
-    public int read() {
+    public long read() {
         int total = 0;
-        for (AtomicInteger v : count.values()) {
+        for (AtomicLong v : count.values()) {
             total += v.get();
         }
         return total;

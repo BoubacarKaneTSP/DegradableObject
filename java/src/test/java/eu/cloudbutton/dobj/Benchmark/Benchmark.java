@@ -114,36 +114,35 @@ public class Benchmark {
 
 
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread); // Adding one if we have a solo reader
 
-                    CountDownLatch latch = new CountDownLatch(nbCurrentThread);
+                    CountDownLatch latch = new CountDownLatch(nbCurrentThread); // Adding one if we have a solo reader
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
                             latch
                     );
 
-                    for (int j = 0; j < nbCurrentThread; j++) {
+                    for (int j = 0; j < nbCurrentThread - 1; j++) { // -1 not to count the thread that only read.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
 
 
-                   /*
 
-                   Code if one reader is needed
+//                   Code if one reader is needed
 
                    FactoryTester factoryT = new FactoryTester(
-                            object,
-                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
-                            latch,
-                            nbOps/nbCurrentThread
-                    );
+                           object,
+                           new int[] {0},
+                           latch
+                   );
 
-                    Method m1 = factoryT.getClass().getDeclaredMethod("create" + clazz.getSuperclass().getSimpleName() + "Tester");
-                    Tester t = (Tester) m1.invoke(factoryT);
+                    Tester t = factoryT.createTester();
                     callables.add(t);
-*/
+
+//
+
                     ExecutorService executorCoordinator = Executors.newFixedThreadPool(1);
                     flag = new AtomicBoolean();
                     flag.set(true);
@@ -188,6 +187,7 @@ public class Benchmark {
                     System.out.println("    -time/add : " + (nbAdd.get() / (double) timeAdd.get()) * 1_000_000_000);
                     System.out.println("    -time/remove : " + (nbRemove.get() / (double) timeRemove.get()) * 1_000_000_000);
                     System.out.println("    -time/read: " + (nbRead.get() / (double)timeRead.get()) * 1_000_000_000);
+                    System.out.println("    -num read: " + nbRead.get());
                 }
 
                 nbCurrentThread *= 2;
@@ -220,11 +220,19 @@ public class Benchmark {
         @Override
         public Void call() throws Exception {
             try {
+                if (_p)
+                    System.out.println("Warming up.");
+
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
+
+                if (_p)
+                    System.out.println("Computing.");
+
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
 
+                System.out.println("Done computing.");
 
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);

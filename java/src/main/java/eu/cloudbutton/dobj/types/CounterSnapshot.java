@@ -63,7 +63,7 @@ public class CounterSnapshot extends AbstractCounter{
      * @return the current value stored by this object.
      */
     @Override
-    public int read(){
+    public long read(){
 
         List<Counter> list = snapobject.snap();
 

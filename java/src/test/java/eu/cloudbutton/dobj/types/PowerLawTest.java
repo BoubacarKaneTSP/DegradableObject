@@ -22,7 +22,7 @@ public class PowerLawTest {
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
 
 
-            int i = 0, nbMax = 0, max = 600, avg = 0;
+            int i = 0, nbMax = 0, max = 57, avg = 0;
 
 
             for (int val: data){
@@ -40,10 +40,10 @@ public class PowerLawTest {
             System.out.println(data);
             System.out.println();
             System.out.println("======= " + alpha + " =======");
-            System.out.println("max : " + Collections.max(data) + " => " + Collections.max(data)/ 1000000.0 * 100 +"%");
-            System.out.println("Q1 : " + data.get(data.size()/4) + " => " + data.get(data.size()/4) / 1000000.0 * 100 +"%");
-            System.out.println("médiane : " + data.get(data.size()/2) + " => " + data.get(data.size()/2) / 1000000.0 * 100 +"%");
-            System.out.println("Q3 : " + data.get(3*data.size()/4) + " => " + data.get(3*data.size()/4) / 1000000.0 * 100 +"%");
+            System.out.println("max : " + Collections.max(data) + " => " + Collections.max(data)/ (double) max * 100 +"%");
+            System.out.println("Q1 : " + data.get(data.size()/4) + " => " + data.get(data.size()/4) / (double) max * 100 +"%");
+            System.out.println("médiane : " + data.get(data.size()/2) + " => " + data.get(data.size()/2) / (double) max * 100 +"%");
+            System.out.println("Q3 : " + data.get(3*data.size()/4) + " => " + data.get(3*data.size()/4) / (double) max * 100 +"%");
             System.out.println("nbMax : " + nbMax);
             System.out.println("avg : " + avg/data.size());
         }

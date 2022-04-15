@@ -467,7 +467,7 @@ public class App {
 
     public class UserAdder implements Callable<Void>{
 
-        int lastIDAdded = 0;
+        long lastIDAdded = 0;
         private final CountDownLatch latch;
 
         public UserAdder(CountDownLatch latch) {
@@ -488,9 +488,9 @@ public class App {
         }
 
         public void add() throws ClassNotFoundException {
-            int lastID = database.getUserID().read();
+            long lastID = database.getUserID().read();
 
-            for (int i = lastIDAdded ; i < lastID; i++) {
+            for (long i = lastIDAdded ; i < lastID; i++) {
                 database.addUser("User_" + i);
             }
             lastIDAdded = lastID;

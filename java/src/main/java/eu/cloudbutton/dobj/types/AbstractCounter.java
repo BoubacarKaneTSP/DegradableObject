@@ -17,5 +17,5 @@ public abstract class AbstractCounter {
      * Returns the current value of the Counter.
      * @return the current value stored by this object.
      */
-    public abstract int read();
+    public abstract long read();
 }

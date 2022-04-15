@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public class Database {
@@ -70,9 +69,6 @@ public class Database {
                 usersProbability.add("User_"+id);
 
         }
-
-        TimeUnit.SECONDS.sleep(2);
-
         latchDatabase.countDown();
         latchDatabase.await();
 

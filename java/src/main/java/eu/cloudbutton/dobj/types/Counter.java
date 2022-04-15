@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class encapsulate the AtomicCounter from Java.
@@ -9,24 +9,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  * */
 public class Counter extends AbstractCounter {
 
-    private final AtomicInteger count;
+    private final AtomicLong count;
 
     /**
      * Creates a new Counter initialized with the value stored in the specified counter.
      * @param counter The counter whose value is given to the new.
      */
-    public Counter(Counter counter) { count = new AtomicInteger(counter.read()); }
+    public Counter(Counter counter) { count = new AtomicLong(counter.read()); }
 
     /**
      * Creates a new Counter initialized with the given initial value.
      * @param initialValue the initial value.
      */
-    public Counter(int initialValue) { count = new AtomicInteger(initialValue); }
+    public Counter(int initialValue) { count = new AtomicLong(initialValue); }
 
     /**
      * Creates a new Counter initialized with the initial value 0.
      */
-    public Counter() { count = new AtomicInteger(); }
+    public Counter() { count = new AtomicLong(); }
 
     /**
      * Atomically increments the current value of the Counter.
@@ -50,7 +50,7 @@ public class Counter extends AbstractCounter {
      * @return the current value stored by this object.
      */
     @Override
-    public int read() {
+    public long read() {
         return count.intValue();
     }
 

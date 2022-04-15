@@ -52,7 +52,7 @@ public class CounterSnapshotSRMW extends AbstractCounter{
      * @return the current value stored by this object.
      */
     @Override
-    public int read() {
+    public long read() {
         int result = 0;
 
         for (Integer i : snapobject.snap()) {

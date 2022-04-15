@@ -53,6 +53,8 @@ public class Factory {
                 return new CounterSnapshot();
             case "CounterSnapshotSRMW":
                 return new CounterSnapshotSRMW();
+            case "FuzzyCounter":
+                return new FuzzyCounter();
             default:
                 throw new ClassNotFoundException();
         }
