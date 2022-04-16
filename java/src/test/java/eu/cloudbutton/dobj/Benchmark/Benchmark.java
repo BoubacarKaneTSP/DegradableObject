@@ -165,11 +165,16 @@ public class Benchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
-                long nbOpTotal;
-                long avgTimeTotal;
-                avgTimeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
+                long timeTotal;
+                double throughputADD, throughputREMOVE, throughputREAD, throughputTotal;
 
-                nbOpTotal = nbAdd.get() + nbRemove.get() + nbRead.get();
+                timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
+
+                throughputADD = (nbAdd.get() / (double) timeTotal) * 1_000_000_000;
+                throughputREMOVE = (nbRemove.get() / (double) timeTotal) * 1_000_000_000;
+                throughputREAD = (nbRead.get() / (double) timeTotal) * 1_000_000_000;
+
+                throughputTotal = throughputADD + throughputREMOVE + throughputREAD;
 
                 if (_s){
 
@@ -179,14 +184,14 @@ public class Benchmark {
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread + " " + (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000);
+                    printWriter.println(nbCurrentThread + " " + (throughputTotal) * 1_000_000_000);
                 }
 
                 if (_p){
-                    System.out.println(nbCurrentThread + " " + (nbOpTotal / (double) avgTimeTotal) * 1_000_000_000); // printing the throughput per op for nbCurrentThread thread(s)
-                    System.out.println("    -time/add : " + (nbAdd.get() / (double) timeAdd.get()) * 1_000_000_000);
-                    System.out.println("    -time/remove : " + (nbRemove.get() / (double) timeRemove.get()) * 1_000_000_000);
-                    System.out.println("    -time/read: " + (nbRead.get() / (double)timeRead.get()) * 1_000_000_000);
+                    System.out.println(nbCurrentThread + " " + throughputTotal); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println("    -time/add : " + throughputADD);
+                    System.out.println("    -time/remove : " + throughputREMOVE);
+                    System.out.println("    -time/read: " + throughputREAD);
                     System.out.println("    -num read: " + nbRead.get());
                 }
 

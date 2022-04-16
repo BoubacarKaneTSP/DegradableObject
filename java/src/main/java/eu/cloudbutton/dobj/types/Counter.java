@@ -51,7 +51,7 @@ public class Counter extends AbstractCounter {
      */
     @Override
     public long read() {
-        return count.intValue();
+        return count.longValue();
     }
 
 }

@@ -53,7 +53,7 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long read() {
-        int total = 0;
+        long total = 0;
         for (AtomicLong v : count.values()) {
             total += v.get();
         }
