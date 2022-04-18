@@ -11,7 +11,7 @@ public class NoopTester extends Tester<Noop> {
     }
 
     @Override
-    protected void test(opType type, long iid) {
+    protected long test(opType type) {
         // no-op
         int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {
@@ -25,5 +25,7 @@ public class NoopTester extends Tester<Noop> {
                 n += 2;
                 break;
         }
+
+        return 0L;
     }
 }

@@ -13,17 +13,28 @@ public class QueueTester extends Tester<AbstractQueue> {
     }
 
     @Override
-    protected void test(opType type, long iid) {
+    protected long test(opType type) {
+
+        long startTime = 0L, endTime = 0L;
+
+        int rand = random.nextInt(ITEM_PER_THREAD);
+        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
 
         switch (type) {
             case ADD:
+                startTime = System.nanoTime();
                 object.offer(iid);
+                endTime = System.nanoTime();
                 break;
             case REMOVE:
+                startTime = System.nanoTime();
                 object.remove(iid);
+                endTime = System.nanoTime();
                 break;
             case READ:
+                startTime = System.nanoTime();
                     object.contains(iid);
+                endTime = System.nanoTime();
                 Collection<Long> ret = new ArrayList<>();
 
                 Iterator<Long> it = object.iterator();
@@ -35,5 +46,7 @@ public class QueueTester extends Tester<AbstractQueue> {
                 }
                 break;
         }
+
+        return endTime - startTime;
     }
 }

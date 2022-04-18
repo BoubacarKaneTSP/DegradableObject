@@ -11,16 +11,29 @@ public class CounterTester extends Tester<AbstractCounter> {
     }
 
     @Override
-    protected void test(opType type, long iid) {
+    protected long test(opType type) {
+
+        long startTime = 0L, endTime = 0L;
 
         switch (type) {
             case ADD:
             case REMOVE:
-                object.increment();
+                startTime = System.nanoTime();
+                for (int i = 0; i < 1000; i++) {
+                    object.increment();
+                }
+                endTime = System.nanoTime();
                 break;
             case READ:
-                object.read();
+                startTime = System.nanoTime();
+                for (int i = 0; i < 1000; i++) {
+                    object.read();
+                }
+                endTime = System.nanoTime();
+
                 break;
         }
+
+        return endTime - startTime;
     }
 }

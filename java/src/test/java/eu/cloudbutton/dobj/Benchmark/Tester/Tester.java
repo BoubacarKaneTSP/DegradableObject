@@ -30,10 +30,8 @@ public abstract class Tester<T> implements Callable<Void> {
     @Override
     public Void call() {
 
-        long startTime, endTime;
-
         int n, add = 0, remove = 0, read = 0;
-        long timeAdd = 0, timeRemove = 0, timeRead = 0;
+        long timeAdd = 0, timeRemove = 0, timeRead = 0, elapsedTime;
 
         opType type;
 
@@ -56,9 +54,7 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                int rand = random.nextInt(ITEM_PER_THREAD);
-                long iid = Thread.currentThread().getId() * 1000000000L + rand;
-                test(type, iid);
+                test(type);
             }
 
             latch.await();
@@ -76,25 +72,20 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                int rand = random.nextInt(ITEM_PER_THREAD);
-                long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-
-                startTime = System.nanoTime();
-                test(type, iid);
-                endTime = System.nanoTime();
+                elapsedTime = test(type) / 1000;
 
                 switch (type) {
                     case ADD:
                         add++;
-                        timeAdd += endTime - startTime;
+                        timeAdd += elapsedTime;
                         break;
                     case REMOVE:
                         remove++;
-                        timeRemove += endTime - startTime;
+                        timeRemove += elapsedTime;
                         break;
                     case READ:
                         read++;
-                        timeRead += endTime - startTime;
+                        timeRead += elapsedTime;
                         break;
                 }
             }
@@ -114,5 +105,5 @@ public abstract class Tester<T> implements Callable<Void> {
         return null;
     }
 
-    protected abstract void test(opType type, long iid);
+    protected abstract long test(opType type);
 }

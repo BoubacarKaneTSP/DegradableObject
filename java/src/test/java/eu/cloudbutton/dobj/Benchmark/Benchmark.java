@@ -95,7 +95,7 @@ public class Benchmark {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
 
-            for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
+            for (int nbCurrentThread = 2; nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicInteger(0);
                 nbRemove = new AtomicInteger(0);
                 nbRead = new AtomicInteger(0);
@@ -114,16 +114,16 @@ public class Benchmark {
 
 
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread); // Adding one if we have a solo reader
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
-                    CountDownLatch latch = new CountDownLatch(nbCurrentThread); // Adding one if we have a solo reader
+                    CountDownLatch latch = new CountDownLatch(nbCurrentThread);
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
                             latch
                     );
 
-                    for (int j = 0; j < nbCurrentThread - 1; j++) { // -1 not to count the thread that only read.
+                    for (int j = 0; j < nbCurrentThread - 1; j++) { // -1 to not count the thread that only read.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
