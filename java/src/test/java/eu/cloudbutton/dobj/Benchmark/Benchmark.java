@@ -95,7 +95,7 @@ public class Benchmark {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
 
-            for (int nbCurrentThread = 2; nbCurrentThread <= nbThreads; ) {
+            for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicInteger(0);
                 nbRemove = new AtomicInteger(0);
                 nbRead = new AtomicInteger(0);
@@ -107,7 +107,7 @@ public class Benchmark {
 
                     Object object = Factory.createObject(type);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, 100);
+                    FactoryFiller factoryFiller = new FactoryFiller(object, 1000);
 
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
@@ -119,11 +119,11 @@ public class Benchmark {
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread);
                     FactoryTester factoryTester = new FactoryTester(
                             object,
-                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(), //new int[] {100},
+                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
                             latch
                     );
 
-                    for (int j = 0; j < nbCurrentThread - 1; j++) { // -1 to not count the thread that only read.
+                    for (int j = 0; j < nbCurrentThread; j++) { // -1 if a thread only read.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
@@ -132,6 +132,7 @@ public class Benchmark {
 
 //                   Code if one reader is needed
 
+/*
                    FactoryTester factoryT = new FactoryTester(
                            object,
                            new int[] {0},
@@ -140,6 +141,7 @@ public class Benchmark {
 
                     Tester t = factoryT.createTester();
                     callables.add(t);
+*/
 
 //
 
