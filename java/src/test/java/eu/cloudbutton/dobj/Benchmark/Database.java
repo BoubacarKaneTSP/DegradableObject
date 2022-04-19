@@ -7,6 +7,7 @@ import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,7 +26,6 @@ public class Database {
     private final AbstractCounter userID;
     private final List<String> usersProbability;
 
-
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha) throws ClassNotFoundException {
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -39,16 +39,16 @@ public class Database {
         usersProbability = new CopyOnWriteArrayList<>();
     }
 
-    public void fill(int NB_USERS, double alpha, CountDownLatch latchDatabase, Map<String, List<String>> mapFollow) throws InterruptedException, ClassNotFoundException {
+    public void fill(int NB_USERS, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException {
         int n;
-        String userA, userB;
+        String user, userB;
 
         int bound = 1000;
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
         int i = 0;
 
-        double ratio = 100000/ 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
         long max = (long) ((long) NB_USERS * ratio);
 
         for (int val: data){
@@ -61,36 +61,39 @@ public class Database {
         }
 
         //adding users
+
         for (int id = 0; id < NB_USERS; id++) {
-            userID.increment();
-            mapFollow.put("User_"+id, new ArrayList<>());
-
-            for (int j = 0 ; j < data.get(random.nextInt(bound)); j++)
-                usersProbability.add("User_"+id);
-
+            user = addUser();
+            usersFollow.get().put(user, new LinkedList<>());
+            for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
+                usersProbability.add(user);
+                System.out.println("add");
+            }
         }
         latchDatabase.countDown();
         latchDatabase.await();
 
+        System.out.println("Following phase");
 
         //Following phase
-        for (int id = 0; id < NB_USERS; id++) {
 
-            userA = "User_"+id;
-
+        for (String userA: usersFollow.get().keySet()){
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j <= nbFollow; j++){
                 n = random.nextInt(usersProbability.size());
                 userB = usersProbability.get(n);
 
                 followUser(userA, userB);
-                mapFollow.get(userA).add(userB);
+                usersFollow.get().get(userA).add(userB);
             }
         }
 
     }
 
-    public void addUser(String user) throws ClassNotFoundException {
+    public String addUser() throws ClassNotFoundException {
+
+        userID.increment();
+        String user = "User_" + userID.read();
         mapFollowers.put(user,
                 Factory.createSet(typeSet)
         );
@@ -99,6 +102,8 @@ public class Database {
                         Factory.createCounter(typeCounter)
                 )
         );
+
+        return user;
     }
 
     public void followUser(String userA, String userB){
@@ -119,7 +124,7 @@ public class Database {
         mapTimelines.get(user).read();
     }
 
-    public Database localCopy() throws ClassNotFoundException {
+    public Database copy() throws ClassNotFoundException {
         Database copyDatabase = new Database("Map", "Set", "Queue", "Counter", alpha);
 
         for (String user: this.getMapFollowers().keySet()){

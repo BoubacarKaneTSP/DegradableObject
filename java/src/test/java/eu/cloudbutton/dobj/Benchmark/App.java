@@ -81,7 +81,6 @@ public class App {
     private Map<opType, AtomicLong> timeOperations;
 
     private Database database;
-    private Map<String,List<String>> mapFollow;
 
     int NB_USERS = 100000;
 
@@ -159,7 +158,7 @@ public class App {
 
                 for (int nbCurrTest = 1; nbCurrTest <= nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread+1); // Additional count for the UserAdder
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread); // Additional count for the UserAdder
                     ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
 
                     flagComputing = new AtomicBoolean(true);
@@ -167,9 +166,9 @@ public class App {
 
                     if (nbCurrThread == 1){
                         database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha);
-                        mapFollow = new ConcurrentHashMap<>();
                         flagWarmingUp = new AtomicBoolean(true);
                     }
+
                     if (nbCurrTest == 1) {
                         nbOperations = new ConcurrentHashMap<>();
                         nbOperationsFailed = new ConcurrentHashMap<>();
@@ -183,7 +182,7 @@ public class App {
                     }
 
                     CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
-                    CountDownLatch latchFillDatabase = new CountDownLatch(2); // Additional count for the UserAdder
+                    CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
@@ -193,7 +192,6 @@ public class App {
                         );
                         callables.add(retwisApp);
                     }
-                    callables.add(new UserAdder(latchFillDatabase));
 
                     executorServiceCoordinator.submit(new Coordinator(latch));
 
@@ -300,6 +298,7 @@ public class App {
         private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
+        private ThreadLocal<Map<String, Queue<String>>> usersFollow;
 
         public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -307,57 +306,51 @@ public class App {
             this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
+            usersFollow = ThreadLocal.withInitial(() -> new HashMap<>());
         }
 
         @Override
         public Void call(){
 
-            opType type;
-            int val;
-
-            AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
-            AbstractMap<opType, Integer> nbLocalOperationsFailed = new HashMap<>();
-            AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
-
-            for (opType op: opType.values()){
-                nbLocalOperations.put(op, 0);
-                nbLocalOperationsFailed.put(op, 0);
-                timeLocalOperations.put(op, 0L);
-            }
-
             try{
 
-                if (flagWarmingUp.get()) {
-                    database.fill(NB_USERS, alpha, latchFillDatabase, mapFollow);
+                opType type;
+                int val;
 
-                    latch.countDown();
+                AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
+                AbstractMap<opType, Integer> nbLocalOperationsFailed = new HashMap<>();
+                AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
 
-                    latch.await();
+                for (opType op: opType.values()){
+                    nbLocalOperations.put(op, 0);
+                    nbLocalOperationsFailed.put(op, 0);
+                    timeLocalOperations.put(op, 0L);
+                }
 
-                    while (flagComputing.get()) {     // warm up
+                database.fill(NB_USERS, latchFillDatabase, usersFollow);
 
-                        val = random.nextInt(100);
+                latch.countDown();
 
-                        if (val < ratiosArray[0]) { // add
-                            type = opType.ADD;
-                        } else if (val >= ratiosArray[0] && val < ratiosArray[0] + ratiosArray[1]) { //follow or unfollow
-                            if (val % 2 == 0) { // follow
-                                type = opType.FOLLOW;
-                            } else { // unfollow
-                                type = opType.UNFOLLOW;
-                            }
-                        } else if (val >= ratiosArray[0] + ratiosArray[1] && val < ratiosArray[0] + ratiosArray[1] + ratiosArray[2]) { // tweet
-                            type = opType.TWEET;
-                        } else { // read
-                            type = opType.READ;
+                latch.await();
+
+                while (flagComputing.get()) { // warm up
+
+                    val = random.nextInt(100);
+
+                    if (val < ratiosArray[0]) { // add
+                        type = opType.ADD;
+                    } else if (val >= ratiosArray[0] && val < ratiosArray[0] + ratiosArray[1]) { //follow or unfollow
+                        if (val % 2 == 0) { // follow
+                            type = opType.FOLLOW;
+                        } else { // unfollow
+                            type = opType.UNFOLLOW;
                         }
-
-                        compute(type);
+                    } else if (val >= ratiosArray[0] + ratiosArray[1] && val < ratiosArray[0] + ratiosArray[1] + ratiosArray[2]) { // tweet
+                        type = opType.TWEET;
+                    } else { // read
+                        type = opType.READ;
                     }
-                } else {
-                    latch.countDown();
-
-                    latch.await();
+                    compute(type);
                 }
 
                 while (!flagComputing.get()){
@@ -405,10 +398,20 @@ public class App {
         public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
-            int n = random.nextInt(NB_USERS);
-            String userA, userB;
-            userA = "User_"+n;
-            List<String> listFollow = mapFollow.get(userA);
+            int n;
+            String userA = "", userB;
+
+            int i = 0, val = random.nextInt(usersFollow.get().size());
+
+            for (String s: usersFollow.get().keySet()){
+                if (i == val)
+                    userA = s;
+
+                i++;
+            }
+
+            Queue<String> listFollow = usersFollow.get().get(userA);
+
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
@@ -427,27 +430,27 @@ public class App {
                             endTime = System.nanoTime();
                         }
                     }catch (NullPointerException e){
-                        System.out.println(userA + " may not have a list of follow (Follow method): " + mapFollow);
+                        System.out.println(userA + " may not have a list of follow (Follow method)");
                     }
 
                 break;
                 case UNFOLLOW:
                     try{
-                        if (listFollow.size() != 0){
-                            userB = listFollow.remove(0);
-
+                        userB = listFollow.poll();
+                        if (userB != null){
                             startTime = System.nanoTime();
                             database.unfollowUser(userA, userB);
                             endTime = System.nanoTime();
                         }
                     }catch (NullPointerException e){
-                        System.out.println(userA + " may not have a list of follow (Unfollow method): " + mapFollow.get(userA));
+                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
                     }
 
                 break;
                 case TWEET:
+                    String msg = "msg from " + userA;
                     startTime = System.nanoTime();
-                    database.tweet(userA, "msg from " + userA);
+                    database.tweet(userA, msg);
                     endTime = System.nanoTime();
 
                 break;
@@ -462,38 +465,6 @@ public class App {
             }
 
             return endTime - startTime;
-        }
-    }
-
-    public class UserAdder implements Callable<Void>{
-
-        long lastIDAdded = 0;
-        private final CountDownLatch latch;
-
-        public UserAdder(CountDownLatch latch) {
-            this.latch = latch;
-        }
-
-        @Override
-        public Void call() throws ClassNotFoundException {
-
-            while (flagWarmingUp.get() && lastIDAdded != NB_USERS ) {
-                add();
-            }
-            latch.countDown();
-
-            while (!flagComputing.get()) add();
-
-            return null;
-        }
-
-        public void add() throws ClassNotFoundException {
-            long lastID = database.getUserID().read();
-
-            for (long i = lastIDAdded ; i < lastID; i++) {
-                database.addUser("User_" + i);
-            }
-            lastIDAdded = lastID;
         }
     }
 

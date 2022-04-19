@@ -27,7 +27,7 @@ public class FuzzyCounter extends AbstractCounter{
         long res = counter.read() * N;
 
         String valString = Long.toString(res);
-        valString = valString + Long.toString(ID.get());
+        valString = valString + ID.get();
         return Long.valueOf(valString);
     }
 

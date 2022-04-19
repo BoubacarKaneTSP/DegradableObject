@@ -42,7 +42,7 @@ plt.xticks(fontsize=SIZE)
 plt.yticks(fontsize=SIZE)
 
 
-plt.gca().set_ylim([1000,100000])
+# plt.gca().set_ylim([1000,100000])
 # plt.gca().set_ylim([0.00000001,0.001])
 # plt.gca().invert_yaxis()
 plt.gca().spines['right'].set_visible(False)
