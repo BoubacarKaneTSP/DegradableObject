@@ -59,7 +59,9 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long addAndGet(int delta) throws IllegalArgumentException{
-        throw new IllegalArgumentException("This counter only supports increments of 1");
+        if (delta != 1)
+            throw new IllegalArgumentException("This counter only supports increments of 1");
+        return incrementAndGet();
     }
 
     /**
