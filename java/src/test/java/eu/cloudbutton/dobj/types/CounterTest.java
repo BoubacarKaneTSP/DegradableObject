@@ -73,8 +73,7 @@ public class CounterTest {
             long myID = Thread.currentThread().getId();
             mapRead.put(myID, new ArrayList());
             for (int i = 0; i < 10000; i++) {
-                count.incrementAndGet();
-                mapRead.get(myID).add(count.read());
+                mapRead.get(myID).add(count.incrementAndGet());
             }
             return null;
         };

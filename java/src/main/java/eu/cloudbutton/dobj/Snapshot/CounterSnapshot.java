@@ -46,6 +46,8 @@ public class CounterSnapshot extends AbstractCounter {
         tripletThreadLocal.get().getValue0().incrementAndGet();
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
+
+        return 0;
     }
 
     /**
@@ -59,6 +61,8 @@ public class CounterSnapshot extends AbstractCounter {
         tripletThreadLocal.get().getValue0().addAndGet(delta);
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
+
+        return 0;
     }
 
 

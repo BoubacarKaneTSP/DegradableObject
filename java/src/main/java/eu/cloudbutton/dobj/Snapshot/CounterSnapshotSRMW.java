@@ -38,6 +38,7 @@ public class CounterSnapshotSRMW extends AbstractCounter {
     public long addAndGet(int delta) {
         counterThreadLocal.set(counterThreadLocal.get()+delta);
         snapobject.update(counterThreadLocal.get());
+        return 0;
     }
 
     /**
@@ -48,6 +49,7 @@ public class CounterSnapshotSRMW extends AbstractCounter {
     public long incrementAndGet() {
         counterThreadLocal.set(counterThreadLocal.get()+1);
         snapobject.update(counterThreadLocal.get());
+        return 0;
     }
 
     /**
