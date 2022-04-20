@@ -1,4 +1,6 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj;
+
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,7 +19,7 @@ public class Timeline<T> {
 
     public void add(T elt){
         if (flag.get()){
-            size.increment();
+            size.incrementAndGet();
             if (size.read() >= 50) {
                 flag.set(false);
             }

@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Set;
 
 import java.util.AbstractSet;
 import java.util.HashSet;

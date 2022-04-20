@@ -1,5 +1,8 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.Counter.FuzzyCounter;
+import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
@@ -41,7 +44,7 @@ public class CounterTest {
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             for (int i = 0; i < 100; i++) {
-                count.increment();
+                count.incrementAndGet();
             }
             return null;
         };
@@ -70,7 +73,7 @@ public class CounterTest {
             long myID = Thread.currentThread().getId();
             mapRead.put(myID, new ArrayList());
             for (int i = 0; i < 10000; i++) {
-                count.increment();
+                count.incrementAndGet();
                 mapRead.get(myID).add(count.read());
             }
             return null;

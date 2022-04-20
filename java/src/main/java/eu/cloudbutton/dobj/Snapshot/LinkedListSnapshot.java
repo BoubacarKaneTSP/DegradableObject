@@ -1,17 +1,18 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Snapshot;
 
+import eu.cloudbutton.dobj.List.LinkedList;
+import eu.cloudbutton.dobj.Snapshot.Snapshot;
 import org.javatuples.Triplet;
 
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LinkedListSnapshot<T> extends AbstractList<T> {
 
-    private final Snapshot<LinkedList<T>> snapobject;
-    private final ThreadLocal<Triplet<LinkedList<T>, AtomicInteger, ArrayList<LinkedList<T>>>> tripletThreadLocal;
+    private final Snapshot<eu.cloudbutton.dobj.List.LinkedList<T>> snapobject;
+    private final ThreadLocal<Triplet<eu.cloudbutton.dobj.List.LinkedList<T>, AtomicInteger, ArrayList<eu.cloudbutton.dobj.List.LinkedList<T>>>> tripletThreadLocal;
     private final ThreadLocal<Thread> name;
 
     public LinkedListSnapshot() {
@@ -22,11 +23,11 @@ public class LinkedListSnapshot<T> extends AbstractList<T> {
 
     @Override
     public Iterator<T> iterator() {
-        java.util.List<LinkedList<T>> list = snapobject.snap();
+        java.util.List<eu.cloudbutton.dobj.List.LinkedList<T>> list = snapobject.snap();
 
         java.util.List<T> result = new ArrayList<>();
 
-        for (LinkedList<T> ens : list) {
+        for (eu.cloudbutton.dobj.List.LinkedList<T> ens : list) {
             result.addAll(ens.read());
         }
         return result.iterator();
@@ -43,11 +44,11 @@ public class LinkedListSnapshot<T> extends AbstractList<T> {
             name.set(Thread.currentThread());
 
         if (!snapobject.obj.containsKey(name.get())){
-            tripletThreadLocal.set(new Triplet<>(new LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
-            snapobject.obj.put(name.get(), new Triplet<>(new LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
+            tripletThreadLocal.set(new Triplet<>(new eu.cloudbutton.dobj.List.LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
+            snapobject.obj.put(name.get(), new Triplet<>(new eu.cloudbutton.dobj.List.LinkedList<>(), new AtomicInteger(), new ArrayList<>()));
         }
 
-        java.util.List<LinkedList<T>> embedded_snap = snapobject.snap();
+        java.util.List<eu.cloudbutton.dobj.List.LinkedList<T>> embedded_snap = snapobject.snap();
         tripletThreadLocal.get().getValue0().add(val);
         tripletThreadLocal.get().getValue1().incrementAndGet();
 
@@ -63,11 +64,11 @@ public class LinkedListSnapshot<T> extends AbstractList<T> {
     }
 
     public List<T> read() {
-        java.util.List<LinkedList<T>> list = snapobject.snap();
+        java.util.List<eu.cloudbutton.dobj.List.LinkedList<T>> list = snapobject.snap();
 
         java.util.List<T> result = new ArrayList<>();
 
-        for (LinkedList<T> ens : list) {
+        for (eu.cloudbutton.dobj.List.LinkedList<T> ens : list) {
             result.addAll(ens.read());
         }
         return result;
@@ -77,7 +78,7 @@ public class LinkedListSnapshot<T> extends AbstractList<T> {
     public boolean remove(Object val) {
         boolean removed = false;
 
-        for ( Triplet<LinkedList<T>, AtomicInteger, java.util.List<LinkedList<T>>> triplet: snapobject.obj.values()){
+        for ( Triplet<eu.cloudbutton.dobj.List.LinkedList<T>, AtomicInteger, java.util.List<eu.cloudbutton.dobj.List.LinkedList<T>>> triplet: snapobject.obj.values()){
             removed = triplet.getValue0().contains(val);
             if (removed)
                 break;
@@ -90,7 +91,7 @@ public class LinkedListSnapshot<T> extends AbstractList<T> {
     public boolean contains(Object val) {
         boolean contained = false;
 
-        for ( Triplet<LinkedList<T>, AtomicInteger, java.util.List<LinkedList<T>>> triplet: snapobject.obj.values()){
+        for ( Triplet<eu.cloudbutton.dobj.List.LinkedList<T>, AtomicInteger, java.util.List<LinkedList<T>>> triplet: snapobject.obj.values()){
             contained = triplet.getValue0().contains(val);
             if (contained)
                 break;

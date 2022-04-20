@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Counter;
 
 public class FuzzyCounter extends AbstractCounter{
     
@@ -13,22 +13,23 @@ public class FuzzyCounter extends AbstractCounter{
     }
     
     @Override
-    public void increment() {
-        counter.increment();
+    public long incrementAndGet() {
+        counter.incrementAndGet();
+
+        return (counter.read() * N) + ID.get();
     }
 
     @Override
-    public void increment(int delta) {
+    public long addAndGet(int delta) {
+        counter.addAndGet(delta);
+
+        return (counter.read() * N) + ID.get();
     }
 
     @Override
     public long read() {
 
-        long res = counter.read() * N;
-
-        String valString = Long.toString(res);
-        valString = valString + ID.get();
-        return Long.valueOf(valString);
+        return (counter.read() * N) + ID.get();
     }
 
     public void setN(int nbThread)   {

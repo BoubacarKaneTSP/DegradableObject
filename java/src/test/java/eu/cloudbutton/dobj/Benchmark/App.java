@@ -163,9 +163,9 @@ public class App {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread);
 
                     if (nbCurrThread == 1){
-                        database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha);
                         flagWarmingUp = new AtomicBoolean(true);
                     }
 
@@ -186,7 +186,6 @@ public class App {
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
-                                alpha,
                                 latch,
                                 latchFillDatabase
                         );
@@ -295,15 +294,13 @@ public class App {
 
         protected final ThreadLocalRandom random;
         private final int[] ratiosArray;
-        private final double alpha;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<String, Queue<String>>> usersFollow;
 
-        public RetwisApp(double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase) {
+        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
-            this.alpha = alpha;
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             usersFollow = ThreadLocal.withInitial(() -> new HashMap<>());
@@ -415,7 +412,7 @@ public class App {
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
-                    database.getUserID().increment();
+                    database.getUserID().incrementAndGet();
                     endTime = System.nanoTime();
 
                     break;

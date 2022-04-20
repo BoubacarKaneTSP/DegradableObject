@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.types.AbstractCounter;
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
 
 public class CounterFiller extends Filler<AbstractCounter> {
 
@@ -11,7 +11,7 @@ public class CounterFiller extends Filler<AbstractCounter> {
     @Override
     public void fill() {
         for (int i = 0; i < nbOps; i++) {
-            object.increment();
+            object.incrementAndGet();
         }
     }
 }

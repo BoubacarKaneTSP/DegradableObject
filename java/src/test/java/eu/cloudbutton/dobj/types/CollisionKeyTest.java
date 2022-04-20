@@ -1,11 +1,10 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Map.CollisionKey;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
 
 public class CollisionKeyTest {

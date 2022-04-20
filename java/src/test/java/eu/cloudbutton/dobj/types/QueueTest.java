@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -1,5 +1,6 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Snapshot;
 
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
 import org.javatuples.Pair;
 
 /**
@@ -7,7 +8,7 @@ import org.javatuples.Pair;
  *
  * @author Boubacar Kane
  * */
-public class CounterSnapshotSRMW extends AbstractCounter{
+public class CounterSnapshotSRMW extends AbstractCounter {
 
     private final SnapshotSRMW<Integer> snapobject;
     private final ThreadLocal<Integer> counterThreadLocal;
@@ -31,18 +32,20 @@ public class CounterSnapshotSRMW extends AbstractCounter{
     /**
      * Adds the given value to the current value.
      * @param delta the value added to the Counter.
+     * @return
      */
     @Override
-    public void increment(int delta) {
+    public long addAndGet(int delta) {
         counterThreadLocal.set(counterThreadLocal.get()+delta);
         snapobject.update(counterThreadLocal.get());
     }
 
     /**
      * Increments the current value of the Counter.
+     * @return
      */
     @Override
-    public void increment() {
+    public long incrementAndGet() {
         counterThreadLocal.set(counterThreadLocal.get()+1);
         snapobject.update(counterThreadLocal.get());
     }

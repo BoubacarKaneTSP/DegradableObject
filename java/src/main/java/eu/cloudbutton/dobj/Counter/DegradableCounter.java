@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Counter;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -28,23 +28,28 @@ public class DegradableCounter extends AbstractCounter {
 
     /**
      * Increments the current value.
+     * @return 0
      */
     @Override
-    public void increment() {
+    public long incrementAndGet() {
         local.get().incrementAndGet();
+
+        return 0;
     }
 
     /**
      * Adds the given value to the current value of the Counter.
      * @param delta the value added to the Counter.
      * @throws IllegalArgumentException if the value is different than 1.
+     * @return 0
      */
     @Override
-    public void increment(int delta) throws IllegalArgumentException{
+    public long addAndGet(int delta) throws IllegalArgumentException{
         if (delta != 1)
             throw new IllegalArgumentException("This counter only supports increments of 1");
 
         local.get().addAndGet(delta);
+        return 0;
     }
 
     /**

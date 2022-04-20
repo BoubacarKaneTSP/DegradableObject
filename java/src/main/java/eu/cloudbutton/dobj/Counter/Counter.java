@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Counter;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,19 +30,21 @@ public class Counter extends AbstractCounter {
 
     /**
      * Atomically increments the current value of the Counter.
+     * @return the value of the counter after increment.
      */
     @Override
-    public void increment() {
-        count.incrementAndGet();
+    public long incrementAndGet() {
+        return count.incrementAndGet();
     }
 
     /**
      * Atomically adds the given value to the current value of the Counter.
      * @param delta the value added to the Counter.
+     * @return the value of the counter after adding delta.
      */
     @Override
-    public void increment(int delta) {
-        count.addAndGet(delta);
+    public long addAndGet(int delta) {
+         return count.addAndGet(delta);
     }
 
     /**

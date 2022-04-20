@@ -1,7 +1,14 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj;
 
+import eu.cloudbutton.dobj.Counter.*;
+import eu.cloudbutton.dobj.List.*;
+import eu.cloudbutton.dobj.Map.DegradableMap;
+import eu.cloudbutton.dobj.Queue.DegradableQueue;
+import eu.cloudbutton.dobj.Queue.MapQueue;
+import eu.cloudbutton.dobj.Set.DegradableSet;
+import eu.cloudbutton.dobj.Set.Set;
+import eu.cloudbutton.dobj.Snapshot.*;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 import java.util.AbstractList;
@@ -9,9 +16,7 @@ import java.util.AbstractMap;
 import java.util.AbstractQueue;
 import java.util.AbstractSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 @Builder
 @Getter

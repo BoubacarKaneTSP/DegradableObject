@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Map;
 
 import lombok.Data;
 import nl.peterbloem.powerlaws.DiscreteApproximate;

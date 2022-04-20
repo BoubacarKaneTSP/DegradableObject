@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.types.Noop;
+import eu.cloudbutton.dobj.Noop;
 
 import java.util.concurrent.CountDownLatch;
 

@@ -1,13 +1,13 @@
 package eu.cloudbutton.dobj.Benchmark;
 
-import eu.cloudbutton.dobj.types.AbstractCounter;
-import eu.cloudbutton.dobj.types.Factory;
-import eu.cloudbutton.dobj.types.Timeline;
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.Counter.FuzzyCounter;
+import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.Timeline;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,26 +20,32 @@ public class Database {
     private final String typeQueue;
     private final String typeCounter;
     private final double alpha;
+    private final int nbThread;
     private final ThreadLocalRandom random;
     private final AbstractMap<String, AbstractSet<String>> mapFollowers;
     private final AbstractMap<String, Timeline<String>> mapTimelines;
     private final AbstractCounter userID;
     private final List<String> usersProbability;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha) throws ClassNotFoundException {
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException {
         this.typeMap = typeMap;
         this.typeSet = typeSet;
         this.typeQueue = typeQueue;
         this.typeCounter = typeCounter;
         this.alpha = alpha;
+        this.nbThread = nbThread;
         this.random = ThreadLocalRandom.current();
         mapFollowers = Factory.createMap(typeMap);
         mapTimelines = Factory.createMap(typeMap);
         userID = Factory.createCounter(typeCounter);
+
+        if (userID instanceof FuzzyCounter)
+            ((FuzzyCounter) userID).setN(nbThread);
+
         usersProbability = new CopyOnWriteArrayList<>();
     }
 
-    public void fill(int NB_USERS, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException {
+    public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException {
         int n;
         String user, userB;
 
@@ -49,7 +55,7 @@ public class Database {
         int i = 0;
 
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) NB_USERS * ratio);
+        long max = (long) ((long) nbUsers * ratio);
 
         for (int val: data){
             if (val >= max) {
@@ -62,7 +68,7 @@ public class Database {
 
         //adding users
 
-        for (int id = 0; id < NB_USERS; id++) {
+        for (int id = 0; id < nbUsers; id++) {
             user = addUser();
             usersFollow.get().put(user, new LinkedList<>());
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
@@ -92,7 +98,7 @@ public class Database {
 
     public String addUser() throws ClassNotFoundException {
 
-        userID.increment();
+        userID.incrementAndGet();
         String user = "User_" + userID.read();
         mapFollowers.put(user,
                 Factory.createSet(typeSet)
@@ -125,7 +131,7 @@ public class Database {
     }
 
     public Database copy() throws ClassNotFoundException {
-        Database copyDatabase = new Database("Map", "Set", "Queue", "Counter", alpha);
+        Database copyDatabase = new Database("Map", "Set", "Queue", "Counter", alpha, nbThread);
 
         for (String user: this.getMapFollowers().keySet()){
             AbstractSet copySet = Factory.createSet(copyDatabase.getTypeSet());

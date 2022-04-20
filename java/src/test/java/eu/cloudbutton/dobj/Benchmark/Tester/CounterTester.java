@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.types.AbstractCounter;
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -20,7 +20,7 @@ public class CounterTester extends Tester<AbstractCounter> {
             case REMOVE:
                 startTime = System.nanoTime();
                 for (int i = 0; i < 1000; i++) {
-                    object.increment();
+                    object.incrementAndGet();
                 }
                 endTime = System.nanoTime();
                 break;

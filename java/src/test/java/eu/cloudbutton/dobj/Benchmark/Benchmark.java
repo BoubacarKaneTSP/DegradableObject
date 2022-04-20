@@ -4,7 +4,8 @@ import eu.cloudbutton.dobj.Benchmark.Tester.FactoryFiller;
 import eu.cloudbutton.dobj.Benchmark.Tester.FactoryTester;
 import eu.cloudbutton.dobj.Benchmark.Tester.Filler;
 import eu.cloudbutton.dobj.Benchmark.Tester.Tester;
-import eu.cloudbutton.dobj.types.*;
+import eu.cloudbutton.dobj.Counter.FuzzyCounter;
+import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -14,8 +15,6 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +105,9 @@ public class Benchmark {
                 for (int a = 0; a < nbTest; a++) {
 
                     Object object = Factory.createObject(type);
+
+                    if (object instanceof FuzzyCounter)
+                        ((FuzzyCounter) object).setN(nbCurrentThread);
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, 1000);
 

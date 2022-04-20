@@ -1,5 +1,7 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Snapshot;
 
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.Counter.Counter;
 import org.javatuples.Triplet;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Boubacar Kane
  * */
-public class CounterSnapshot extends AbstractCounter{
+public class CounterSnapshot extends AbstractCounter {
 
     private final Snapshot<Counter> snapobject;
     private final ThreadLocal<Triplet<Counter, AtomicInteger, List<Counter>>> tripletThreadLocal;
@@ -36,11 +38,12 @@ public class CounterSnapshot extends AbstractCounter{
 
     /**
      * Increments the current value of the Counter.
+     * @return
      */
     @Override
-    public void increment() {
+    public long incrementAndGet() {
         List<Counter> embedded_snap = snapobject.snap();
-        tripletThreadLocal.get().getValue0().increment();
+        tripletThreadLocal.get().getValue0().incrementAndGet();
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
     }
@@ -48,11 +51,12 @@ public class CounterSnapshot extends AbstractCounter{
     /**
      * Adds the given value to the current value of the Counter.
      * @param delta the value added to the Counter.
+     * @return
      */
     @Override
-    public void increment(int delta) {
+    public long addAndGet(int delta) {
         List<Counter> embedded_snap = snapobject.snap();
-        tripletThreadLocal.get().getValue0().increment(delta);
+        tripletThreadLocal.get().getValue0().addAndGet(delta);
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
     }

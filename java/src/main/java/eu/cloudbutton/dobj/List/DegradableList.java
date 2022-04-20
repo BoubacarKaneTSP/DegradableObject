@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.List;
 
 import java.util.*;
 import java.util.List;

@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.Set.DegradableSet;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;

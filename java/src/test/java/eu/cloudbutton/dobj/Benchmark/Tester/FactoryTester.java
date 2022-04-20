@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.types.AbstractCounter;
-import eu.cloudbutton.dobj.types.Noop;
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.Noop;
 
 import java.util.AbstractList;
 import java.util.AbstractMap;
@@ -34,7 +34,7 @@ public class FactoryTester {
         else if (object instanceof AbstractCounter)
             return new CounterTester((AbstractCounter) object, ratios, latch);
         else if (object instanceof Noop)
-            return new NoopTester((eu.cloudbutton.dobj.types.Noop) object, ratios, latch);
+            return new NoopTester((Noop) object, ratios, latch);
         else
             throw new ClassNotFoundException("The Tester for"+ object.getClass() +" may not exists");
     }

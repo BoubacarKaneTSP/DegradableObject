@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.types;
+package eu.cloudbutton.dobj.Map;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,5 +1,11 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.Snapshot.CounterSnapshot;
+import eu.cloudbutton.dobj.Snapshot.CounterSnapshotSRMW;
+import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.Snapshot.SetSnapshot;
+import eu.cloudbutton.dobj.Snapshot.SetSnapshotSRMW;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -56,7 +62,7 @@ public class SnapshotTest {
         List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            snap.increment();
+            snap.incrementAndGet();
 //            System.out.println(snap.read());
             return null;
         };
