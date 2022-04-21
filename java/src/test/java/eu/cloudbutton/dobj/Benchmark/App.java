@@ -165,7 +165,7 @@ public class App {
                     flagWarmingUp = new AtomicBoolean(false);
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread);
 
-                    if (nbCurrThread == 1){
+                    if (nbCurrThread == 1 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
                     }
 
