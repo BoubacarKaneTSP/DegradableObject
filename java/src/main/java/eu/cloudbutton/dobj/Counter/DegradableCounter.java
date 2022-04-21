@@ -34,7 +34,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            Long l = new Long(0);
+            Long l = 0L;
             count.put(Thread.currentThread(), l);
             return l;
         });

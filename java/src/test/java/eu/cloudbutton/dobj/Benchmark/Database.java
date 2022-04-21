@@ -104,6 +104,7 @@ public class Database {
 
 
         String user = "User_" + userID.incrementAndGet();
+
         mapFollowers.put(user,
                 Factory.createSet(typeSet)
         );

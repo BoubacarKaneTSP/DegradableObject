@@ -399,7 +399,7 @@ public class App {
 
             long startTime = 0L, endTime= 0L;
             int n;
-            String userA = "User_100", userB;
+            String userA = "", userB;
 
 /*            int i = 0, val = random.nextInt(usersFollow.get().size());
 
@@ -431,7 +431,8 @@ public class App {
                             listFollow.add(userB);
                         }
                     }catch (NullPointerException e){
-                        System.out.println(userA + " may not have a list of follow (Follow method)");
+//                        System.out.println(userA + " may not have a list of follow (Follow method)");
+//                        Make a "debug mode" to specify when a process doesn't handle userA
                     }
 
                 break;
@@ -444,7 +445,7 @@ public class App {
                             endTime = System.nanoTime();
                         }
                     }catch (NullPointerException e){
-                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
+//                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
                     }
 
                 break;
