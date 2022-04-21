@@ -3,7 +3,9 @@
 TMPDIR=/tmp
 
 clazzes="ConcurrentSkipListSet ConcurrentLinkedQueue ConcurrentHashMap AtomicLong"
+clazzes="AtomicReference"
 repo="https://github.com/apache/ignite https://github.com/apache/hadoop https://github.com/apache/cassandra"
+repo="https://github.com/apache/ignite"
 
 for r in ${repo}
 do

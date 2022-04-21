@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.Counter;
 
+import eu.cloudbutton.dobj.register.SWMRLong;
 import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentMap;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final ConcurrentMap<Thread, Long> count;
-    private final ThreadLocal<Long> local;
+    private final ConcurrentMap<Thread, SWMRLong> count;
+    private final ThreadLocal<SWMRLong> local;
 
     private static final sun.misc.Unsafe UNSAFE;
 
@@ -34,7 +34,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            Long l = 0L;
+            SWMRLong l = new SWMRLong();
             count.put(Thread.currentThread(), l);
             return l;
         });
@@ -46,11 +46,9 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        local.set(local.get()+1);
-        UNSAFE.storeFence();
+        local.get().increment(1);
         return 0;
     }
-
     /**
      * Adds the given value to the current value of the Counter.
      * @param delta the value added to the Counter.
@@ -72,8 +70,8 @@ public class DegradableCounter extends AbstractCounter {
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (Long v : count.values()) {
-            total += v;
+        for (SWMRLong v : count.values()) {
+            total += v.lazyGet();
         }
         return total;
     }
