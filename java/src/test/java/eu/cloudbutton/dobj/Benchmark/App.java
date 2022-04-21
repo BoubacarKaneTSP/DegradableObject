@@ -166,7 +166,7 @@ public class App {
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread);
 
                     if (nbCurrThread == 1){
-                        flagWarmingUp = new AtomicBoolean(true);
+                        flagWarmingUp.set(true);
                     }
 
                     if (nbCurrTest == 1) {
@@ -212,16 +212,16 @@ public class App {
 
                 long nbOpTotal = 0;
                 long nbOpTotalFailed = 0;
-                long avgTimeTotal = 0L;
+                long timeTotal = 0L;
 
                 for (opType op : opType.values()){
                     nbOpTotal += nbOperations.get(op).get();
                     nbOpTotalFailed += nbOperationsFailed.get(op).get();
-                    avgTimeTotal += timeOperations.get(op).get();
+                    timeTotal += timeOperations.get(op).get();
                 }
 
                 long nbOp = nbOpTotal - nbOpTotalFailed;
-//                avgTimeTotal = avgTimeTotal / nbCurrThread; // Compute the avg time to get the global throughput
+//              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
                 if (_s){
 
@@ -231,7 +231,7 @@ public class App {
                         fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrThread +" "+ (nbOp / (double) avgTimeTotal) * 1_000_000_000);
+                    printWriter.println(nbCurrThread +" "+ (nbOp / (double) timeTotal) * 1_000_000_000);
                 }
 
                 if (_p){
@@ -239,7 +239,7 @@ public class App {
                     System.out.print(" Throughput for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+ (nbOp / (double) avgTimeTotal) * 1_000_000_000);
+                    System.out.println(" - "+ (nbOp / (double) timeTotal) * 1_000_000_000);
                     System.out.println("* Proportion of failed operations : " + (nbOpTotalFailed / (double) nbOpTotal) * 100);
 
                 }
@@ -259,7 +259,7 @@ public class App {
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOperations.get(op).get()) * 1_000_000_000);
+                        printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeTotal) * 1_000_000_000);
                     }
 
                     if (_p){
@@ -267,7 +267,7 @@ public class App {
                         System.out.print(" Throughput for "+op+" operations ");
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
                         System.out.println();
-                        System.out.println(" - "+ (nbOp / (double) timeOperations.get(op).get()) * 1_000_000_000);
+                        System.out.println(" - "+ (nbOp / (double) timeTotal) * 1_000_000_000);
                         System.out.println("* Proportion of failed " + op + " operations : " + (nbOperationsFailed.get(op).get() / (double) nbOperations.get(op).get()) * 100);
                     }
 
@@ -297,6 +297,7 @@ public class App {
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<String, Queue<String>>> usersFollow;
+        private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -329,6 +330,8 @@ public class App {
                 latch.countDown();
 
                 latch.await();
+
+                usersProbabilitySize.set(database.getUsersProbability().size());
 
                 while (flagComputing.get()) { // warm up
 
@@ -412,12 +415,12 @@ public class App {
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
-                    database.getUserID().incrementAndGet();
+                    database.addUser();
                     endTime = System.nanoTime();
 
                     break;
                 case FOLLOW:
-                    n = random.nextInt(database.getUsersProbability().size());
+                    n = random.nextInt(usersProbabilitySize.get());
                     userB = database.getUsersProbability().get(n);
 
                     try{
@@ -425,6 +428,7 @@ public class App {
                             startTime = System.nanoTime();
                             database.followUser(userA, userB);
                             endTime = System.nanoTime();
+                            listFollow.add(userB);
                         }
                     }catch (NullPointerException e){
                         System.out.println(userA + " may not have a list of follow (Follow method)");

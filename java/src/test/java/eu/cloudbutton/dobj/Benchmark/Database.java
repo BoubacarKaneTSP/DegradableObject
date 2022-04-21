@@ -68,14 +68,18 @@ public class Database {
 
         //adding users
 
+        List<String> localUsers = new ArrayList<>();
+
         for (int id = 0; id < nbUsers; id++) {
             user = addUser();
+
             usersFollow.get().put(user, new LinkedList<>());
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
-                usersProbability.add(user);
-                System.out.println("add");
+                localUsers.add(user);
             }
         }
+
+        usersProbability.addAll(localUsers);
         latchDatabase.countDown();
         latchDatabase.await();
 
@@ -98,8 +102,8 @@ public class Database {
 
     public String addUser() throws ClassNotFoundException {
 
-        userID.incrementAndGet();
-        String user = "User_" + userID.read();
+
+        String user = "User_" + userID.incrementAndGet();
         mapFollowers.put(user,
                 Factory.createSet(typeSet)
         );
