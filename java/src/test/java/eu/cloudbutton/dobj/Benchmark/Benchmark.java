@@ -183,9 +183,9 @@ public class Benchmark {
                 if (_s){
 
                     if (nbCurrentThread == 1)
-                        fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", false);
+                        fileWriter = new FileWriter("results_"+type+"_ratio_write_old_"+ratios[0]+".txt", false);
                     else
-                        fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
+                        fileWriter = new FileWriter("results_"+type+"_ratio_write_old_"+ratios[0]+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(nbCurrentThread + " " + throughputTotal);

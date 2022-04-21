@@ -399,16 +399,16 @@ public class App {
 
             long startTime = 0L, endTime= 0L;
             int n;
-            String userA = "", userB;
+            String userA = "User_100", userB;
 
-            int i = 0, val = random.nextInt(usersFollow.get().size());
+/*            int i = 0, val = random.nextInt(usersFollow.get().size());
 
             for (String s: usersFollow.get().keySet()){
                 if (i == val)
                     userA = s;
 
                 i++;
-            }
+            }*/
 
             Queue<String> listFollow = usersFollow.get().get(userA);
 
