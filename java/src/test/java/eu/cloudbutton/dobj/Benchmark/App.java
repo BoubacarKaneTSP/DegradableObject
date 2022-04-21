@@ -401,14 +401,14 @@ public class App {
             int n;
             String userA = "", userB;
 
-/*            int i = 0, val = random.nextInt(usersFollow.get().size());
+            int i = 0, val = random.nextInt(usersFollow.get().size());
 
             for (String s: usersFollow.get().keySet()){
                 if (i == val)
                     userA = s;
 
                 i++;
-            }*/
+            }
 
             Queue<String> listFollow = usersFollow.get().get(userA);
 
