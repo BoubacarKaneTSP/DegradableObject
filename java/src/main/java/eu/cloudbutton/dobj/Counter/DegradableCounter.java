@@ -1,8 +1,10 @@
 package eu.cloudbutton.dobj.Counter;
 
+import sun.misc.Unsafe;
+
+import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class build a Counter on top of a Snapshot object.
@@ -11,8 +13,20 @@ import java.util.concurrent.atomic.AtomicLong;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final ConcurrentMap<Thread, AtomicLong> count;
-    private final ThreadLocal<AtomicLong> local;
+    private final ConcurrentMap<Thread, Long> count;
+    private final ThreadLocal<Long> local;
+
+    private static final sun.misc.Unsafe UNSAFE;
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            UNSAFE = (Unsafe) f.get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
 
     /**
      * Creates a new Counter initialized with the initial value 0.
@@ -20,7 +34,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            AtomicLong l = new AtomicLong(0);
+            Long l = new Long(0);
             count.put(Thread.currentThread(), l);
             return l;
         });
@@ -32,8 +46,8 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        local.get().incrementAndGet();
-
+        local.set(local.get()+1);
+        UNSAFE.storeFence();
         return 0;
     }
 
@@ -47,9 +61,7 @@ public class DegradableCounter extends AbstractCounter {
     public long addAndGet(int delta) throws IllegalArgumentException{
         if (delta != 1)
             throw new IllegalArgumentException("This counter only supports increments of 1");
-
-        local.get().addAndGet(delta);
-        return 0;
+        return incrementAndGet();
     }
 
     /**
@@ -59,9 +71,11 @@ public class DegradableCounter extends AbstractCounter {
     @Override
     public long read() {
         long total = 0;
-        for (AtomicLong v : count.values()) {
-            total += v.get();
+        UNSAFE.loadFence();
+        for (Long v : count.values()) {
+            total += v;
         }
         return total;
     }
+
 }
