@@ -409,7 +409,7 @@ public class App {
             int n;
             String userA = "", userB;
 
-            int i = 0, val = random.nextInt(usersFollow.get().size());
+            int val = random.nextInt(arrayUsersFollow.get().size());
 
             userA = arrayUsersFollow.get().get(val);
 
