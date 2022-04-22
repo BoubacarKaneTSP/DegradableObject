@@ -299,6 +299,7 @@ public class App {
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<String, Queue<String>>> usersFollow;
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
+        private final AtomicLong atomicLong = new AtomicLong(0);
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -356,7 +357,7 @@ public class App {
 
                 while (!flagComputing.get()){
 
-                    val = random.nextInt(100);
+                    /*val = random.nextInt(100);
 
                     if(val < ratiosArray[0]){ // add
                         type = opType.ADD;
@@ -372,7 +373,19 @@ public class App {
                         type = opType.READ;
                     }
 
-                    long elapsedTime = compute(type);
+                    long elapsedTime = compute(type);*/
+
+                    type = opType.ADD;
+
+                    long start, end;
+
+                    start = System.nanoTime();
+                    for (int i = 0; i < 1000; i++) {
+                        atomicLong.incrementAndGet();
+                    }
+                    end = System.nanoTime();
+
+                    long elapsedTime = (end-start) / 1000;
 
                     nbLocalOperations.compute(type, (key, value) -> value + 1);
                     timeLocalOperations.compute(type, (key, value) -> value + elapsedTime);
