@@ -108,7 +108,7 @@ public class Database {
         List<String> localUsers = new ArrayList<>();
 
         for (int id = 0; id < nbUsers; id++) {
-            user = addUser();
+            user = addUser2();
 
             usersFollow.get().put(user, new LinkedList<>());
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
@@ -135,7 +135,26 @@ public class Database {
 
     }
 
-    public String addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+
+
+        String user = "User_" + userID.incrementAndGet();
+      /*
+        mapFollowers.put(user,
+                factory.getSet()
+        );
+        mapTimelines.put(user,
+                new Timeline(factory.getQueue(),
+                        factory.getCounter()
+                )
+        );
+
+        return user;
+      */
+
+    }
+
+    public String addUser2() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
 
         String user = "User_" + userID.incrementAndGet();
