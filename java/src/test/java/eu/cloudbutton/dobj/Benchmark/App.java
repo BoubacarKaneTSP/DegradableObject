@@ -184,12 +184,13 @@ public class App {
 
                     CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
+                    AtomicLong atomicLong = new AtomicLong();
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latch,
                                 latchFillDatabase,
-                                new AtomicLong()
+                                atomicLong
                         );
                         callables.add(retwisApp);
                     }
@@ -359,7 +360,7 @@ public class App {
 
                 while (!flagComputing.get()){
 
-                    /*val = random.nextInt(100);
+                    val = random.nextInt(100);
 
                     if(val < ratiosArray[0]){ // add
                         type = opType.ADD;
@@ -375,19 +376,7 @@ public class App {
                         type = opType.READ;
                     }
 
-                    long elapsedTime = compute(type);*/
-
-                    type = opType.ADD;
-
-                    long start, end;
-
-                    start = System.nanoTime();
-                    for (int i = 0; i < 1000; i++) {
-                        atomicLong.incrementAndGet();
-                    }
-                    end = System.nanoTime();
-
-                    long elapsedTime = (end-start) / 1000;
+                    long elapsedTime = compute(type) / 1000;
 
                     nbLocalOperations.compute(type, (key, value) -> value + 1);
                     timeLocalOperations.compute(type, (key, value) -> value + elapsedTime);
@@ -414,6 +403,7 @@ public class App {
         public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
+
             int n;
             String userA = "", userB;
 
@@ -426,12 +416,22 @@ public class App {
                 i++;
             }
 
-            Queue<String> listFollow = usersFollow.get().get(userA);
+//            Queue<String> listFollow = usersFollow.get().get(userA);
 
+            startTime = System.nanoTime();
+            for (int j = 0; j < 1000; j++) {
+                atomicLong.incrementAndGet();
+            }
+//                    database.addUser();
+            endTime = System.nanoTime();
+            /*
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
-                    database.addUser();
+                    for (int j = 0; j < 1000; j++) {
+                        atomicLong.incrementAndGet();
+                    }
+//                    database.addUser();
                     endTime = System.nanoTime();
 
                     break;
@@ -481,7 +481,7 @@ public class App {
                 default:
                     throw new IllegalStateException("Unexpected value: " + type);
             }
-
+*/
             return endTime - startTime;
         }
     }
