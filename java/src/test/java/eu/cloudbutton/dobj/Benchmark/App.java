@@ -302,6 +302,7 @@ public class App {
         private ThreadLocal<Map<String, Queue<String>>> usersFollow;
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
         private final AtomicLong atomicLong;
+        private ThreadLocal<List<String>> arrayUsersFollow = new ThreadLocal<>();
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, AtomicLong atomicLong) {
             this.random = ThreadLocalRandom.current();
@@ -358,6 +359,8 @@ public class App {
                     compute(type);
                 }
 
+                arrayUsersFollow.set(new ArrayList<>(usersFollow.get().keySet()));
+
                 while (!flagComputing.get()){
 
                     val = random.nextInt(100);
@@ -408,6 +411,8 @@ public class App {
             String userA = "", userB;
 
             int i = 0, val = random.nextInt(usersFollow.get().size());
+
+            userA = arrayUsersFollow.get().get(val);
 
 /*            for (String s: usersFollow.get().keySet()){
                 if (i == val)
