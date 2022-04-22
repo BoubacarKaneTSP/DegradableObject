@@ -1,8 +1,6 @@
 package eu.cloudbutton.dobj.Set;
 
-import java.util.AbstractSet;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -21,14 +19,69 @@ public class DegradableSet<T> extends AbstractSet<T> {
         });
     }
 
+    public static class setsIterator<V> implements Iterator<V> {
+
+        Iterator<ConcurrentSkipListSet<V>> _inUnion;
+        Iterator<V> _inSet;
+        Collection<ConcurrentSkipListSet<V>> _elements;
+
+        public setsIterator(Collection<ConcurrentSkipListSet<V>> elts) {
+            _elements = elts;
+            if (_elements.size() > 0) {
+                _inUnion = _elements.iterator();
+                _inSet = _inUnion.next().iterator();
+            }
+        }
+
+        public boolean hasNext() {
+
+            if (_inUnion == null) return false;
+
+            if (!_inSet.hasNext()) {
+
+                do {
+                    if (!_inUnion.hasNext()) return false;
+                    _inSet = _inUnion.next().iterator();
+                }
+
+                while (!_inSet.hasNext());
+
+            }
+
+            return true;
+
+        }
+
+        public V next() {
+
+            if (!_inSet.hasNext()) {
+
+                do {
+                    if (!_inUnion.hasNext()) throw new NoSuchElementException();
+                    _inSet = _inUnion.next().iterator();
+                }
+
+                while (!_inSet.hasNext());
+
+            }
+
+            return _inSet.next();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    }
+
     @Override
     public Iterator<T> iterator() {
-        AbstractSet<T> iteratorSet = new HashSet<>();
+        /*AbstractSet<T> iteratorSet = new HashSet<>();
 
         for (ConcurrentSkipListSet<T> s: set.values()){
             iteratorSet.addAll(s);
-        }
-        return iteratorSet.iterator();
+        }*/
+        return new setsIterator<T>(set.values());
     }
 
     @Override
