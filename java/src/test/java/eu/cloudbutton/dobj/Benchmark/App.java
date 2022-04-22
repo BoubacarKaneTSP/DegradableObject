@@ -409,12 +409,12 @@ public class App {
 
             int i = 0, val = random.nextInt(usersFollow.get().size());
 
-            for (String s: usersFollow.get().keySet()){
+/*            for (String s: usersFollow.get().keySet()){
                 if (i == val)
                     userA = s;
 
                 i++;
-            }
+            }*/
 
 //            Queue<String> listFollow = usersFollow.get().get(userA);
 
