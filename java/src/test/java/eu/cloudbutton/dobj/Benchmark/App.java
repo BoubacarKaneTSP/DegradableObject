@@ -409,10 +409,8 @@ public class App {
 
             userA = arrayUsersFollow.get().get(val);
 
-
             Queue<String> listFollow = usersFollow.get().get(userA);
 
-            endTime = System.nanoTime();
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
