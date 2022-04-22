@@ -188,7 +188,8 @@ public class App {
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latch,
-                                latchFillDatabase
+                                latchFillDatabase,
+                                new AtomicLong()
                         );
                         callables.add(retwisApp);
                     }
@@ -299,14 +300,15 @@ public class App {
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<String, Queue<String>>> usersFollow;
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private final AtomicLong atomicLong = new AtomicLong(0);
+        private final AtomicLong atomicLong;
 
-        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
+        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, AtomicLong atomicLong) {
             this.random = ThreadLocalRandom.current();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             usersFollow = ThreadLocal.withInitial(() -> new HashMap<>());
+            this.atomicLong = atomicLong;
         }
 
         @Override
