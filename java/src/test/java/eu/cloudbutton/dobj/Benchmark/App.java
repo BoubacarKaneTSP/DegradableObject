@@ -338,6 +338,7 @@ public class App {
                 latch.await();
 
                 usersProbabilitySize.set(database.getUsersProbability().size());
+                arrayUsersFollow.set(new ArrayList<>(usersFollow.get().keySet()));
 
                 while (flagComputing.get()) { // warm up
 
@@ -358,8 +359,6 @@ public class App {
                     }
                     compute(type);
                 }
-
-                arrayUsersFollow.set(new ArrayList<>(usersFollow.get().keySet()));
 
                 while (!flagComputing.get()){
 
