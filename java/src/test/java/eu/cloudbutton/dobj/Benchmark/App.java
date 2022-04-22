@@ -413,29 +413,14 @@ public class App {
 
             userA = arrayUsersFollow.get().get(val);
 
-/*            for (String s: usersFollow.get().keySet()){
-                if (i == val)
-                    userA = s;
 
-                i++;
-            }*/
+            Queue<String> listFollow = usersFollow.get().get(userA);
 
-//            Queue<String> listFollow = usersFollow.get().get(userA);
-
-            startTime = System.nanoTime();
-            for (int j = 0; j < 1000; j++) {
-                atomicLong.incrementAndGet();
-            }
-//                    database.addUser();
             endTime = System.nanoTime();
-            /*
             switch (type){
                 case ADD:
                     startTime = System.nanoTime();
-                    for (int j = 0; j < 1000; j++) {
-                        atomicLong.incrementAndGet();
-                    }
-//                    database.addUser();
+                    database.addUser();
                     endTime = System.nanoTime();
 
                     break;
@@ -485,7 +470,6 @@ public class App {
                 default:
                     throw new IllegalStateException("Unexpected value: " + type);
             }
-*/
             return endTime - startTime;
         }
     }
