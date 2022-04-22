@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark;
 
+import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -86,11 +87,11 @@ public class App {
 
     int nbSign = 5;
 
-    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
+    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         new App().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
+    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{

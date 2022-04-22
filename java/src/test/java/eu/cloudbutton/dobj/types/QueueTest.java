@@ -12,11 +12,11 @@ import java.util.concurrent.*;
 
 public class QueueTest {
 
-    private Factory.FactoryBuilder factory;
+    private Factory factory;
 
     @BeforeTest
     void setUp() {
-        factory = Factory.builder();
+        factory = new Factory();
     }
 
     @Test
@@ -24,8 +24,6 @@ public class QueueTest {
        /* doAppend(factory.createList());
         doAppend(factory.createDegradableList());
         doAppend(factory.createListSnapshot());
-        doAppend(factory.createSecondDegradableList());
-        doAppend(factory.createThirdDegradableList());
         doAppend(factory.createDegradableLinkedList());
         doAppend(factory.createLinkedList());
         doAppend(factory.createLinkedListSnapshot());*/

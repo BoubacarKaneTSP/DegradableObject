@@ -10,7 +10,10 @@ import eu.cloudbutton.dobj.Set.Set;
 import eu.cloudbutton.dobj.Snapshot.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractQueue;
@@ -18,8 +21,6 @@ import java.util.AbstractSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Builder
-@Getter
 public class Factory {
 
     private AbstractMap map;
@@ -28,6 +29,44 @@ public class Factory {
     private AbstractQueue queue;
     private AbstractCounter counter;
     private Noop noop;
+
+    private Constructor<? extends AbstractMap> constructorMap;
+    private Constructor<? extends AbstractList> constructorList;
+    private Constructor<? extends AbstractSet> constructorSet;
+    private Constructor<? extends AbstractQueue> constructorQueue;
+    private Constructor<? extends AbstractCounter> constructorCounter;
+
+    public void setFactoryMap(Class<? extends AbstractMap> mapClass) throws NoSuchMethodException {
+        constructorMap = mapClass.getConstructor();
+    }
+    public void setFactoryCounter(Class<? extends AbstractCounter> counterClass) throws NoSuchMethodException {
+        constructorCounter = counterClass.getConstructor();
+    }
+    public void setFactorySet(Class<? extends AbstractSet> setClass) throws NoSuchMethodException{
+        constructorSet = setClass.getConstructor();
+    }
+    public void setFactoryList(Class<? extends AbstractList> listClass) throws NoSuchMethodException{
+        constructorList = listClass.getConstructor();
+    }
+    public void setFactoryQueue(Class<? extends AbstractQueue> queueClass) throws NoSuchMethodException{
+        constructorQueue = queueClass.getConstructor();
+    }
+
+    public AbstractMap getMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        return constructorMap.newInstance();
+    }
+    public AbstractCounter getCounter() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        return constructorCounter.newInstance();
+    }
+    public AbstractSet getSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        return constructorSet.newInstance();
+    }
+    public AbstractQueue getQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        return constructorQueue.newInstance();
+    }
+    public AbstractList getList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        return constructorList.newInstance();
+    }
 
     public static Object createObject(String object) throws ClassNotFoundException{
 

@@ -5,24 +5,23 @@ import eu.cloudbutton.dobj.Queue.DegradableQueue;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractQueue;
 
 public class DegradableQueueTest {
 
-    private Factory.FactoryBuilder factory;
+    private Factory factory;
 
     @BeforeTest
     void setUp() {
-        factory = Factory.builder();
+        factory = new Factory();
     }
 
     @Test
-    void offer(){
-        doOffer(factory
-                .queue(new DegradableQueue())
-                .build()
-                .getQueue()
-        );
+    void offer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class cls = Class.forName("eu.cloudbutton.dobj.Queue.DegradableQueue");
+        factory.setFactoryQueue(cls);
+        doOffer(factory.getQueue());
     }
 
     private static void doOffer(AbstractQueue queue){

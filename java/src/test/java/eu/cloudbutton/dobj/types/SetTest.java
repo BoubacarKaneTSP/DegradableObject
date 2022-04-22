@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -14,20 +15,18 @@ import java.util.concurrent.*;
 
 public class SetTest {
 
-    private Factory.FactoryBuilder factory;
+    private Factory factory;
 
     @BeforeTest
     void setUp() {
-        factory = Factory.builder();
+        factory = new Factory();
     }
 
     @Test
-    void add() throws ExecutionException, InterruptedException {
-        doAdd(factory
-                .set(new DegradableSet())
-                .build()
-                .getSet()
-        );
+    void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
+       Class cls = Class.forName("eu.cloudbutton.dobj.Set.DegradableSet");
+       factory.setFactorySet(cls);
+       doAdd(factory.getSet());
     }
 
     private static void doAdd(AbstractSet set) throws ExecutionException, InterruptedException {

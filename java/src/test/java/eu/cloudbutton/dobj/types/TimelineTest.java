@@ -13,28 +13,25 @@ import java.util.concurrent.*;
 
 public class TimelineTest {
 
-    private Factory.FactoryBuilder factory;
+    private Factory factory;
 
     @BeforeTest
     void setUp() {
-        factory = Factory.builder();
+        factory = new Factory();
     }
 
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-
-        doAppend(factory
-                .queue(new ConcurrentLinkedQueue())
-                .build()
-                .getQueue()
-        );
+/*
+        Class cls = Class.forName("ConcurrentLinkedQueue");
+        doAppend(factory.getQueue());
 
         doAppend(factory
                 .queue(new MapQueue())
                 .build()
                 .getQueue()
-        );
+        );*/
     }
 
     private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {

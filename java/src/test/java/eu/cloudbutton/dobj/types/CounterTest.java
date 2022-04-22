@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +16,16 @@ import java.util.concurrent.*;
 
 public class CounterTest {
 
-    private Factory.FactoryBuilder factory;
+    private Factory factory;
 
     @BeforeTest
-    public void setUp(){
-        factory = Factory.builder();
+    public void setUp() throws NoSuchMethodException, ClassNotFoundException {
+        factory = new Factory();
+        Class cls = Class.forName("eu.cloudbutton.dobj.Counter.FuzzyCounter");
+        factory.setFactoryCounter(cls);
     }
     @Test
-    public void increment() throws ExecutionException, InterruptedException, ClassNotFoundException {
+    public void increment() throws ExecutionException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         /*doIncrement(factory
                 .counter(new DegradableCounter())
@@ -36,7 +39,7 @@ public class CounterTest {
                 .getCounter()
         );*/
 
-        testDifferentRead((FuzzyCounter) factory.counter(new FuzzyCounter()).build().getCounter());
+        testDifferentRead((FuzzyCounter) factory.getCounter());
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {

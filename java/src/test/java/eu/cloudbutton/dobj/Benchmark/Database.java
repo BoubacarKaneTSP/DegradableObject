@@ -7,6 +7,7 @@ import eu.cloudbutton.dobj.Timeline;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -19,6 +20,7 @@ public class Database {
     private final String typeSet;
     private final String typeQueue;
     private final String typeCounter;
+    private final Factory factory;
     private final double alpha;
     private final int nbThread;
     private final ThreadLocalRandom random;
@@ -27,7 +29,42 @@ public class Database {
     private final AbstractCounter userID;
     private final List<String> usersProbability;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException {
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        this.factory = new Factory();
+        Class cls;
+
+        try{
+            cls = Class.forName("eu.cloudbutton.dobj.Counter."+typeCounter);
+        }catch (ClassNotFoundException e){
+            cls = Class.forName("java.util.concurrent."+typeCounter);
+        }
+
+        factory.setFactoryCounter(cls);
+
+        try{
+            cls = Class.forName("eu.cloudbutton.dobj.Set."+typeSet);
+        }catch (ClassNotFoundException e){
+            cls = Class.forName("java.util.concurrent."+typeSet);
+        }
+
+        factory.setFactorySet(cls);
+
+        try{
+            cls = Class.forName("eu.cloudbutton.dobj.Queue."+typeQueue);
+        }catch (ClassNotFoundException e){
+            cls = Class.forName("java.util.concurrent."+typeQueue);
+        }
+
+        factory.setFactoryQueue(cls);
+
+        try{
+            cls = Class.forName("eu.cloudbutton.dobj.Map."+typeMap);
+        }catch (ClassNotFoundException e){
+            cls = Class.forName("java.util.concurrent."+typeMap);
+        }
+
+        factory.setFactoryMap(cls);
+
         this.typeMap = typeMap;
         this.typeSet = typeSet;
         this.typeQueue = typeQueue;
@@ -35,9 +72,9 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         this.random = ThreadLocalRandom.current();
-        mapFollowers = Factory.createMap(typeMap);
-        mapTimelines = Factory.createMap(typeMap);
-        userID = Factory.createCounter(typeCounter);
+        mapFollowers = factory.getMap();
+        mapTimelines = factory.getMap();
+        userID = factory.getCounter();
 
         if (userID instanceof FuzzyCounter)
             ((FuzzyCounter) userID).setN(nbThread);
@@ -45,7 +82,7 @@ public class Database {
         usersProbability = new CopyOnWriteArrayList<>();
     }
 
-    public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException {
+    public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         int n;
         String user, userB;
 
@@ -83,8 +120,6 @@ public class Database {
         latchDatabase.countDown();
         latchDatabase.await();
 
-        System.out.println("Following phase");
-
         //Following phase
 
         for (String userA: usersFollow.get().keySet()){
@@ -100,17 +135,17 @@ public class Database {
 
     }
 
-    public String addUser() throws ClassNotFoundException {
+    public String addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
 
         String user = "User_" + userID.incrementAndGet();
 
         mapFollowers.put(user,
-                Factory.createSet(typeSet)
+                factory.getSet()
         );
         mapTimelines.put(user,
-                new Timeline(Factory.createQueue(typeQueue),
-                        Factory.createCounter(typeCounter)
+                new Timeline(factory.getQueue(),
+                        factory.getCounter()
                 )
         );
 
@@ -135,7 +170,7 @@ public class Database {
         mapTimelines.get(user).read();
     }
 
-    public Database copy() throws ClassNotFoundException {
+    public Database copy() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Database copyDatabase = new Database("Map", "Set", "Queue", "Counter", alpha, nbThread);
 
         for (String user: this.getMapFollowers().keySet()){
