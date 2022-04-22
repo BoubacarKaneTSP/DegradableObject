@@ -184,13 +184,11 @@ public class App {
 
                     CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
-                    AtomicLong atomicLong = new AtomicLong();
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latch,
-                                latchFillDatabase,
-                                atomicLong
+                                latchFillDatabase
                         );
                         callables.add(retwisApp);
                     }
@@ -301,16 +299,14 @@ public class App {
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<String, Queue<String>>> usersFollow;
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private final AtomicLong atomicLong;
         private ThreadLocal<List<String>> arrayUsersFollow = new ThreadLocal<>();
 
-        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, AtomicLong atomicLong) {
+        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             usersFollow = ThreadLocal.withInitial(() -> new HashMap<>());
-            this.atomicLong = atomicLong;
         }
 
         @Override
@@ -378,7 +374,7 @@ public class App {
                         type = opType.READ;
                     }
 
-                    long elapsedTime = compute(type) / 1000;
+                    long elapsedTime = compute(type);
 
                     nbLocalOperations.compute(type, (key, value) -> value + 1);
                     timeLocalOperations.compute(type, (key, value) -> value + elapsedTime);
