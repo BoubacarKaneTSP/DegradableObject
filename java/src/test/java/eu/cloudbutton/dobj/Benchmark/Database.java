@@ -83,7 +83,7 @@ public class Database {
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        int n;
+        int n, userPerThread;
         String user, userB;
 
         int bound = 1000;
@@ -106,8 +106,9 @@ public class Database {
         //adding users
 
         List<String> localUsers = new ArrayList<>();
+        userPerThread = nbUsers / nbThread;
 
-        for (int id = 0; id < nbUsers; id++) {
+        for (int id = 0; id < userPerThread; id++) {
             user = addUser();
 
             usersFollow.get().put(user, new LinkedList<>());
