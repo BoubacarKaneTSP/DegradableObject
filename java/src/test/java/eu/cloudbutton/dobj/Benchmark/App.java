@@ -1,8 +1,8 @@
 package eu.cloudbutton.dobj.Benchmark;
 
-import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Localizable;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;

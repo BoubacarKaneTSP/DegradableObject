@@ -38,33 +38,21 @@ public class DegradableSet<T> extends AbstractSet<T> {
             if (_inUnion == null) return false;
 
             if (!_inSet.hasNext()) {
-
                 do {
                     if (!_inUnion.hasNext()) return false;
                     _inSet = _inUnion.next().iterator();
-                }
-
-                while (!_inSet.hasNext());
-
+                } while (!_inSet.hasNext());
             }
-
             return true;
-
         }
 
         public V next() {
-
             if (!_inSet.hasNext()) {
-
                 do {
                     if (!_inUnion.hasNext()) throw new NoSuchElementException();
                     _inSet = _inUnion.next().iterator();
-                }
-
-                while (!_inSet.hasNext());
-
+                } while (!_inSet.hasNext());
             }
-
             return _inSet.next();
         }
 
@@ -76,11 +64,13 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public Iterator<T> iterator() {
-        /*AbstractSet<T> iteratorSet = new HashSet<>();
+/*        AbstractSet<T> iteratorSet = new HashSet<>();
 
         for (ConcurrentSkipListSet<T> s: set.values()){
             iteratorSet.addAll(s);
-        }*/
+        }
+
+        return iteratorSet.iterator();*/
         return new setsIterator<T>(set.values());
     }
 
