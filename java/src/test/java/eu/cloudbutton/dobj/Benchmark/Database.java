@@ -162,7 +162,7 @@ public class Database {
 
     public void tweet(String user, String msg){
         for (String follower : mapFollowers.get(user)) {
-            mapTimelines.get(follower).add(msg);
+//            mapTimelines.get(follower).add(msg);
         }
     }
 
@@ -171,7 +171,7 @@ public class Database {
     }
 
     public Database copy() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        Database copyDatabase = new Database("Map", "Set", "Queue", "Counter", alpha, nbThread);
+        Database copyDatabase = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbThread);
 
         for (String user: this.getMapFollowers().keySet()){
             AbstractSet copySet = Factory.createSet(copyDatabase.getTypeSet());

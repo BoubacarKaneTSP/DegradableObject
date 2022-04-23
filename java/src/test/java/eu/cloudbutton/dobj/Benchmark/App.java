@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.Benchmark;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Localizable;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
@@ -135,7 +134,11 @@ public class App {
             listAlpha.add(i);
         }
 
-        for (int nbCurrThread = 1; nbCurrThread <= nbThreads;) {
+        List<Integer> listNbThread = new ArrayList<>();
+        listNbThread.add(1);
+        listNbThread.add(16);
+        for (int nbCurrThread: listNbThread){
+//        for (int nbCurrThread = 1; nbCurrThread <= nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
