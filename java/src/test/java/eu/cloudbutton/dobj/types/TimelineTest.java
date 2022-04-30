@@ -36,9 +36,9 @@ public class TimelineTest {
 
     private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
 
-        Timeline timeline = new Timeline(list, new DegradableCounter());
+//        Timeline timeline = new Timeline(list, new DegradableCounter());
 
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+/*        ExecutorService executor = Executors.newFixedThreadPool(3);
         AbstractList<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             timeline.add(1);
@@ -64,6 +64,6 @@ public class TimelineTest {
 
         System.out.println(timeline.read());
         System.out.println(timeline.read().size());
-        System.out.println();
+        System.out.println();*/
     }
 }
