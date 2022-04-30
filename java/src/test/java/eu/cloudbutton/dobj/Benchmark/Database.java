@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 public class Database {
@@ -145,7 +146,8 @@ public class Database {
         );
         mapTimelines.put(user,
                 new Timeline(factory.getQueue(),
-                        factory.getCounter()
+//                        factory.getCounter()
+                        new AtomicLong()
                 )
         );
 
@@ -174,6 +176,7 @@ public class Database {
     public Database copy() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Database copyDatabase = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbThread);
 
+/*
         for (String user: this.getMapFollowers().keySet()){
             AbstractSet copySet = Factory.createSet(copyDatabase.getTypeSet());
 
@@ -189,6 +192,7 @@ public class Database {
             }
             copyDatabase.getMapTimelines().put(user, copyTimeline);
         }
+*/
 
         return copyDatabase;
     }

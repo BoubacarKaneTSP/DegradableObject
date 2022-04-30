@@ -4,14 +4,15 @@ import eu.cloudbutton.dobj.Counter.AbstractCounter;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Timeline<T> {
 
     private final AbstractQueue<T> timeline;
-    private final AbstractCounter size;
+    private final AtomicLong size;
     private AtomicBoolean flag = new AtomicBoolean();
 
-    public Timeline(AbstractQueue<T> timeline, AbstractCounter size) {
+    public Timeline(AbstractQueue<T> timeline, AtomicLong size) {
         this.timeline = timeline;
         this.size = size;
         this.flag.set(true);
@@ -20,7 +21,7 @@ public class Timeline<T> {
     public void add(T elt){
         if (flag.get()){
             size.incrementAndGet();
-            if (size.read() >= 50) {
+            if (size.get() >= 50) {
                 flag.set(false);
             }
             timeline.offer(elt);
