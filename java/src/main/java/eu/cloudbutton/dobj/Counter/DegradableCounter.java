@@ -34,7 +34,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
-            Long l = 0L;
+            Long l = new Long(0);
             count.add(l);
             return l;
         });
