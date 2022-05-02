@@ -4,17 +4,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableSet<T> extends AbstractSet<T> {
 
-    private final ConcurrentMap<Thread, ConcurrentSkipListSet<T>> set;
+    private final CopyOnWriteArrayList<ConcurrentSkipListSet<T>> set;
     private final ThreadLocal<ConcurrentSkipListSet<T>> local;
 
     public DegradableSet() {
-        this.set = new ConcurrentHashMap<>();
+        this.set = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
             ConcurrentSkipListSet<T> l = new ConcurrentSkipListSet<>();
-            set.put(Thread.currentThread(),l);
+            set.add(l);
             return l;
         });
     }
@@ -74,7 +75,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
         }
 
         return iteratorSet.iterator();*/
-        return new setsIterator<>(set.values());
+        return new setsIterator<>(set);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     public java.util.Set<T> read() {
         java.util.Set<T> result = new HashSet<>();
-        for (ConcurrentSkipListSet<T> val : set.values()){
+        for (ConcurrentSkipListSet<T> val : set){
             result.addAll(val);
         }
         return result;
@@ -102,7 +103,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public boolean contains(Object val) {
-        for (ConcurrentSkipListSet<T> s : set.values()){
+        for (ConcurrentSkipListSet<T> s : set){
             if (s.contains(val)) return true;
         }
         return false;
