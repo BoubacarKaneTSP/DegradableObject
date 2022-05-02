@@ -3,7 +3,10 @@ package eu.cloudbutton.dobj.Counter;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class build a Counter on top of a Snapshot object.
@@ -12,8 +15,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final CopyOnWriteArrayList<Long> count;
-    private final ThreadLocal<Long> local;
+//    private final CopyOnWriteArrayList<Long> count;
+    private final ConcurrentMap<String, BoxLong> count;
+    private final ThreadLocal<BoxLong> local;
 
     private static final sun.misc.Unsafe UNSAFE;
 
@@ -31,10 +35,11 @@ public class DegradableCounter extends AbstractCounter {
      * Creates a new Counter initialized with the initial value 0.
      */
     public DegradableCounter() {
-        this.count = new CopyOnWriteArrayList<>();
+        this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            Long l = 0L;
-            count.add(l);
+            BoxLong l = new BoxLong();
+            l.setVal(0);
+            count.put(Thread.currentThread().getName(), l);
             return l;
         });
     }
@@ -45,7 +50,7 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        local.set(local.get()+1);
+        local.get().setVal(local.get().getVal() + 1);
         UNSAFE.storeFence();
         return read();
     }
@@ -70,8 +75,8 @@ public class DegradableCounter extends AbstractCounter {
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (Long v : count) {
-            total += v;
+        for (BoxLong v : count.values()) {
+            total += v.getVal();
         }
         return total;
     }

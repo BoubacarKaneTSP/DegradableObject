@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.Counter.DegradableCounter;
 import eu.cloudbutton.dobj.Counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
@@ -47,11 +48,16 @@ public class CounterTest {
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {
+        count = new DegradableCounter();
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
+
+
+        AbstractCounter finalCount = count;
         Callable<Void> callable = () -> {
+            System.out.println(Thread.currentThread().getName());
             for (int i = 0; i < 100; i++) {
-                count.incrementAndGet();
+                finalCount.incrementAndGet();
             }
             return null;
         };
@@ -64,7 +70,7 @@ public class CounterTest {
         for (Future<Void> future : futures) {
             future.get();
         }
-        assertEquals(count.read(),1000,"Failed incrementing the Counter");
+        assertEquals(finalCount.read(),1000,"Failed incrementing the Counter");
     }
 
     private static void testDifferentRead(FuzzyCounter count) throws ExecutionException, InterruptedException {
