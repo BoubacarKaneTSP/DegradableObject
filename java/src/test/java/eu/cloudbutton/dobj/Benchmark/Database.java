@@ -166,9 +166,13 @@ public class Database {
     }
 
     public void tweet(String user, String msg){
-        for (String follower : mapFollowers.get(user)) {
+        mapFollowers.get(user).forEach(e ->
+                        mapTimelines.get(e).add(msg)
+                );
+
+/*        for (String follower : mapFollowers.get(user)) {
 //            mapTimelines.get(follower).add(msg);
-        }
+        }*/
     }
 
     public void showTimeline(String user){
