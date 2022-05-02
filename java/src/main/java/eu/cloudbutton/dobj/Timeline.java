@@ -9,10 +9,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Timeline<T> {
 
     private final AbstractQueue<T> timeline;
-    private final AtomicLong size;
+    private final AbstractCounter size;
     private AtomicBoolean flag = new AtomicBoolean();
 
-    public Timeline(AbstractQueue<T> timeline, AtomicLong size) {
+    public Timeline(AbstractQueue timeline, AbstractCounter size) {
         this.timeline = timeline;
         this.size = size;
         this.flag.set(true);
@@ -21,7 +21,7 @@ public class Timeline<T> {
     public void add(T elt){
         if (flag.get()){
             size.incrementAndGet();
-            if (size.get() >= 50) {
+            if (size.read() >= 50) {
                 flag.set(false);
             }
             timeline.offer(elt);

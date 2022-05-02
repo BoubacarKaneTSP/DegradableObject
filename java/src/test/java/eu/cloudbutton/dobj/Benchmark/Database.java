@@ -146,8 +146,8 @@ public class Database {
         );
         mapTimelines.put(user,
                 new Timeline(factory.getQueue(),
-//                        factory.getCounter()
-                        new AtomicLong()
+                        factory.getCounter()
+//                        new AtomicLong()
                 )
         );
 
@@ -165,7 +165,7 @@ public class Database {
 
     public void tweet(String user, String msg){
         for (String follower : mapFollowers.get(user)) {
-//            mapTimelines.get(follower).add(msg);
+            mapTimelines.get(follower).add(msg);
         }
     }
 
