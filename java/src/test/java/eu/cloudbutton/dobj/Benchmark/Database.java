@@ -117,7 +117,6 @@ public class Database {
                 localUsers.add(user);
             }
         }
-        System.out.println(localUsers.size());
         usersProbability.addAll(localUsers);
         latchDatabase.countDown();
         latchDatabase.await();
