@@ -124,6 +124,7 @@ public class Database {
         //Following phase
 
         for (String userA: usersFollow.get().keySet()){
+
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j <= nbFollow; j++){
                 n = random.nextInt(usersProbability.size());
@@ -133,6 +134,8 @@ public class Database {
                 usersFollow.get().get(userA).add(userB);
             }
         }
+
+
 
     }
 

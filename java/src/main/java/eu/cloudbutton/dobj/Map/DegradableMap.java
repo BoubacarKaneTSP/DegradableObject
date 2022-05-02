@@ -8,17 +8,18 @@ import java.util.AbstractMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
-    private final ConcurrentMap<Thread, ConcurrentHashMap<K,V>> map;
+    private final CopyOnWriteArrayList<ConcurrentHashMap<K,V>> map;
     private final ThreadLocal<ConcurrentHashMap<K,V>> local;
 
     public DegradableMap(){
-        map = new ConcurrentHashMap<>();
-        this.local = ThreadLocal.withInitial(() -> {
+        map = new CopyOnWriteArrayList<>();
+        local = ThreadLocal.withInitial(() -> {
             ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
-            map.put(Thread.currentThread(),m);
+            map.add(m);
             return m;
         });
     }
@@ -43,13 +44,12 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         if (value != null)
             return value;
 
-        for (AbstractMap<K,V> map : map.values()){
+        for (AbstractMap<K,V> map : map){
             value = map.get(key);
 
             if (value != null)
                 return value;
         }
-
 
         throw new NullPointerException();
     }
