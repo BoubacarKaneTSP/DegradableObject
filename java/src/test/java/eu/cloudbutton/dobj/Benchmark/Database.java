@@ -135,6 +135,9 @@ public class Database {
             }
         }
 
+        for (AbstractSet set: mapFollowers.values()){
+            System.out.println(set.size());
+        }
 
 
     }
