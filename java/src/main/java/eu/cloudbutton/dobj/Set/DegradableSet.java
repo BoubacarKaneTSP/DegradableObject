@@ -27,7 +27,10 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
         public setsIterator(Collection<ConcurrentSkipListSet<V>> elts) {
             _elements = elts;
-            if (_elements.size() > 0) {
+
+            Iterator<ConcurrentSkipListSet<V>> itr = elts.iterator();
+
+            if (itr.hasNext()){
                 _inUnion = _elements.iterator();
                 _inSet = _inUnion.next().iterator();
             }
@@ -71,7 +74,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
         }
 
         return iteratorSet.iterator();*/
-        return new setsIterator<T>(set.values());
+        return new setsIterator<>(set.values());
     }
 
     @Override
