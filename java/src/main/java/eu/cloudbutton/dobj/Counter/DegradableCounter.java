@@ -15,8 +15,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-//    private final CopyOnWriteArrayList<Long> count;
-    private final ConcurrentMap<String, BoxLong> count;
+    private final CopyOnWriteArrayList<BoxLong> count;
+//    private final ConcurrentMap<String, BoxLong> count;
     private final ThreadLocal<BoxLong> local;
 
     private static final sun.misc.Unsafe UNSAFE;
@@ -35,11 +35,11 @@ public class DegradableCounter extends AbstractCounter {
      * Creates a new Counter initialized with the initial value 0.
      */
     public DegradableCounter() {
-        this.count = new ConcurrentHashMap<>();
+        this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
             BoxLong l = new BoxLong();
             l.setVal(0);
-            count.put(Thread.currentThread().getName(), l);
+            count.add(l);
             return l;
         });
     }
@@ -75,7 +75,7 @@ public class DegradableCounter extends AbstractCounter {
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (BoxLong v : count.values()) {
+        for (BoxLong v : count) {
             total += v.getVal();
         }
         return total;

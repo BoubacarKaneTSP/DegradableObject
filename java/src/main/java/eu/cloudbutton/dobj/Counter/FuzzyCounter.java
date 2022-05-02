@@ -1,8 +1,10 @@
 package eu.cloudbutton.dobj.Counter;
 
+import lombok.SneakyThrows;
+
 public class FuzzyCounter extends AbstractCounter{
     
-    private final AbstractCounter counter;
+    private final DegradableCounter counter;
     private int N; // Base increment based on the number of thread
     private final ThreadLocal<Long> ID;
     
@@ -26,10 +28,11 @@ public class FuzzyCounter extends AbstractCounter{
         return (counter.read() * N) + ID.get();
     }
 
+    @SneakyThrows
     @Override
     public long read() {
 
-        return (counter.read() * N) + ID.get();
+        throw new IllegalAccessException();
     }
 
     public void setN(int nbThread)   {

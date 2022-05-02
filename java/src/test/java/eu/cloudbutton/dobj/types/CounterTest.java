@@ -48,16 +48,13 @@ public class CounterTest {
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {
-        count = new DegradableCounter();
+
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
 
-
-        AbstractCounter finalCount = count;
         Callable<Void> callable = () -> {
-            System.out.println(Thread.currentThread().getName());
             for (int i = 0; i < 100; i++) {
-                finalCount.incrementAndGet();
+                count.incrementAndGet();
             }
             return null;
         };
@@ -70,7 +67,7 @@ public class CounterTest {
         for (Future<Void> future : futures) {
             future.get();
         }
-        assertEquals(finalCount.read(),1000,"Failed incrementing the Counter");
+        assertEquals(count.read(),1000,"Failed incrementing the Counter");
     }
 
     private static void testDifferentRead(FuzzyCounter count) throws ExecutionException, InterruptedException {
