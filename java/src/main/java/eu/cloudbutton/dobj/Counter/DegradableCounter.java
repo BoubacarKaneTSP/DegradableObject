@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.Counter;
 
-import eu.cloudbutton.dobj.register.SWMRLong;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -34,7 +33,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
-            Long l = new Long(0);
+            Long l = 0L;
             count.add(l);
             return l;
         });
@@ -48,7 +47,7 @@ public class DegradableCounter extends AbstractCounter {
     public long incrementAndGet() {
         local.set(local.get()+1);
         UNSAFE.storeFence();
-        return 0;
+        return read();
     }
     /**
      * Adds the given value to the current value of the Counter.

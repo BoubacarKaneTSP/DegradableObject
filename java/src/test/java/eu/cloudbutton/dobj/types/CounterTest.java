@@ -19,13 +19,11 @@ public class CounterTest {
     private Factory factory;
 
     @BeforeTest
-    public void setUp() throws NoSuchMethodException, ClassNotFoundException {
+    public void setUp() {
         factory = new Factory();
-        Class cls = Class.forName("eu.cloudbutton.dobj.Counter.FuzzyCounter");
-        factory.setFactoryCounter(cls);
     }
     @Test
-    public void increment() throws ExecutionException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void increment() throws ExecutionException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException {
 
         /*doIncrement(factory
                 .counter(new DegradableCounter())
@@ -39,7 +37,13 @@ public class CounterTest {
                 .getCounter()
         );*/
 
+        Class cls = Class.forName("eu.cloudbutton.dobj.Counter.FuzzyCounter");
+        factory.setFactoryCounter(cls);
         testDifferentRead((FuzzyCounter) factory.getCounter());
+
+        cls = Class.forName("eu.cloudbutton.dobj.Counter.DegradableCounter");
+        factory.setFactoryCounter(cls);
+        doIncrement(factory.getCounter());
     }
 
     private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {
@@ -60,7 +64,7 @@ public class CounterTest {
         for (Future<Void> future : futures) {
             future.get();
         }
-        assertEquals(1000, count.read(),"Failed incrementing the Counter");
+        assertEquals(count.read(),1000,"Failed incrementing the Counter");
     }
 
     private static void testDifferentRead(FuzzyCounter count) throws ExecutionException, InterruptedException {
@@ -75,14 +79,14 @@ public class CounterTest {
         Callable<Void> callable = () -> {
             long myID = Thread.currentThread().getId();
             mapRead.put(myID, new ArrayList());
-            for (int i = 0; i < 10000; i++) {
+            for (int i = 0; i < 100; i++) {
                 mapRead.get(myID).add(count.incrementAndGet());
             }
             return null;
         };
 
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             futures.add(executor.submit(callable));
         }
 
