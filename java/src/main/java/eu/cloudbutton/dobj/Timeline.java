@@ -20,7 +20,7 @@ public class Timeline<T> {
 
     public void add(T elt){
 
-/*        if (flag.get()){
+        if (flag.get()){
             size.incrementAndGet();
             if (size.read() >= 50) {
                 flag.set(false);
@@ -29,7 +29,7 @@ public class Timeline<T> {
         }else{
             timeline.offer(elt);
             timeline.poll();
-        }*/
+        }
    }
 
    public AbstractQueue<T> read(){
