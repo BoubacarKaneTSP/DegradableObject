@@ -157,7 +157,6 @@ public class Database {
         mapTimelines.put(user,
                 new Timeline(factory.getQueue(),
                         factory.getCounter()
-//                        new AtomicLong()
                 )
         );
 
