@@ -75,6 +75,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
         return iteratorSet.iterator();*/
         CopyOnWriteArrayList copy = new CopyOnWriteArrayList();
+        System.out.println(set.get(0));
         copy.add(set.get(0));
         return new setsIterator<>(copy);
     }
