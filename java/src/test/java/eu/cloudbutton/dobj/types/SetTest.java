@@ -68,12 +68,13 @@ public class SetTest {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         AbstractList<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
-            set.add(Thread.currentThread().getName()+" : v1");
-            set.add(Thread.currentThread().getName()+" : v2");
-            set.add(Thread.currentThread().getName()+" : v3");
-            set.add(Thread.currentThread().getName()+" : v4");
-            set.add(Thread.currentThread().getName()+" : v5");
-            set.add(Thread.currentThread().getName()+" : v6");
+            String name = Thread.currentThread().getName();
+            set.add(name +" : v1");
+            set.add(name +" : v2");
+            set.add(name +" : v3");
+            set.add(name +" : v4");
+            set.add(name +" : v5");
+            set.add(name +" : v6");
             return null;
         };
 
