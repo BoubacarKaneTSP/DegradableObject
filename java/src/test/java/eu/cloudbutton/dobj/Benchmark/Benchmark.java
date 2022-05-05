@@ -30,9 +30,9 @@ public class Benchmark {
     public static AtomicLong timeAdd;
     public static AtomicLong timeRemove;
     public static AtomicLong timeRead;
-    public static AtomicInteger nbAdd;
-    public static AtomicInteger nbRemove;
-    public static AtomicInteger nbRead;
+    public static AtomicLong nbAdd;
+    public static AtomicLong nbRemove;
+    public static AtomicLong nbRead;
     public static AtomicBoolean flag;
 
     @Option(name = "-type", required = true, usage = "type to test")
@@ -95,9 +95,9 @@ public class Benchmark {
             FileWriter fileWriter;
 
             for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
-                nbAdd = new AtomicInteger(0);
-                nbRemove = new AtomicInteger(0);
-                nbRead = new AtomicInteger(0);
+                nbAdd = new AtomicLong(0);
+                nbRemove = new AtomicLong(0);
+                nbRead = new AtomicLong(0);
 
                 timeAdd = new AtomicLong(0);
                 timeRemove = new AtomicLong(0);
