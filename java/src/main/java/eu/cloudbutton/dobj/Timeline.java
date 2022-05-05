@@ -16,7 +16,6 @@ public class Timeline<T> {
 
     public Timeline(AbstractQueue timeline, AbstractCounter size) {
         this.timeline = timeline;
-        this.flag.set(true);
     }
 
     public void add(T elt){
