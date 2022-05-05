@@ -13,7 +13,6 @@ public class Timeline<T> {
 
     private final LinkedList<T> topk = new LinkedList<>();
     private final AbstractQueue<T> timeline;
-    private AtomicBoolean flag = new AtomicBoolean();
 
     public Timeline(AbstractQueue timeline, AbstractCounter size) {
         this.timeline = timeline;
