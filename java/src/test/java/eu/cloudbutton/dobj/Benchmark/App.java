@@ -82,7 +82,7 @@ public class App {
 
     private Database database;
 
-    int NB_USERS = 100000;
+    int NB_USERS = 10000;
 
     int nbSign = 5;
 

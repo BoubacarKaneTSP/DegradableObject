@@ -74,15 +74,18 @@ public class DegradableSet<T> extends AbstractSet<T> {
         }
 
         return iteratorSet.iterator();*/
-        CopyOnWriteArrayList copy = new CopyOnWriteArrayList();
-        System.out.println(set.get(0));
-        copy.add(set.get(0));
+        CopyOnWriteArrayList<ConcurrentSkipListSet<T>> copy = new CopyOnWriteArrayList();
+        copy.add(new ConcurrentSkipListSet<>());
         return new setsIterator<>(copy);
     }
 
     @Override
     public int size() {
-        return 0;
+        int size = 0;
+        for (AbstractSet s: set){
+            size += s.size();
+        }
+        return size;
     }
 
     @Override
