@@ -26,26 +26,27 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
         public setsIterator(Collection<ConcurrentSkipListSet<V>> elts) {
 
-            /*_elements = elts;
+            _elements = elts;
 
-            Iterator<ConcurrentSkipListSet<V>> itr = elts.iterator();
+
+            Iterator<ConcurrentSkipListSet<V>> itr = _elements.iterator();
 
             if (itr.hasNext()){
                 _inUnion = _elements.iterator();
                 _inSet = _inUnion.next().iterator();
-            }*/
+            }
         }
 
         public boolean hasNext() {
 
-            /*if (_inUnion == null) return false;
+            if (_inUnion == null) return false;
 
             if (!_inSet.hasNext()) {
                 do {
                     if (!_inUnion.hasNext()) return false;
                     _inSet = _inUnion.next().iterator();
                 } while (!_inSet.hasNext());
-            }*/
+            }
             return false;
         }
 
