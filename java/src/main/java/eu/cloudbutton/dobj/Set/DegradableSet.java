@@ -47,7 +47,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
                     _inSet = _inUnion.next().iterator();
                 } while (!_inSet.hasNext());
             }
-            return false;
+            return true;
         }
 
         public V next() {
