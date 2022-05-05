@@ -18,26 +18,26 @@ public class MapTester extends Tester<AbstractMap> {
 
         int rand = random.nextInt(ITEM_PER_THREAD);
         long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-        CollisionKey collisionKey = new CollisionKey(Long.toString(iid));
+//        CollisionKey collisionKey = new CollisionKey(Long.toString(iid));
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                object.put(collisionKey, Long.toString(iid));
+//                object.put(collisionKey, Long.toString(iid));
                 endTime = System.nanoTime();
-//                object.put(Long.toString(iid), Long.toString(iid));
+                object.put(Long.toString(iid), Long.toString(iid));
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                object.remove(collisionKey);
+//                object.remove(collisionKey);
                 endTime = System.nanoTime();
-//                object.remove(Long.toString(iid));
+                object.remove(Long.toString(iid));
                 break;
             case READ:
                 startTime = System.nanoTime();
-                object.get(collisionKey);
+//                object.get(collisionKey);
                 endTime = System.nanoTime();
-//                object.get(Long.toString(iid));
+                object.get(Long.toString(iid));
                 break;
         }
 
