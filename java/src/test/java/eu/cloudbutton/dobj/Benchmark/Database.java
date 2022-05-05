@@ -142,7 +142,7 @@ public class Database {
             m += 1;
         }
 
-        System.out.println(Thread.currentThread().getName() + " : " +val/m);
+//        System.out.println(Thread.currentThread().getName() + " : " +val/m);
 
 
     }
