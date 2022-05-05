@@ -68,13 +68,6 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public Iterator<T> iterator() {
-/*        AbstractSet<T> iteratorSet = new HashSet<>();
-
-        for (ConcurrentSkipListSet<T> s: set.values()){
-            iteratorSet.addAll(s);
-        }
-
-        return iteratorSet.iterator();*/
 
         /*CopyOnWriteArrayList<ConcurrentSkipListSet<T>> copy = new CopyOnWriteArrayList();
         copy.add(new ConcurrentSkipListSet<>());*/
