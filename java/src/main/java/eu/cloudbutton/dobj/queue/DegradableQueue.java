@@ -180,6 +180,11 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         return ret;
     }
 
+    @Override
+    public boolean add(E e){
+        return offer(e);
+    }
+
     /**
      * Inserts the specified element into this queue.
      * @param e
@@ -213,6 +218,12 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                 // Check for tail updates after two hops.
                 p = (p != t && t != (t = tail)) ? t : q;
         }
+    }
+
+
+    @Override
+    public E remove(){
+        return poll();
     }
 
     /**

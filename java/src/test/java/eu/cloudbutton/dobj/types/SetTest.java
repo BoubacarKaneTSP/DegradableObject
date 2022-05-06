@@ -85,8 +85,5 @@ public class SetTest {
             future.get();
         }
 
-        for (String s: set){
-            System.out.println(s);
-        }
     }
 }

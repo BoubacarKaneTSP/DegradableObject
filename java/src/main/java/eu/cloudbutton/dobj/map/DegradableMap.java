@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.map;
 
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
 import java.util.Set;
@@ -52,7 +51,6 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         throw new NullPointerException();
     }
 
-    @NotNull
     @Override
     public Set<Entry<K, V>> entrySet() {
         return null;

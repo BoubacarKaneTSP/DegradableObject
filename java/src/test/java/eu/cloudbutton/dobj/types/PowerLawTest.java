@@ -11,7 +11,7 @@ import java.util.List;
 public class PowerLawTest {
 
     @Test
-    void add() {
+    void add() {/*
         List<Double> listAlpha = new ArrayList<>();
 
         for (double i = 1.315 ; i <= 1.315; i+=0.025) {
@@ -46,7 +46,7 @@ public class PowerLawTest {
             System.out.println("Q3 : " + data.get(3*data.size()/4) + " => " + data.get(3*data.size()/4) / (double) max * 100 +"%");
             System.out.println("nbMax : " + nbMax);
             System.out.println("avg : " + avg/data.size());
-        }
+        }*/
 
     }
 

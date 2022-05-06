@@ -28,7 +28,7 @@ public class QueueTester extends Tester<AbstractQueue> {
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                object.remove(iid);
+                object.remove();
                 endTime = System.nanoTime();
                 break;
             case READ:

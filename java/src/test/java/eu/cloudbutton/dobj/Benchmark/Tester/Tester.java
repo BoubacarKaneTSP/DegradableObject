@@ -46,11 +46,10 @@ public abstract class Tester<T> implements Callable<Void> {
                 n = this.random.nextInt(100);
 
                 if (n < ratios[0]) {
-                    if (n % 2 == 0)
-                        type = opType.ADD;
-                    else
-                        type = opType.REMOVE;
-                } else {
+                    type = opType.ADD;
+                }else if(n < ratios[0] + ratios[1]) {
+                    type = opType.REMOVE;
+                }else {
                     type = opType.READ;
                 }
 
@@ -64,11 +63,10 @@ public abstract class Tester<T> implements Callable<Void> {
                 n = this.random.nextInt(100);
 
                 if (n < ratios[0]) {
-                    if (n % 2 == 0)
-                        type = opType.ADD;
-                    else
-                        type = opType.REMOVE;
-                } else {
+                    type = opType.ADD;
+                }else if(n < ratios[0] + ratios[1]) {
+                    type = opType.REMOVE;
+                }else {
                     type = opType.READ;
                 }
 

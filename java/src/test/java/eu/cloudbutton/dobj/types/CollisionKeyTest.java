@@ -11,7 +11,7 @@ public class CollisionKeyTest {
 
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
-
+/*
         ConcurrentHashMap<CollisionKey, String> collisionMap = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
 
@@ -41,12 +41,12 @@ public class CollisionKeyTest {
         }
 
         end = System.nanoTime();
-        double timeElapsed =  (end - start) / 1000000000.0;
-
+        double timeElapsed =  (end - start) / 1000000000.0;*/
+/*
         System.out.println("Number of processes => " + Runtime.getRuntime().availableProcessors()/2);
         System.out.println("Time elapsed filling the hashmap => " + timeElapsed + " seconds.");
         System.out.println("Current map size => " + map.size());
-        System.out.println("Current collisionMap size => " + collisionMap.size());
+        System.out.println("Current collisionMap size => " + collisionMap.size());*/
 
     }
 

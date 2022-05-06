@@ -60,6 +60,7 @@ public class Benchmark {
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
         CmdLineParser parser = new CmdLineParser(this);
 
+
         try{
             // parse the arguments.
             parser.parseArgument(args);
@@ -72,6 +73,17 @@ public class Benchmark {
             if (args.length < 1)
                 throw new CmdLineException(parser, "No argument is given");
 
+            if (ratios.length != 3)
+                throw new java.lang.Error("Number of ratios must be 3 (% ADD, % REMOVE, % READ)");
+
+            int total = 0;
+            for (int ratio: Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()) {
+                total += ratio;
+            }
+
+            if (total != 100){
+                throw new java.lang.Error("Total ratio must be 100");
+            }
         } catch (CmdLineException e) {
             // if there's a problem in the command line,
             // you'll get this exception. this will report
