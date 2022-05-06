@@ -6,7 +6,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 mvn clean package -f ../java -DskipTests;
 
-for ratio in "50 50 0"; #95 80 50 20 5;
+for ratio in "100 0 0"; #95 80 50 20 5;
 do
 for type in 'DegradableQueue'
 #for type in 'Counter' 'DegradableCounter' 'ConcurrentLinkedQueue' 'MapQueue' 'ConcurrentSkipListSet' 'DegradableSet' 'ConcurrentHashMap' 'DegradableMap'

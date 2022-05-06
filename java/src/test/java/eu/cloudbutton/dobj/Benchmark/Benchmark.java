@@ -136,7 +136,7 @@ public class Benchmark {
                             latch
                     );
 
-                    for (int j = 0; j < nbCurrentThread; j++) { // -1 if a thread only read.
+                    for (int j = 0; j < nbCurrentThread - 1; j++) { // -1 if a thread only read.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
@@ -145,16 +145,14 @@ public class Benchmark {
 
 //                   Code if one reader is needed
 
-/*
                    FactoryTester factoryT = new FactoryTester(
                            object,
-                           new int[] {0},
+                           new int[] {0, 100, 0},
                            latch
                    );
 
                     Tester t = factoryT.createTester();
                     callables.add(t);
-*/
 
 //
 
