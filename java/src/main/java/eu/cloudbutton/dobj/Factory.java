@@ -1,16 +1,13 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.Counter.*;
-import eu.cloudbutton.dobj.List.*;
-import eu.cloudbutton.dobj.Map.DegradableMap;
-import eu.cloudbutton.dobj.Queue.DegradableQueue;
-import eu.cloudbutton.dobj.Queue.MapQueue;
-import eu.cloudbutton.dobj.Set.DegradableSet;
-import eu.cloudbutton.dobj.Set.Set;
-import eu.cloudbutton.dobj.Snapshot.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import eu.cloudbutton.dobj.counter.*;
+import eu.cloudbutton.dobj.list.*;
+import eu.cloudbutton.dobj.map.DegradableMap;
+import eu.cloudbutton.dobj.queue.DegradableQueue;
+import eu.cloudbutton.dobj.queue.MapQueue;
+import eu.cloudbutton.dobj.set.DegradableSet;
+import eu.cloudbutton.dobj.set.Set;
+import eu.cloudbutton.dobj.snapshot.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

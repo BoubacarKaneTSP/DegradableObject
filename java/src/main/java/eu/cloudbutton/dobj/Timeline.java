@@ -1,10 +1,9 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Timeline<T> {
 

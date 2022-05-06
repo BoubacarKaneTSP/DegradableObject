@@ -1,14 +1,10 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.Counter.DegradableCounter;
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.Queue.MapQueue;
-import eu.cloudbutton.dobj.Timeline;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.*;
-import java.util.AbstractList;
 import java.util.concurrent.*;
 
 public class TimelineTest {

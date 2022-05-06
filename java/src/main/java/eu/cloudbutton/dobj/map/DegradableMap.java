@@ -1,13 +1,11 @@
-package eu.cloudbutton.dobj.Map;
+package eu.cloudbutton.dobj.map;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
-import java.rmi.NoSuchObjectException;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {

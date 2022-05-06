@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
 
 import java.util.AbstractList;
 import java.util.AbstractMap;

@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Snapshot;
+package eu.cloudbutton.dobj.snapshot;
 
 import org.javatuples.Pair;
 

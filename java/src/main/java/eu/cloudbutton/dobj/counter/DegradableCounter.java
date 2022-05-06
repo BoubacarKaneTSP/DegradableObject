@@ -1,12 +1,9 @@
-package eu.cloudbutton.dobj.Counter;
+package eu.cloudbutton.dobj.counter;
 
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class build a Counter on top of a Snapshot object.

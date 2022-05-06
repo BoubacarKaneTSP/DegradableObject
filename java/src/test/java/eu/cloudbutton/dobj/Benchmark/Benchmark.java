@@ -4,7 +4,7 @@ import eu.cloudbutton.dobj.Benchmark.Tester.FactoryFiller;
 import eu.cloudbutton.dobj.Benchmark.Tester.FactoryTester;
 import eu.cloudbutton.dobj.Benchmark.Tester.Filler;
 import eu.cloudbutton.dobj.Benchmark.Tester.Tester;
-import eu.cloudbutton.dobj.Counter.FuzzyCounter;
+import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;

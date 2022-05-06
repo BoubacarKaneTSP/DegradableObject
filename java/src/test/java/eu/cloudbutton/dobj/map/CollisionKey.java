@@ -1,8 +1,7 @@
-package eu.cloudbutton.dobj.Map;
+package eu.cloudbutton.dobj.map;
 
 import lombok.Data;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;

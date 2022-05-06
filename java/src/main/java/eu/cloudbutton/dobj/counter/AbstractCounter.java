@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Counter;
+package eu.cloudbutton.dobj.counter;
 
 public abstract class AbstractCounter {
 

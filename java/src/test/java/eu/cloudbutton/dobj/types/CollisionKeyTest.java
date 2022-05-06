@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.Map.CollisionKey;
+import eu.cloudbutton.dobj.map.CollisionKey;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

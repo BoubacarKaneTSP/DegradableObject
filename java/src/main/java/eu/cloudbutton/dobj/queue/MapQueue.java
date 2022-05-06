@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Queue;
+package eu.cloudbutton.dobj.queue;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;

@@ -1,7 +1,7 @@
-package eu.cloudbutton.dobj.Snapshot;
+package eu.cloudbutton.dobj.snapshot;
 
-import eu.cloudbutton.dobj.Counter.AbstractCounter;
-import eu.cloudbutton.dobj.Counter.Counter;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 import org.javatuples.Triplet;
 
 import java.util.ArrayList;

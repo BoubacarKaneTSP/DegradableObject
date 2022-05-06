@@ -1,6 +1,6 @@
-package eu.cloudbutton.dobj.Snapshot;
+package eu.cloudbutton.dobj.snapshot;
 
-import eu.cloudbutton.dobj.Counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
 import org.javatuples.Pair;
 
 /**

@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Queue;
+package eu.cloudbutton.dobj.queue;
 
 import sun.misc.Unsafe;
 
@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.AbstractQueue;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -186,19 +187,18 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
      */
     @Override
     public boolean offer(E e) {
-        checkNotNull(e);
-        final Node<E> newNode = new Node<>(e);
+        final Node<E> newNode = new Node<E>(Objects.requireNonNull(e));
 
         for (Node<E> t = tail, p = t;;) {
             Node<E> q = p.next;
             if (q == null) {
                 // p is last node
-                if (p.casNext(null, newNode)) {
+                if (NEXT.compareAndSet(p, null, newNode)) {
                     // Successful CAS is the linearization point
                     // for e to become an element of this queue,
                     // and for newNode to become "live".
-                    if (p != t) // hop two nodes at a time
-                        lazySetTail(newNode);
+                    if (p != t) // hop two nodes at a time; failure is OK
+                        TAIL.weakCompareAndSet(this, t, newNode);
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -221,30 +221,15 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
      */
     @Override
     public E poll() {
-        restartFromHead:
-        for (;;) {
-            for (Node<E> h = head, p = h, q;;) {
-                E item = p.item;
 
-                if (item != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-//					if (p != h) // hop two nodes at a time
-//						updateHead(h, ((q = p.next) != null) ? q : p);
-                    if (p != h && p.next != null)
-                        head.lazySetNext(p.next);
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-                else
-                    p = q;
-            }
+        if (head != tail){
+            E item = head.next.item;
+            head = head.next;
+            head.item = null;
+            return item;
         }
+
+        return null;
     }
 
     @Override

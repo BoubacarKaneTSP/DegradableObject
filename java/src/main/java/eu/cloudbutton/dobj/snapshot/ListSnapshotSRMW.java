@@ -1,25 +1,24 @@
-package eu.cloudbutton.dobj.Snapshot;
+package eu.cloudbutton.dobj.snapshot;
 
-import eu.cloudbutton.dobj.List.LinkedList;
-import eu.cloudbutton.dobj.Snapshot.SnapshotSRMW;
 import org.javatuples.Pair;
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LinkedListSnapshotSRMW<T> extends AbstractList<T> {
+public class ListSnapshotSRMW<T> extends AbstractList<T> {
 
-    private final SnapshotSRMW<eu.cloudbutton.dobj.List.LinkedList<T>> snapobject;
-    private final ThreadLocal<eu.cloudbutton.dobj.List.LinkedList<T>> listThreadLocal;
+    private final SnapshotSRMW<AbstractQueue<T>> snapobject;
+    private final ThreadLocal<AbstractQueue<T>> listThreadLocal;
 
-    public LinkedListSnapshotSRMW(){
+    public ListSnapshotSRMW(){
         snapobject = new SnapshotSRMW<>();
         listThreadLocal = ThreadLocal.withInitial(() -> {
-            eu.cloudbutton.dobj.List.LinkedList<T> linkedList = new eu.cloudbutton.dobj.List.LinkedList<>();
-            snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new eu.cloudbutton.dobj.List.LinkedList<>(), 0),
-                    new Pair<>(new eu.cloudbutton.dobj.List.LinkedList<>(), 0)
+            AbstractQueue<T> List = new ConcurrentLinkedQueue<>();
+            snapobject.memory.put(Thread.currentThread(), new Pair<>( new Pair<>(new ConcurrentLinkedQueue<>(), 0),
+                    new Pair<>(new ConcurrentLinkedQueue<>(), 0)
             ));
-            return linkedList;
+            return List;
         });
     }
 
@@ -38,6 +37,7 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T> {
 
         listThreadLocal.get().add(val);
         snapobject.update(listThreadLocal.get());
+
         return true;
     }
 
@@ -50,8 +50,8 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T> {
 
         List<T> result = new ArrayList<>();
 
-        for (eu.cloudbutton.dobj.List.LinkedList<T> l : snapobject.snap())
-            result.addAll(l.read());
+        for (AbstractQueue<T> l : snapobject.snap())
+            result.addAll(l);
 
         return result;
     }
@@ -71,7 +71,7 @@ public class LinkedListSnapshotSRMW<T> extends AbstractList<T> {
 
         boolean contained = false;
 
-        for (LinkedList<T> list : snapobject.snap()){
+        for (AbstractQueue<T> list : snapobject.snap()){
             contained = list.contains(val);
             if (contained)
                 break;

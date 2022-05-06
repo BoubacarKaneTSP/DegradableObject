@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.Benchmark;
 
-import eu.cloudbutton.dobj.Counter.AbstractCounter;
-import eu.cloudbutton.dobj.Counter.FuzzyCounter;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import lombok.Getter;
@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 public class Database {

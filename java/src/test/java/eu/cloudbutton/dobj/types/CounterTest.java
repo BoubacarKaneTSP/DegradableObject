@@ -1,8 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.Counter.AbstractCounter;
-import eu.cloudbutton.dobj.Counter.DegradableCounter;
-import eu.cloudbutton.dobj.Counter.FuzzyCounter;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -38,11 +37,11 @@ public class CounterTest {
                 .getCounter()
         );*/
 
-        Class cls = Class.forName("eu.cloudbutton.dobj.Counter.FuzzyCounter");
+        Class cls = Class.forName("eu.cloudbutton.dobj.counter.FuzzyCounter");
         factory.setFactoryCounter(cls);
         testDifferentRead((FuzzyCounter) factory.getCounter());
 
-        cls = Class.forName("eu.cloudbutton.dobj.Counter.DegradableCounter");
+        cls = Class.forName("eu.cloudbutton.dobj.counter.DegradableCounter");
         factory.setFactoryCounter(cls);
         doIncrement(factory.getCounter());
     }

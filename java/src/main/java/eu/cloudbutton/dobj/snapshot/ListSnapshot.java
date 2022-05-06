@@ -1,6 +1,5 @@
-package eu.cloudbutton.dobj.Snapshot;
+package eu.cloudbutton.dobj.snapshot;
 
-import eu.cloudbutton.dobj.Snapshot.Snapshot;
 import org.javatuples.Triplet;
 
 import java.util.*;
