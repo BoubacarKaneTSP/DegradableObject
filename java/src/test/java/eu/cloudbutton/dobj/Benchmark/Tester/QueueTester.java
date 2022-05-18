@@ -15,10 +15,12 @@ public class QueueTester extends Tester<AbstractQueue> {
     @Override
     protected long test(opType type) {
 
-        long startTime = 0L, endTime = 0L;
+        long startTime = 0L, endTime = 0L, iid = 0L;
 
-        int rand = random.nextInt(ITEM_PER_THREAD);
-        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+        if (type == opType.ADD || type == opType.READ){
+            int rand = random.nextInt(ITEM_PER_THREAD);
+            iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+        }
 
         switch (type) {
             case ADD:
@@ -28,7 +30,7 @@ public class QueueTester extends Tester<AbstractQueue> {
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                object.remove();
+                object.poll();
                 endTime = System.nanoTime();
                 break;
             case READ:

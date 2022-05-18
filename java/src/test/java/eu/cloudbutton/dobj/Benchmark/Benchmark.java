@@ -105,7 +105,7 @@ public class Benchmark {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
 
-            for (int nbCurrentThread = 1; nbCurrentThread <= nbThreads; ) {
+            for (int nbCurrentThread = 2; nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
@@ -120,7 +120,7 @@ public class Benchmark {
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, 1000);
+                    FactoryFiller factoryFiller = new FactoryFiller(object, 1_000_000);
 
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
@@ -136,18 +136,18 @@ public class Benchmark {
                             latch
                     );
 
-                    for (int j = 0; j < nbCurrentThread - 1; j++) { // -1 if a thread only read.
+                    for (int j = 0; j < nbCurrentThread -1; j++) { // -1 if a specific thread perform a different operation.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
 
 
 
-//                   Code if one reader is needed
+//                   Code if a specific thread perform a different operation.
 
                    FactoryTester factoryT = new FactoryTester(
                            object,
-                           new int[] {0, 100, 0},
+                           new int[] {0, 100, 0}, // [add, remove, read]
                            latch
                    );
 
@@ -205,6 +205,8 @@ public class Benchmark {
                     System.out.println("    -time/add : " + throughputADD);
                     System.out.println("    -time/remove : " + throughputREMOVE);
                     System.out.println("    -time/read: " + throughputREAD);
+                    System.out.println("    -num add: " + nbAdd.get());
+                    System.out.println("    -num remove: " + nbRemove.get());
                     System.out.println("    -num read: " + nbRead.get());
                 }
 
