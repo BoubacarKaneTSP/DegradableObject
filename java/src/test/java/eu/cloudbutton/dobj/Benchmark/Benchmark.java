@@ -215,7 +215,7 @@ public class Benchmark {
                     System.out.println("    -num add: " + nbAdd.get());
                     System.out.println("    -num remove: " + nbRemove.get());
                     System.out.println("    -num remove fail: " + nbRemoveFail.get());
-                    System.out.println("    -fail remove ratio: " + nbRemoveFail.get()/(nbRemove.get() + nbRemoveFail.get()));
+                    System.out.println("    -fail remove ratio: " + nbRemoveFail.get()/(double) (nbRemove.get() + nbRemoveFail.get()));
                     System.out.println("    -num read: " + nbRead.get());
                 }
 
