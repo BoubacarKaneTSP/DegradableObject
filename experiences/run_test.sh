@@ -13,6 +13,6 @@ for type in 'DegradableQueue'
   do
     echo " "
     echo $type $ratio
-    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest 1 -time 10 -wTime 5 -p
+    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest 1 -time 5 -wTime 2 -p
   done
 done

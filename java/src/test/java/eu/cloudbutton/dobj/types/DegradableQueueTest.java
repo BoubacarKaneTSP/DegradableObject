@@ -49,5 +49,7 @@ public class DegradableQueueTest {
         for (Future<Void> future : futures) {
             future.get();
         }
+
+        System.out.println(queue.size());
     }
 }
