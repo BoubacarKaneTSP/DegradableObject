@@ -70,7 +70,7 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type) / 1000;
+                elapsedTime = test(type);
 
                 switch (type) {
                     case ADD:
