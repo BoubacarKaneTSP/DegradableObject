@@ -67,7 +67,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     }
 
 
-    private transient volatile Node<E> head;
+    private transient Node<E> head;
 
     private transient volatile Node<E> tail;
 
@@ -232,26 +232,8 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
      */
     @Override
     public E poll() {
-        restartFromHead: for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
-                final E item;
-                if ((item = p.item) != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-                    if (p != h) // hop two nodes at a time
-                        updateHead(h, ((q = p.next) != null) ? q : p);
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-            }
-        }
 
-/*        if (head != tail){
+        if (head != tail){
             E item = head.next.item;
             head = head.next;
 //            head.item = null;
@@ -259,7 +241,6 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         }
 
         return null;
-        */
 
     }
 

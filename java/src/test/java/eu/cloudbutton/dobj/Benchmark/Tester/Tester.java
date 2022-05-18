@@ -30,7 +30,7 @@ public abstract class Tester<T> implements Callable<Void> {
     @Override
     public Void call() {
 
-        int n, add = 0, remove = 0, read = 0;
+        int n, add = 0, remove = 0, read = 0, addFail = 0, removeFail = 0, readFail = 0;
         long timeAdd = 0, timeRemove = 0, timeRead = 0, elapsedTime;
 
         opType type;
@@ -74,15 +74,24 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 switch (type) {
                     case ADD:
-                        add++;
+                        if (elapsedTime != 0)
+                            add++;
+                        else
+                            addFail++;
                         timeAdd += elapsedTime;
                         break;
                     case REMOVE:
-                        remove++;
+                        if (elapsedTime != 0)
+                            remove++;
+                        else
+                            removeFail++;
                         timeRemove += elapsedTime;
                         break;
                     case READ:
-                        read++;
+                        if (elapsedTime != 0)
+                            read++;
+                        else
+                            readFail++;
                         timeRead += elapsedTime;
                         break;
                 }
@@ -95,6 +104,10 @@ public abstract class Tester<T> implements Callable<Void> {
         Benchmark.nbAdd.addAndGet(add);
         Benchmark.nbRemove.addAndGet(remove);
         Benchmark.nbRead.addAndGet(read);
+
+        Benchmark.nbAddFail.addAndGet(addFail);
+        Benchmark.nbRemoveFail.addAndGet(removeFail);
+        Benchmark.nbReadFail.addAndGet(readFail);
 
         Benchmark.timeAdd.addAndGet(timeAdd);
         Benchmark.timeRemove.addAndGet(timeRemove);

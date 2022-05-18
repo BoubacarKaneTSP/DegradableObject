@@ -32,6 +32,9 @@ public class Benchmark {
     public static AtomicLong nbAdd;
     public static AtomicLong nbRemove;
     public static AtomicLong nbRead;
+    public static AtomicLong nbAddFail;
+    public static AtomicLong nbRemoveFail;
+    public static AtomicLong nbReadFail;
     public static AtomicBoolean flag;
 
     @Option(name = "-type", required = true, usage = "type to test")
@@ -109,6 +112,10 @@ public class Benchmark {
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
+
+                nbAddFail = new AtomicLong(0);
+                nbRemoveFail = new AtomicLong(0);
+                nbReadFail = new AtomicLong(0);
 
                 timeAdd = new AtomicLong(0);
                 timeRemove = new AtomicLong(0);
@@ -207,6 +214,8 @@ public class Benchmark {
                     System.out.println("    -time/read: " + throughputREAD);
                     System.out.println("    -num add: " + nbAdd.get());
                     System.out.println("    -num remove: " + nbRemove.get());
+                    System.out.println("    -num remove fail: " + nbRemoveFail.get());
+                    System.out.println("    -fail remove ratio: " + nbRemoveFail.get()/(nbRemove.get() + nbRemoveFail.get()));
                     System.out.println("    -num read: " + nbRead.get());
                 }
 
