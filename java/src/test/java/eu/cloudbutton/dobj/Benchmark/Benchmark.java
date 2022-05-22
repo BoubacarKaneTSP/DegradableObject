@@ -212,7 +212,7 @@ public class Benchmark {
                 }
 
                 if (_p){
-                    System.out.println(nbCurrentThread + " " + throughputTotal); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
                     System.out.println("    -time/add : " + String.format("%.3E",throughputADD));
                     System.out.println("    -time/remove : " + String.format("%.3E",throughputREMOVE));
                     System.out.println("    -time/remove total : " + String.format("%.3E",throughputREMOVETotal));
