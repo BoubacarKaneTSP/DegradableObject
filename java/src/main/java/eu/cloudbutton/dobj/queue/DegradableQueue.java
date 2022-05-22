@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class provide a Queue.
@@ -66,16 +67,21 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         }
     }
 
-
     private transient Node<E> head;
-
     private transient volatile Node<E> tail;
+    private final CopyOnWriteArrayList<Integer> listNbFor;
+    private ThreadLocal<Integer> countNbFor;
 
     /**
      * Create an empty queue.
      */
     public DegradableQueue() {
         tail = head = new Node<>(null);
+        listNbFor = new CopyOnWriteArrayList<>();
+        countNbFor = ThreadLocal.withInitial(() -> {
+            listNbFor.add(0);
+            return 0;
+        });
     }
 
     /**
@@ -192,9 +198,10 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
      */
     @Override
     public boolean offer(E e) {
-        final Node<E> newNode = new Node<E>(Objects.requireNonNull(e));
+        final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
         for (Node<E> t = tail, p = t;;) {
+            countNbFor.set(countNbFor.get()+1);
             Node<E> q = p.next;
             if (q == null) {
                 // p is last node
@@ -220,6 +227,15 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         }
     }
 
+    public int getListNbFor(){
+        int val = 0;
+
+        for (Integer integer: listNbFor){
+            val += integer;
+        }
+
+        return val;
+    }
 
     @Override
     public E remove(){

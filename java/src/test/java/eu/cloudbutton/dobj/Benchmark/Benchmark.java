@@ -6,6 +6,7 @@ import eu.cloudbutton.dobj.Benchmark.Tester.Filler;
 import eu.cloudbutton.dobj.Benchmark.Tester.Tester;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.queue.DegradableQueue;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -107,6 +108,7 @@ public class Benchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
+            Object object = null;
 
             for (int nbCurrentThread = 2; nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicLong(0);
@@ -122,7 +124,7 @@ public class Benchmark {
                 timeRead = new AtomicLong(0);
                 for (int a = 0; a < nbTest; a++) {
 
-                    Object object = Factory.createObject(type);
+                    object = Factory.createObject(type);
 
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);
@@ -217,6 +219,7 @@ public class Benchmark {
                     System.out.println("    -num remove fail: " + nbRemoveFail.get());
                     System.out.println("    -fail remove ratio: " + nbRemoveFail.get()/(double) (nbRemove.get() + nbRemoveFail.get()));
                     System.out.println("    -num read: " + nbRead.get());
+                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getListNbFor()/nbAdd.get() );
                 }
 
                 nbCurrentThread *= 2;
