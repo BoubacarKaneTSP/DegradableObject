@@ -189,15 +189,16 @@ public class Benchmark {
                 }
 
                 long timeTotal;
-                double throughputADD, throughputREMOVE, throughputREAD, throughputTotal;
+                double throughputADD, throughputREMOVE, throughputREMOVETotal, throughputREAD, throughputTotal;
 
                 timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
                 throughputADD = (nbAdd.get() / (double) timeTotal) * 1_000_000_000;
                 throughputREMOVE = (nbRemove.get() / (double) timeTotal) * 1_000_000_000;
+                throughputREMOVETotal = ((nbRemove.get() + nbRemoveFail.get() )/ (double) timeTotal) * 1_000_000_000;
                 throughputREAD = (nbRead.get() / (double) timeTotal) * 1_000_000_000;
 
-                throughputTotal = throughputADD + throughputREMOVE + throughputREAD;
+                throughputTotal = throughputADD + throughputREMOVE + throughputREAD + throughputREMOVETotal;
 
                 if (_s){
 
@@ -212,9 +213,10 @@ public class Benchmark {
 
                 if (_p){
                     System.out.println(nbCurrentThread + " " + throughputTotal); // printing the throughput per op for nbCurrentThread thread(s)
-                    System.out.println("    -time/add : " + throughputADD);
-                    System.out.println("    -time/remove : " + throughputREMOVE);
-                    System.out.println("    -time/read: " + throughputREAD);
+                    System.out.println("    -time/add : " + String.format("%.3E",throughputADD));
+                    System.out.println("    -time/remove : " + String.format("%.3E",throughputREMOVE));
+                    System.out.println("    -time/remove total : " + String.format("%.3E",throughputREMOVETotal));
+                    System.out.println("    -time/read: " + String.format("%.3E",throughputREAD));
                     System.out.println("    -num add: " + nbAdd.get());
                     System.out.println("    -num remove: " + nbRemove.get());
                     System.out.println("    -num remove fail: " + nbRemoveFail.get());
