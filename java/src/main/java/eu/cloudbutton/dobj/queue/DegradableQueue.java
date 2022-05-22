@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.queue;
 
+import eu.cloudbutton.dobj.counter.DegradableCounter;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
@@ -69,8 +70,8 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
 
     private transient Node<E> head;
     private transient volatile Node<E> tail;
-    private final CopyOnWriteArrayList<Integer> listNbFor;
-    private ThreadLocal<Integer> countNbFor;
+    private final CopyOnWriteArrayList<Long> listNbFor;
+    private DegradableCounter countNbFor;
 
     /**
      * Create an empty queue.
@@ -78,10 +79,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     public DegradableQueue() {
         tail = head = new Node<>(null);
         listNbFor = new CopyOnWriteArrayList<>();
-        countNbFor = ThreadLocal.withInitial(() -> {
-            listNbFor.add(0);
-            return 0;
-        });
+        countNbFor = new DegradableCounter();
     }
 
     /**
@@ -201,7 +199,9 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
         for (Node<E> t = tail, p = t;;) {
-            countNbFor.set(countNbFor.get()+1);
+
+            countNbFor.incrementAndGet();
+
             Node<E> q = p.next;
             if (q == null) {
                 // p is last node
@@ -227,14 +227,12 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         }
     }
 
-    public int getListNbFor(){
-        int val = 0;
+    public void resetNbFor(){
+        countNbFor = new DegradableCounter();
+    }
 
-        for (Integer integer: listNbFor){
-            val += integer;
-        }
-
-        return val;
+    public long getNbFor(){
+        return countNbFor.read();
     }
 
     @Override

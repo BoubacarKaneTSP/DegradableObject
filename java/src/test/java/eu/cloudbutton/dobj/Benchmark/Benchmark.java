@@ -134,6 +134,7 @@ public class Benchmark {
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
 
+                    ((DegradableQueue)object).resetNbFor();
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
@@ -219,7 +220,7 @@ public class Benchmark {
                     System.out.println("    -num remove fail: " + nbRemoveFail.get());
                     System.out.println("    -fail remove ratio: " + nbRemoveFail.get()/(double) (nbRemove.get() + nbRemoveFail.get()));
                     System.out.println("    -num read: " + nbRead.get());
-                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getListNbFor()/nbAdd.get() );
+                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
                 nbCurrentThread *= 2;
