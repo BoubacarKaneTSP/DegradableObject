@@ -198,7 +198,7 @@ public class Benchmark {
                 throughputREMOVETotal = ((nbRemove.get() + nbRemoveFail.get() )/ (double) timeTotal) * 1_000_000_000;
                 throughputREAD = (nbRead.get() / (double) timeTotal) * 1_000_000_000;
 
-                throughputTotal = throughputADD + throughputREMOVE + throughputREAD + throughputREMOVETotal;
+                throughputTotal = throughputADD + throughputREAD + throughputREMOVETotal;
 
                 if (_s){
 
