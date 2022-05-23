@@ -137,8 +137,8 @@ public class App {
         List<Integer> listNbThread = new ArrayList<>();
         listNbThread.add(1);
         listNbThread.add(16);
-        for (int nbCurrThread: listNbThread){
-//        for (int nbCurrThread = 1; nbCurrThread <= nbThreads;) {
+//        for (int nbCurrThread: listNbThread){
+        for (int nbCurrThread = 1; nbCurrThread <= nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
