@@ -34,7 +34,7 @@ public class Database {
         Class cls;
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.Counter."+typeCounter);
+            cls = Class.forName("eu.cloudbutton.dobj.counter."+typeCounter);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeCounter);
         }
@@ -42,7 +42,7 @@ public class Database {
         factory.setFactoryCounter(cls);
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.Set."+typeSet);
+            cls = Class.forName("eu.cloudbutton.dobj.set."+typeSet);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeSet);
         }
@@ -50,7 +50,7 @@ public class Database {
         factory.setFactorySet(cls);
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.Queue."+typeQueue);
+            cls = Class.forName("eu.cloudbutton.dobj.queue."+typeQueue);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeQueue);
         }
@@ -58,7 +58,7 @@ public class Database {
         factory.setFactoryQueue(cls);
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.Map."+typeMap);
+            cls = Class.forName("eu.cloudbutton.dobj.map."+typeMap);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeMap);
         }
