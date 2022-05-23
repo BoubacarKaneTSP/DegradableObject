@@ -243,7 +243,7 @@ public class App {
                     System.out.print(" Throughput for all type of operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+ (nbOp / (double) timeTotal) * 1_000_000_000);
+                    System.out.println(" - "+ String.format("%.3E",(nbOp / (double) timeTotal) * 1_000_000_000));
                     System.out.println("* Proportion of failed operations : " + (nbOpTotalFailed / (double) nbOpTotal) * 100);
 
                 }
@@ -271,7 +271,7 @@ public class App {
                         System.out.print(" Throughput for "+op+" operations ");
                         for (int j = 0; j < nbSign; j++) System.out.print("-");
                         System.out.println();
-                        System.out.println(" - "+ (nbOp / (double) timeTotal) * 1_000_000_000);
+                        System.out.println(" - "+String.format("%.3E", (nbOp / (double) timeTotal) * 1_000_000_000));
                         System.out.println("* Proportion of failed " + op + " operations : " + (nbOperationsFailed.get(op).get() / (double) nbOperations.get(op).get()) * 100);
                     }
 
