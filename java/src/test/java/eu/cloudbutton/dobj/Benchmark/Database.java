@@ -134,13 +134,6 @@ public class Database {
             }
         }
 
-        int val = 0, m = 0;
-
-        for (AbstractSet set: mapFollowers.values()){
-            val += set.size();
-            m += 1;
-        }
-
 //        System.out.println(Thread.currentThread().getName() + " : " +val/m);
 
 
