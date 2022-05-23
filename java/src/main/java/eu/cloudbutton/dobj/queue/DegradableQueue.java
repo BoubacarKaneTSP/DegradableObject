@@ -264,6 +264,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                     continue restartFromHead;
             }
         }
+	
 /*
         if (head != tail){
             E item = head.next.item;
@@ -272,8 +273,9 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
             return item;
         }
 
-        return null;*/
-
+        return null;
+	*/
+	
     }
 
     @Override
