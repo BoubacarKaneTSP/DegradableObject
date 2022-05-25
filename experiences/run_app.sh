@@ -7,7 +7,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 mvn clean package -f ../java -DskipTests;
 
 echo "********** Test objet java concurrent **********"
-CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set ConcurrentSkipListSet -queue ConcurrentLinkedQueue -counter Counter -map ConcurrentHashMap -distribution 5 15 30 50 -nbTest 1 -time 5 -wTime 2 -p
+CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set ConcurrentSkipListSet -queue DegradableQueue -counter Counter -map ConcurrentHashMap -distribution 5 15 30 50 -nbTest 1 -time 5 -wTime 2 -p -s
 
 echo "********** Test objet degradable **********"
-#CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set DegradableSet -queue MapQueue -counter DegradableCounter -map DegradableMap -distribution 5 15 30 50 -nbTest 5 -time 10 -wTime 5 -s -p
+#CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set DegradableSet -queue DegradableQueue -counter FuzzyCounter -map DegradableMap -distribution 5 15 30 50 -nbTest 1 -time 5 -wTime 2 -p -s
