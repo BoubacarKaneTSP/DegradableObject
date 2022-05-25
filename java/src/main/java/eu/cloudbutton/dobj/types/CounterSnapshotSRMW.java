@@ -2,11 +2,19 @@ package eu.cloudbutton.dobj.types;
 
 import org.javatuples.Pair;
 
+/**
+ * This class build a single reader multiple writer Counter on top of a Snapshot object.
+ *
+ * @author Boubacar Kane
+ * */
 public class CounterSnapshotSRMW extends AbstractCounter{
 
     private final SnapshotSRMW<Integer> snapobject;
     private final ThreadLocal<Integer> counterThreadLocal;
 
+    /**
+     * Creates a new Counter initialized with the initial value 0.
+     */
     public CounterSnapshotSRMW(){
         snapobject = new SnapshotSRMW<>();
         counterThreadLocal = ThreadLocal.withInitial(
@@ -20,17 +28,29 @@ public class CounterSnapshotSRMW extends AbstractCounter{
         );
     }
 
-    public void increment(int val) {
-        counterThreadLocal.set(counterThreadLocal.get()+val);
+    /**
+     * Adds the given value to the current value.
+     * @param delta the value added to the Counter.
+     */
+    @Override
+    public void increment(int delta) {
+        counterThreadLocal.set(counterThreadLocal.get()+delta);
         snapobject.update(counterThreadLocal.get());
     }
 
+    /**
+     * Increments the current value of the Counter.
+     */
     @Override
     public void increment() {
         counterThreadLocal.set(counterThreadLocal.get()+1);
         snapobject.update(counterThreadLocal.get());
     }
 
+    /**
+     * Returns the current value of the Counter.
+     * @return the current value stored by this object.
+     */
     @Override
     public int read() {
         int result = 0;
@@ -42,13 +62,5 @@ public class CounterSnapshotSRMW extends AbstractCounter{
         return result;
     }
 
-    @Override
-    public void write() {
-        increment();
-    }
 
-    @Override
-    public void write(int val) {
-        increment(val);
-    }
 }

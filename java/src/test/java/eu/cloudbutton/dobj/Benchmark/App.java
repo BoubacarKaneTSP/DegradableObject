@@ -1,10 +1,9 @@
-package eu.cloudbutton.dobj;
+package eu.cloudbutton.dobj.Benchmark;
 
 import eu.cloudbutton.dobj.types.*;
-import nl.peterbloem.powerlaws.Discrete;
+import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Localizable;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
@@ -17,7 +16,6 @@ import java.util.*;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -113,7 +111,7 @@ public class App {
             System.err.println();
 
             // print option sample. This is useful some time
-            System.err.println("  Example: java eu.cloudbutton.dobj.App" + parser.printExample(ALL));
+            System.err.println("  Example: java eu.cloudbutton.dobj.Benchmark.App" + parser.printExample(ALL));
 
             return;
         }
@@ -146,8 +144,7 @@ public class App {
                 System.out.println();
             }
 
-            for (double alpha :listAlpha) {
-
+            for (double alpha : listAlpha) {
                 if (_p){
                     System.out.println();
                     for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
@@ -186,7 +183,8 @@ public class App {
                                 alpha,
                                 latch,
                                 latchFillDatabase,
-                                factory);
+                                factory,
+                                i);
                         callables.add(retwisApp);
                     }
 
@@ -202,10 +200,22 @@ public class App {
                         for (Future<Void> future : futures) {
                             future.get();
                         }
-                    } catch (CancellationException | ExecutionException e) {
+                    } catch (OutOfMemoryError | CancellationException | ExecutionException e) {
                         //ignore
-                        System.out.println(e);
+                        int x = 0, y = 0;
+                        for (AbstractSet<String> set : follower.values()){
+                            if (set.isEmpty()){
+                                x++;
+                            }else if (set.size() == 50000){
+                                y++;
+                            }
+                        }
+                        System.out.println("nb de user qui ne follow personne : " + x);
+                        System.out.println("nb de user qui follow le max de personne : " + y);
+                        e.printStackTrace();
+                        System.exit(0);
                     }
+
                     TimeUnit.SECONDS.sleep(5);
                     executor.shutdown();
                 }
@@ -226,7 +236,7 @@ public class App {
                         fileWriter = new FileWriter("retwis_all_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(alpha +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
+                    printWriter.println(i +" "+ (double)timeTotalOperations/1_000_000_000/nbTotalOperations);
                 }
 
                 if (_p){
@@ -248,7 +258,7 @@ public class App {
                         else
                             fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(alpha +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
+                        printWriter.println(i +" "+ (double)timeOperations.get(op).get()/1_000_000_000/(double)nbOperations.get(op).read());
                     }
 
                     if (_p){
@@ -280,7 +290,8 @@ public class App {
 
     public class RetwisApp implements Callable<Void>{
 
-        protected static final int ITEM_PER_THREAD = 1000;
+        private  final int NB_USERS = 500000;
+        protected int ITEM_PER_THREAD = 0;
         protected final ThreadLocalRandom random;
         private final String objectSet;
         private final String objectList;
@@ -291,7 +302,7 @@ public class App {
         private final CountDownLatch latchFillDatabase;
         private final Factory factory;
 
-        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory) {
+        public RetwisApp(String objectSet, String objectList, String objectCounter, int[] ratios, double alpha, CountDownLatch latch,CountDownLatch latchFillDatabase, Factory factory, int nbThread) {
             this.random = ThreadLocalRandom.current();
             this.objectSet = objectSet;
             this.objectList = objectList;
@@ -301,6 +312,7 @@ public class App {
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             this.factory = factory;
+            this.ITEM_PER_THREAD = NB_USERS / nbThread; // the loop start with j=0
         }
 
         @Override
@@ -324,6 +336,8 @@ public class App {
                 latch.countDown();
 
                 latch.await();
+
+                System.out.println(follower.size());
 
                 //warm up
                 while (flag.get()){
@@ -409,48 +423,72 @@ public class App {
 
             int n;
             String userA;
-            String userB = null;
+            String userB;
 
+            System.out.println(Thread.currentThread().getName() + " is starting to fill...");
             //adding users
-            for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
+            for (int i = 0; i < ITEM_PER_THREAD; i++) {
                 addUser("user_"+Thread.currentThread().getName()+"_"+i);
             }
+
+            System.out.println(Thread.currentThread().getName() + " is done to fill...");
 
             latchFillDatabase.countDown();
 
             latchFillDatabase.await();
-            
+
+            System.out.println(Thread.currentThread().getName() + " is starting to follow...");
             int nbUsers = follower.keySet().size();
             String[] users = follower.keySet().toArray(new String[nbUsers]);
 
+            int bound = 1000;
             
-            List<Integer> data = new Discrete(1, alpha).generate(1000);
+            List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
+
+            int i = 0, max = 100000/(175000000/nbUsers);
+
+
+            for (int val: data){
+                if (val >= max) {
+                    data.set(i,max);
+                }
+                if (val < 0)
+                    data.set(i, 0);
+                i++;
+            }
 
 //            System.out.println("fill");
 
             //Following phase
-            for (int i = 0; i < ITEM_PER_THREAD/2; i++) {
+            for (i = 0; i < ITEM_PER_THREAD; i++) {
 
                 userA = "user_"+Thread.currentThread().getName()+"_"+i;
                 
-                int nbFollow = Math.min(Math.max(data.get(random.nextInt(1000)), 0), nbUsers);
-                
-                for(int j = 0; j < nbFollow; j++){
-//                    System.out.println("follow");
+                int nbFollow = data.get(random.nextInt(bound)); //10⁵ is ~ the number of follow max on twitter and 175000000 is the number of user on twitter (stats from the article)
+//                System.out.println(nbFollow);
 
-                    n = random.nextInt(nbUsers);
-                    userB = users[n];
-                    
-                    follow(userA, userB);
-                }
+                    for(int j = 0; j < nbFollow; j++){
+
+
+//                    if (nbFollow >= nbUsers)
+//                        System.out.println("Nb follow max : " + nbUsers);
+
+                        n = random.nextInt(nbUsers);
+//                    userB = users[j];
+                        userB = users[n];
+
+                        follow(userA, userB);
+                    }
             }
+
+            System.out.println(Thread.currentThread().getName() + " is done to follow...");
 
         }
 
         public long compute(char type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
             long startTime = 0L, endTime= 0L;
-            int i, n = random.nextInt(ITEM_PER_THREAD);
+            int i, n = random.nextInt(ITEM_PER_THREAD*2);
             String userA;
             String userB;
 

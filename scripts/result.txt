@@ -1,0 +1,816 @@
+ignite AtomicLong DistributedComputing N +incrementAndGet
+ignite ConcurrentHashMap UriDeploymentHttpScanner Y +get +putIfAbsent
+ignite ConcurrentHashMap UriDeploymentFileScanner Y +get +putIfAbsent
+ignite ConcurrentHashMap AlignedBuffersDirectFileIOFactory Y put
+ignite ConcurrentHashMap ZookeeperDiscoveryImpl Y +get +putIfAbsent remove values
+ignite AtomicLong ZookeeperDiscoveryStatistics Y value
+ignite ConcurrentHashMap ZkClusterNodes N +put +remove values
+ignite ConcurrentHashMap ZkCommunicationErrorProcessFuture Y entrySet +get put size +values
+ignite ConcurrentHashMap TcpDiscoveryZookeeperIpFinder Y +get put
+ignite ConcurrentHashMap ZkTestClientCnxnSocketNIO N clear +get put
+ignite ConcurrentHashMap ZookeeperDiscoverySpiTestBase N put
+ignite AtomicLong ZookeeperDiscoveryRandomStopOrFailConcurrentTest Y addAndGet get incrementAndGet
+ignite ConcurrentHashMap CassandraSessionImpl Y +computeIfAbsent
+ignite ConcurrentHashMap DiskPageCompressionIntegrationTest Y put remove +values
+ignite ConcurrentLinkedQueue ClientAbstractMultiThreadedSelfTest N add size
+ignite AtomicLong ClientAbstractMultiThreadedSelfTest N +getAndIncrement
+ignite ConcurrentHashMap HibernateAccessStrategyFactory Y +get +putIfAbsent
+ignite ConcurrentHashMap ApplicationMaster Y 
+ignite AtomicLong ValidateIndexesClosure Y compareAndSet +get
+ignite ConcurrentHashMap IgniteStatisticsRepository Y clear computeIfPresent +entrySet +get put remove
+ignite ConcurrentHashMap IgniteStatisticsInMemoryStoreImpl Y clear compute computeIfPresent keySet put remove +size
+ignite ConcurrentHashMap StatisticsGatherer Y clear +get +put +putIfAbsent remove size values
+ignite ConcurrentHashMap ReduceIndex N +get +put
+ignite ConcurrentHashMap PartitionReservationManager Y 
+ignite ConcurrentHashMap MapNodeResults Y +get keySet +put +remove values
+ignite ConcurrentHashMap GridMapQueryExecutor Y +get +putIfAbsent +remove values
+ignite ConcurrentHashMap AbstractReducer N +get +put
+ignite ConcurrentHashMap GridReduceQueryExecutor Y entrySet +get put +remove values
+ignite AtomicLong GridReduceQueryExecutor Y +incrementAndGet
+ignite ConcurrentHashMap H2Schema Y +get +putIfAbsent remove +values
+ignite ConcurrentHashMap SchemaManager Y 
+ignite ConcurrentHashMap QueryContextRegistry Y +get keySet +putIfAbsent +remove
+ignite ConcurrentHashMap GridH2Table Y +get put +remove
+ignite AtomicLong GridH2Table Y +get incrementAndGet +longValue
+ignite ConcurrentHashMap GridLuceneDirectory N containsKey +get isEmpty +keySet +put +remove
+ignite AtomicLong GridLuceneDirectory N addAndGet +get
+ignite AtomicLong GridLuceneFile Y decrementAndGet +get incrementAndGet
+ignite ConcurrentHashMap GridH2MetaTable Y clear +get put remove +size +values
+ignite AtomicLong GridH2MetaTable Y +get incrementAndGet
+ignite ConcurrentLinkedQueue ConcurrentStripedPool Y 
+ignite ConcurrentHashMap CommandProcessor Y put +remove +values
+ignite AtomicLong CommandProcessor Y +incrementAndGet
+ignite ConcurrentHashMap LongRunningQueryManager Y clear entrySet put remove
+ignite AtomicLong IgniteDbSingleNodeWithIndexingPutGetTest N addAndGet
+ignite ConcurrentHashMap IgniteCacheConfigVariationsQueryTest Y get put size
+ignite ConcurrentLinkedQueue BinaryTypeRegistrationTest Y add clear size
+ignite ConcurrentHashMap AbstractIndexingCommonTest Y +computeIfAbsent get
+ignite ConcurrentHashMap IndexesRebuildTaskEx Y clear computeIfAbsent entrySet getOrDefault
+ignite AtomicLong IndexingTestUtils N incrementAndGet
+ignite ConcurrentHashMap CacheMvccSqlUpdateCountersTest N entrySet get keySet put
+ignite AtomicLong CacheMvccSqlUpdateCountersTest N addAndGet
+ignite ConcurrentHashMap IgniteCacheAbstractQuerySelfTest Y clear entrySet +get put remove +size
+ignite ConcurrentLinkedQueue CacheRegisterMetadataLocallyTest Y add clear forEach size
+ignite AtomicLong IgniteCachePartitionedQueryMultiThreadedSelfTest N +incrementAndGet
+ignite AtomicLong IgniteSqlSplitterSelfTest N incrementAndGet
+ignite ConcurrentHashMap JavaEmbeddedIgniteRDDWithLocalStoreSelfTest Y +get put remove
+ignite ConcurrentHashMap CacheDeploymentTestStoreFactory Y clear +get put remove
+ignite AtomicLong JmhWaitStategyBenchmark Y 
+ignite AtomicLong JmhPartitionUpdateCounterBenchmark Y +getAndAdd set
+ignite AtomicLong JmhIncrementBenchmark Y +addAndGet AtomicLong +incrementAndGet
+ignite ConcurrentHashMap ListenedGridTestLog4jLogger Y +putIfAbsent +remove values
+ignite AtomicLong IgniteSqlDeleteFilteredBenchmark Y get getAndAdd
+ignite AtomicLong IgniteSqlUpdateFilteredBenchmark Y get getAndAdd
+ignite AtomicLong RdbmsBenchmark Y +getAndIncrement
+ignite AtomicLong IgniteNativeTxBenchmark Y +getAndIncrement
+ignite ConcurrentHashMap IgniteTransactionalInvokeRetryBenchmark Y 
+ignite ConcurrentHashMap IgniteAtomicInvokeRetryBenchmark Y clear entrySet get +putIfAbsent
+ignite AtomicLong CacheEntryEventProbe N +getAndSet
+ignite AtomicLong MvccUpdateContentionBenchmark Y get incrementAndGet
+ignite ConcurrentHashMap PartitionDataStorage Y +computeIfAbsent +get
+ignite ConcurrentSkipListSet ANNClassificationTrainer N addAll forEach
+ignite ConcurrentHashMap ANNClassificationTrainer Y +centroidStat clsLblsSet counts get +getOrDefault put
+ignite ConcurrentHashMap CrossValidationResult Y forEach put
+ignite ConcurrentHashMap KMeansTrainer N compute entrySet putIfAbsent
+ignite ConcurrentHashMap LocalModelDescriptorStorage Y +entrySet +get put +putIfAbsent remove
+ignite ConcurrentHashMap LocalModelStorageProvider Y +get model put remove
+ignite AtomicLong PartitionDataStorageTest N incrementAndGet intValue
+ignite AtomicLong LocalDatasetBuilderTest N incrementAndGet intValue
+ignite AtomicLong IgniteIndexReader N get set
+ignite ConcurrentHashMap GridCommandHandlerIndexForceRebuildTest Y clear containsKey +get put remove
+ignite AtomicLong GridCommandHandlerTest N +get set
+ignite AtomicLong BaselineEventsTest N get set
+ignite AtomicLong IgniteIndexReaderTest N +get set
+ignite ConcurrentHashMap StatusMatchTable Y +get put
+ignite ConcurrentHashMap AbstractTracingTest Y clear +get put +values
+ignite AtomicLong SortedEvictionPolicy Y incrementAndGet
+ignite AtomicLong EventLocalOrder Y +getAndIncrement
+ignite ConcurrentHashMap BinaryContext Y +entrySet +get put +putIfAbsent
+ignite ConcurrentLinkedQueue IgniteClusterImpl N add
+ignite ConcurrentHashMap MaintenanceFileStore Y put remove +values
+ignite ConcurrentHashMap MaintenanceProcessor Y clear containsKey +get isEmpty putAll +remove
+ignite AtomicLong IndexingDefragmentation N get set
+ignite ConcurrentHashMap IndexKeyFactory Y +containsKey +get put
+ignite ConcurrentHashMap DurableBackgroundCleanupIndexTreeTaskV2 Y clear +entrySet +isEmpty put putAll
+ignite AtomicLong DurableBackgroundCleanupIndexTreeTaskV2 Y addAndGet +get
+ignite ConcurrentHashMap InlineIndexKeyTypeRegistry Y +containsKey +get put
+ignite AtomicLong InlineRecommender Y compareAndSet +get
+ignite ConcurrentHashMap IndexProcessor Y containsKey +get putIfAbsent
+ignite ConcurrentHashMap OptimizedMarshaller Y clear keySet remove
+ignite AtomicLong PageMemoryNoStoreImpl Y +compareAndSet +get
+ignite ConcurrentHashMap IgnitionEx Y 
+ignite ConcurrentHashMap GridKeyLock Y 
+ignite AtomicLong IpcSharedMemoryServerEndpoint Y +compareAndSet +get
+ignite AtomicLong GridCircularBuffer Y +getAndIncrement
+ignite ConcurrentHashMap IgniteUtils N +get +putIfAbsent
+ignite AtomicLong IgniteUtils Y 
+ignite ConcurrentHashMap TimeBag Y computeIfAbsent
+ignite ConcurrentHashMap GridToStringBuilder Y +get putIfAbsent remove
+ignite ConcurrentHashMap GridAnnotationsCache N get putIfAbsent
+ignite ConcurrentLinkedQueue GridNioServer Y isEmpty offer +poll +remove
+ignite AtomicLong GridNioServer Y +get incrementAndGet
+ignite AtomicLong GridNioSessionImpl Y +compareAndSet +get
+ignite AtomicLong GridUnsafeMemory Y 
+ignite AtomicLong IgniteExceptionRegistry Y +get incrementAndGet
+ignite AtomicLong LongSumReducer Y addAndGet +get
+ignite ConcurrentHashMap DistributedProcess Y 
+ignite AtomicLong CdcMain N get set
+ignite ConcurrentHashMap JdbcThinConnection Y 
+ignite ConcurrentHashMap WorkersRegistry Y 
+ignite ConcurrentLinkedQueue GridClientFutureAdapter Y add +poll
+ignite ConcurrentHashMap GridClientImpl Y +get +putIfAbsent
+ignite ConcurrentHashMap GridClientNioTcpConnection Y +get +isEmpty +putIfAbsent remove +values
+ignite AtomicLong GridClientNioTcpConnection Y +getAndIncrement
+ignite ConcurrentLinkedQueue GridClientTopology Y add remove
+ignite ConcurrentHashMap GridClientConnectionManagerAdapter Y clear +get +putIfAbsent remove +values
+ignite ConcurrentHashMap GridClientPartitionAffinity Y +get put +remove
+ignite ConcurrentHashMap GridRouterClientImpl Y +get putIfAbsent
+ignite ConcurrentHashMap TcpIgniteClient Y 
+ignite ConcurrentLinkedQueue ClientCacheAffinityContext Y add
+ignite ConcurrentHashMap ClientClusterGroupImpl Y +get keySet put
+ignite ConcurrentHashMap TcpClientChannel Y put +remove values
+ignite AtomicLong TcpClientChannel Y +getAndIncrement
+ignite ConcurrentHashMap ClientCacheEntryListenersRegistry N computeIfAbsent get
+ignite ConcurrentHashMap ReliableChannel Y +get putIfAbsent remove
+ignite ConcurrentHashMap TcpClientTransactions Y +get put remove
+ignite AtomicLong TcpClientTransactions Y +incrementAndGet
+ignite ConcurrentHashMap GridClientFactory Y +putIfAbsent +remove
+ignite AtomicLong VisorFindAndDeleteGarbageInPersistenceClosure Y compareAndSet +get
+ignite ConcurrentHashMap MarshallerContextImpl N 
+ignite ConcurrentHashMap GridEventStorageManager Y add clear +get highPriorityLsnrs isEmpty lsnrs +putIfAbsent +remove size values
+ignite ConcurrentHashMap GridSystemViewManager Y get put +values
+ignite ConcurrentLinkedQueue GridIoManager Y add remove
+ignite ConcurrentHashMap GridIoManager Y clear +get +putIfAbsent remove
+ignite AtomicLong GridIoManager Y +getAndIncrement
+ignite ConcurrentHashMap GridCheckpointManager Y +get +keySet +putIfAbsent +remove size
+ignite ConcurrentHashMap GridDeploymentLocalStore Y 
+ignite ConcurrentHashMap GridDeployment Y +containsKey +get +putIfAbsent +values
+ignite ConcurrentHashMap GridDeploymentPerVersionStore Y +get remove
+ignite ConcurrentHashMap GridDiscoveryManager Y clear containsKey entrySet +get put +remove +size
+ignite ConcurrentHashMap IndexesRebuildTask Y +put +remove
+ignite ConcurrentHashMap GridEncryptionManager Y entrySet +get put remove values
+ignite ConcurrentLinkedQueue CacheGroupEncryptionKeys Y add addAll +iterator
+ignite ConcurrentHashMap CacheGroupEncryptionKeys Y +computeIfAbsent entrySet +get +keySet put +remove +size
+ignite ConcurrentLinkedQueue CacheGroupPageScanner Y add addAll contains removeIf
+ignite ConcurrentHashMap CacheGroupPageScanner Y +get +isEmpty put remove values
+ignite AtomicLong CacheGroupPageScanner Y addAndGet +get
+ignite ConcurrentHashMap GridClusterStateProcessor Y +get put remove
+ignite ConcurrentHashMap ClusterProcessor Y entrySet put remove
+ignite AtomicLong ClusterProcessor Y getAndIncrement
+ignite ConcurrentHashMap IgniteSecurityProcessor Y +computeIfAbsent remove
+ignite ConcurrentHashMap CacheObjectBinaryProcessorImpl Y clear +containsKey entrySet +get put +size +values
+ignite ConcurrentLinkedQueue BinaryMetadataTransport Y add clear +poll
+ignite ConcurrentHashMap BinaryMetadataTransport Y +get +putIfAbsent remove values
+ignite ConcurrentHashMap BinaryMetadataFileStore Y clear entrySet +get putIfAbsent +remove
+ignite ConcurrentHashMap CacheStoreBalancingWrapper Y +get +putIfAbsent remove
+ignite ConcurrentHashMap GridCacheQueryManager Y +get +putIfAbsent +remove
+ignite ConcurrentHashMap CacheContinuousQueryHandler Y computeIfAbsent entrySet +get remove values
+ignite ConcurrentHashMap CacheContinuousQueryManager Y +get +putIfAbsent +remove values
+ignite AtomicLong CacheContinuousQueryManager Y getAndIncrement
+ignite ConcurrentHashMap GridCacheDistributedQueryManager Y put remove size +values
+ignite ConcurrentHashMap GridCacheWriteBehindStore Y get put remove
+ignite ConcurrentHashMap CacheWeakQueryIteratorsHolder Y clear +put +remove values
+ignite ConcurrentHashMap TxCounters Y 
+ignite AtomicLong TxCounters Y 
+ignite ConcurrentHashMap IgniteTxManager Y +get +put remove +values
+ignite AtomicLong IgniteTxManager Y +get incrementAndGet
+ignite ConcurrentHashMap MvccProcessorImpl Y putIfAbsent remove +values
+ignite ConcurrentHashMap TxLog Y +get +putIfAbsent +remove
+ignite ConcurrentHashMap MvccCachingManager Y +computeIfAbsent +remove
+ignite ConcurrentHashMap GridCacheIoManager N remove
+ignite AtomicLong GridCacheIoManager Y +incrementAndGet
+ignite ConcurrentHashMap GridCacheProcessor Y containsKey +get isEmpty +put +remove +values
+ignite AtomicLong GridCacheProcessor N addAndGet get
+ignite ConcurrentHashMap CacheAffinitySharedManager Y clear +get isEmpty +keySet +put +remove +values
+ignite ConcurrentHashMap LockedEntriesInfo Y entrySet put remove
+ignite ConcurrentHashMap CacheDataStructuresManager Y entrySet +get +putIfAbsent remove values
+ignite AtomicLong PartitionUpdateCounterVolatileImpl Y compareAndSet +get +getAndAdd +incrementAndGet set
+ignite ConcurrentLinkedQueue GridCacheUtils Y add addAll putAll
+ignite ConcurrentHashMap GridCacheUtils Y add addAll putAll
+ignite ConcurrentHashMap GridCacheDatabaseSharedManager Y +computeIfAbsent
+ignite AtomicLong GridCacheDatabaseSharedManager N 
+ignite AtomicLong CachePartitionDefragmentationManager N get set
+ignite ConcurrentLinkedQueue IntervalBasedMeasurement Y offer remove +size
+ignite AtomicLong IntervalBasedMeasurement Y get incrementAndGet set
+ignite ConcurrentHashMap DelayedPageReplacementTracker Y +computeIfAbsent
+ignite AtomicLong PagesWriteSpeedBasedThrottle Y +compareAndSet +get
+ignite ConcurrentHashMap PagesWriteThrottle Y put remove values
+ignite AtomicLong PageMemoryImpl Y decrementAndGet +doubleValue incrementAndGet set
+ignite ConcurrentHashMap IgniteSnapshotManager Y clear +containsKey +get putIfAbsent remove values
+ignite ConcurrentHashMap SnapshotPartitionsVerifyHandler N data +error put
+ignite AtomicLong MemoryCalculator Y +get getAndAdd
+ignite ConcurrentHashMap SharedPageLockTracker Y computeIfAbsent +entrySet remove
+ignite ConcurrentHashMap CheckpointHistory Y clear containsKey +entrySet +get keySet put
+ignite ConcurrentHashMap CheckpointProgressImpl Y +computeIfAbsent +get
+ignite ConcurrentHashMap FileWriteAheadLogManager Y +getOrDefault put putIfAbsent remove
+ignite AtomicLong FileWriteAheadLogManager Y +get set
+ignite ConcurrentHashMap FileHandleManagerImpl N entrySet +get +isEmpty put remove values
+ignite ConcurrentLinkedQueue SegmentObservable Y add forEach
+ignite ConcurrentHashMap SegmentLockStorage Y 
+ignite ConcurrentHashMap IgniteCacheDatabaseSharedManager N clear +get +isEmpty put +size +values
+ignite AtomicLong PagesList N decrementAndGet +get incrementAndGet set
+ignite AtomicLong FilePageStoreManager Y getAndIncrement
+ignite AtomicLong FilePageStore Y +compareAndSet +get getAndSet set
+ignite AtomicLong BPlusTree N get set
+ignite ConcurrentHashMap PartitionAllocationMap Y clear entrySet +put
+ignite AtomicLong MetaStorage Y get set
+ignite AtomicLong IgniteCacheOffheapManagerImpl Y addAndGet +get set
+ignite AtomicLong PartitionUpdateCounterTrackingImpl N +compareAndSet +get +getAndAdd +incrementAndGet queue set
+ignite ConcurrentHashMap ClusterCachesInfo Y +get put remove
+ignite ConcurrentHashMap GridCacheSharedContext Y computeIfPresent +containsKey +get keySet put remove +values
+ignite ConcurrentHashMap GridCacheDeploymentManager Y entrySet +get +putIfAbsent remove size values
+ignite AtomicLong GridDhtLocalPartition Y 
+ignite ConcurrentHashMap PartitionsEvictManager Y computeIfAbsent keySet remove +values
+ignite ConcurrentHashMap GridDhtTxAbstractEnlistFuture Y +get put remove values
+ignite ConcurrentHashMap GridDhtPartitionDemander Y +get
+ignite AtomicLong GridDhtPartitionDemander Y accumulateAndGet get
+ignite ConcurrentHashMap ExchangeLatchManager Y computeIfAbsent +containsKey entrySet +get +keySet remove
+ignite ConcurrentHashMap GridDhtPartitionsExchangeFuture Y clear containsKey entrySet put
+ignite ConcurrentHashMap GridDhtTxLocalAdapter N keySet
+ignite ConcurrentHashMap GridDhtColocatedLockFuture Y +get put
+ignite AtomicLong GridDhtAssignmentFetchFuture Y +getAndIncrement
+ignite AtomicLong GridNearTxLocal Y addAndGet +get
+ignite ConcurrentHashMap GridNearTxEnlistFuture Y 
+ignite ConcurrentHashMap GridNearLockFuture Y +get put
+ignite ConcurrentHashMap GridNearTxQueryResultsEnlistFuture Y 
+ignite ConcurrentHashMap IgniteTxMappingsImpl Y clear +get +isEmpty put +remove size +values
+ignite ConcurrentHashMap GridNearReadRepairAbstractFuture N clear containsValue entrySet +isEmpty put values
+ignite ConcurrentHashMap CachesRegistry Y clear containsKey +get +put +remove
+ignite ConcurrentLinkedQueue GridCacheMvccManager N addAll +isEmpty putAll removeIf
+ignite ConcurrentHashMap GridCacheMvccManager Y +get +put +remove +size +values
+ignite AtomicLong GridCacheMvccManager N +getAndAdd
+ignite ConcurrentHashMap GridCacheSharedTtlCleanupManager Y computeIfPresent entrySet +isEmpty put remove
+ignite ConcurrentHashMap GridCachePartitionExchangeManager Y +get putIfAbsent +remove +values
+ignite AtomicLong GridCachePartitionExchangeManager Y compareAndSet
+ignite ConcurrentLinkedQueue ExchangeDiscoveryEvents Y add isEmpty
+ignite ConcurrentHashMap GridDeferredAckMessageSender Y +get +putIfAbsent remove values
+ignite AtomicLong GridCacheVersionManager Y 
+ignite ConcurrentHashMap RunningQueryManager Y +get +putIfAbsent +remove +values
+ignite AtomicLong RunningQueryManager Y +incrementAndGet
+ignite ConcurrentHashMap GridQueryProcessor Y 
+ignite ConcurrentHashMap IndexBuildStatusStorage Y 
+ignite ConcurrentHashMap IgniteAuthenticationProcessor Y +get put remove values
+ignite ConcurrentHashMap GridMarshallerMappingProcessor Y +get values
+ignite ConcurrentHashMap ClientResourceRegistry Y entrySet +get put +remove
+ignite AtomicLong ClientResourceRegistry Y +incrementAndGet
+ignite ConcurrentHashMap ClientConnectionContext Y clear +get put remove values
+ignite AtomicLong ClientConnectionContext Y decrementAndGet +get incrementAndGet
+ignite ConcurrentHashMap ClientServiceInvokeRequest Y +get putIfAbsent
+ignite ConcurrentHashMap PlatformDotNetEntityFrameworkCacheExtension Y +containsKey put remove
+ignite ConcurrentHashMap DataStreamerImpl Y clear +get put remove values
+ignite AtomicLong DataStreamerImpl Y +incrementAndGet
+ignite ConcurrentHashMap TraceableMessagesTable Y +get put
+ignite ConcurrentHashMap DurableBackgroundTasksProcessor Y 
+ignite ConcurrentHashMap OdbcRequestHandler Y +get put remove +size values
+ignite ConcurrentHashMap JdbcRequestHandler Y clear +entrySet +get put +remove +size values
+ignite ConcurrentHashMap MetricRegistry Y 
+ignite AtomicLong HitRateMetric Y addAndGet +compareAndSet +get
+ignite AtomicLong HistogramMetricImpl N 
+ignite ConcurrentHashMap GridMetricManager Y 
+ignite ConcurrentHashMap GridResourceIoc Y clear +remove size
+ignite ConcurrentSkipListSet GridCacheLockImpl Y add contains remove
+ignite ConcurrentHashMap DataStructuresProcessor Y clear containsKey +entrySet put
+ignite ConcurrentHashMap IgniteServiceProcessor Y clear +computeIfAbsent +get +remove values
+ignite ConcurrentLinkedQueue GridServiceProcessor N 
+ignite ConcurrentHashMap GridServiceProcessor Y +get +putIfAbsent +remove
+ignite ConcurrentHashMap ServiceContextImpl Y +get put
+ignite ConcurrentHashMap ServiceDeploymentManager Y 
+ignite AtomicLong GridJobProcessor Y compareAndSet +get
+ignite ConcurrentLinkedQueue SimpleDistributedProperty Y add forEach
+ignite ConcurrentHashMap DistributedConfigurationProcessor Y +containsKey +get put +values
+ignite ConcurrentHashMap GridContinuousProcessor Y containsKey entrySet +get isEmpty +keySet put putIfAbsent +remove +size values
+ignite AtomicLong GridContinuousProcessor Y incrementAndGet
+ignite ConcurrentHashMap QueryCommandHandler Y entrySet +get put remove
+ignite AtomicLong QueryCommandHandler Y +getAndIncrement
+ignite AtomicLong GridTaskCommandHandler Y getAndIncrement
+ignite ConcurrentHashMap GridRestProcessor Y get put putIfAbsent remove
+ignite AtomicLong GridRestProcessor Y 
+ignite ConcurrentHashMap GridTcpRestNioListener Y computeIfAbsent computeIfPresent remove
+ignite ConcurrentHashMap DistributedMetaStorageImpl Y clear put +remove values
+ignite AtomicLong IgniteUuid Y +get getAndIncrement incrementAndGet
+ignite ConcurrentHashMap JobStealingCollisionSpi Y +get putIfAbsent remove
+ignite AtomicLong TcpDiscoveryStatistics Y compareAndSet +get set
+ignite ConcurrentLinkedQueue ServerImpl Y add +poll
+ignite ConcurrentHashMap ServerImpl Y clear entrySet +get +putIfAbsent +remove +size values
+ignite ConcurrentHashMap ClientImpl Y clear +get put +putIfAbsent +remove +values
+ignite AtomicLong IgniteSpiThread Y +incrementAndGet
+ignite AtomicLong IgniteThread Y +incrementAndGet
+ignite ConcurrentHashMap ConcurrentHashMap8 Y put
+ignite ConcurrentLinkedQueue CacheJdbcPojoStoreTest N add clear +isEmpty size
+ignite ConcurrentHashMap CacheStoreReadFromBackupTest Y entrySet +get +keySet put remove
+ignite ConcurrentHashMap BreakRebalanceChainTest Y entrySet put
+ignite ConcurrentLinkedQueue QueueSizeCounterMultiThreadedTest N add +poll size
+ignite ConcurrentHashMap MarshallerContextTestImpl Y 
+ignite AtomicLong GridSnapshotLockSelfTest N addAndGet +get
+ignite ConcurrentHashMap GridConcurrentLinkedHashMapMultiThreadedSelfTest N +put
+ignite ConcurrentHashMap AbstractCdcTest N computeIfAbsent +get
+ignite AtomicLong CdcCacheVersionTest N get incrementAndGet
+ignite ConcurrentHashMap Parameters Y +get put
+ignite ConcurrentHashMap ConfigVariationsTestSuiteBuilder Y +get put
+ignite AtomicLong GridTestSafeThreadFactory Y incrementAndGet
+ignite ConcurrentHashMap AbstractTestDependencyResolver Y 
+ignite ConcurrentLinkedQueue GridSpiTestContext Y add clear contains +iterator +remove
+ignite ConcurrentHashMap GridSpiTestContext Y 
+ignite ConcurrentHashMap IgniteProcessProxy Y clear +get keySet +putIfAbsent remove values
+ignite ConcurrentHashMap GridAbstractTest Y 
+ignite ConcurrentHashMap GridSpiAbstractTest Y get put
+ignite ConcurrentHashMap GridTestUtils N entrySet +get putIfAbsent
+ignite ConcurrentHashMap TestCachingMetadataHandler Y +get +put +values
+ignite ConcurrentHashMap OptimizedObjectStreamSelfTest Y 
+ignite ConcurrentHashMap IgniteClientReconnectAbstractTest N keySet put
+ignite AtomicLong IpcSharedMemoryBenchmarkReader N addAndGet getAndSet
+ignite AtomicLong IpcSharedMemoryBenchmarkWriter N addAndGet getAndSet
+ignite AtomicLong AbstractBaseIntMapTest N addAndGet get
+ignite ConcurrentHashMap GridNioSelfTest Y entrySet get put
+ignite AtomicLong GridNioSelfTest Y +get incrementAndGet
+ignite ConcurrentHashMap GridOffHeapPartitionedMapPerformanceAbstractTest Y 
+ignite AtomicLong GridOffHeapPartitionedMapPerformanceAbstractTest N addAndGet +getAndSet
+ignite ConcurrentHashMap GridOffHeapPartitionedMapAbstractSelfTest Y 
+ignite ConcurrentHashMap GridOffHeapMapAbstractSelfTest Y 
+ignite AtomicLong GridFutureQueueTest Y decrementAndGet +get +incrementAndGet
+ignite ConcurrentHashMap GridConcurrentMultiPairQueueTest N +containsKey +get +isEmpty put remove
+ignite AtomicLong MetricsSelfTest Y 
+ignite ConcurrentLinkedQueue IgniteLocalNodeMapBeforeStartTest N add poll size
+ignite ConcurrentHashMap GridDiscoveryEventSelfTest N +get put size
+ignite AtomicLong MasterKeyChangeTest N +get incrementAndGet
+ignite ConcurrentLinkedQueue ThinClientAbstractPartitionAwarenessTest N clear offer +poll
+ignite ConcurrentHashMap GridDeploymentMessageCountSelfTest Y put values
+ignite ConcurrentHashMap GridFactoryVmShutdownTest N +put +replace
+ignite ConcurrentHashMap CacheFreeListSelfTest N isEmpty +put +remove +size +values
+ignite ConcurrentHashMap IgniteDbPutGetWithCacheStoreTest Y clear +get put remove size
+ignite ConcurrentHashMap BPlusTreeSelfTest Y 
+ignite AtomicLong BPlusTreeSelfTest Y compareAndSet
+ignite ConcurrentHashMap TestCertificateSecurityProcessor N containsKey +get put remove
+ignite ConcurrentLinkedQueue AbstractRemoteSecurityContextCheckTest Y 
+ignite ConcurrentHashMap AbstractRemoteSecurityContextCheckTest Y clear forEach +get put
+ignite ConcurrentHashMap GridCacheBinaryStoreAbstractSelfTest Y +get put remove
+ignite ConcurrentLinkedQueue BinaryMetadataUpdatesFlowTest Y add +isEmpty +poll
+ignite ConcurrentHashMap CacheStoreTxPutAllMultiNodeTest Y +get put remove
+ignite ConcurrentHashMap IgniteCacheReadThroughStoreCallTest Y clear +get put remove
+ignite ConcurrentHashMap CacheDataPageScanQueryTest N +isEmpty put remove +size
+ignite ConcurrentHashMap CacheContinuousQueryVariationsTest N +get put remove
+ignite ConcurrentHashMap CacheContinuousQueryFactoryFilterRandomOperationTest N +get put remove
+ignite ConcurrentHashMap CacheContinuousQueryFailoverAbstractSelfTest Y clear entrySet get isEmpty put remove size values
+ignite AtomicLong CacheContinuousQueryFailoverAbstractSelfTest Y +get incrementAndGet
+ignite ConcurrentHashMap CacheContinuousQueryCounterAbstractTest N +get put size
+ignite ConcurrentHashMap CacheKeepBinaryIterationStoreEnabledTest Y +get +isEmpty put remove
+ignite ConcurrentSkipListSet GridCacheContinuousQueryMultiNodesFilteringTest N add
+ignite ConcurrentHashMap GridCacheContinuousQueryMultiNodesFilteringTest Y +get put
+ignite ConcurrentHashMap CacheContinuousQueryOrderingEventTest Y +put
+ignite ConcurrentHashMap CacheContinuousQueryRandomOperationsTest N +get put putAll remove
+ignite ConcurrentLinkedQueue IgniteCacheContinuousQueryImmutableEntryTest Y add clear isEmpty
+ignite ConcurrentLinkedQueue CacheContinuousQueryEventBufferTest N +poll
+ignite ConcurrentHashMap GridCacheContinuousQueryAbstractSelfTest Y clear equals put size
+ignite ConcurrentHashMap GridCacheWriteBehindStoreAbstractTest N +putIfAbsent values
+ignite ConcurrentHashMap GridCacheWriteBehindStoreAbstractSelfTest N +putIfAbsent values
+ignite ConcurrentHashMap IgniteCacheGroupsTest Y 
+ignite ConcurrentHashMap IgniteCacheExpireAndUpdateConsistencyTest N +get putIfAbsent
+ignite ConcurrentHashMap IgniteTxMultiThreadedAbstractTest N 
+ignite ConcurrentLinkedQueue TxPartitionCounterStateOnePrimaryOneBackupTest Y add +isEmpty +poll
+ignite ConcurrentHashMap TxPartitionCounterStateOnePrimaryOneBackupTest Y put remove +size
+ignite AtomicLong TxWithSmallTimeoutAndContentionOneKeyTest N get +getAndIncrement
+ignite ConcurrentHashMap TxCrossCacheRemoteMultiplePartitionReservationTest N computeIfAbsent toString values
+ignite ConcurrentLinkedQueue TxPartitionCounterStateTwoPrimaryTwoBackupsTest Y add +isEmpty +poll
+ignite ConcurrentHashMap TxPartitionCounterStateTwoPrimaryTwoBackupsTest Y put remove +size
+ignite ConcurrentLinkedQueue PartitionUpdateCounterTest N add +isEmpty +poll
+ignite ConcurrentHashMap TxPartitionCounterStateAbstractTest N +get put
+ignite ConcurrentLinkedQueue TransactionIntegrityWithPrimaryIndexCorruptionTest Y add
+ignite ConcurrentHashMap TxOptimisticReadThroughTest Y +get put remove
+ignite ConcurrentHashMap TxRollbackAsyncTest N +get put values
+ignite ConcurrentHashMap CacheConnectionLeakStoreTxTest N clear isEmpty put remove
+ignite ConcurrentHashMap GridCacheOrderedPreloadingSelfTest Y 
+ignite ConcurrentHashMap ClusterReadOnlyModeTest N +get put size
+ignite ConcurrentSkipListSet GridCacheAbstractDataStructuresFailoverSelfTest N add clear size
+ignite ConcurrentHashMap IgniteLockAbstractSelfTest N +get put
+ignite AtomicLong IgniteLockAbstractSelfTest N getAndIncrement
+ignite ConcurrentHashMap IgniteOnePhaseCommitNearSelfTest Y clear +get
+ignite ConcurrentHashMap IgniteCacheLoaderWriterAbstractTest Y clear +containsKey +get put putAll remove
+ignite ConcurrentHashMap IgniteCacheLoadAllAbstractTest Y +get put remove
+ignite ConcurrentHashMap GridCacheAbstractLocalStoreSelfTest Y clear +get isEmpty put remove size
+ignite ConcurrentHashMap GridCacheGenericTestStore Y 
+ignite ConcurrentHashMap CacheInterceptorPartitionCounterLocalSanityTest N +get put remove
+ignite ConcurrentHashMap IgniteCacheStoreClusterReadOnlyModeSelfTest Y clear +computeIfAbsent values
+ignite AtomicLong CorruptedTreeFailureHandlingTest Y +get set
+ignite ConcurrentHashMap PagePoolTest Y +add +isEmpty +keySet +put +remove +size
+ignite ConcurrentHashMap NoOpPageStoreManager Y +get
+ignite ConcurrentHashMap IgniteClusterSnapshotCheckTest Y clear +get +putIfAbsent
+ignite ConcurrentLinkedQueue IgniteClusterSnapshotSelfTest N add isEmpty size
+ignite ConcurrentHashMap PageMemoryTracker Y 
+ignite AtomicLong SegmentedRingByteBufferTest N +addAndGet set
+ignite AtomicLong IgnitePdsRecoveryAfterFileCorruptionTest N +get getAndAdd
+ignite AtomicLong ProgressWatchdog Y getAndSet set
+ignite ConcurrentLinkedQueue WalDeletionArchiveAbstractTest N add size
+ignite ConcurrentLinkedQueue IgniteWalRebalanceTest N add +stream
+ignite ConcurrentHashMap IgnitePdsStartWIthEmptyArchive Y clear +keySet put
+ignite ConcurrentHashMap IgniteLogicalRecoveryTest N +get put remove
+ignite ConcurrentHashMap IgnitePdsCheckpointSimulationWithRealCpDisabledTest N +get put
+ignite AtomicLong IgnitePdsDiskErrorsRecoveringTest Y addAndGet +get
+ignite ConcurrentHashMap IgnitePdsCacheRebalancingAbstractTest N entrySet put
+ignite AtomicLong IgnitePdsCacheRebalancingAbstractTest N +get incrementAndGet
+ignite AtomicLong IgniteDataStorageMetricsSelfTest N +get set
+ignite ConcurrentHashMap ClientAffinityAssignmentWithBaselineTest N compute
+ignite ConcurrentHashMap IgniteChangeGlobalStateAbstractTest N clear +get keySet put remove
+ignite ConcurrentLinkedQueue IgniteRebalanceScheduleResendPartitionsTest Y add clear
+ignite ConcurrentHashMap GridCacheAbstractRemoveFailureTest Y entrySet isEmpty put
+ignite AtomicLong GridCacheAbstractRemoveFailureTest N addAndGet +longValue
+ignite ConcurrentHashMap GridCacheEvictionFilterSelfTest Y +get +putIfAbsent
+ignite ConcurrentHashMap GridCacheStoreManagerDeserializationTest N clear containsKey +get put remove size
+ignite ConcurrentHashMap GridCacheInterceptorAbstractSelfTest Y clear get +put size
+ignite ConcurrentHashMap CacheSerializableTransactionsTest Y clear +get put remove
+ignite ConcurrentHashMap GridCacheConcurrentTxMultiNodeLoadTest Y currentTimeMillis +get putIfAbsent
+ignite AtomicLong GridCacheConcurrentTxMultiNodeLoadTest Y get incrementAndGet
+ignite ConcurrentHashMap CacheNearReaderUpdateTest Y clear +get put remove
+ignite AtomicLong CacheBlockOnReadAbstractTest Y +get set
+ignite ConcurrentHashMap CacheNearDisabledAtomicInvokeRestartSelfTest Y clear entrySet get +putIfAbsent
+ignite AtomicLong IgniteCacheNearRestartRollbackSelfTest N get notifyAll set wait
+ignite ConcurrentHashMap IgniteCachePartitionLossPolicySelfTest N computeIfAbsent +get
+ignite ConcurrentHashMap GridCachePartitionedReloadAllAbstractSelfTest Y clear entrySet +get +keySet put
+ignite ConcurrentHashMap GridCacheEventAbstractTest Y clear +get
+ignite ConcurrentHashMap IgniteCrossCacheTxStoreSelfTest Y clear +computeIfAbsent get values
+ignite AtomicLong GridExchangeFreeSwitchTest Y get incrementAndGet set
+ignite ConcurrentHashMap GridCacheMultithreadedFailoverTest Y entrySet get +keySet putAll remove
+ignite AtomicLong GridCacheMultithreadedFailoverTest N addAndGet +longValue
+ignite ConcurrentLinkedQueue CacheExchangeMergeTest N add +isEmpty
+ignite ConcurrentHashMap CacheNearDisabledTransactionalInvokeRestartSelfTest N +get +putIfAbsent
+ignite ConcurrentHashMap IgniteCacheTxRecoveryRollbackTest Y clear +get put remove
+ignite ConcurrentHashMap EvictPartitionInLogTest N +containsKey +get
+ignite ConcurrentHashMap GridCacheGlobalLoadTest Y +get +put size
+ignite ConcurrentLinkedQueue IgniteAtomicLongChangingTopologySelfTest Y add clear isEmpty size
+ignite ConcurrentHashMap GridCachePartitionedSupplyEventsSelfTest Y clear compute +isEmpty size values
+ignite ConcurrentLinkedQueue GridCacheColocatedDebugTest N 
+ignite AtomicLong GridCacheColocatedDebugTest N +get +getAndIncrement
+ignite ConcurrentHashMap GridCacheNearOneNodeSelfTest Y clear +containsKey +get +isEmpty put +putIfAbsent remove
+ignite ConcurrentHashMap GridNearCacheStoreUpdateTest Y +get put remove
+ignite ConcurrentHashMap GridPartitionedBackupLoadSelfTest Y +get put
+ignite ConcurrentHashMap GridCacheNearMultiNodeSelfTest Y clear +get +isEmpty put +putIfAbsent remove
+ignite ConcurrentHashMap ExchangeMergeStaleServerNodesTest Y computeIfAbsent +replace
+ignite ConcurrentLinkedQueue RebalanceStatisticsTest N size +stream
+ignite ConcurrentHashMap RebalanceStatisticsTest N computeIfAbsent get
+ignite ConcurrentHashMap IgniteRebalanceOnCachesStoppingOrDestroyingTest Y forEach +get put remove
+ignite ConcurrentHashMap GridCacheRabalancingDelayedPartitionMapExchangeSelfTest Y cache communication isEmpty +putIfAbsent +size values
+ignite ConcurrentHashMap GridCacheRebalancingOrderingTest Y entrySet +get put remove +size
+ignite ConcurrentHashMap MapCacheStoreStrategy Y 
+ignite AtomicLong GridCacheFinishPartitionsSelfTest N get set
+ignite ConcurrentHashMap GridCacheTestStore Y 
+ignite ConcurrentHashMap SimpleObservableWarmUpStrategy N computeIfAbsent
+ignite ConcurrentHashMap LoadAllWarmUpStrategySelfTest N get
+ignite ConcurrentHashMap CacheInterceptorPartitionCounterRandomOperationsTest N clear +get put +putIfAbsent
+ignite ConcurrentHashMap IgniteCacheAbstractTest N clear entrySet +get put remove
+ignite ConcurrentHashMap IgniteMvccTxMultiThreadedAbstractTest N 
+ignite ConcurrentHashMap DataStreamProcessorSelfTest Y +get put remove
+ignite ConcurrentHashMap DummyService N clear +get +putIfAbsent
+ignite ConcurrentHashMap GridServiceProcessorProxySelfTest Y 
+ignite ConcurrentLinkedQueue GridTimeoutProcessorSelfTest N add size
+ignite ConcurrentSkipListSet GridEventConsumeSelfTest N add size
+ignite AtomicLong GridCircularBufferPerformanceTest N getAndSet increment incrementAndGet sumThenReset
+ignite ConcurrentLinkedQueue GridFifoQueueCollisionSpiSelfTest N add size
+ignite AtomicLong GridTcpCommunicationSpiConcurrentConnectSelfTest N +getAndIncrement
+ignite AtomicLong GridTcpCommunicationSpiLanLoadTest Y get getAndIncrement
+ignite ConcurrentHashMap GridTcpCommunicationSpiMultithreadedSelfTest Y clear +get put values
+ignite AtomicLong GridTcpCommunicationSpiMultithreadedSelfTest Y get getAndIncrement
+ignite AtomicLong TcpClientDiscoverySpiFailureTimeoutSelfTest N compareAndSet +get
+ignite ConcurrentLinkedQueue DiscoverySpiDataExchangeTest N add +isEmpty stream +toString
+ignite ConcurrentLinkedQueue IgniteClientReconnectEventHandlingTest Y add clear poll size
+ignite ConcurrentHashMap GridHashMapLoadTest N put
+ignite AtomicLong GridCacheWriteBehindStoreLoadTest N +get +incrementAndGet
+ignite AtomicLong GridCacheAbstractLoadTest N +get
+ignite AtomicLong GridCacheBenchmark Y +incrementAndGet set
+ignite ConcurrentHashMap GridTcpCommunicationBenchmark N get put
+ignite ConcurrentHashMap GridIoManagerBenchmark Y get put
+ignite ConcurrentHashMap GridIoManagerBenchmark0 N get put
+ignite AtomicLong GridDsiClient Y +get incrementAndGet
+ignite AtomicLong GridBenchmarkCacheGetLoadTest Y +get incrementAndGet
+ignite ConcurrentHashMap GridDsiPerfJob Y currentTimeMillis +get +putIfAbsent
+ignite AtomicLong GridJobExecutionSingleNodeLoadTest N +get incrementAndGet
+ignite AtomicLong GridContinuousOperationsLoadTest N +get incrementAndGet
+ignite ConcurrentHashMap ContainerSweepClassLoader Y +containsKey +get put
+ignite ConcurrentHashMap JavaEmbeddedIgniteRDDWithLocalStoreSelfTest Y +get put remove
+ignite ConcurrentLinkedQueue ComputeContinuousMapperExample Y +poll
+hadoop ConcurrentHashMap DeadNodeDetector Y 
+hadoop ConcurrentHashMap DFSStripedOutputStream Y clear containsKey entrySet put size
+hadoop AtomicLong DFSClientFaultInjector N 
+hadoop AtomicLong DirectoryScanner N getAndAdd
+hadoop AtomicLong StripedReconstructor Y addAndGet +get
+hadoop AtomicLong ProvidedVolumeImpl Y addAndGet +get
+hadoop ConcurrentHashMap AddBlockPoolException Y containsKey get isEmpty keySet toString
+hadoop AtomicLong CacheStats Y 
+hadoop AtomicLong BlockPoolSlice Y decrementAndGet +get incrementAndGet
+hadoop AtomicLong PmemVolumeManager Y 
+hadoop AtomicLong FsVolumeImpl Y addAndGet compareAndSet +get
+hadoop ConcurrentHashMap MountVolumeMap N +containsKey +get put remove
+hadoop AtomicLong RamDiskReplicaTracker N +get
+hadoop ConcurrentHashMap FsDatasetImpl N +get put remove
+hadoop AtomicLong DatasetVolumeChecker Y +get incrementAndGet
+hadoop ConcurrentHashMap DiskBalancer Y 
+hadoop ConcurrentHashMap DataNode Y put
+hadoop AtomicLong BlockReceiver Y get set
+hadoop AtomicLong RollingWindow Y addAndGet get set
+hadoop AtomicLong FSNamesystemLock Y compareAndSet get
+hadoop AtomicLong StepTracking N +get
+hadoop AtomicLong NameNodeConnector Y addAndGet
+hadoop ConcurrentHashMap SlowPeerTracker N entrySet +get +isEmpty putIfAbsent +size
+hadoop ConcurrentHashMap SlowDiskTracker Y put remove
+hadoop AtomicLong BlockManagerSafeMode Y get set
+hadoop AtomicLong ExcessRedundancyMap Y decrementAndGet +get incrementAndGet set
+hadoop ConcurrentHashMap ReferenceCountMap Y clear +get +keySet +putIfAbsent remove +size
+hadoop AtomicLong TestBatchIbr N addAndGet +get
+hadoop AtomicLong TestDatasetVolumeChecker N +get incrementAndGet
+hadoop AtomicLong TestThrottledAsyncChecker N +get incrementAndGet
+hadoop AtomicLong TestThrottledAsyncCheckerTimeout N +get incrementAndGet
+hadoop AtomicLong TestDatasetVolumeCheckerTimeout N +get incrementAndGet
+hadoop AtomicLong TestDirectoryScanner N +get set
+hadoop ConcurrentLinkedQueue TestEditLogTailer N add +size
+hadoop ConcurrentHashMap TestRetryCacheWithHA N containsKey get put
+hadoop AtomicLong TestBalancer Y get getAndUpdate
+hadoop AtomicLong TestLowRedundancyBlockQueues Y +incrementAndGet
+hadoop AtomicLong TestReplicationPolicy Y +incrementAndGet
+hadoop ConcurrentHashMap HashResolver Y computeIfAbsent
+hadoop ConcurrentHashMap MountTableResolver N containsKey put
+hadoop ConcurrentHashMap InstrumentationService N put
+hadoop AtomicLong InstrumentationService Y addAndGet get
+hadoop AtomicLong OpenFileCtx Y +addAndGet +get
+hadoop AtomicLong ApplicationMaster Y +incrementAndGet
+hadoop AtomicLong Component Y decrementAndGet +getAndIncrement
+hadoop ConcurrentHashMap ServiceClient Y +containsKey +get put remove
+hadoop ConcurrentHashMap TestComponentInstance N put +values
+hadoop ConcurrentHashMap ConfiguredYarnAuthorizer N +get put
+hadoop ConcurrentHashMap CommonNodeLabelsManager N entrySet get keySet put values
+hadoop ConcurrentHashMap RpcServerFactoryPBImpl Y +get putIfAbsent
+hadoop ConcurrentHashMap RecordFactoryPBImpl Y +get putIfAbsent
+hadoop ConcurrentHashMap RpcClientFactoryPBImpl Y +get putIfAbsent
+hadoop ConcurrentHashMap NMTokenCache Y clear +containsKey +get put remove +size
+hadoop ConcurrentHashMap AMRMClientRelayerMetrics N containsKey +get put
+hadoop AtomicLong OpportunisticContainerAllocator N incrementAndGet set
+hadoop ConcurrentHashMap MemoryFederationStateStore Y containsKey +get put values
+hadoop ConcurrentHashMap FederationRegistryClient N get put
+hadoop ConcurrentHashMap RouterPolicyFacade Y get put
+hadoop ConcurrentHashMap LocalityMulticastAMRMProxyPolicy Y 
+hadoop ConcurrentHashMap UnmanagedAMPoolManager Y containsKey get isEmpty keySet put +remove
+hadoop AtomicLong TimestampGenerator Y compareAndSet +get
+hadoop ConcurrentHashMap TimelineCollector N +get keySet +putIfAbsent
+hadoop ConcurrentHashMap NMTimelinePublisher Y containsKey +get keySet put +remove
+hadoop ConcurrentHashMap DirectoryCollection Y clear +containsKey +get put
+hadoop AtomicLong LocalResourcesTrackerImpl Y +compareAndSet +get +incrementAndGet
+hadoop AtomicLong LocalizedResource N 
+hadoop ConcurrentHashMap NonAggregatingLogHandler Y put +remove
+hadoop ConcurrentHashMap TrafficControlBandwidthHandlerImpl Y +get put
+hadoop ConcurrentLinkedQueue NodeManager N 
+hadoop ConcurrentHashMap NodeManager N putIfAbsent
+hadoop ConcurrentHashMap FederationInterceptor Y containsKey get put remove
+hadoop ConcurrentHashMap NMLogAggregationStatusTracker N +entrySet put
+hadoop ConcurrentHashMap TestLocalResourcesTrackerImpl N +containsKey +get put size
+hadoop ConcurrentHashMap TestFpgaResourceHandlerImpl Y put
+hadoop ConcurrentHashMap TestGpuResourceHandlerImpl Y put
+hadoop ConcurrentHashMap TestableFederationInterceptor N containsKey +get put
+hadoop ConcurrentHashMap TestNMLogAggregationStatusTracker N putIfAbsent
+hadoop ConcurrentHashMap FairSchedulerAppsBlock N put values
+hadoop AtomicLong SchedulerApplicationAttempt Y compareAndSet longValue
+hadoop ConcurrentLinkedQueue ActivitiesManager N add poll +size
+hadoop ConcurrentHashMap ActivitiesManager N entrySet +get put
+hadoop ConcurrentSkipListSet ResourceUsageMultiNodeLookupPolicy N addAll
+hadoop ConcurrentHashMap ResourceUsageMultiNodeLookupPolicy N +getOrDefault put
+hadoop ConcurrentHashMap MultiNodeSortingManager Y +get put values
+hadoop ConcurrentHashMap UsersManager Y entrySet +get keySet put remove values
+hadoop ConcurrentHashMap LeafQueue N 
+hadoop ConcurrentHashMap CapacityScheduler N get put remove
+hadoop ConcurrentHashMap PlacementDispatcher N computeIfAbsent get remove
+hadoop ConcurrentHashMap SchedulerHealth Y +get put
+hadoop ConcurrentHashMap FairScheduler N +get put remove size
+hadoop ConcurrentSkipListSet AppSchedulingInfo N add clear +first +isEmpty remove
+hadoop ConcurrentHashMap AppSchedulingInfo N clear +get put remove +values
+hadoop AtomicLong AppSchedulingInfo Y incrementAndGet
+hadoop ConcurrentSkipListSet FifoOrderingPolicyForPendingApps N 
+hadoop ConcurrentSkipListSet FairOrderingPolicy N 
+hadoop ConcurrentSkipListSet FifoOrderingPolicy N 
+hadoop AtomicLong ResourceTrackerService Y getAndIncrement
+hadoop ConcurrentHashMap ResourceProfilesManagerImpl Y clear containsKey +get keySet put
+hadoop AtomicLong AbstractReservationSystem Y incrementAndGet
+hadoop ConcurrentSkipListSet RMAppImpl Y add clear
+hadoop ConcurrentHashMap RMAppAttemptImpl N clear entrySet get putIfAbsent values
+hadoop ConcurrentHashMap RMAppAttemptMetrics Y 
+hadoop AtomicLong RMAppAttemptMetrics N addAndGet set
+hadoop ConcurrentHashMap VolumeStates Y +get +putIfAbsent
+hadoop ConcurrentHashMap VolumeManagerImpl Y +get put
+hadoop ConcurrentLinkedQueue RMNodeImpl Y add clear +poll +size
+hadoop AtomicLong RMActiveServiceContext Y +get incrementAndGet
+hadoop ConcurrentHashMap ApplicationMasterService N clear +putIfAbsent remove
+hadoop ConcurrentHashMap TestSystemMetricsPublisherForV2 Y +get putIfAbsent
+hadoop ConcurrentHashMap TestCombinedSystemMetricsPublisher Y putIfAbsent
+hadoop ConcurrentHashMap TestRMContainerImpl N putIfAbsent
+hadoop ConcurrentHashMap TestActivitiesManager N put
+hadoop AtomicLong TestCapacitySchedulerPerf N get incrementAndGet
+hadoop ConcurrentHashMap TestPlacementConstraintsUtil N put
+hadoop ConcurrentHashMap TestAllocationTagsManager N put
+hadoop ConcurrentHashMap TestFSAppAttempt N put
+hadoop ConcurrentHashMap TestClientRMService N put
+hadoop AtomicLong KMSAuditLogger Y 
+hadoop ConcurrentHashMap RpcProgramPortmap Y class +get put remove +values
+hadoop ConcurrentHashMap RegistryDNSServer Y putAll remove
+hadoop ConcurrentHashMap RegistryDNS Y 
+hadoop ConcurrentHashMap AbstractDelegationTokenSecretManager N 
+hadoop ConcurrentHashMap MutableRatesWithAggregation N +get put
+hadoop AtomicLong MutableGaugeLong Y addAndGet +get set +toString
+hadoop ConcurrentHashMap PrometheusMetricsSink Y computeIfAbsent
+hadoop AtomicLong DecayRpcScheduler Y +get getAndAdd set
+hadoop ConcurrentHashMap Server Y +get put remove
+hadoop AtomicLong Server Y +get getAndIncrement
+hadoop AtomicLong Client Y get set
+hadoop ConcurrentHashMap RpcClientUtil N +get put
+hadoop ConcurrentHashMap CachedDNSToSwitchMapping Y 
+hadoop ConcurrentHashMap SocketIOWithTimeout N computeIfAbsent get values
+hadoop AtomicLong SequentialNumber Y +compareAndSet +equals +get +incrementAndGet set
+hadoop ConcurrentLinkedQueue DirectBufferPool N add +poll +size
+hadoop AtomicLong InstrumentedLock Y +get
+hadoop AtomicLong CachingGetSpaceUsed N 
+hadoop ConcurrentHashMap IOStatisticsBinding N clear +compareAndSet +get put
+hadoop ConcurrentHashMap IOStatisticsStoreImpl Y +containsKey entrySet +get put values
+hadoop AtomicLong IOStatisticsStoreImpl Y 
+hadoop ConcurrentHashMap IOStatisticsSnapshot Y clear
+hadoop AtomicLong FileSystem Y +get incrementAndGet
+hadoop ConcurrentHashMap HarFileSystem Y +get put
+hadoop ConcurrentHashMap AbstractMapWritable N +containsKey +get put
+hadoop ConcurrentLinkedQueue AsyncCallHandler Y 
+hadoop ConcurrentHashMap Configuration Y +get put
+hadoop AtomicLong TestMetricsSystemImpl Y 
+hadoop AtomicLong RPCCallBenchmark Y +getAndSet incrementAndGet
+hadoop AtomicLong TestSocketIOWithTimeout N get incrementAndGet
+hadoop AtomicLong TestInstrumentedLock N +get set
+hadoop AtomicLong TestInstrumentedReadWriteLock N +get set
+hadoop AtomicLong TestDynamicIOStatistics Y addAndGet get incrementAndGet
+hadoop AtomicLong TestMRIntermediateDataEncryption N addAndGet get
+hadoop AtomicLong MRAsyncDiskService Y getAndIncrement
+hadoop ConcurrentHashMap TestRMNMInfo N put
+hadoop ConcurrentHashMap ShuffleHandler Y +get put remove
+hadoop ConcurrentHashMap MRAppMaster Y 
+hadoop ConcurrentLinkedQueue RMCommunicator Y add +poll
+hadoop ConcurrentHashMap DefaultSpeculator N get put remove
+hadoop ConcurrentHashMap SimpleExponentialTaskRuntimeEstimator N putIfAbsent
+hadoop ConcurrentHashMap TaskAttemptListenerImpl N computeIfAbsent remove
+hadoop AtomicLong TestMRAppMaster N get set
+hadoop ConcurrentHashMap BalanceProcedureScheduler Y keySet put +remove +values
+hadoop ConcurrentLinkedQueue AbfsPerfTracker Y 
+hadoop AtomicLong AbfsClientThrottlingAnalyzer Y addAndGet get
+hadoop AtomicLong AzureFileSystemInstrumentation Y +get incrementAndGet
+hadoop AtomicLong BlockBlobAppendStream Y +get set
+hadoop AtomicLong ClientThrottlingAnalyzer Y addAndGet get
+hadoop ConcurrentLinkedQueue TestNativeAzureFileSystemConcurrency N add isEmpty
+hadoop AtomicLong DebugJobProducer Y addAndGet set
+hadoop ConcurrentHashMap AuditReplayMapper N 
+hadoop AtomicLong ImageWriter Y +get +getAndIncrement
+hadoop AtomicLong FixedBlockResolver Y +get +incrementAndGet set
+hadoop ConcurrentSkipListSet AMSimulator Y 
+hadoop ConcurrentHashMap SLSRunner Y +get +keySet put +size
+hadoop ConcurrentLinkedQueue Tasks N add size
+hadoop ConcurrentLinkedQueue StagingCommitter Y add +size
+hadoop ConcurrentHashMap PartitionedStagingCommitter N 
+hadoop AtomicLong RenameOperation Y addAndGet +get
+hadoop AtomicLong InconsistentAmazonS3Client Y +get +incrementAndGet set
+hadoop ConcurrentHashMap DirListingMetadata Y entrySet +get +put remove +size +values
+hadoop AtomicLong LocalMetadataStore N +get incrementAndGet
+hadoop AtomicLong DynamoDBMetadataStore Y +get incrementAndGet
+hadoop AtomicLong SelectInputStream Y addAndGet +get
+hadoop AtomicLong S3AInstrumentation Y 
+hadoop AtomicLong ITestS3GuardOutOfBandOperations N +get set
+hadoop AtomicLong TestRequestFactory Y addAndGet get
+hadoop AtomicLong ProgressCounter Y +get incrementAndGet
+hadoop AtomicLong ITestS3SelectMRJob N get incrementAndGet
+hadoop AtomicLong AbstractSTestS3AHugeFiles Y addAndGet +get
+cassandra ConcurrentHashMap JavaDriverClient Y +get put
+cassandra ConcurrentHashMap SeedManager N get +putIfAbsent +remove
+cassandra AtomicLong SeedManager N getAndIncrement
+cassandra AtomicLong DistributionSequence Y getAndIncrement set
+cassandra ConcurrentLinkedQueue TokenRangeIterator Y addAll +isEmpty +poll
+cassandra AtomicLong WorkManager N +compareAndSet +get getAndSet
+cassandra AtomicLong StressAction N +getAndAdd
+cassandra ConcurrentHashMap SSLFactory Y clear forEachKey +get +putIfAbsent remove
+cassandra ConcurrentHashMap MessagingMetrics N +computeIfAbsent +get update
+cassandra AtomicLong RestorableMeter Y addAndGet +get
+cassandra AtomicLong DecayingEstimatedHistogramReservoir Y 
+cassandra ConcurrentHashMap CassandraMetricsRegistry Y +get put remove +values
+cassandra AtomicLong RowCacheSentinel Y +getAndIncrement
+cassandra ConcurrentLinkedQueue SEPExecutor N add +poll
+cassandra AtomicLong SEPExecutor Y +compareAndSet +get set updateAndGet
+cassandra AtomicLong SharedExecutorPool N incrementAndGet
+cassandra ConcurrentHashMap Dispatcher Y +get +putIfAbsent
+cassandra ConcurrentLinkedQueue Flusher Y add +isEmpty +poll
+cassandra ConcurrentHashMap ConnectionLimitHandler Y +get +putIfAbsent remove
+cassandra AtomicLong ConnectionLimitHandler Y decrementAndGet +incrementAndGet
+cassandra ConcurrentHashMap Server Y +get +put
+cassandra ConcurrentLinkedQueue SimpleClient N +isEmpty offer +poll
+cassandra ConcurrentSkipListSet SkipListMemIndex N 
+cassandra ConcurrentSkipListSet TrieMemIndex N 
+cassandra AtomicLong TermIterator N addAndGet getAndAdd
+cassandra ConcurrentHashMap ColumnIndex Y putIfAbsent remove +values
+cassandra ConcurrentHashMap Tracing N 
+cassandra ConcurrentLinkedQueue HintsStore Y add +poll removeAll
+cassandra ConcurrentHashMap HintsStore Y +get put remove
+cassandra ConcurrentHashMap HintsBuffer Y +computeIfAbsent +get +keySet
+cassandra AtomicLong HintsBuffer Y +get +getAndAdd set
+cassandra ConcurrentHashMap HintsDispatchExecutor Y clear +computeIfAbsent +containsKey +get isEmpty +remove
+cassandra ConcurrentHashMap HintsCatalog Y +computeIfAbsent +get keySet put remove +values
+cassandra ConcurrentHashMap FromJsonFct Y +get put
+cassandra ConcurrentHashMap ToJsonFct Y +get put
+cassandra ConcurrentHashMap JavaBasedUDFunction Y +get put +remove
+cassandra ConcurrentHashMap QueryProcessor Y clear +get put +values
+cassandra ConcurrentHashMap RequestCallbacks Y 
+cassandra ConcurrentHashMap MessagingServiceMBeanImpl N entrySet +size
+cassandra ConcurrentHashMap StartupClusterConnectivityChecker Y +computeIfAbsent +incrementAndCheck
+cassandra ConcurrentHashMap MapSerializer Y +computeIfAbsent +get
+cassandra ConcurrentHashMap SetSerializer Y +computeIfAbsent +get
+cassandra ConcurrentHashMap ListSerializer Y +computeIfAbsent +get
+cassandra ConcurrentLinkedQueue NativeAllocator Y add
+cassandra ConcurrentLinkedQueue BufferPool Y add isEmpty poll
+cassandra AtomicLong BufferPool Y +compareAndSet +get set
+cassandra ConcurrentLinkedQueue SlabAllocator Y add poll
+cassandra AtomicLong SlabAllocator Y addAndGet
+cassandra AtomicLong NonBlockingRateLimiter Y +compareAndSet +get set
+cassandra ConcurrentLinkedQueue WaitQueue Y add isEmpty +iterator +poll +register removeIf
+cassandra AtomicLong UUIDGen Y +compareAndSet +get +incrementAndGet
+cassandra AtomicLong JMXProgressSupport Y getAndIncrement
+cassandra ConcurrentHashMap DiagnosticSnapshotService Y +computeIfAbsent
+cassandra AtomicLong EstimatedHistogram N addAndGet +get +getAndSet incrementAndGet +length
+cassandra ConcurrentLinkedQueue DeletingArchiver Y isEmpty offer +poll
+cassandra AtomicLong BinLog Y get incrementAndGet set
+cassandra ConcurrentHashMap CustomClassLoader Y +get put
+cassandra ConcurrentLinkedQueue AbstractCommitLogSegmentManager Y add clear +peek remove
+cassandra AtomicLong AbstractCommitLogSegmentManager Y 
+cassandra ConcurrentHashMap CommitLogArchiver N put +remove
+cassandra ConcurrentHashMap CommitLogSegment Y computeIfAbsent +entrySet +get +isEmpty
+cassandra AtomicLong AbstractCommitLogService Y +get incrementAndGet
+cassandra ConcurrentHashMap VirtualKeyspaceRegistry Y +get put +values
+cassandra ConcurrentHashMap Keyspace Y +containsKey +get +putIfAbsent +remove +size +values
+cassandra AtomicLong Keyspace N set
+cassandra ConcurrentLinkedQueue LogTransaction Y add +poll
+cassandra ConcurrentHashMap RowFilter Y +get +getDeserializer +getId put registerUserExpressionClass
+cassandra AtomicLong Mutation N 
+cassandra AtomicLong ViewBuilderTask N 
+cassandra ConcurrentHashMap ViewManager Y containsKey +get put +remove +values
+cassandra ConcurrentSkipListSet Memtable Y add
+cassandra AtomicLong Memtable Y addAndGet +get
+cassandra ConcurrentHashMap ReversedType Y computeIfAbsent +get remove
+cassandra ConcurrentHashMap CompositeType Y computeIfAbsent +get remove
+cassandra ConcurrentHashMap DynamicCompositeType Y computeIfAbsent +get remove
+cassandra ConcurrentHashMap ListType Y 
+cassandra ConcurrentHashMap MapType Y 
+cassandra ConcurrentHashMap SetType Y 
+cassandra AtomicLong MonitoringTask Y getAndSet incrementAndGet
+cassandra ConcurrentSkipListSet Gossiper N add clear remove +size
+cassandra ConcurrentHashMap Gossiper Y clear +get +keySet put remove +size
+cassandra ConcurrentHashMap FailureDetector Y entrySet +get +keySet +putIfAbsent remove
+cassandra ConcurrentHashMap CqlRecordWriter N +get +putIfAbsent
+cassandra ConcurrentHashMap StorageProxy N +get put
+cassandra ConcurrentHashMap LoadBroadcaster Y put remove
+cassandra ConcurrentHashMap PrepareCallback Y get +keySet put
+cassandra ConcurrentHashMap AbstractWriteResponseHandler Y put
+cassandra AtomicLong WarnAbortCounter N accumulateAndGet
+cassandra ConcurrentHashMap ReadCallback Y put
+cassandra ConcurrentLinkedQueue BlockingReadRepair N add
+cassandra ConcurrentHashMap BlockingPartitionRepair Y entrySet +keySet remove +values
+cassandra AtomicLong ClientState Y +compareAndSet +get
+cassandra ConcurrentHashMap ActiveRepairService Y +get put remove values
+cassandra ConcurrentHashMap StorageService N add entrySet put
+cassandra ConcurrentLinkedQueue SnapshotDeletingTask Y add +poll +size
+cassandra AtomicLong BloomFilterTracker Y +get incrementAndGet
+cassandra ConcurrentHashMap SSTableReader N clear +get +putIfAbsent remove
+cassandra AtomicLong SSTableReader N +get incrementAndGet
+cassandra ConcurrentHashMap LZ4Compressor Y +get +putIfAbsent
+cassandra ConcurrentHashMap ZstdCompressor Y +computeIfAbsent
+cassandra AtomicLong FileUtils Y +getAndIncrement
+cassandra AtomicLong SSTableExport N get set
+cassandra AtomicLong DiagnosticEventMemoryStore Y +get +incrementAndGet
+cassandra ConcurrentHashMap DiagnosticEventPersistence Y +computeIfAbsent
+cassandra ConcurrentHashMap LastEventIdBroadcaster Y +compute get isEmpty put
+cassandra AtomicLong LastEventIdBroadcaster Y incrementAndGet
+cassandra ConcurrentHashMap RepairSession Y clear put +remove
+cassandra ConcurrentHashMap SessionInfo Y +values
+cassandra ConcurrentLinkedQueue StreamResultFuture Y add
+cassandra AtomicLong StreamEventJMXNotifier Y getAndIncrement
+cassandra ConcurrentHashMap StreamSession N +get isEmpty +putIfAbsent remove values
+cassandra ConcurrentHashMap StreamingMultiplexedChannel Y clear +get put remove values
+cassandra ConcurrentHashMap DynamicEndpointSnitch Y clear entrySet +get +putIfAbsent +size
+cassandra ConcurrentHashMap TokenMetadata Y clear get +isEmpty put values
+cassandra ConcurrentHashMap SystemReplicas Y +computeIfAbsent
+cassandra AtomicLong GcCompactionBench Y +incrementAndGet set
+cassandra ConcurrentHashMap ViewLongTest N +containsKey +get put
+cassandra AtomicLong CachingBench Y +incrementAndGet set
+cassandra AtomicLong CommitLogStressTest N get incrementAndGet
+cassandra AtomicLong SimpleClientPerfTest N get incrementAndGet
+cassandra AtomicLong Verifier Y +getAndIncrement
+cassandra AtomicLong Connection Y +getAndUpdate set
+cassandra ConcurrentLinkedQueue BytesInFlightController Y add +poll
+cassandra AtomicLong LongBTreeTest N get incrementAndGet
+cassandra AtomicLong RateLimitingTest Y addAndGet +get
+cassandra AtomicLong CQLConnectionTest N addAndGet get
+cassandra ConcurrentLinkedQueue HintsBufferPoolTest N isEmpty offer +poll
+cassandra ConcurrentHashMap VirtualTableTest Y clear computeIfAbsent forEach +get remove
+cassandra AtomicLong ProxyHandlerTest N set
+cassandra AtomicLong ConnectionTest N +get incrementAndGet
+cassandra ConcurrentLinkedQueue RefCountedTest N add
+cassandra ConcurrentHashMap RefCountedTest N put
+cassandra AtomicLong RecomputingSupplierTest N +get +incrementAndGet
+cassandra AtomicLong CommitLogUpgradeTestMaker N get incrementAndGet
+cassandra ConcurrentHashMap AbstractCluster Y clear +get +put remove
+cassandra ConcurrentHashMap DistributedTestSnitch Y +get put
+cassandra ConcurrentHashMap TableMetricTest Y +containsKey put +putIfAbsent +remove
+cassandra AtomicLong QueryReplayerEndToEndTest Y incrementAndGet
+cassandra ConcurrentHashMap StreamingTest N +get put
