@@ -37,6 +37,7 @@ public class Benchmark {
     public static AtomicLong nbRemoveFail;
     public static AtomicLong nbReadFail;
     public static AtomicBoolean flag;
+    public static boolean ratioFail;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -56,6 +57,14 @@ public class Benchmark {
     private boolean _s = false;
     @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
     private boolean _p = false;
+    @Option(name = "-ratioFail", handler = ExplicitBooleanOptionHandler.class, usage = "Compute the fail ratio")
+    private boolean _ratioFail = false;
+    @Option(name = "-asymmetric", handler = ExplicitBooleanOptionHandler.class, usage = "Asymmetric workload")
+    private boolean _asymmetric = false;
+    @Option(name = "-collisionKey", handler = ExplicitBooleanOptionHandler.class, usage = "Testing map with collision on key")
+    public boolean _collisionKey = false;
+    @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Testing only one and max nbThreads")
+    public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         new Benchmark().doMain(args);
@@ -105,12 +114,18 @@ public class Benchmark {
         }
 
         try{
+            ratioFail = _ratioFail;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            Object object = null;
+            Object object;
 
-            for (int nbCurrentThread = 2; nbCurrentThread <= nbThreads; ) {
+            int nbCurrentThread = 1;
+
+            if (_asymmetric)
+                nbCurrentThread = 2;
+
+            for (; nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
@@ -134,7 +149,8 @@ public class Benchmark {
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
 
-                    ((DegradableQueue)object).resetNbFor();
+                    if (object instanceof DegradableQueue)
+                        ((DegradableQueue)object).resetNbFor();
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
@@ -143,10 +159,13 @@ public class Benchmark {
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
-                            latch
+                            latch,
+                            _collisionKey
                     );
 
-                    for (int j = 0; j < nbCurrentThread -1; j++) { // -1 if a specific thread perform a different operation.
+                    int nbComputingThread = _asymmetric ? nbCurrentThread - 1 : nbCurrentThread;
+
+                    for (int j = 0; j < nbComputingThread; j++) { // -1 if a specific thread perform a different operation.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
@@ -155,14 +174,17 @@ public class Benchmark {
 
 //                   Code if a specific thread perform a different operation.
 
-                   FactoryTester factoryT = new FactoryTester(
-                           object,
-                           new int[] {0, 100, 0}, // [add, remove, read]
-                           latch
-                   );
+                    if (_asymmetric){
+                        FactoryTester factoryT = new FactoryTester(
+                                object,
+                                new int[] {0, 100, 0}, // [add, remove, read]
+                                latch,
+                                _collisionKey
+                        );
 
-                    Tester t = factoryT.createTester();
-                    callables.add(t);
+                        Tester t = factoryT.createTester();
+                        callables.add(t);
+                    }
 
 //
 
@@ -189,16 +211,15 @@ public class Benchmark {
                 }
 
                 long timeTotal;
-                double throughputADD, throughputREMOVE, throughputREMOVETotal, throughputREAD, throughputTotal;
+                double throughputADD, throughputREMOVE, throughputREAD, throughputTotal;
 
                 timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
 
-                throughputADD = (nbAdd.get() / (double) timeTotal) * 1_000_000_000;
-                throughputREMOVE = (nbRemove.get() / (double) timeTotal) * 1_000_000_000;
-                throughputREMOVETotal = ((nbRemove.get() + nbRemoveFail.get() )/ (double) timeTotal) * 1_000_000_000;
-                throughputREAD = (nbRead.get() / (double) timeTotal) * 1_000_000_000;
+                throughputADD = ((nbAdd.get() + nbAddFail.get()) / (double) timeTotal) * 1_000_000_000;
+                throughputREMOVE = ((nbRemove.get() + nbRemoveFail.get() )/ (double) timeTotal) * 1_000_000_000;
+                throughputREAD = ((nbRead.get() + nbReadFail.get()) / (double) timeTotal) * 1_000_000_000;
 
-                throughputTotal = throughputADD + throughputREAD + throughputREMOVETotal;
+                throughputTotal = throughputADD + throughputREMOVE +throughputREAD;
 
                 if (_s){
 
@@ -213,23 +234,23 @@ public class Benchmark {
 
                 if (_p){
                     System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
-                    System.out.println("    -time/add : " + String.format("%.3E",throughputADD));
-                    System.out.println("    -time/remove : " + String.format("%.3E",throughputREMOVE));
-                    System.out.println("    -time/remove total : " + String.format("%.3E",throughputREMOVETotal));
-                    System.out.println("    -time/read: " + String.format("%.3E",throughputREAD));
+                    System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
+                    System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
+                    System.out.println("    -throughput READ: " + String.format("%.3E",throughputREAD));
                     System.out.println("    -num add: " + nbAdd.get());
-                    System.out.println("    -num remove: " + nbRemove.get());
-                    System.out.println("    -num remove fail: " + nbRemoveFail.get());
-                    System.out.println("    -fail remove ratio: " + nbRemoveFail.get()/(double) (nbRemove.get() + nbRemoveFail.get()));
+                    System.out.println("    -num remove: " + nbRemove.get() + nbRemoveFail.get());
                     System.out.println("    -num read: " + nbRead.get());
-                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
+//                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
                 nbCurrentThread *= 2;
 
-                /*if(nbCurrentThread==2)
-                    nbCurrentThread = nbThreads;
-*/
+                if (_quickTest){
+                    if(nbCurrentThread==2)
+                        nbCurrentThread = nbThreads;
+
+                }
+
                 if (nbCurrentThread > nbThreads && nbCurrentThread != 2 * nbThreads) {
                     nbCurrentThread = nbThreads;
                 }

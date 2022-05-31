@@ -14,17 +14,19 @@ public class FactoryTester {
     private final Object object;
     private final int[] ratios;
     private final CountDownLatch latch;
+    private final boolean collisionKey;
 
-    public FactoryTester(Object object, int[] ratios, CountDownLatch latch) {
+    public FactoryTester(Object object, int[] ratios, CountDownLatch latch, boolean collisionKey) {
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
+        this.collisionKey = collisionKey;
     }
 
     public Tester createTester() throws ClassNotFoundException{
 
         if (object instanceof AbstractMap)
-            return new MapTester((AbstractMap) object, ratios, latch);
+            return new MapTester((AbstractMap) object, ratios, latch, collisionKey);
         else if (object instanceof AbstractSet)
             return new SetTester((AbstractSet) object, ratios, latch);
         else if (object instanceof AbstractQueue)
