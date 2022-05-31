@@ -1,12 +1,17 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.map.CollisionKey;
+
 import java.util.AbstractMap;
 import java.util.concurrent.CountDownLatch;
 
 public class MapTester extends Tester<AbstractMap> {
 
-    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch) {
+    private final boolean collisionKey;
+
+    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, boolean collisionKey) {
         super(object, ratios, latch);
+        this.collisionKey = collisionKey;
     }
 
     @Override
@@ -16,26 +21,36 @@ public class MapTester extends Tester<AbstractMap> {
 
         int rand = random.nextInt(ITEM_PER_THREAD);
         long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-//        CollisionKey collisionKey = new CollisionKey(Long.toString(iid));
+
+        CollisionKey colKey = null;
+        if (collisionKey)
+            colKey = new CollisionKey(Long.toString(iid));
+
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-//                object.put(collisionKey, Long.toString(iid));
+                if (collisionKey)
+                    object.put(colKey, Long.toString(iid));
+                else
+                    object.put(Long.toString(iid), Long.toString(iid));
                 endTime = System.nanoTime();
-                object.put(Long.toString(iid), Long.toString(iid));
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-//                object.remove(collisionKey);
+                if (collisionKey)
+                    object.remove(colKey);
+                else
+                    object.remove(Long.toString(iid));
                 endTime = System.nanoTime();
-                object.remove(Long.toString(iid));
                 break;
             case READ:
                 startTime = System.nanoTime();
-//                object.get(collisionKey);
+                if (collisionKey)
+                    object.get(colKey);
+                else
+                    object.get(Long.toString(iid));
                 endTime = System.nanoTime();
-                object.get(Long.toString(iid));
                 break;
         }
 

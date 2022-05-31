@@ -38,8 +38,6 @@ public abstract class Tester<T> implements Callable<Void> {
         latch.countDown();
 
         try{
-            // TRY WITH ONLY ONE RANDOM NUMBER AND DO % 100 FOR THE OTHER
-
             // warm up
             while (Benchmark.flag.get()) {
 
@@ -70,7 +68,15 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type);
+                if (Benchmark.ratioFail){
+                    elapsedTime = test(type);
+                }else{
+                    long cumulTime = 0;
+                    for (int i = 0; i < 200; i++) {
+                        cumulTime += test(type);
+                    }
+                    elapsedTime = cumulTime / 200;
+                }
 
                 switch (type) {
                     case ADD:

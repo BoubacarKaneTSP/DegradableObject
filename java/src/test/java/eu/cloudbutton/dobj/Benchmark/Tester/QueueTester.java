@@ -15,7 +15,7 @@ public class QueueTester extends Tester<AbstractQueue> {
     @Override
     protected long test(opType type) {
 
-        long startTime = 0L, endTime = 0L, iid = 0L, valReturned = 0L;
+        long startTime = 0L, endTime = 0L, iid = 0L;
 
         if (type == opType.ADD || type == opType.READ){
             int rand = random.nextInt(ITEM_PER_THREAD);
