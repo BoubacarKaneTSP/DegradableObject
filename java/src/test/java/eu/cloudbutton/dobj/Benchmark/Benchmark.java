@@ -162,8 +162,7 @@ public class Benchmark {
                     FactoryTester factoryTester = new FactoryTester(
                             object,
                             Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
-                            latch,
-                            _collisionKey
+                            latch
                     );
 
                     int nbComputingThread = _asymmetric ? nbCurrentThread - 1 : nbCurrentThread;
@@ -181,8 +180,7 @@ public class Benchmark {
                         FactoryTester factoryT = new FactoryTester(
                                 object,
                                 new int[] {0, 100, 0}, // [add, remove, read]
-                                latch,
-                                _collisionKey
+                                latch
                         );
 
                         Tester t = factoryT.createTester();
