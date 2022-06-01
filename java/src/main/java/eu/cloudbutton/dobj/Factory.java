@@ -8,6 +8,7 @@ import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.set.DegradableSet;
 import eu.cloudbutton.dobj.set.Set;
 import eu.cloudbutton.dobj.snapshot.*;
+import eu.cloudbutton.dobj.counter.DegradableCounter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
