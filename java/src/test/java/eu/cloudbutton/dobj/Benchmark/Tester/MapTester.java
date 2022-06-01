@@ -5,13 +5,13 @@ import eu.cloudbutton.dobj.map.CollisionKey;
 import java.util.AbstractMap;
 import java.util.concurrent.CountDownLatch;
 
+import static eu.cloudbutton.dobj.Benchmark.Benchmark.collisionKey;
+
 public class MapTester extends Tester<AbstractMap> {
 
-    private final boolean collisionKey;
 
-    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, boolean collisionKey) {
+    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch) {
         super(object, ratios, latch);
-        this.collisionKey = collisionKey;
     }
 
     @Override

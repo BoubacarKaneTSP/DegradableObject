@@ -39,6 +39,7 @@ public class Benchmark {
     public static AtomicLong nbReadFail;
     public static AtomicBoolean flag;
     public static boolean ratioFail;
+    public static boolean collisionKey;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -116,6 +117,7 @@ public class Benchmark {
 
         try{
             ratioFail = _ratioFail;
+            collisionKey = _collisionKey;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;

@@ -5,6 +5,8 @@ import eu.cloudbutton.dobj.map.CollisionKey;
 import java.util.AbstractMap;
 import java.util.Random;
 
+import static eu.cloudbutton.dobj.Benchmark.Benchmark.collisionKey;
+
 public class MapFiller extends Filler<AbstractMap> {
 
     public MapFiller(AbstractMap map, long nbOps) {
@@ -17,8 +19,12 @@ public class MapFiller extends Filler<AbstractMap> {
         Random random = new Random();
 
         for (int i = 0; i < nbOps; i++) {
-//            CollisionKey collisionKey = new CollisionKey(Integer.toString(random.nextInt()));
-            object.put(Integer.toString(i), Integer.toString(i));
+            if (collisionKey){
+                CollisionKey colKey = new CollisionKey(Integer.toString(random.nextInt()));
+                object.put(colKey, Integer.toString(i));
+            }else {
+                object.put(Integer.toString(i), Integer.toString(i));
+            }
         }
     }
 }
