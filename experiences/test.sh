@@ -18,7 +18,7 @@ asymmetric=""
 collisionKey=""
 quickTest=""
 
-while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvx' OPTION; do
+while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvxo' OPTION; do
   case "$OPTION" in
     c)
       typeCounter="$OPTARG"
@@ -145,6 +145,26 @@ while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvx' OPTION; do
       ;;
     x)
       mvn clean package -f ../java -DskipTests;
+      ;;
+    o)
+      echo "script usage: $(basename \$0)
+      [-c] counter type,
+      [-s] set type,
+      [-q] queue type,
+      [-l] list type,
+      [-m] map type,
+      [-t] test type,
+      [-r] ratio of write in %,
+      [-p] print,
+      [-e] save,
+      [-w] workload Time in sec,
+      [-u] warming up Time in sec,
+      [-n] number of test
+      [-f] print the ratio of operations that failed
+      [-a] test an asymmetrical workload
+      [-k] test the map with collision on key
+      [-v] testing only one and max nbThreads" >&2
+      exit 1
       ;;
     ?)
       echo "script usage: $(basename \$0)

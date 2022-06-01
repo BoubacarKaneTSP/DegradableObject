@@ -4,6 +4,7 @@ import eu.cloudbutton.dobj.Benchmark.Tester.FactoryFiller;
 import eu.cloudbutton.dobj.Benchmark.Tester.FactoryTester;
 import eu.cloudbutton.dobj.Benchmark.Tester.Filler;
 import eu.cloudbutton.dobj.Benchmark.Tester.Tester;
+import eu.cloudbutton.dobj.counter.Counter;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.queue.DegradableQueue;

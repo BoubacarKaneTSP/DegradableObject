@@ -68,15 +68,8 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                if (Benchmark.ratioFail){
-                    elapsedTime = test(type);
-                }else{
-                    long cumulTime = 0;
-                    for (int i = 0; i < 200; i++) {
-                        cumulTime += test(type);
-                    }
-                    elapsedTime = cumulTime / 200;
-                }
+
+                elapsedTime = test(type);
 
                 switch (type) {
                     case ADD:
