@@ -17,8 +17,8 @@ public class MapFiller extends Filler<AbstractMap> {
         Random random = new Random();
 
         for (int i = 0; i < nbOps; i++) {
-            CollisionKey collisionKey = new CollisionKey(Integer.toString(random.nextInt()));
-            object.put(collisionKey, Integer.toString(i));
+//            CollisionKey collisionKey = new CollisionKey(Integer.toString(random.nextInt()));
+            object.put(Integer.toString(i), Integer.toString(i));
         }
     }
 }
