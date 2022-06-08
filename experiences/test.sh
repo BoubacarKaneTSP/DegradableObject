@@ -94,7 +94,6 @@ while getopts 'c:s:q:l:m:t:r:d:pew:u:n:fakvxo' OPTION; do
         echo "The counter used is : $typeCounter"
         echo "The set used is : $typeSet"
         echo "The queue used is : $typeQueue"
-        echo "The list used is : $typeList"
         echo "The map used is : $typeMap"
       else
         echo "Test type must be Benchmark or Retwis." >&2

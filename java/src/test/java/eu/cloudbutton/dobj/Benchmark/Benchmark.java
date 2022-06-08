@@ -238,9 +238,10 @@ public class Benchmark {
                     System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
                     System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
                     System.out.println("    -throughput READ: " + String.format("%.3E",throughputREAD));
-                    System.out.println("    -num add: " + nbAdd.get());
+                    System.out.println("    -num add: " + nbAdd.get() + nbAddFail.get());
+                    System.out.println("    -num add (fail): " + nbAddFail.get());
                     System.out.println("    -num remove: " + nbRemove.get() + nbRemoveFail.get());
-                    System.out.println("    -num read: " + nbRead.get());
+                    System.out.println("    -num read: " + nbRead.get() + nbReadFail.get());
 //                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
