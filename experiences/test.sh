@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# kill all the children of the current process
+trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+
 typeCounter=""
 typeSet=""
 typeQueue=""
@@ -7,6 +11,7 @@ typeList=""
 typeMap=""
 typeTest=""
 ratio="100 0 0"
+distribution="5 15 30 50"
 print=""
 save=""
 workloadTime=5
@@ -18,7 +23,7 @@ asymmetric=""
 collisionKey=""
 quickTest=""
 
-while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvxo' OPTION; do
+while getopts 'c:s:q:l:m:t:r:d:pew:u:n:fakvxo' OPTION; do
   case "$OPTION" in
     c)
       typeCounter="$OPTARG"
@@ -73,41 +78,24 @@ while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvxo' OPTION; do
 
           if [[ ! ($sum -eq 1) ]]
           then
-            echo "One type must be specified for the Benchmark. (Before test specification)" >&2
+            echo "One type must be specified in order to run the micro-Benchmark. (Before test specification)" >&2
             exit 1
           fi
 
+          echo "The type being tested is : $type"
+
       elif [[ $typeTest == "Retwis" ]]
       then
-        if [[ $typeCounter == "" ]]
-          then
-            typeCounter=Counter
-          fi
-
-          if [[ $typeSet == "" ]]
-          then
-            typeSet=Set
-          fi
-
-          if [[ $typeList == "" ]]
-          then
-            typeList=List
-          fi
-
-          if [[ $typeQueue == "" ]]
-          then
-            typeQueue=Queue
-          fi
-
-          if [[ $typeMap == "" ]]
-          then
-            typeMap=Map
-          fi
-        typeCounter=Counter
-        typeSet=Set
-        typeQueue=Queue
-        typeList=List
-        typeMap=Map
+        if [[ $typeCounter == "" ]] && [[ $typeSet == "" ]] && [[ $typeQueue == "" ]] && [[ $typeMap == "" ]]
+        then
+          echo "Must be specified a type for : a Counter, a Set, a Queue and a Map in order to run the Retwis Benchmark (Before test specification)" >&2
+            exit 1
+        fi
+        echo "The counter used is : $typeCounter"
+        echo "The set used is : $typeSet"
+        echo "The queue used is : $typeQueue"
+        echo "The list used is : $typeList"
+        echo "The map used is : $typeMap"
       else
         echo "Test type must be Benchmark or Retwis." >&2
         exit 1
@@ -115,6 +103,9 @@ while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvxo' OPTION; do
       ;;
     r)
       ratio="$OPTARG"
+      ;;
+    d)
+      distribution="$OPTARG"
       ;;
     p)
       print="-p"
@@ -155,6 +146,7 @@ while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvxo' OPTION; do
       [-m] map type,
       [-t] test type,
       [-r] ratio of write in %,
+      [-d] distribution of operations in Retwis
       [-p] print,
       [-e] save,
       [-w] workload Time in sec,
@@ -189,22 +181,16 @@ while getopts 'c:s:q:l:m:t:r:pew:u:n:fakvxo' OPTION; do
   esac
 done
 
-echo "The counter used is : $typeCounter"
-echo "The set used is : $typeSet"
-echo "The queue used is : $typeQueue"
-echo "The list used is : $typeList"
-echo "The map used is : $typeMap"
 echo "The test launched is : $typeTest"
 echo "The ratio of write is : $ratio"
 echo "The workload time is : $workloadTime"
 echo "The warming up time is : $warmingUpTime"
 echo "The number of test is : $nbTest"
 
-# kill all the children of the current process
-trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
-
 if [[ $typeTest == "Benchmark" ]]
 then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save $printFail $asymmetric $collisionKey $quickTest
+elif [[ $typeTest == "Retwis" ]]
+then
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save
 fi
