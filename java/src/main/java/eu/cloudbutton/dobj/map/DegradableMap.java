@@ -17,7 +17,7 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         map = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
             ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
-            map.put(Thread.currentThread(), m);
+//            map.put(Thread.currentThread(), m);
             return m;
         });
     }
