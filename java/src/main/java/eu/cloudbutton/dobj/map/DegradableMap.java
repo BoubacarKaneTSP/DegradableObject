@@ -5,18 +5,19 @@ import lombok.SneakyThrows;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
-    private final CopyOnWriteArrayList<ConcurrentHashMap<K,V>> map;
+    private final ConcurrentMap<Thread,ConcurrentHashMap<K,V>> map;
     private final ThreadLocal<ConcurrentHashMap<K,V>> local;
 
     public DegradableMap(){
-        map = new CopyOnWriteArrayList<>();
+        map = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
             ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
-            map.add(m);
+            map.put(Thread.currentThread(), m);
             return m;
         });
     }
@@ -41,7 +42,7 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         if (value != null)
             return value;
 
-        for (AbstractMap<K,V> map : map){
+        for (AbstractMap<K,V> map : map.values()){
             value = map.get(key);
 
             if (value != null)

@@ -7,6 +7,8 @@ files = []
 linestyle_tuple = ['-', '--', '-.', ':', 'solid', 'dashed', 'dashdot', 'dotted']
 linestyles = ['solid', 'dotted', 'dashdot', 'dashed']
 markers = ["o", "s", "*", "P", "d", "v", "<", ">", "^", "p", "D", "1", "h", "X"]
+
+font = {'fontname':'Arial'}
 for arg in sys.argv[1:]:
     print(arg)
     files.append(open(arg,"r"))
@@ -38,6 +40,7 @@ for numprocess, resultat, name, linestyle, marker in zip(numprocesses,resultats,
 SIZE = 15
 
 plt.rcParams.update({'font.size': SIZE})
+plt.rcParams["font.family"] = "Arial"
 plt.xticks(fontsize=SIZE)
 plt.yticks(fontsize=SIZE)
 
