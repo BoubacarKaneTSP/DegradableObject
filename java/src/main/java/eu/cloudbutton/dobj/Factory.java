@@ -78,6 +78,8 @@ public class Factory {
             return createQueue(object);
         else if (object.contains("Map"))
             return createMap(object);
+        else if (object.contains("Noop"))
+            return new Noop();
         else
             throw new ClassNotFoundException("The object : "+ object +" may not exists");
     }
