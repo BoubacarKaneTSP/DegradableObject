@@ -15,7 +15,7 @@ public class NoopTester extends Tester<Noop> {
         // no-op
 
         long startTime = 1L, endTime = 1L;
-        int val = 250_000;
+        int val = 200_000;
 
         int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {
