@@ -23,8 +23,11 @@ asymmetric=""
 collisionKey=""
 quickTest=""
 
-while getopts 'c:s:q:l:m:t:r:d:pew:u:n:fakvxo' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvo' OPTION; do
   case "$OPTION" in
+    x)
+      mvn clean package -f ../java -DskipTests;
+      ;;
     c)
       typeCounter="$OPTARG"
       ;;
@@ -132,9 +135,6 @@ while getopts 'c:s:q:l:m:t:r:d:pew:u:n:fakvxo' OPTION; do
       ;;
     v)
       quickTest="-quickTest"
-      ;;
-    x)
-      mvn clean package -f ../java -DskipTests;
       ;;
     o)
       echo "script usage: $(basename \$0)

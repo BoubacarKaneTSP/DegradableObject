@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.counter.AbstractCounter;
 
 import java.util.AbstractList;
@@ -29,6 +30,8 @@ public class FactoryFiller {
             return new ListFiller((AbstractList) object, nbOps);
         else if (object instanceof AbstractCounter)
             return new CounterFiller((AbstractCounter) object, nbOps);
+        else if (object instanceof Noop)
+            return new NoopFiller((Noop) object, nbOps);
         else
             throw new ClassNotFoundException("The Filler for "+ object.getClass() +" may not exists");
     }

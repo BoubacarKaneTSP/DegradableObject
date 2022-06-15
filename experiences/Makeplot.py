@@ -2,13 +2,17 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+import matplotlib.font_manager as fm
 
 files = []
 linestyle_tuple = ['-', '--', '-.', ':', 'solid', 'dashed', 'dashdot', 'dotted']
 linestyles = ['solid', 'dotted', 'dashdot', 'dashed']
 markers = ["o", "s", "*", "P", "d", "v", "<", ">", "^", "p", "D", "1", "h", "X"]
-
 font = {'fontname':'Arial'}
+
+plt.rcParams.update({"font.family" : "Arial"})
+
+
 for arg in sys.argv[1:]:
     print(arg)
     files.append(open(arg,"r"))
@@ -37,10 +41,9 @@ for numprocess, resultat, name, linestyle, marker in zip(numprocesses,resultats,
     plt.plot(numprocess, resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label=name[:len(name)-4].replace("_", " "))
 
 
-SIZE = 15
+SIZE = 25
 
 plt.rcParams.update({'font.size': SIZE})
-plt.rcParams["font.family"] = "Arial"
 plt.xticks(fontsize=SIZE)
 plt.yticks(fontsize=SIZE)
 
@@ -52,8 +55,8 @@ plt.gca().spines['right'].set_visible(False)
 plt.gca().spines['top'].set_visible(False)
 plt.gca().tick_params(axis='both', which='major', labelsize=SIZE, length=SIZE)
 plt.gca().tick_params(axis='both', which='minor', labelsize=SIZE, length=SIZE)
-plt.ylabel("Throughput", fontsize=SIZE)
-plt.xlabel("# Processes", fontsize=SIZE)
+plt.ylabel("Opérations par seconde", fontsize=SIZE)
+plt.xlabel("# Processus", fontsize=SIZE)
 plt.legend(bbox_to_anchor=(0., 1.04, 1., 1.), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
 plt.yscale("log")
 plt.show()

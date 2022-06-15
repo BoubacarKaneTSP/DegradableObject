@@ -13,19 +13,35 @@ public class NoopTester extends Tester<Noop> {
     @Override
     protected long test(opType type) {
         // no-op
+
+        long startTime = 0L, endTime = 0L;
+
         int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {
             case ADD:
-                n++;
+                startTime = System.nanoTime();
+                for (int i = 0; i < 2000; i++) {
+                    n++;
+                }
+                endTime = System.nanoTime();
                 break;
             case REMOVE:
-                n--;
+                startTime = System.nanoTime();
+                for (int i = 0; i < 2000; i++) {
+                    n--;
+                }
+                endTime = System.nanoTime();
                 break;
             case READ:
-                n += 2;
+                startTime = System.nanoTime();
+                for (int i = 0; i < 2000; i++) {
+                    n += 2;
+                }
+                endTime = System.nanoTime();
+
                 break;
         }
 
-        return 0L;
+        return (endTime - startTime)/2000;
     }
 }
