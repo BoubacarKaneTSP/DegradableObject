@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.map;
 import lombok.SneakyThrows;
 
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -10,13 +11,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
-    private final ConcurrentMap<Thread,ConcurrentHashMap<K,V>> map;
-    private final ThreadLocal<ConcurrentHashMap<K,V>> local;
+//    private final ConcurrentMap<Thread,ConcurrentHashMap<K,V>> map;
+    private final ThreadLocal<HashMap<K,V>> local;
 
     public DegradableMap(){
-        map = new ConcurrentHashMap<>();
+//        map = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
-            ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
+            HashMap<K, V> m = new HashMap<>();
 //            map.put(Thread.currentThread(), m);
             return m;
         });
@@ -42,12 +43,12 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         if (value != null)
             return value;
 
-        for (AbstractMap<K,V> map : map.values()){
+       /* for (AbstractMap<K,V> map : map.values()){
             value = map.get(key);
 
             if (value != null)
                 return value;
-        }
+        }*/
 
         throw new NullPointerException();
     }
