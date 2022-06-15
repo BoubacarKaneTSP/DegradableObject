@@ -46,7 +46,7 @@ public class Benchmark {
     @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
     private String[] ratios;
     @Option(name = "-nbThreads", usage = "Number of threads")
-    private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    private int nbThreads = Runtime.getRuntime().availableProcessors();
     @Option(name = "-time", usage = "How long will the test last (seconds)")
     private int time = 300;
     @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
