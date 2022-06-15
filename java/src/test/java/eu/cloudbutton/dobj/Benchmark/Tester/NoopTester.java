@@ -15,26 +15,27 @@ public class NoopTester extends Tester<Noop> {
         // no-op
 
         long startTime = 1L, endTime = 1L;
+        int val = 250_000;
 
         int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 5000; i++) {
+                for (int i = 0; i < val; i++) {
                     n++;
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 5000; i++) {
+                for (int i = 0; i < val; i++) {
                     n--;
                 }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 5000; i++) {
+                for (int i = 0; i < val; i++) {
                     n += 2;
                 }
                 endTime = System.nanoTime();
@@ -42,6 +43,6 @@ public class NoopTester extends Tester<Noop> {
                 break;
         }
 
-        return (endTime - startTime)/5000;
+        return (endTime - startTime)/val;
     }
 }
