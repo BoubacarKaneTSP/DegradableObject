@@ -11,14 +11,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
-    private final ConcurrentMap<Thread,HashMap<K,V>> map;
+//    private final ConcurrentMap<Thread,HashMap<K,V>> map;
     private final ThreadLocal<HashMap<K,V>> local;
 
     public DegradableMap(){
-        map = new ConcurrentHashMap<>();
+//        map = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
             HashMap<K, V> m = new HashMap<>();
-            map.put(Thread.currentThread(), m);
+//            map.put(Thread.currentThread(), m);
             return m;
         });
     }

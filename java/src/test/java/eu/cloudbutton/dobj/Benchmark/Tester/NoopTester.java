@@ -22,14 +22,14 @@ public class NoopTester extends Tester<Noop> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < val; i++) {
-                    n++;
+                    n = n + 1;
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
                 for (int i = 0; i < val; i++) {
-                    n--;
+                    n = n - 1;
                 }
                 endTime = System.nanoTime();
                 break;
