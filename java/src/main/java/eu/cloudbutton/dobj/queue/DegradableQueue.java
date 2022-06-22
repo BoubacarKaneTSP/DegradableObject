@@ -246,7 +246,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
      */
     @Override
     public E poll() {
-        restartFromHead: for (;;) {
+/*        restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
@@ -263,19 +263,18 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                 else if (p == q)
                     continue restartFromHead;
             }
-        }
+        }*/
 	
-/*
+
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-//            head.item = null;
+            head.item = null;
             return item;
         }
 
         return null;
-	*/
-	
+
     }
 
     @Override
