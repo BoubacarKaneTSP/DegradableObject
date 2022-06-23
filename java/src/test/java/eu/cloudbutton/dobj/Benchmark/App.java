@@ -300,9 +300,9 @@ public class App {
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private ThreadLocal<Map<String, Queue<String>>> usersFollow;
+        private ThreadLocal<Map<String, Queue<String>>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private ThreadLocal<List<String>> arrayUsersFollow = new ThreadLocal<>();
+        private ThreadLocal<List<String>> arrayUsersFollow = new ThreadLocal<>(); // Local array that store the users handled by a thread
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -422,7 +422,7 @@ public class App {
 
                     break;
                 case FOLLOW:
-                    n = random.nextInt(usersProbabilitySize.get());
+                    n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
                     userB = database.getUsersProbability().get(n);
 
                     try{

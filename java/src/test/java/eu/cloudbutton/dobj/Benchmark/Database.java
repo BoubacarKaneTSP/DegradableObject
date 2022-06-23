@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.Benchmark;
 
 import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.BoxLong;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
@@ -26,7 +27,8 @@ public class Database {
     private final ThreadLocalRandom random;
     private final AbstractMap<String, AbstractSet<String>> mapFollowers;
     private final AbstractMap<String, Timeline<String>> mapTimelines;
-    private final AbstractCounter userID;
+    private final ThreadLocal<BoxLong> userID;
+    private final ThreadLocal<String> threadName;
     private final List<String> usersProbability;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -74,11 +76,8 @@ public class Database {
         this.random = ThreadLocalRandom.current();
         mapFollowers = factory.getMap();
         mapTimelines = factory.getMap();
-        userID = factory.getCounter();
-
-        if (userID instanceof FuzzyCounter)
-            ((FuzzyCounter) userID).setN(nbThread);
-
+        userID = ThreadLocal.withInitial(() -> new BoxLong());
+        threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
     }
 
@@ -141,8 +140,11 @@ public class Database {
 
     public String addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
+        long val = userID.get().getVal();
 
-        String user = "User_" + userID.incrementAndGet();
+        String user = "User_" + threadName.get() + "_" + val;
+        userID.get().setVal(val + 1);
+
         mapFollowers.put(user,
                 factory.getSet()
         );
