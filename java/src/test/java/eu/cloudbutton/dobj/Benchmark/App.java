@@ -48,7 +48,7 @@ public class App {
     private String[] distribution;
 
     @Option(name = "-nbThreads", usage = "Number of threads")
-    private int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    private int nbThreads = Runtime.getRuntime().availableProcessors();
 
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
