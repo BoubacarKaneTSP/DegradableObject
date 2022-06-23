@@ -28,11 +28,10 @@ public class FuzzyCounter extends AbstractCounter{
         return (counter.read() * N) + ID.get();
     }
 
-    @SneakyThrows
     @Override
     public long read() {
 
-        throw new IllegalAccessException();
+        return (counter.read() * N) + ID.get();
     }
 
     public void setN(int nbThread)   {
