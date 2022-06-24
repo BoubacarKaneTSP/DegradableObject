@@ -45,7 +45,7 @@ while getopts 'oepxw:u:n:' OPTION; do
 	esac
 done
 
-for type in "Set" "DegradableSet" "Map" "DegradableMap" "Queue" "DegradableList" #"Counter" "DegradableCounter"
+for type in "Set" "DegradableSet" "Map" "DegradableMap" "Queue" "DegradableList" "Counter" "DegradableCounter" "FuzzyCounter"
 do
 	./test.sh -c $type -t Benchmark -k -w $workloadTime -u $warmingUpTime -n $numberOfTest $print$compile$save
 done
