@@ -45,7 +45,6 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
         for (AbstractMap<K,V> map : map.values()){
             value = map.get(key);
-            System.out.println(value);
             if (value != null)
                 return value;
         }
