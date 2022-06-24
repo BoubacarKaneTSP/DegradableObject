@@ -12,7 +12,7 @@ public class SetFiller extends Filler<AbstractSet>{
     public void fill() {
 
         for (long i = 0; i < nbOps; i++) {
-            object.add(i);
+            object.add(Long.toString(i));
         }
     }
 }
