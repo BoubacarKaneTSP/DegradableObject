@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.set;
 
 import java.util.*;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -111,7 +112,11 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public String toString(){
-        return "method toString (DegradableSet) not build yet";
+        Set<T> set;
+
+        set = read();
+
+        return set.toString();
     }
 
 }
