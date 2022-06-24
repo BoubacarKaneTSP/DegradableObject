@@ -111,7 +111,7 @@ public class DegradableSet<T> extends AbstractSet<T> {
 
     @Override
     public String toString(){
-        return "method toString not build yet";
+        return "method toString (DegradableSet) not build yet";
     }
 
 }
