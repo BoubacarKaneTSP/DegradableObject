@@ -5,6 +5,7 @@ import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.map.DegradableMap;
 import eu.cloudbutton.dobj.queue.DegradableQueue;
 import eu.cloudbutton.dobj.queue.MapQueue;
+import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.set.DegradableSet;
 import eu.cloudbutton.dobj.set.Set;
 import eu.cloudbutton.dobj.snapshot.*;
@@ -143,6 +144,8 @@ public class Factory {
                 return new SetSnapshot<>();
             case "SetSnapshotSRMW":
                 return new SetSnapshotSRMW<>();
+            case "ConcurrentHashSet":
+                return new ConcurrentHashSet<>();
             default:
                 throw new ClassNotFoundException();
         }
