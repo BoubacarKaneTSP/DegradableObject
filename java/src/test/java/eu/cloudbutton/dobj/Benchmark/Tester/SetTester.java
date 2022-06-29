@@ -15,8 +15,8 @@ public class SetTester extends Tester<AbstractSet> {
         long startTime = 0L, endTime = 0L;
 
         int rand = random.nextInt(ITEM_PER_THREAD);
-//        String iid = Thread.currentThread().getId()  + Long.toString(rand);
-        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+        String iid = Thread.currentThread().getId()  + Long.toString(rand);
+//        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
 
         switch (type) {
             case ADD:
