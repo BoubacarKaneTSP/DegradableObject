@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final CopyOnWriteArrayList<Long> count;
+//    private final CopyOnWriteArrayList<Long> count;
     private final ThreadLocal<Long> local;
 
     private static final sun.misc.Unsafe UNSAFE;
@@ -31,10 +31,10 @@ public class DegradableCounter extends AbstractCounter {
      * Creates a new Counter initialized with the initial value 0.
      */
     public DegradableCounter() {
-        this.count = new CopyOnWriteArrayList<>();
+//        this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
             Long l = 0L;
-            count.add(l);
+//            count.add(l);
             return l;
         });
     }
@@ -69,10 +69,10 @@ public class DegradableCounter extends AbstractCounter {
     @Override
     public long read() {
         long total = 0;
-        UNSAFE.loadFence();
+       /* UNSAFE.loadFence();
         for (Long v : count) {
             total += v;
-        }
+        }*/
         return total;
     }
 
