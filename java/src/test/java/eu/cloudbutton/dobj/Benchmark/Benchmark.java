@@ -211,14 +211,17 @@ public class Benchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
-                long timeTotal;
+                long timeTotal, totalADD, totalREMOVE, totalREAD;
                 double throughputADD, throughputREMOVE, throughputREAD, throughputTotal;
 
                 timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
+                totalADD =  nbAdd.get() + nbAddFail.get();
+                totalREMOVE =  nbRemove.get() + nbRemoveFail.get();
+                totalREAD = nbRead.get() + nbReadFail.get();
 
-                throughputADD = ((nbAdd.get() + nbAddFail.get()) / (double) timeTotal) * 1_000_000_000;
-                throughputREMOVE = ((nbRemove.get() + nbRemoveFail.get() )/ (double) timeTotal) * 1_000_000_000;
-                throughputREAD = ((nbRead.get() + nbReadFail.get()) / (double) timeTotal) * 1_000_000_000;
+                throughputADD = (totalADD / (double) timeTotal) * 1_000_000_000;
+                throughputREMOVE = (totalREMOVE / (double) timeTotal) * 1_000_000_000;
+                throughputREAD = (totalREAD / (double) timeTotal) * 1_000_000_000;
 
                 throughputTotal = throughputADD + throughputREMOVE +throughputREAD;
 
@@ -238,12 +241,12 @@ public class Benchmark {
                     System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
                     System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
                     System.out.println("    -throughput READ: " + String.format("%.3E",throughputREAD));
-                    System.out.println("    -num add: " + nbAdd.get() + nbAddFail.get());
+                    System.out.println("    -num add: " + totalADD);
                     System.out.println("    -num add (fail): " + nbAddFail.get());
-                    System.out.println("    -num remove: " + nbRemove.get() + nbRemoveFail.get());
+                    System.out.println("    -num remove: " + totalREMOVE);
                     System.out.println("    -num remove (fail): " + nbRemoveFail.get());
-                    System.out.println("    -ratio remove fail: " + (nbRemoveFail.get() / (nbRemove.get() + nbRemoveFail.get()) ) *100);
-                    System.out.println("    -num read: " + nbRead.get() + nbReadFail.get());
+                    System.out.println("    -ratio remove fail: " + (nbRemoveFail.get() / (double) totalREMOVE ) *100);
+                    System.out.println("    -num read: " + totalREAD);
 //                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
