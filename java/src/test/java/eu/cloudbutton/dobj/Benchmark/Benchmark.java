@@ -241,6 +241,8 @@ public class Benchmark {
                     System.out.println("    -num add: " + nbAdd.get() + nbAddFail.get());
                     System.out.println("    -num add (fail): " + nbAddFail.get());
                     System.out.println("    -num remove: " + nbRemove.get() + nbRemoveFail.get());
+                    System.out.println("    -num remove (fail): " + nbRemoveFail.get());
+                    System.out.println("    -ratio remove fail: " + (nbRemoveFail.get() / (nbRemove.get() + nbRemoveFail.get()) ) *100);
                     System.out.println("    -num read: " + nbRead.get() + nbReadFail.get());
 //                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
