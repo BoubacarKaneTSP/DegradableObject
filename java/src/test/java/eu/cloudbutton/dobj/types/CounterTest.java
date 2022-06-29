@@ -39,7 +39,7 @@ public class CounterTest {
 
         Class cls = Class.forName("eu.cloudbutton.dobj.counter.FuzzyCounter");
         factory.setFactoryCounter(cls);
-        testDifferentRead((FuzzyCounter) factory.getCounter());
+//        testDifferentRead((FuzzyCounter) factory.getCounter());
 
         cls = Class.forName("eu.cloudbutton.dobj.counter.DegradableCounter");
         factory.setFactoryCounter(cls);
