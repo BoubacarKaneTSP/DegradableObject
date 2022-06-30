@@ -269,7 +269,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-            head.item = null;
+//            head.item = null;
             return item;
         }
 

@@ -17,15 +17,17 @@ public class QueueTester extends Tester<AbstractQueue> {
 
         long startTime = 0L, endTime = 0L, iid = 0L;
 
-        if (type == opType.ADD || type == opType.READ){
+        /*if (type == opType.ADD || type == opType.READ){
             int rand = random.nextInt(ITEM_PER_THREAD);
             iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-        }
+        }*/
+
+        int rand = random.nextInt(Integer.MAX_VALUE);
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                object.offer(iid);
+                object.offer(rand);
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
