@@ -1,9 +1,10 @@
 package eu.cloudbutton.dobj.counter;
 
-import sun.misc.Unsafe;
+import eu.cloudbutton.dobj.counter.AbstractCounter;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class build a Counter on top of a Snapshot object.
@@ -12,54 +13,50 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final CopyOnWriteArrayList<BoxLong> count;
+    private final ConcurrentMap<Thread, BoxLong> count;
     private final ThreadLocal<BoxLong> local;
-
-/*    private static final sun.misc.Unsafe UNSAFE;
-
-    static {
-        try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            UNSAFE = (Unsafe) f.get(null);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }*/
 
     /**
      * Creates a new Counter initialized with the initial value 0.
      */
     public DegradableCounter() {
-        this.count = new CopyOnWriteArrayList<>();
+        this.count = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
             BoxLong l = new BoxLong();
-            count.add(l);
+            count.put(Thread.currentThread(), l);
             return l;
         });
     }
 
     /**
      * Increments the current value.
-     * @return 0
      */
-    @Override
-    public long incrementAndGet() {
+    public void increment() {
         local.get().setVal(local.get().getVal() + 1);
-//        UNSAFE.storeFence();
-        return 0;
     }
+
     /**
      * Adds the given value to the current value of the Counter.
      * @param delta the value added to the Counter.
      * @throws IllegalArgumentException if the value is different than 1.
-     * @return 0
      */
-    @Override
-    public long addAndGet(int delta) throws IllegalArgumentException{
+    public void increment(int delta) throws IllegalArgumentException{
         if (delta != 1)
             throw new IllegalArgumentException("This counter only supports increments of 1");
-        return incrementAndGet();
+
+        increment();
+    }
+
+    @Override
+    public long incrementAndGet() {
+        increment();
+        return 0;
+    }
+
+    @Override
+    public long addAndGet(int delta) {
+        increment(delta);
+        return 0;
     }
 
     /**
@@ -68,12 +65,10 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long read() {
-        long total = 0;
-//        UNSAFE.loadFence();
-        for (BoxLong v : count) {
+        int total = 0;
+        for (BoxLong v : count.values()) {
             total += v.getVal();
         }
         return total;
     }
-
 }
