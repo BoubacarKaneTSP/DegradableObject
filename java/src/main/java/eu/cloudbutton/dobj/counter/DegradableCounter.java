@@ -76,7 +76,7 @@ public class DegradableCounter extends AbstractCounter {
     @Override
     public long read() {
         long total = 0;
-        UNSAFE.loadFence();
+//        UNSAFE.loadFence();
         for (BoxLong v : count) {
             total += v.val;
         }
