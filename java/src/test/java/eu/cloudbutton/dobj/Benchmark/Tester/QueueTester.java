@@ -27,12 +27,16 @@ public class QueueTester extends Tester<AbstractQueue> {
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                object.offer(rand);
+                for (int i = 0; i < 1000; i++) {
+                    object.offer(rand);
+                }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                object.poll();
+                for (int i = 0; i < 1000; i++) {
+                    object.poll();
+                }
                 endTime = System.nanoTime();
                 break;
             case READ:
@@ -51,6 +55,6 @@ public class QueueTester extends Tester<AbstractQueue> {
                 break;
         }
 
-        return endTime - startTime;
+        return (endTime - startTime)/1000;
     }
 }
