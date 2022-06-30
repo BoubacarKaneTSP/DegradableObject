@@ -54,7 +54,7 @@ public class DegradableCounter extends AbstractCounter {
     }
 
     public void increment(){
-        incrementAndGet();
+        local.get().val +=1 ;
     }
     /**
      * Adds the given value to the current value of the Counter.
