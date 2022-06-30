@@ -16,7 +16,7 @@ public class FuzzyCounter extends AbstractCounter{
     
     @Override
     public long incrementAndGet() {
-        counter.incrementAndGet();
+        counter.increment();
 		
 	return (counter.read() * N) + ID.get();
     }

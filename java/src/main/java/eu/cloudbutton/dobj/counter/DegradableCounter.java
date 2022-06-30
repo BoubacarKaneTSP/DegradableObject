@@ -52,6 +52,10 @@ public class DegradableCounter extends AbstractCounter {
         UNSAFE.storeFence();
         return 0;
     }
+
+    public void increment(){
+        incrementAndGet();
+    }
     /**
      * Adds the given value to the current value of the Counter.
      * @param delta the value added to the Counter.
