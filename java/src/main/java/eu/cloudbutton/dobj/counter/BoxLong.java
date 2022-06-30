@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class BoxLong {
 
-    private long val;
+    public long val;
 }

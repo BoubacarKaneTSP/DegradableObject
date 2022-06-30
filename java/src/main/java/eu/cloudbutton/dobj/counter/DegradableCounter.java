@@ -46,7 +46,8 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        local.get().setVal(local.get().getVal() + 1);
+        long v = local.get().val;
+        local.get().val = v +1;
 //        local.set(local.get() +1);
         UNSAFE.storeFence();
         return 0;
@@ -73,7 +74,7 @@ public class DegradableCounter extends AbstractCounter {
         long total = 0;
         UNSAFE.loadFence();
         for (BoxLong v : count) {
-            total += v.getVal();
+            total += v.val;
         }
         return total;
     }
