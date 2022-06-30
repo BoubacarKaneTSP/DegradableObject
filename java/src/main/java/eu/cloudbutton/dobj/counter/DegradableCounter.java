@@ -13,10 +13,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * */
 public class DegradableCounter extends AbstractCounter {
 
-    private final CopyOnWriteArrayList<AtomicLong> count;
-    private final ThreadLocal<AtomicLong> local;
+    private final CopyOnWriteArrayList<BoxLong> count;
+    private final ThreadLocal<BoxLong> local;
 
-/*    private static final sun.misc.Unsafe UNSAFE;
+    private static final sun.misc.Unsafe UNSAFE;
 
     static {
         try {
@@ -26,7 +26,7 @@ public class DegradableCounter extends AbstractCounter {
         } catch (Exception e) {
             throw new Error(e);
         }
-    }*/
+    }
 
     /**
      * Creates a new Counter initialized with the initial value 0.
@@ -34,7 +34,7 @@ public class DegradableCounter extends AbstractCounter {
     public DegradableCounter() {
         this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
-            AtomicLong l = new AtomicLong();
+            BoxLong l = new BoxLong();
             count.add(l);
             return l;
         });
@@ -46,9 +46,9 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        local.get().incrementAndGet();
-//        local.get().setVal(local.get().getVal() + 1);
-//        UNSAFE.storeFence();
+        local.get().setVal(local.get().getVal() + 1);
+//        local.set(local.get() +1);
+        UNSAFE.storeFence();
         return 0;
     }
     /**
@@ -71,9 +71,9 @@ public class DegradableCounter extends AbstractCounter {
     @Override
     public long read() {
         long total = 0;
-//        UNSAFE.loadFence();
-        for (AtomicLong v : count) {
-            total += v.get();
+        UNSAFE.loadFence();
+        for (BoxLong v : count) {
+            total += v.getVal();
         }
         return total;
     }
