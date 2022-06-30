@@ -32,10 +32,7 @@ public class QueueTester extends Tester<AbstractQueue> {
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-
-                if (object.poll() == null){
-                    return 0L;
-                }
+                object.poll();
                 endTime = System.nanoTime();
                 break;
             case READ:
