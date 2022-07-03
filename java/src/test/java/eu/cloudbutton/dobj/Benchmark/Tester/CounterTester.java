@@ -19,14 +19,14 @@ public class CounterTester extends Tester<AbstractCounter> {
             case ADD:
             case REMOVE:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.incrementAndGet();
                 }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.read();
                 }
                 endTime = System.nanoTime();
@@ -34,6 +34,6 @@ public class CounterTester extends Tester<AbstractCounter> {
                 break;
         }
 
-        return (endTime - startTime)/1000;
+        return (endTime - startTime)/nbRepeat;
     }
 }

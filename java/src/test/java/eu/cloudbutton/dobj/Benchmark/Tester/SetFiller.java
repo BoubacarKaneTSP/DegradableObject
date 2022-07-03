@@ -1,5 +1,8 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.Benchmark.Benchmark;
+import eu.cloudbutton.dobj.map.CollisionKey;
+
 import java.util.AbstractSet;
 
 public class SetFiller extends Filler<AbstractSet>{
@@ -12,7 +15,10 @@ public class SetFiller extends Filler<AbstractSet>{
     public void fill() {
 
         for (long i = 0; i < nbOps; i++) {
-            object.add(Long.toString(i));
+            if(Benchmark.collisionKey)
+                object.add(new CollisionKey(Long.toString(i)));
+            else
+                object.add(Long.toString(i));
         }
     }
 }

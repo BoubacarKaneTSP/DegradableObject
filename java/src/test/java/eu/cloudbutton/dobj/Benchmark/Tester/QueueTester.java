@@ -15,46 +15,34 @@ public class QueueTester extends Tester<AbstractQueue> {
     @Override
     protected long test(opType type) {
 
-        long startTime = 0L, endTime = 0L, iid = 0L;
-
-        /*if (type == opType.ADD || type == opType.READ){
-            int rand = random.nextInt(ITEM_PER_THREAD);
-            iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-        }*/
+        long startTime = 0L, endTime = 0L;
 
         int rand = random.nextInt(Integer.MAX_VALUE);
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.offer(rand);
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.poll();
                 }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
-                    object.contains(iid);
-                endTime = System.nanoTime();
-                Collection<Long> ret = new ArrayList<>();
-
-                Iterator<Long> it = object.iterator();
-                int i = 0;
-
-                while (it.hasNext() && i < 50) {
-                    ret.add(it.next());
-                    i++;
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.contains(rand);
                 }
+                endTime = System.nanoTime();
                 break;
         }
 
-        return (endTime - startTime)/1000;
+        return (endTime - startTime)/nbRepeat;
     }
 }

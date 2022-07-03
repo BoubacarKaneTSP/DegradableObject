@@ -237,6 +237,7 @@ public class Benchmark {
                 }
 
                 if (_p){
+                    //Computing the operations that failed need to be done
                     System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
                     System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
                     System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));

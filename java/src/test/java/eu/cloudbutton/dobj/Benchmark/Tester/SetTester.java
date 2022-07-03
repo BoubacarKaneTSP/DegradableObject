@@ -1,7 +1,14 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.map.CollisionKey;
+
+import java.util.AbstractList;
 import java.util.AbstractSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import static eu.cloudbutton.dobj.Benchmark.Benchmark.collisionKey;
 
 public class SetTester extends Tester<AbstractSet> {
 
@@ -14,28 +21,43 @@ public class SetTester extends Tester<AbstractSet> {
 
         long startTime = 0L, endTime = 0L;
 
-        int rand = random.nextInt(ITEM_PER_THREAD);
-        String iid = Thread.currentThread().getId()  + Long.toString(rand);
-//        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+        AbstractList list = new ArrayList<>();
+
+        for (int i = 0; i < nbRepeat; i++) {
+            int rand = random.nextInt(ITEM_PER_THREAD);
+            String iid = Thread.currentThread().getId()  + Long.toString(rand);
+
+            if (collisionKey)
+                list.add(new CollisionKey(iid));
+            else
+                list.add(iid);
+        }
+
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                object.add(iid);
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.add(list.get(i));
+                }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                object.remove(iid);
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.remove(list.get(i));
+                }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
-                object.contains(iid);
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.contains(list.get(i));
+                }
                 endTime = System.nanoTime();
                 break;
         }
 
-        return endTime - startTime;
+        return (endTime - startTime)/nbRepeat;
     }
 }

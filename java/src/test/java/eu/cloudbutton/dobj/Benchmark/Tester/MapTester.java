@@ -2,7 +2,9 @@ package eu.cloudbutton.dobj.Benchmark.Tester;
 
 import eu.cloudbutton.dobj.map.CollisionKey;
 
+import java.util.AbstractList;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import static eu.cloudbutton.dobj.Benchmark.Benchmark.collisionKey;
@@ -19,41 +21,44 @@ public class MapTester extends Tester<AbstractMap> {
 
         long startTime = 0L, endTime = 0L;
 
-        int rand = random.nextInt(ITEM_PER_THREAD);
-        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+        AbstractList list = new ArrayList<>();
 
-        CollisionKey colKey = null;
-        if (collisionKey)
-            colKey = new CollisionKey(Long.toString(iid));
+        for (int i = 0; i < nbRepeat; i++) {
+            int rand = random.nextInt(ITEM_PER_THREAD);
+            String iid = Thread.currentThread().getId()  + Long.toString(rand);
+//        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
+
+            if (collisionKey)
+                list.add(new CollisionKey(iid));
+            else
+                list.add(iid);
+        }
 
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                if (collisionKey)
-                    object.put(colKey, Long.toString(iid));
-                else
-                    object.put(Long.toString(iid), Long.toString(iid));
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.put(list.get(i), i);
+                }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                if (collisionKey)
-                    object.remove(colKey);
-                else
-                    object.remove(Long.toString(iid));
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.remove(list.get(i));
+                }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
-                if (collisionKey)
-                    object.get(colKey);
-                else
-                    object.get(Long.toString(iid));
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.get(list.get(i));
+                }
                 endTime = System.nanoTime();
                 break;
         }
 
-        return endTime - startTime;
+        return (endTime - startTime) / nbRepeat;
     }
 }

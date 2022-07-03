@@ -19,12 +19,14 @@ public abstract class Tester<T> implements Callable<Void> {
     protected final T object;
     protected final int[] ratios;
     protected final CountDownLatch latch;
+    protected int nbRepeat;
 
     public Tester(T object, int[] ratios, CountDownLatch latch) {
         this.random = ThreadLocalRandom.current();
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
+        this.nbRepeat = 1000;
     }
 
     @Override

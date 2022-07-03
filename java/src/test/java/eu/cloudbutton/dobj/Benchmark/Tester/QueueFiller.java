@@ -11,7 +11,7 @@ public class QueueFiller extends Filler<AbstractQueue> {
     @Override
     public void fill() {
 
-        for (long i = 0; i < nbOps; i++) {
+        for (int i = 0; i < nbOps; i++) {
             object.add(i);
         }
 

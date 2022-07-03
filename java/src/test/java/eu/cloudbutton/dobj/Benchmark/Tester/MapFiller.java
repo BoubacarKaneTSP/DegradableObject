@@ -21,9 +21,9 @@ public class MapFiller extends Filler<AbstractMap> {
         for (int i = 0; i < nbOps; i++) {
             if (collisionKey){
                 CollisionKey colKey = new CollisionKey(Integer.toString(random.nextInt()));
-                object.put(colKey, Integer.toString(i));
+                object.put(colKey, i);
             }else {
-                object.put(Integer.toString(i), Integer.toString(i));
+                object.put(Integer.toString(i), i);
             }
         }
     }

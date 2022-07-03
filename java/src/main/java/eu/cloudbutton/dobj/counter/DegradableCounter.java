@@ -46,9 +46,7 @@ public class DegradableCounter extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        long v = local.get().val;
-        local.get().val = v +1;
-//        local.set(local.get() +1);
+        local.get().val += 1;
         UNSAFE.storeFence();
         return 0;
     }
