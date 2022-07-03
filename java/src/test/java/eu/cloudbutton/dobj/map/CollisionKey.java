@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Data
-public class CollisionKey implements Comparable<CollisionKey>{
+public class CollisionKey /*implements Comparable<CollisionKey>*/{
 
      String value;
      List<Integer> listHashCode = new ArrayList<>();
@@ -46,9 +46,9 @@ public class CollisionKey implements Comparable<CollisionKey>{
     public int hashCode() {
         return listHashCode.get(random.nextInt(listHashCode.size()));
     }
-
+/*
     @Override
     public int compareTo(@NotNull CollisionKey o) {
         return this.value.hashCode() - o.hashCode();
-    }
+    }*/
 }
