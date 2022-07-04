@@ -41,6 +41,10 @@ public class SetTester extends Tester<AbstractSet> {
                     object.add(list.get(i));
                 }
                 endTime = System.nanoTime();
+
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.remove(list.get(i));
+                }
                 break;
             case REMOVE:
                 startTime = System.nanoTime();

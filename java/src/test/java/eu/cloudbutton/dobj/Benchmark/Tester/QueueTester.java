@@ -26,6 +26,10 @@ public class QueueTester extends Tester<AbstractQueue> {
                     object.offer(rand);
                 }
                 endTime = System.nanoTime();
+
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.poll();
+                }
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
