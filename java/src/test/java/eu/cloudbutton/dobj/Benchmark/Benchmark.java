@@ -147,7 +147,7 @@ public class Benchmark {
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, 1_000);
+                    FactoryFiller factoryFiller = new FactoryFiller(object, 1_000_000);
 
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
