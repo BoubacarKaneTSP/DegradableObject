@@ -45,7 +45,15 @@ while getopts 'oepxw:u:n:' OPTION; do
 	esac
 done
 
-for type in "Set" "DegradableSet" "Map" "DegradableMap" "Queue" "DegradableList" "Counter" "DegradableCounter" "FuzzyCounter"
+for type in "Set" "DegradableSet" "ConcurrentHashSet" "Map" "DegradableMap" "Queue" "DegradableQueue" "DegradableList" "Counter" "DegradableCounter" "FuzzyCounter"
 do
-	./test.sh -c $type -t Benchmark -k -w $workloadTime -u $warmingUpTime -n $numberOfTest $print$compile$save
+	if [[ $type == "Queue" || $type == "DegradableQueue" ]]
+	then	
+		./test.sh -c $type -t Benchmark -k -a -w $workloadTime -u $warmingUpTime -n $numberOfTest $print$compile$save
+	elif [[ $type == "ConcurrentHashSet" || $type == "Set" || $type == "DegradableSet" ]]
+	then
+		./test.sh -c $type -t Benchmark -w $workloadTime -u $warmingUpTime -n $numberOfTest $print$compile$save
+	else
+		./test.sh -c $type -t Benchmark -k -w $workloadTime -u $warmingUpTime -n $numberOfTest $print$compile$save
+	fi
 done
