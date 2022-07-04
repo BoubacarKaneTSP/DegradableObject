@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.Benchmark.Tester;
 
 import eu.cloudbutton.dobj.map.CollisionKey;
 
+import java.lang.instrument.Instrumentation;
 import java.util.AbstractMap;
 import java.util.Random;
 

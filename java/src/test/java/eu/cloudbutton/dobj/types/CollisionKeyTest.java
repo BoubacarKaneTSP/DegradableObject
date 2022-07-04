@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.types;
 import eu.cloudbutton.dobj.map.CollisionKey;
 import org.testng.annotations.Test;
 
+import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;

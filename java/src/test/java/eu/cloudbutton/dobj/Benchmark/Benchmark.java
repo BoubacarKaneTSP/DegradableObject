@@ -7,6 +7,7 @@ import eu.cloudbutton.dobj.Benchmark.Tester.Tester;
 import eu.cloudbutton.dobj.counter.Counter;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.map.CollisionKey;
 import eu.cloudbutton.dobj.queue.DegradableQueue;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -17,6 +18,7 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.instrument.Instrumentation;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -149,8 +151,14 @@ public class Benchmark {
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, 1_000_000);
 
+                    if (_p)
+                        System.out.println("Start filling.");
+
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
+
+                    if (_p)
+                        System.out.println("End filling.");
 
                     if (object instanceof DegradableQueue)
                         ((DegradableQueue)object).resetNbFor();
@@ -294,4 +302,5 @@ public class Benchmark {
             return null;
         }
     }
+
 }
