@@ -22,8 +22,9 @@ printFail=""
 asymmetric=""
 collisionKey=""
 quickTest=""
+nbInitialAdd=1000
 
-while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvo' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
@@ -136,6 +137,9 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvo' OPTION; do
     v)
       quickTest="-quickTest"
       ;;
+    i)
+      nbInitialAdd="$OPTARG"
+      ;;
     o)
       echo "script usage: $(basename \$0)
       [-c] counter type,
@@ -150,10 +154,11 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvo' OPTION; do
       [-e] save,
       [-w] workload Time in sec,
       [-u] warming up Time in sec,
-      [-n] number of test
-      [-f] print the ratio of operations that failed
-      [-a] test an asymmetrical workload
-      [-k] test the map with collision on key
+      [-n] number of test,
+      [-f] print the ratio of operations that failed,
+      [-a] test an asymmetrical workload,
+      [-k] test the map with collision on key,
+      [-i] Number of object initially added,
       [-v] testing only one and max nbThreads" >&2
       exit 1
       ;;
@@ -170,10 +175,11 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvo' OPTION; do
       [-e] save,
       [-w] workload Time in sec,
       [-u] warming up Time in sec,
-      [-n] number of test
-      [-f] print the ratio of operations that failed
-      [-a] test an asymmetrical workload
-      [-k] test the map with collision on key
+      [-n] number of test,
+      [-f] print the ratio of operations that failed,
+      [-a] test an asymmetrical workload,
+      [-k] test the map with collision on key,
+      [-i] Number of object initially added,
       [-v] testing only one and max nbThreads" >&2
       exit 1
       ;;
@@ -188,7 +194,7 @@ echo "The number of test is : $nbTest"
 
 if [[ $typeTest == "Benchmark" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -verbose:gc eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save $printFail $asymmetric $collisionKey $quickTest
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -verbose:gc eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
 elif [[ $typeTest == "Retwis" ]]
 then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save

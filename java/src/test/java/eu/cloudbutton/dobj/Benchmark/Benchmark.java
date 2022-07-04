@@ -53,8 +53,8 @@ public class Benchmark {
     private int time = 300;
     @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
     private int wTime = 0;
-    @Option(name = "-nbOps", usage = "Number of operations between two time's read")
-    private long nbOps = 100_000_000;
+    @Option(name = "-nbOps", usage = "Number of object initially added")
+    private long nbOps = 1_000;
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
@@ -149,7 +149,7 @@ public class Benchmark {
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, 50_000);
+                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps);
 
                     if (_p)
                         System.out.println("Start filling.");
