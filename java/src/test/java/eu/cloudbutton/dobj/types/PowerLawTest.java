@@ -18,14 +18,15 @@ public class PowerLawTest {
             listAlpha.add(i);
         }*/
 
-        listAlpha.add(1.7);
+        listAlpha.add(2.0);
 
         for (double alpha : listAlpha){
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
 
 
-            int i = 0, nbMax = 0, max = 57, avg = 0;
+            int i = 0, nbMax = 0, max = Collections.max(data), avg = 0;;
 
+            max = 4;
 
             for (int val: data){
                 if (val >= max) {

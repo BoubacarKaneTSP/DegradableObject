@@ -26,12 +26,11 @@ public class CollisionKey /*implements Comparable<CollisionKey>*/{
 
         int i = 0;
 
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) 100000 * ratio);
+        int max = 4;
 
         for (int val: data){
             if (val >= max) {
-                data.set(i, (int) max);
+                data.set(i, max);
             }
             if (val < 0)
                 data.set(i, 0);
