@@ -22,7 +22,7 @@ public class CollisionKey /*implements Comparable<CollisionKey>*/{
         this.random = ThreadLocalRandom.current();
         int bound = 1000;
 
-        List<Integer> data = new DiscreteApproximate(1, 1.7).generate(bound);
+        List<Integer> data = new DiscreteApproximate(1, 1.315).generate(bound);
 
         int i = 0;
 
