@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.Benchmark.Tester;
 
 import eu.cloudbutton.dobj.Benchmark.Benchmark;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -117,5 +118,5 @@ public abstract class Tester<T> implements Callable<Void> {
         return null;
     }
 
-    protected abstract long test(opType type);
+    protected abstract long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
 }

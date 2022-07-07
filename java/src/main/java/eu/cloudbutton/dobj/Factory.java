@@ -22,13 +22,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Factory {
 
-    private AbstractMap map;
-    private AbstractList list;
-    private AbstractSet set;
-    private AbstractQueue queue;
-    private AbstractCounter counter;
-    private Noop noop;
-
     private Constructor<? extends AbstractMap> constructorMap;
     private Constructor<? extends AbstractList> constructorList;
     private Constructor<? extends AbstractSet> constructorSet;

@@ -1,35 +1,41 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.map.CollisionKey;
+import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import static eu.cloudbutton.dobj.Benchmark.Benchmark.collisionKey;
-
 public class MapTester extends Tester<AbstractMap> {
 
+    private boolean useCollisionKey;
 
-    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch) {
+    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
         super(object, ratios, latch);
+        this.useCollisionKey = useCollisionKey;
     }
 
     @Override
-    protected long test(opType type) {
+    protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         long startTime = 0L, endTime = 0L;
 
         AbstractList list = new ArrayList<>();
+
+        CollisionKeyFactory factory = new CollisionKeyFactory();
+
+        factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
         for (int i = 0; i < nbRepeat; i++) {
             int rand = random.nextInt(ITEM_PER_THREAD);
             String iid = Thread.currentThread().getId()  + Long.toString(rand);
 //        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
 
-            if (collisionKey)
-                list.add(new CollisionKey(iid));
+            if (useCollisionKey)
+                list.add(factory.getCollisionKey());
             else
                 list.add(iid);
         }
@@ -42,9 +48,6 @@ public class MapTester extends Tester<AbstractMap> {
                     object.put(list.get(i), i);
                 }
                 endTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(list.get(i));
-                }
                 break;
             case REMOVE:
                 startTime = System.nanoTime();

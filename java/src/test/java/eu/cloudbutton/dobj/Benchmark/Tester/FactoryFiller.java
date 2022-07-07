@@ -12,18 +12,20 @@ public class FactoryFiller {
 
     private final Object object;
     private final long nbOps;
+    private boolean useCollisionKey;
 
-    public FactoryFiller(Object object, long nbOps) {
+    public FactoryFiller(Object object, long nbOps, boolean useCollisionKey) {
         this.object = object;
         this.nbOps = nbOps;
+        this.useCollisionKey = useCollisionKey;
     }
 
     public Filler createFiller() throws ClassNotFoundException {
 
         if (object instanceof AbstractMap)
-            return new MapFiller((AbstractMap) object, nbOps);
+            return new MapFiller((AbstractMap) object, nbOps, useCollisionKey);
         else if (object instanceof AbstractSet)
-            return new SetFiller((AbstractSet) object, nbOps);
+            return new SetFiller((AbstractSet) object, nbOps, useCollisionKey);
         else if (object instanceof AbstractQueue)
             return new QueueFiller((AbstractQueue) object, nbOps);
         else if (object instanceof AbstractList)

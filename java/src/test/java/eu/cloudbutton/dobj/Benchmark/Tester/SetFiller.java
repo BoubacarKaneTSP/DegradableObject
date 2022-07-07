@@ -1,22 +1,33 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.Benchmark.Benchmark;
-import eu.cloudbutton.dobj.map.CollisionKey;
+import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractSet;
 
 public class SetFiller extends Filler<AbstractSet>{
 
-    public SetFiller(AbstractSet set, long nbOps) {
+    private boolean useCollisionKey;
+
+    public SetFiller(AbstractSet set, long nbOps, boolean useCollisionKey) {
         super(set, nbOps);
+        this.useCollisionKey = useCollisionKey;
     }
 
     @Override
-    public void fill() {
+    public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
+        CollisionKeyFactory factory = null;
+
+        if (useCollisionKey){
+            factory = new CollisionKeyFactory();
+            factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
+        }
 
         for (long i = 0; i < nbOps; i++) {
-            if(Benchmark.collisionKey)
-                object.add(new CollisionKey(Long.toString(i)));
+            if(useCollisionKey)
+                object.add(factory.getCollisionKey());
             else
                 object.add(Long.toString(i));
         }

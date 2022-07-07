@@ -1,29 +1,34 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.map.CollisionKey;
+import eu.cloudbutton.dobj.Benchmark.Benchmark;
+import eu.cloudbutton.dobj.map.AbstractCollisionKey;
+import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+import eu.cloudbutton.dobj.map.DegradableMap;
+import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 import org.testng.annotations.Test;
 
-import java.lang.instrument.Instrumentation;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class CollisionKeyTest {
+public class PowerLawCollisionKeyTest {
 
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
-/*
-        ConcurrentHashMap<CollisionKey, String> collisionMap = new ConcurrentHashMap<>();
+
+        AbstractMap<AbstractCollisionKey, String> collisionMap = new DegradableMap<>();
         ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
 
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() / 2);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            String currentThreadName = Thread.currentThread().getName();
+            CollisionKeyFactory factory = new CollisionKeyFactory();
+            factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-            for (int i = 0; i < 5_000; i++) {
-                collisionMap.put(new CollisionKey( currentThreadName + "_" + i),"value");
+            for (int i = 0; i < 100_000; i++) {
+                collisionMap.put(factory.getCollisionKey(), "value");
 //                map.put(currentThreadName +"_"+ i , "value");
             }
             return null;
@@ -42,12 +47,12 @@ public class CollisionKeyTest {
         }
 
         end = System.nanoTime();
-        double timeElapsed =  (end - start) / 1000000000.0;*/
-/*
+        double timeElapsed =  (end - start) / 1000000000.0;
+
         System.out.println("Number of processes => " + Runtime.getRuntime().availableProcessors()/2);
         System.out.println("Time elapsed filling the hashmap => " + timeElapsed + " seconds.");
         System.out.println("Current map size => " + map.size());
-        System.out.println("Current collisionMap size => " + collisionMap.size());*/
+        System.out.println("Current collisionMap size => " + collisionMap.size());
 
     }
 

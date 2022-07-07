@@ -1,42 +1,32 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
-import eu.cloudbutton.dobj.map.CollisionKey;
+import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
-import java.lang.instrument.Instrumentation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import static eu.cloudbutton.dobj.Benchmark.Benchmark.collisionKey;
 
 public class MapFiller extends Filler<AbstractMap> {
 
-    public MapFiller(AbstractMap map, long nbOps) {
+    private boolean useCollisionKey;
+
+    public MapFiller(AbstractMap map, long nbOps, boolean useCollisionKey) {
         super(map, nbOps);
+        this.useCollisionKey = useCollisionKey;
     }
 
     @Override
-    public void fill() {
+    public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        Random random = new Random();
+        CollisionKeyFactory factory = new CollisionKeyFactory();
 
-        List<CollisionKey> collisionKeyList = new ArrayList<>();
+        factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-        if (collisionKey) {
-            for (int i = 0; i < nbOps; i++) {
-                collisionKeyList.add(new CollisionKey(Integer.toString(random.nextInt())));
-            }
-
-            System.out.println("Done creating colkey objects");
-
-            for (int i = 0; i < nbOps; i++) {
-                object.put(collisionKeyList.get(i), i);
-            }
-        }else{
-            for (int i = 0; i < nbOps; i++) {
+        for (int i = 0; i < nbOps; i++) {
+            if (useCollisionKey)
+                object.put(factory.getCollisionKey(), i);
+            else
                 object.put(Integer.toString(i), i);
-            }
         }
 
     }

@@ -1,13 +1,8 @@
 package eu.cloudbutton.dobj.Benchmark;
 
-import eu.cloudbutton.dobj.Benchmark.Tester.FactoryFiller;
-import eu.cloudbutton.dobj.Benchmark.Tester.FactoryTester;
-import eu.cloudbutton.dobj.Benchmark.Tester.Filler;
-import eu.cloudbutton.dobj.Benchmark.Tester.Tester;
-import eu.cloudbutton.dobj.counter.Counter;
+import eu.cloudbutton.dobj.Benchmark.Tester.*;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.map.CollisionKey;
 import eu.cloudbutton.dobj.queue.DegradableQueue;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -18,7 +13,7 @@ import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.instrument.Instrumentation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +36,6 @@ public class Benchmark {
     public static AtomicLong nbReadFail;
     public static AtomicBoolean flag;
     public static boolean ratioFail;
-    public static boolean collisionKey;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -119,7 +113,6 @@ public class Benchmark {
 
         try{
             ratioFail = _ratioFail;
-            collisionKey = _collisionKey;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -149,7 +142,7 @@ public class Benchmark {
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps);
+                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
 
                     if (_p)
                         System.out.println("Start filling.");
@@ -167,11 +160,13 @@ public class Benchmark {
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread);
-                    FactoryTester factoryTester = new FactoryTester(
-                            object,
-                            Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray(),
-                            latch
-                    );
+
+                    FactoryTester factoryTester = new FactoryTesterBuilder()
+                            .object(object)
+                            .ratios(Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray())
+                            .latch(latch)
+                            .useCollisionKey(_collisionKey)
+                            .buildTester();
 
                     int nbComputingThread = _asymmetric ? nbCurrentThread - 1 : nbCurrentThread;
 
@@ -185,11 +180,13 @@ public class Benchmark {
 //                   Code if a specific thread perform a different operation.
 
                     if (_asymmetric){
-                        FactoryTester factoryT = new FactoryTester(
-                                object,
-                                new int[] {0, 100, 0}, // [add, remove, read]
-                                latch
-                        );
+
+                        FactoryTester factoryT = new FactoryTesterBuilder()
+                                .object(object)
+                                .ratios(new int[] {0, 100, 0}) // [add, remove, read]
+                                .latch(latch)
+                                .useCollisionKey(_collisionKey)
+                                .buildTester();
 
                         Tester t = factoryT.createTester();
                         callables.add(t);
@@ -235,7 +232,7 @@ public class Benchmark {
 
                 if (_s){
 
-                    if (nbCurrentThread == 1)
+                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", false);
                     else
                         fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
@@ -280,6 +277,14 @@ public class Benchmark {
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
             System.exit(-1);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
         System.exit(0);
     }
