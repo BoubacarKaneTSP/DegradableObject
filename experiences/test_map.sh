@@ -1,3 +1,8 @@
+#!/bin/bash
+
+# kill all the children of the current process
+trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 for nbInitialAdd in 10 100 1000 10000 100000 1000000 10000000
 do
