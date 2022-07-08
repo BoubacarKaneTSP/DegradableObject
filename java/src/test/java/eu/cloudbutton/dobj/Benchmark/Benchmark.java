@@ -123,7 +123,7 @@ public class Benchmark {
             if (_asymmetric)
                 nbCurrentThread = 2;
 
-            for (; nbCurrentThread == 1 || nbCurrentThread <= nbThreads; ) {
+            for (;nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
@@ -267,6 +267,7 @@ public class Benchmark {
                 }
 
                 if (nbCurrentThread > nbThreads && nbCurrentThread != 2 * nbThreads) {
+                    System.out.println("fix nb thread");
                     nbCurrentThread = nbThreads;
                 }
 
