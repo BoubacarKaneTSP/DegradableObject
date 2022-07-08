@@ -123,7 +123,7 @@ public class Benchmark {
             if (_asymmetric)
                 nbCurrentThread = 2;
 
-            for (; nbCurrentThread <= nbThreads; ) {
+            for (; nbCurrentThread == 1 || nbCurrentThread <= nbThreads; ) {
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
