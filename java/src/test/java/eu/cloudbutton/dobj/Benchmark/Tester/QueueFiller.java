@@ -1,6 +1,11 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+
 import java.util.AbstractQueue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class QueueFiller extends Filler<AbstractQueue> {
 
@@ -9,11 +14,28 @@ public class QueueFiller extends Filler<AbstractQueue> {
     }
 
     @Override
-    public void fill() {
+    public void fill() throws ExecutionException, InterruptedException {
 
-        for (int i = 0; i < nbOps; i++) {
-            object.add(i);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Future<Void>> futures = new ArrayList<>();
+
+        int nbTask = 10;
+
+        Callable<Void> callable = () -> {
+            for (int i = 0; i < nbOps/nbTask; i++) {
+                object.add(i);
+            }
+            return null;
+        };
+
+        for (int i = 0; i < nbTask; i++) {
+            futures.add(executor.submit(callable));
         }
+
+        for (Future<Void> future : futures) {
+            future.get();
+        }
+
 
     }
 }

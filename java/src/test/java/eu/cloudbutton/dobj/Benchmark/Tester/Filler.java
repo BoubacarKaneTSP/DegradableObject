@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutionException;
 
 public abstract class Filler<T> {
 
@@ -13,5 +14,5 @@ public abstract class Filler<T> {
     }
 
 
-    public abstract void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
+    public abstract void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException;
 }

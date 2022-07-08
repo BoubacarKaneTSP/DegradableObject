@@ -5,6 +5,9 @@ import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class SetFiller extends Filler<AbstractSet>{
 
@@ -16,7 +19,7 @@ public class SetFiller extends Filler<AbstractSet>{
     }
 
     @Override
-    public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
 
         CollisionKeyFactory factory = null;
 
@@ -25,11 +28,31 @@ public class SetFiller extends Filler<AbstractSet>{
             factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
         }
 
-        for (long i = 0; i < nbOps; i++) {
-            if(useCollisionKey)
-                object.add(factory.getCollisionKey());
-            else
-                object.add(Long.toString(i));
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Future<Void>> futures = new ArrayList<>();
+
+        int nbTask = 10;
+
+        CollisionKeyFactory finalFactory = factory;
+        Callable<Void> callable = () -> {
+
+            for (long i = 0; i < nbOps/nbTask; i++) {
+                if(useCollisionKey)
+                    object.add(finalFactory.getCollisionKey());
+                else
+                    object.add(Long.toString(i));
+            }
+
+            return null;
+        };
+
+        for (int i = 0; i < nbTask; i++) {
+            futures.add(executor.submit(callable));
         }
+
+        for (Future<Void> future : futures) {
+            future.get();
+        }
+
     }
 }

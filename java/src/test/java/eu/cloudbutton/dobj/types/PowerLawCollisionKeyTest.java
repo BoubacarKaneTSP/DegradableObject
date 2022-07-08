@@ -19,12 +19,12 @@ public class PowerLawCollisionKeyTest {
 
         AbstractMap<AbstractCollisionKey, String> collisionMap = new DegradableMap<>();
         ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+        CollisionKeyFactory factory = new CollisionKeyFactory();
 
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            CollisionKeyFactory factory = new CollisionKeyFactory();
             factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
             for (int i = 0; i < 100_000; i++) {

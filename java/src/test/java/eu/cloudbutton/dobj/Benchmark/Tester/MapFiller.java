@@ -5,6 +5,9 @@ import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class MapFiller extends Filler<AbstractMap> {
 
@@ -16,17 +19,31 @@ public class MapFiller extends Filler<AbstractMap> {
     }
 
     @Override
-    public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
 
         CollisionKeyFactory factory = new CollisionKeyFactory();
 
         factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-        for (int i = 0; i < nbOps; i++) {
-            if (useCollisionKey)
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Future<Void>> futures = new ArrayList<>();
+
+        int nbTask = 10;
+
+        Callable<Void> callable = () -> {
+
+            for (int i = 0; i < nbOps/nbTask; i++) {
                 object.put(factory.getCollisionKey(), i);
-            else
-                object.put(Integer.toString(i), i);
+            }
+            return null;
+        };
+
+        for (int i = 0; i < nbTask; i++) {
+            futures.add(executor.submit(callable));
+        }
+
+        for (Future<Void> future : futures) {
+            future.get();
         }
 
     }
