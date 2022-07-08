@@ -118,7 +118,7 @@ public class Benchmark {
             FileWriter fileWriter;
             Object object;
 
-            int nbCurrentThread = 1;
+            int nbCurrentThread = nbThreads;
 
             if (_asymmetric)
                 nbCurrentThread = 2;
@@ -144,14 +144,14 @@ public class Benchmark {
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
 
-                    if (_p)
-                        System.out.println("Start filling.");
+//                    if (_p)
+//                        System.out.println("Start filling.");
 
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
 
-                    if (_p)
-                        System.out.println("End filling.");
+//                    if (_p)
+//                        System.out.println("End filling.");
 
                     if (object instanceof DegradableQueue)
                         ((DegradableQueue)object).resetNbFor();
@@ -241,10 +241,11 @@ public class Benchmark {
                     printWriter.println(nbCurrentThread + " " + throughputTotal);
                 }
 
+
                 if (_p){
                     //Computing the operations that failed need to be done
-//                    System.out.println(nbOps + " " + throughputTotal);
-                    System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println(nbOps + " " + throughputTotal);
+                    /*System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
                     System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
                     System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
                     System.out.println("    -throughput READ: " + String.format("%.3E",throughputREAD));
@@ -253,7 +254,7 @@ public class Benchmark {
                     System.out.println("    - remove: " + totalREMOVE);
                     System.out.println("    - remove (fail): " + nbRemoveFail.get());
                     System.out.println("    - ratio remove fail: " + (nbRemoveFail.get() / (double) totalREMOVE ) *100);
-                    System.out.println("    - read: " + totalREAD);
+                    System.out.println("    - read: " + totalREAD);*/
 //                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
