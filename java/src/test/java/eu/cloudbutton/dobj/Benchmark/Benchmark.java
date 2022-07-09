@@ -118,7 +118,7 @@ public class Benchmark {
             FileWriter fileWriter;
             Object object;
 
-            int nbCurrentThread = nbThreads;
+            int nbCurrentThread = 1;
 
             if (_asymmetric)
                 nbCurrentThread = 2;
@@ -267,7 +267,6 @@ public class Benchmark {
                 }
 
                 if (nbCurrentThread > nbThreads && nbCurrentThread != 2 * nbThreads) {
-                    System.out.println("fix nb thread");
                     nbCurrentThread = nbThreads;
                 }
 
