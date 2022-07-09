@@ -26,7 +26,7 @@ for file in files:
     resultat = []
     for elt in file.read().split():
         if i % 2 == 0:
-            numprocess.append(elt)
+            numprocess.append(int(elt))
         else:
             print(float(elt))
             resultat.append(float(elt))
@@ -47,8 +47,9 @@ plt.rcParams.update({'font.size': SIZE})
 plt.xticks(fontsize=SIZE)
 plt.yticks(fontsize=SIZE)
 
+plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
-plt.gca().set_ylim([100000,1000000000])
+plt.gca().set_ylim([100,100000])
 # plt.gca().set_ylim([0.00000001,0.001])
 # plt.gca().invert_yaxis()
 plt.gca().spines['right'].set_visible(False)
@@ -56,7 +57,7 @@ plt.gca().spines['top'].set_visible(False)
 plt.gca().tick_params(axis='both', which='major', labelsize=SIZE, length=SIZE)
 plt.gca().tick_params(axis='both', which='minor', labelsize=SIZE, length=SIZE)
 plt.ylabel("Throughput", fontsize=SIZE)
-plt.xlabel("# Processes", fontsize=SIZE)
+plt.xlabel("Initial size", fontsize=SIZE)
 plt.legend(bbox_to_anchor=(0., 1.04, 1., 1.), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
 plt.yscale("log")
 plt.show()
