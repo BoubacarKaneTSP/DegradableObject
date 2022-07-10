@@ -6,17 +6,18 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
-    private final List<HashMap<K,V>> listMap;
-    private final ThreadLocal<HashMap<K,V>> local;
+    private final List<ConcurrentHashMap<K,V>> listMap;
+    private final ThreadLocal<ConcurrentHashMap<K,V>> local;
 
     public DegradableMap(){
         listMap = new CopyOnWriteArrayList<>();
         local = ThreadLocal.withInitial(() -> {
-            HashMap<K, V> m = new HashMap<>();
+            ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
             return m;
         });
