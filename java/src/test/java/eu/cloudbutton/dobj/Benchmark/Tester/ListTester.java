@@ -14,34 +14,27 @@ public class ListTester extends Tester<AbstractList> {
 
         long startTime = 0L, endTime = 0L;
 
-        AbstractList<Long> list = new ArrayList();
-
-        for (int i = 0; i < nbRepeat; i++) {
-
-            int rand = random.nextInt(ITEM_PER_THREAD);
-            long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-            list.add(iid);
-        }
+        int rand = random.nextInt(ITEM_PER_THREAD);
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.add(list.get(i));
+                    object.add(rand);
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(list.get(i));
+                    object.remove(rand);
                 }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.contains(list.get(i));
+                    object.contains(rand);
                 }
                 endTime = System.nanoTime();
                 break;

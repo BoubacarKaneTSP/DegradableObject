@@ -115,7 +115,7 @@ public class DegradableList<T> extends AbstractList<T>{
      */
     @Override
     public boolean add(T element) {
-        return local.get().add(element);
+        return local.get().offer(element);
     }
 
     @Override
