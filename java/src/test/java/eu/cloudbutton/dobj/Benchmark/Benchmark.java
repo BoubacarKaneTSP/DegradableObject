@@ -249,7 +249,7 @@ public class Benchmark {
                     System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
                     System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
                     System.out.println("    -throughput READ: " + String.format("%.3E",throughputREAD));
-                    System.out.println("Number of avg computed for each op :");
+                    System.out.println("Number of op computed :");
                     System.out.println("    - add: " + totalADD);
                     System.out.println("    - remove: " + totalREMOVE);
                     System.out.println("    - remove (fail): " + nbRemoveFail.get());
@@ -263,7 +263,6 @@ public class Benchmark {
                 if (_quickTest){
                     if(nbCurrentThread==2)
                         nbCurrentThread = nbThreads;
-
                 }
 
                 if (nbCurrentThread > nbThreads && nbCurrentThread != 2 * nbThreads) {
@@ -279,13 +278,7 @@ public class Benchmark {
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
             System.exit(-1);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         System.exit(0);

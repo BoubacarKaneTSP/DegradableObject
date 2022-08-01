@@ -48,16 +48,19 @@ public class App {
     private String[] distribution;
 
     @Option(name = "-nbThreads", usage = "Number of threads")
-    private int nbThreads = Runtime.getRuntime().availableProcessors();
+    private int _nbThreads = Runtime.getRuntime().availableProcessors();
 
     @Option(name = "-nbTest", usage = "Number of test")
-    private int nbTest = 1;
+    private int _nbTest = 1;
+
+    @Option(name = "-nbOps", usage = "Number of operation done")
+    private long _nbOps = 1_000_000;
 
     @Option(name = "-time", usage = "test time (seconds)")
-    private int time = 300;
+    private int _time = 300;
 
     @Option(name = "-wTime", usage = "warming time (seconds)")
-    private int wTime = 0;
+    private int _wTime = 0;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
     private double _alphaInit = 1.315;
@@ -73,6 +76,15 @@ public class App {
 
     @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
     private boolean _p = false;
+
+    @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Testing only one and max nbThreads")
+    public boolean _quickTest = false;
+
+    @Option(name = "-completionTime", handler = ExplicitBooleanOptionHandler.class, usage = "Computing the completion time")
+    public boolean _completionTime = false;
+
+    @Option(name = "-multipleOperation", handler = ExplicitBooleanOptionHandler.class, usage = "Computing operation multiples times")
+    public boolean _multipleOperation = false;
 
     private AtomicBoolean flagComputing,flagWarmingUp;
 
@@ -134,14 +146,11 @@ public class App {
             listAlpha.add(i);
         }
 
-        List<Integer> listNbThread = new ArrayList<>();
-        listNbThread.add(1);
-        listNbThread.add(16);
-//        for (int nbCurrThread: listNbThread){
-        for (int nbCurrThread = 1; nbCurrThread <= nbThreads;) {
+        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
+            long startTime, endTime, timeTotal = 0L;
 
             if (_p){
                 System.out.println();
@@ -160,7 +169,7 @@ public class App {
                     System.out.println();
                 }
 
-                for (int nbCurrTest = 1; nbCurrTest <= nbTest; nbCurrTest++) {
+                for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread); // Additional count for the UserAdder
                     ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
@@ -197,8 +206,11 @@ public class App {
                     }
 
                     executorServiceCoordinator.submit(new Coordinator(latch));
-
                     List<Future<Void>> futures;
+
+
+
+                    startTime = System.nanoTime();
                     futures = executor.invokeAll(callables);
 
                     try{
@@ -210,21 +222,23 @@ public class App {
                         System.exit(0);
                     }
 
+                    endTime = System.nanoTime();
+
+                    timeTotal = endTime - startTime;
+
                     TimeUnit.SECONDS.sleep(5);
                     executor.shutdown();
                 }
 
                 long nbOpTotal = 0;
                 long nbOpTotalFailed = 0;
-                long timeTotal = 0L;
 
                 for (opType op : opType.values()){
                     nbOpTotal += nbOperations.get(op).get();
                     nbOpTotalFailed += nbOperationsFailed.get(op).get();
-                    timeTotal += timeOperations.get(op).get();
                 }
 
-                long nbOp = nbOpTotal - nbOpTotalFailed;
+                long nbOp;
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
                 if (_s){
@@ -235,15 +249,19 @@ public class App {
                         fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrThread +" "+ (nbOp / (double) timeTotal) * 1_000_000_000);
+                    if (_completionTime)
+                        printWriter.println(nbCurrThread +" "+ (_nbOps / (double) timeTotal) * 1_000_000_000);
+                    else
+                        printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) _time) * 1_000_000_000);
                 }
 
                 if (_p){
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
-                    System.out.print(" Throughput for all type of operations ");
+                    System.out.print(" Completion time for " + _nbOps + " operations ");
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     System.out.println();
-                    System.out.println(" - "+ String.format("%.3E",(nbOp / (double) timeTotal) * 1_000_000_000));
+                    System.out.println(" - "+ timeTotal/1_000_000_000 +" seconds");
+                    System.out.println();
                     System.out.println("* Proportion of failed operations : " + (nbOpTotalFailed / (double) nbOpTotal) * 100);
 
                 }
@@ -251,33 +269,36 @@ public class App {
                 if (_s)
                     printWriter.flush();
 
-                for (opType op: opType.values()){
+                if (! _completionTime){
+                    for (opType op: opType.values()){
 
-                    nbOp = nbOperations.get(op).get() - nbOperationsFailed.get(op).get();
+                        nbOp = nbOperations.get(op).get() - nbOperationsFailed.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                    if (_s){
-                        if (nbCurrThread == 1)
-                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
-                        else
-                            fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
-                        printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeTotal) * 1_000_000_000);
-                    }
+                        if (_s){
+                            if (nbCurrThread == 1)
+                                fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                            else
+                                fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                            printWriter = new PrintWriter(fileWriter);
+                            printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeTotal) * 1_000_000_000);
+                        }
 
-                    if (_p){
-                        for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.print(" Throughput for "+op+" operations ");
-                        for (int j = 0; j < nbSign; j++) System.out.print("-");
-                        System.out.println();
-                        System.out.println(" - "+String.format("%.3E", (nbOp / (double) timeTotal) * 1_000_000_000));
-                        System.out.println("* Proportion of failed " + op + " operations : " + (nbOperationsFailed.get(op).get() / (double) nbOperations.get(op).get()) * 100);
-                    }
+                        if (_p){
+                            for (int j = 0; j < nbSign; j++) System.out.print("-");
+                            System.out.print(" Throughput for "+op+" operations ");
+                            for (int j = 0; j < nbSign; j++) System.out.print("-");
+                            System.out.println();
+                            System.out.println(" - "+String.format("%.3E", (nbOp / (double) timeTotal) * 1_000_000_000));
+                            System.out.println("* Proportion of failed " + op + " operations : " + (nbOperationsFailed.get(op).get() / (double) nbOperations.get(op).get()) * 100);
+                        }
 
-                    if (_s)
-                        printWriter.flush();
+                        if (_s)
+                            printWriter.flush();
+                    }
                 }
+
                 if(_p)
                     System.out.println();
                 if (_s)
@@ -288,8 +309,14 @@ public class App {
 
 
             nbCurrThread *= 2;
-            if (nbCurrThread > nbThreads && nbCurrThread != 2 * nbThreads)
-                nbCurrThread = nbThreads;
+
+            if (_quickTest){
+                if(nbCurrThread==2)
+                    nbCurrThread = _nbThreads;
+            }
+
+            if (nbCurrThread > _nbThreads && nbCurrThread != 2 * _nbThreads)
+                nbCurrThread = _nbThreads;
         }
         System.exit(0);
     }
@@ -303,6 +330,7 @@ public class App {
         private ThreadLocal<Map<String, Queue<String>>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
         private ThreadLocal<List<String>> arrayUsersFollow = new ThreadLocal<>(); // Local array that store the users handled by a thread
+        private int nbRepeat = 1000;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -356,10 +384,14 @@ public class App {
                     } else { // read
                         type = opType.READ;
                     }
-                    compute(type);
+                    for (int i = 0; i < nbRepeat; i++) {
+                        compute(type);
+                    }
+
                 }
 
-                while (!flagComputing.get()){
+                for (int i = 0; i < _nbOps; i++) {
+//                while (!flagComputing.get()){
 
                     val = random.nextInt(100);
 
@@ -377,12 +409,24 @@ public class App {
                         type = opType.READ;
                     }
 
-                    long elapsedTime = compute(type);
+                    long elapsedTime = 0L;
 
-                    nbLocalOperations.compute(type, (key, value) -> value + 1);
-                    timeLocalOperations.compute(type, (key, value) -> value + elapsedTime);
-                    if (elapsedTime == 0)
-                        nbLocalOperationsFailed.compute(type, (key, value) -> value + 1);
+                    if (_multipleOperation){
+                        for (int j = 0; j < nbRepeat; j++) {
+                            elapsedTime += compute(type);
+                        }
+
+                        elapsedTime = elapsedTime / nbRepeat;
+                    }else{
+                        elapsedTime = compute(type);
+                    }
+
+                    if (elapsedTime != 0)
+                        nbLocalOperations.compute(type, (key, value) -> value + 1);
+                    long finalElapsedTime = elapsedTime;
+                    timeLocalOperations.compute(type, (key, value) -> value + finalElapsedTime);
+//                    if (elapsedTime == 0)
+//                        nbLocalOperationsFailed.compute(type, (key, value) -> value + 1);
                 }
 
                 for (opType op: opType.values()){
@@ -416,9 +460,14 @@ public class App {
 
             switch (type){
                 case ADD:
-                    startTime = System.nanoTime();
-                    database.addUser();
-                    endTime = System.nanoTime();
+                    if (_completionTime){
+                        database.addUser();
+                    }else{
+                        startTime = System.nanoTime();
+                        database.addUser();
+                        endTime = System.nanoTime();
+                    }
+
 
                     break;
                 case FOLLOW:
@@ -427,9 +476,13 @@ public class App {
 
                     try{
                         if (!listFollow.contains(userB)){
-                            startTime = System.nanoTime();
-                            database.followUser(userA, userB);
-                            endTime = System.nanoTime();
+                            if (_completionTime){
+                                database.followUser(userA, userB);
+                            }else {
+                                startTime = System.nanoTime();
+                                database.followUser(userA, userB);
+                                endTime = System.nanoTime();
+                            }
                             listFollow.add(userB);
                         }
                     }catch (NullPointerException e){
@@ -442,9 +495,13 @@ public class App {
                     try{
                         userB = listFollow.poll();
                         if (userB != null){
-                            startTime = System.nanoTime();
-                            database.unfollowUser(userA, userB);
-                            endTime = System.nanoTime();
+                            if (_completionTime){
+                                database.unfollowUser(userA, userB);
+                            }else{
+                                startTime = System.nanoTime();
+                                database.unfollowUser(userA, userB);
+                                endTime = System.nanoTime();
+                            }
                         }
                     }catch (NullPointerException e){
 //                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
@@ -453,20 +510,34 @@ public class App {
                 break;
                 case TWEET:
                     String msg = "msg from " + userA;
-                    startTime = System.nanoTime();
-                    database.tweet(userA, msg);
-                    endTime = System.nanoTime();
+                    if (_completionTime){
+                        database.tweet(userA, msg);
+                    }else{
+                        startTime = System.nanoTime();
+                        database.tweet(userA, msg);
+                        endTime = System.nanoTime();
+                    }
 
                 break;
                 case READ:
-                    startTime = System.nanoTime();
-                    database.showTimeline(userA);
-                    endTime = System.nanoTime();
+                    if (_completionTime){
+                        database.showTimeline(userA);
+
+                    }else{
+                        startTime = System.nanoTime();
+                        database.showTimeline(userA);
+                        endTime = System.nanoTime();
+                    }
+
 
                 break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + type);
             }
+
+            if (_completionTime)
+                return -1;
+
             return endTime - startTime;
         }
     }
@@ -494,7 +565,7 @@ public class App {
                         System.out.println("Warming up");
                     }
 
-                    TimeUnit.SECONDS.sleep(wTime);
+                    TimeUnit.SECONDS.sleep(_wTime);
 
                     flagComputing.set(false);
                 }
@@ -507,8 +578,8 @@ public class App {
                 if (_p){
                     System.out.println("Computing");
                 }
-                TimeUnit.SECONDS.sleep(time);
-                flagComputing.set(true);
+                if (! _completionTime)
+                    flagComputing.set(true);
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }

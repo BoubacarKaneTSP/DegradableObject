@@ -36,9 +36,13 @@ for file in files:
 
 #print(resultats)
 #print(numprocesses)
+labels = []
+labels.append('$S_1$')
+labels.append('$S_2$')
 
-for numprocess, resultat, name, linestyle, marker in zip(numprocesses,resultats,sys.argv[1:], linestyle_tuple, markers):
-    plt.plot(numprocess, resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label=name[:len(name)-4].replace("_", " "))
+for numprocess, resultat, name, linestyle, marker, l  in zip(numprocesses,resultats,sys.argv[1:], linestyle_tuple, markers,labels):
+    # label=name[:len(name)-4].replace("_", " ")
+    plt.plot(numprocess, resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label= l)
 
 
 SIZE = 25
@@ -49,7 +53,7 @@ plt.yticks(fontsize=SIZE)
 
 # plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
-plt.gca().set_ylim([100000,100000000])
+plt.gca().set_ylim([1000000,100000000])
 # plt.gca().set_ylim([0.00000001,0.001])
 # plt.gca().invert_yaxis()
 plt.gca().spines['right'].set_visible(False)

@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.Benchmark.Tester;
 import eu.cloudbutton.dobj.Benchmark.Benchmark;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.AbstractMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -77,21 +78,21 @@ public abstract class Tester<T> implements Callable<Void> {
                 switch (type) {
                     case ADD:
                         if (elapsedTime != 0)
-                            add++;
+                            add+= nbRepeat;
                         else
                             addFail++;
                         timeAdd += elapsedTime;
                         break;
                     case REMOVE:
                         if (elapsedTime != 0)
-                            remove++;
+                            remove+=nbRepeat;
                         else
                             removeFail++;
                         timeRemove += elapsedTime;
                         break;
                     case READ:
                         if (elapsedTime != 0)
-                            read++;
+                            read+=nbRepeat;
                         else
                             readFail++;
                         timeRead += elapsedTime;
@@ -99,6 +100,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 }
             }
 
+            System.out.println("Map size : " + ((AbstractMap)object).size());
         } catch (Exception e) {
             e.printStackTrace();
         }
