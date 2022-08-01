@@ -14,6 +14,7 @@ ratio="100 0 0"
 distribution="5 15 30 50"
 print=""
 save=""
+completionTime=""
 workloadTime=5
 warmingUpTime=1
 nbTest=1
@@ -24,7 +25,7 @@ collisionKey=""
 quickTest=""
 nbInitialAdd=1000
 
-while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:z' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
@@ -140,6 +141,9 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:' OPTION; do
     i)
       nbInitialAdd="$OPTARG"
       ;;
+    z)
+      completionTime="-completionTime"
+      ;;
     o)
       echo "script usage: $(basename \$0)
       [-c] counter type,
@@ -201,5 +205,5 @@ then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
 elif [[ $typeTest == "Retwis" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $completionTime $print $save
 fi
