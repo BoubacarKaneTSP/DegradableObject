@@ -24,7 +24,7 @@ public class Timeline<T> {
        T e = timeline.poll();
        if (e!=null) {
            topk.add(e);
-           if (topk.size()>50)
+           if (topk.size()>LENGTH)
                topk.poll();
        }
        return topk;

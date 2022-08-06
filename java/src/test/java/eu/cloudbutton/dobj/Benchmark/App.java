@@ -57,10 +57,10 @@ public class App {
     private long _nbOps = 1_000_000;
 
     @Option(name = "-time", usage = "test time (seconds)")
-    private int _time = 300;
+    private long _time = 20;
 
     @Option(name = "-wTime", usage = "warming time (seconds)")
-    private int _wTime = 0;
+    private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
     private double _alphaInit = 1.315;
@@ -89,7 +89,6 @@ public class App {
     private AtomicBoolean flagComputing,flagWarmingUp;
 
     private Map<opType, AtomicInteger> nbOperations;
-    private Map<opType, AtomicInteger> nbOperationsFailed;
     private Map<opType, AtomicLong> timeOperations;
 
     private Database database;
@@ -152,6 +151,7 @@ public class App {
             FileWriter fileWriter;
             long startTime, endTime, timeTotal = 0L;
 
+
             if (_p){
                 System.out.println();
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
@@ -184,12 +184,10 @@ public class App {
 
                     if (nbCurrTest == 1) {
                         nbOperations = new ConcurrentHashMap<>();
-                        nbOperationsFailed = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
 
                         for (opType op : opType.values()) {
                             nbOperations.put(op, new AtomicInteger(0));
-                            nbOperationsFailed.put(op, new AtomicInteger(0));
                             timeOperations.put(op, new AtomicLong(0));
                         }
                     }
@@ -223,19 +221,20 @@ public class App {
                     }
 
                     endTime = System.nanoTime();
-
                     timeTotal = endTime - startTime;
+
+                    if (flagWarmingUp.get())
+                        timeTotal -= _wTime * 1_000_000_000;
 
                     TimeUnit.SECONDS.sleep(5);
                     executor.shutdown();
                 }
 
-                long nbOpTotal = 0;
-                long nbOpTotalFailed = 0;
+                long nbOpTotal = 0, timeTotalComputed = 0;
 
                 for (opType op : opType.values()){
                     nbOpTotal += nbOperations.get(op).get();
-                    nbOpTotalFailed += nbOperationsFailed.get(op).get();
+                    timeTotalComputed += timeOperations.get(op).get();
                 }
 
                 long nbOp;
@@ -252,17 +251,22 @@ public class App {
                     if (_completionTime)
                         printWriter.println(nbCurrThread +" "+ timeTotal);
                     else
-                        printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) _time) * 1_000_000_000);
+                        printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                 }
 
                 if (_p){
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
-                    System.out.print(" Completion time for " + _nbOps + " operations ");
-                    for (int j = 0; j < nbSign; j++) System.out.print("-");
+                    if (_completionTime) {
+                        System.out.print(" Completion time for " + _nbOps + " operations : ");
+                        System.out.println(timeTotal/1_000_000_000 +" seconds");
+                    }
+                    else {
+                        System.out.print(" Throughput (op/s) for all operations : ");
+                        System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
+                    }
+
+
                     System.out.println();
-                    System.out.println(" - "+ timeTotal/1_000_000_000 +" seconds");
-                    System.out.println();
-                    System.out.println("* Proportion of failed operations : " + (nbOpTotalFailed / (double) nbOpTotal) * 100);
 
                 }
 
@@ -272,7 +276,7 @@ public class App {
                 if (! _completionTime){
                     for (opType op: opType.values()){
 
-                        nbOp = nbOperations.get(op).get() - nbOperationsFailed.get(op).get();
+                        nbOp = nbOperations.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
@@ -282,16 +286,13 @@ public class App {
                             else
                                 fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                             printWriter = new PrintWriter(fileWriter);
-                            printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeTotal) * 1_000_000_000);
+                            printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeTotalComputed) * 1_000_000_000);
                         }
 
                         if (_p){
                             for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.print(" Throughput for "+op+" operations ");
-                            for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.println();
-                            System.out.println(" - "+String.format("%.3E", (nbOp / (double) timeTotal) * 1_000_000_000));
-                            System.out.println("* Proportion of failed " + op + " operations : " + (nbOperationsFailed.get(op).get() / (double) nbOperations.get(op).get()) * 100);
+                            System.out.print(" Throughput (op/s) for "+op+" : ");
+                            System.out.println(String.format("%.3E", (nbOp / (double) timeTotalComputed) * 1_000_000_000));
                         }
 
                         if (_s)
@@ -329,7 +330,7 @@ public class App {
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<String, Queue<String>>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private ThreadLocal<List<String>> arrayUsersFollow = new ThreadLocal<>(); // Local array that store the users handled by a thread
+        private ThreadLocal<List<String>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread
         private int nbRepeat = 1000;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
@@ -346,15 +347,12 @@ public class App {
             try{
 
                 opType type;
-                int val;
 
                 AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
-                AbstractMap<opType, Integer> nbLocalOperationsFailed = new HashMap<>();
                 AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
 
                 for (opType op: opType.values()){
                     nbLocalOperations.put(op, 0);
-                    nbLocalOperationsFailed.put(op, 0);
                     timeLocalOperations.put(op, 0L);
                 }
 
@@ -365,73 +363,49 @@ public class App {
                 latch.await();
 
                 usersProbabilitySize.set(database.getUsersProbability().size());
-                arrayUsersFollow.set(new ArrayList<>(usersFollow.get().keySet()));
+                arrayLocalUsers.set(new ArrayList<>(usersFollow.get().keySet()));
 
                 while (flagComputing.get()) { // warm up
 
-                    val = random.nextInt(100);
+                    type = chooseOperation();
 
-                    if (val < ratiosArray[0]) { // add
-                        type = opType.ADD;
-                    } else if (val >= ratiosArray[0] && val < ratiosArray[0] + ratiosArray[1]) { //follow or unfollow
-                        if (val % 2 == 0) { // follow
-                            type = opType.FOLLOW;
-                        } else { // unfollow
-                            type = opType.UNFOLLOW;
-                        }
-                    } else if (val >= ratiosArray[0] + ratiosArray[1] && val < ratiosArray[0] + ratiosArray[1] + ratiosArray[2]) { // tweet
-                        type = opType.TWEET;
-                    } else { // read
-                        type = opType.READ;
-                    }
-                    for (int i = 0; i < nbRepeat; i++) {
+                    compute(type);
+                }
+
+
+                if (_completionTime){
+                    for (int i = 0; i < _nbOps; i++) {
+                        type = chooseOperation();
                         compute(type);
+
                     }
+                }else{
+                    while (!flagComputing.get()){
 
-                }
+                        type = chooseOperation();
 
-                for (int i = 0; i < _nbOps; i++) {
-//                while (!flagComputing.get()){
+                        long elapsedTime = 0L;
 
-                    val = random.nextInt(100);
+                        if (_multipleOperation){
+                            for (int j = 0; j < nbRepeat; j++) {
+                                elapsedTime += compute(type);
+                            }
 
-                    if(val < ratiosArray[0]){ // add
-                        type = opType.ADD;
-                    }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
-                        if (val%2 == 0){ //follow
-                            type = opType.FOLLOW;
-                        }else{ //unfollow
-                            type = opType.UNFOLLOW;
-                        }
-                    }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ //tweet
-                        type = opType.TWEET;
-                    }else{ //read
-                        type = opType.READ;
-                    }
-
-                    long elapsedTime = 0L;
-
-                    if (_multipleOperation){
-                        for (int j = 0; j < nbRepeat; j++) {
-                            elapsedTime += compute(type);
+                            elapsedTime = elapsedTime / nbRepeat;
+                        }else{
+                            elapsedTime = compute(type);
                         }
 
-                        elapsedTime = elapsedTime / nbRepeat;
-                    }else{
-                        elapsedTime = compute(type);
+                        if (elapsedTime != 0)
+                            nbLocalOperations.compute(type, (key, value) -> value + 1);
+                        long finalElapsedTime = elapsedTime;
+                        timeLocalOperations.compute(type, (key, value) -> value + finalElapsedTime);
                     }
-
-                    if (elapsedTime != 0)
-                        nbLocalOperations.compute(type, (key, value) -> value + 1);
-                    long finalElapsedTime = elapsedTime;
-                    timeLocalOperations.compute(type, (key, value) -> value + finalElapsedTime);
-//                    if (elapsedTime == 0)
-//                        nbLocalOperationsFailed.compute(type, (key, value) -> value + 1);
                 }
+
 
                 for (opType op: opType.values()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
-                    nbOperationsFailed.get(op).addAndGet(nbLocalOperationsFailed.get(op));
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
                 }
 
@@ -445,100 +419,140 @@ public class App {
             TimeUnit.MICROSECONDS.sleep(1000);
         }
 
+        public opType chooseOperation(){
+            opType type;
+
+            int val = random.nextInt(100);
+
+            if(val < ratiosArray[0]){ // add
+                type = opType.ADD;
+            }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
+                if (val%2 == 0){ //follow
+                    type = opType.FOLLOW;
+                }else{ //unfollow
+                    type = opType.UNFOLLOW;
+                }
+            }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ //tweet
+                type = opType.TWEET;
+            }else{ //read
+                type = opType.READ;
+            }
+
+            return type;
+        }
         public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
 
-            int n;
+            int n, nbLocalUsers, nbAttempt = 0;
             String userA = "", userB;
 
-            int val = random.nextInt(arrayUsersFollow.get().size());
+            nbLocalUsers = arrayLocalUsers.get().size();
+            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
 
-            userA = arrayUsersFollow.get().get(val);
+            /*To avoid infinite loop if :
+            * - When doing follow, all user handle by thread i already follow all users in usersProbability.
+            * - When doing unfollow, all user handle by thread i do not follow anyone.
+            *
+            * We use an int nbAttempt to change the operation after an amount of fail
+            * When probability of not doing an operation on userA is less than 1%.
+            * */
+            restartOperation : for (;;){
+                nbAttempt ++;
 
-            Queue<String> listFollow = usersFollow.get().get(userA);
+                if (nbAttempt >= nbAttemptMax)
+                    type = chooseOperation();
 
-            switch (type){
-                case ADD:
-                    if (_completionTime){
-                        database.addUser();
-                    }else{
-                        startTime = System.nanoTime();
-                        database.addUser();
-                        endTime = System.nanoTime();
-                    }
+                int val = random.nextInt(nbLocalUsers);
 
+                userA = arrayLocalUsers.get().get(val);
 
-                    break;
-                case FOLLOW:
-                    n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
-                    userB = database.getUsersProbability().get(n);
+                Queue<String> listFollow = usersFollow.get().get(userA);
 
-                    try{
-                        if (!listFollow.contains(userB)){
-                            if (_completionTime){
-                                database.followUser(userA, userB);
-                            }else {
-                                startTime = System.nanoTime();
-                                database.followUser(userA, userB);
-                                endTime = System.nanoTime();
-                            }
-                            listFollow.add(userB);
+                switch (type){
+                    case ADD:
+                        if (_completionTime){
+                            database.addUser();
+                        }else{
+                            startTime = System.nanoTime();
+                            database.addUser();
+                            endTime = System.nanoTime();
                         }
-                    }catch (NullPointerException e){
+
+
+                        break;
+                    case FOLLOW:
+                        n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
+                        userB = database.getUsersProbability().get(n);
+
+                        try{
+                            if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
+                                if (_completionTime){
+                                    database.followUser(userA, userB);
+                                }else {
+                                    startTime = System.nanoTime();
+                                    database.followUser(userA, userB);
+                                    endTime = System.nanoTime();
+                                }
+                                listFollow.add(userB);
+                            }else
+                                continue restartOperation;
+                        }catch (NullPointerException e){
 //                        System.out.println(userA + " may not have a list of follow (Follow method)");
 //                        Make a "debug mode" to specify when a process doesn't handle userA
-                    }
-
-                break;
-                case UNFOLLOW:
-                    try{
-                        userB = listFollow.poll();
-                        if (userB != null){
-                            if (_completionTime){
-                                database.unfollowUser(userA, userB);
-                            }else{
-                                startTime = System.nanoTime();
-                                database.unfollowUser(userA, userB);
-                                endTime = System.nanoTime();
-                            }
                         }
-                    }catch (NullPointerException e){
+
+                        break;
+                    case UNFOLLOW:
+                        try{
+                            userB = listFollow.poll();
+                            if (userB != null){ // Perform unfollow only if userA already follow someone
+                                if (_completionTime){
+                                    database.unfollowUser(userA, userB);
+                                }else{
+                                    startTime = System.nanoTime();
+                                    database.unfollowUser(userA, userB);
+                                    endTime = System.nanoTime();
+                                }
+                            }else
+                                continue restartOperation;
+                        }catch (NullPointerException e){
 //                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
-                    }
+                        }
 
-                break;
-                case TWEET:
-                    String msg = "msg from " + userA;
-                    if (_completionTime){
-                        database.tweet(userA, msg);
-                    }else{
-                        startTime = System.nanoTime();
-                        database.tweet(userA, msg);
-                        endTime = System.nanoTime();
-                    }
+                        break;
+                    case TWEET:
+                        String msg = "msg from " + userA;
+                        if (_completionTime){
+                            database.tweet(userA, msg);
+                        }else{
+                            startTime = System.nanoTime();
+                            database.tweet(userA, msg);
+                            endTime = System.nanoTime();
+                        }
 
-                break;
-                case READ:
-                    if (_completionTime){
-                        database.showTimeline(userA);
+                        break;
+                    case READ:
+                        if (_completionTime){
+                            database.showTimeline(userA);
 
-                    }else{
-                        startTime = System.nanoTime();
-                        database.showTimeline(userA);
-                        endTime = System.nanoTime();
-                    }
+                        }else{
+                            startTime = System.nanoTime();
+                            database.showTimeline(userA);
+                            endTime = System.nanoTime();
+                        }
 
 
-                break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + type);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + type);
+                }
+
+                if (_completionTime)
+                    return -1;
+
+                return endTime - startTime;
             }
-
-            if (_completionTime)
-                return -1;
-
-            return endTime - startTime;
         }
     }
 
@@ -578,8 +592,11 @@ public class App {
                 if (_p){
                     System.out.println("Computing");
                 }
-                if (! _completionTime)
+
+                if (! _completionTime) {
+                    TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(true);
+                }
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
