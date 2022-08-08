@@ -16,8 +16,8 @@ print=""
 save=""
 completionTime=""
 multipleOperation=""
-workloadTime="-time "
-warmingUpTime="-wtime "
+workloadTime=""
+warmingUpTime=""
 nbTest=1
 type=""
 printFail=""
@@ -119,10 +119,10 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zy' OPTION; do
       save="-s"
       ;;
     w)
-      workloadTime="$workloadTime$OPTARG"
+      workloadTime="-time $OPTARG"
       ;;
     u)
-      warmingUpTime="$warmingUpTime$OPTARG"
+      warmingUpTime="-wtime $OPTARG"
       ;;
     n)
       nbTest="$OPTARG"
