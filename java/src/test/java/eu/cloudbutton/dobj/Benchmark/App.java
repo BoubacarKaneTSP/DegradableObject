@@ -237,7 +237,7 @@ public class App {
                     timeTotalComputed += timeOperations.get(op).get();
                 }
 
-                long nbOp;
+                long nbOp, timeOp;
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
                 if (_s){
@@ -277,6 +277,7 @@ public class App {
                     for (opType op: opType.values()){
 
                         nbOp = nbOperations.get(op).get();
+                        timeOp = timeOperations.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
@@ -292,7 +293,7 @@ public class App {
                         if (_p){
                             for (int j = 0; j < nbSign; j++) System.out.print("-");
                             System.out.print(" Throughput (op/s) for "+op+" : ");
-                            System.out.println(String.format("%.3E", (nbOp / (double) timeTotalComputed) * 1_000_000_000));
+                            System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
                         }
 
                         if (_s)
