@@ -16,8 +16,8 @@ print=""
 save=""
 completionTime=""
 multipleOperation=""
-workloadTime=""
-warmingUpTime=""
+workloadTime="-time "
+warmingUpTime="-wtime "
 nbTest=1
 type=""
 printFail=""
@@ -119,10 +119,10 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zy' OPTION; do
       save="-s"
       ;;
     w)
-      workloadTime="$OPTARG"
+      workloadTime="$workloadTime$OPTARG"
       ;;
     u)
-      warmingUpTime="$OPTARG"
+      warmingUpTime="$warmingUpTime$OPTARG"
       ;;
     n)
       nbTest="$OPTARG"
@@ -213,5 +213,5 @@ then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
 elif [[ $typeTest == "Retwis" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $completionTime $multipleOperation $print $save $quickTest
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $quickTest
 fi
