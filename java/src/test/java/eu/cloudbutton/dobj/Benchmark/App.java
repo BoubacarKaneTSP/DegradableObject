@@ -397,8 +397,7 @@ public class App {
                             elapsedTime = compute(type);
                         }
 
-                        if (elapsedTime != 0)
-                            nbLocalOperations.compute(type, (key, value) -> value + 1);
+                        nbLocalOperations.compute(type, (key, value) -> value + 1);
                         long finalElapsedTime = elapsedTime;
                         timeLocalOperations.compute(type, (key, value) -> value + finalElapsedTime);
                     }
