@@ -124,6 +124,7 @@ public class Benchmark {
                 nbCurrentThread = 2;
 
             for (;nbCurrentThread <= nbThreads; ) {
+                System.out.println();
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
@@ -144,14 +145,14 @@ public class Benchmark {
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
 
-//                    if (_p)
-//                        System.out.println("Start filling.");
+                    if (_p)
+                        System.out.println("* Start filling *");
 
                     Filler filler = factoryFiller.createFiller();
                     filler.fill();
 
-//                    if (_p)
-//                        System.out.println("End filling.");
+                    if (_p)
+                        System.out.println("* End filling *");
 
                     if (object instanceof DegradableQueue)
                         ((DegradableQueue)object).resetNbFor();
