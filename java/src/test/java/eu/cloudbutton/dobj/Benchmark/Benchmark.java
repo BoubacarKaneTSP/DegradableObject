@@ -252,8 +252,8 @@ public class Benchmark {
                     System.out.println("Number of op computed :");
                     System.out.println("    - add: " + totalADD);
                     System.out.println("    - remove: " + totalREMOVE);
-                    System.out.println("    - read (fail): " + nbReadFail.get());
-                    System.out.println("    - ratio remove fail: " + (nbReadFail.get() / (double) totalREAD ) *100);
+                    System.out.println("    - read (unsuccessful): " + nbReadFail.get());
+                    System.out.println("    - ratio read unsuccessful: " + (nbReadFail.get() / (double) totalREAD ) *100);
                     System.out.println("    - read: " + totalREAD);
 //                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
