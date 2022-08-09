@@ -25,8 +25,9 @@ asymmetric=""
 collisionKey=""
 quickTest=""
 nbInitialAdd=1000
+breakdown=""
 
-while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zy' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
@@ -148,6 +149,9 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zy' OPTION; do
     z)
       multipleOperation="-multipleOperation"
       ;;
+    b)
+      breakdown="-breakdown"
+      ;;
     o)
       echo "script usage: $(basename \$0)
       [-c] counter type,
@@ -169,7 +173,8 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zy' OPTION; do
       [-i] Number of object initially added,
       [-v] testing only one and max nbThreads,
       [-z] Computing the completionTime for Retwis,
-      [-y] Computing multiple time the same operation for Retwis">&2
+      [-y] Computing multiple time the same operation for Retwis,
+      [-b] Print the details results for all operations">&2
       exit 1
       ;;
     ?)
@@ -192,7 +197,8 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zy' OPTION; do
       [-i] Number of object initially added,
       [-v] Testing only one and max nbThreads,
       [-z] Computing the completionTime for Retwis,
-      [-y] Computing multiple time the same operation for Retwis">&2
+      [-y] Computing multiple time the same operation for Retwis,
+      [-b] Print the details results for all operations">&2
       exit 1
       ;;
   esac

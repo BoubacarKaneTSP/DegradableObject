@@ -86,6 +86,9 @@ public class App {
     @Option(name = "-multipleOperation", handler = ExplicitBooleanOptionHandler.class, usage = "Computing operation multiples times")
     public boolean _multipleOperation = false;
 
+    @Option(name = "-breakdown", handler = ExplicitBooleanOptionHandler.class, usage = "Print the details results for all operations")
+    public boolean _breakdown = false;
+
     private AtomicBoolean flagComputing,flagWarmingUp;
 
     private Map<opType, AtomicInteger> nbOperations;
@@ -298,6 +301,17 @@ public class App {
 
                         if (_s)
                             printWriter.flush();
+                    }
+
+                    System.out.println();
+
+                    for (opType op: opType.values()){
+                        int nbSpace = 10 - op.toString().length();
+                        if (_breakdown){
+                            System.out.print("-" + op);
+                            for (int i = 0; i < nbSpace; i++) System.out.print(" ");
+                            System.out.println(" : " + nbOperations.get(op).get() + " operations, " + timeOperations.get(op).get() / (double) 1_000_000_000 + " seconds");
+                        }
                     }
                 }
 
