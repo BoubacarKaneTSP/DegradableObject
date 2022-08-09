@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.Benchmark.Benchmark;
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
@@ -21,8 +22,7 @@ public class MapTester extends Tester<AbstractMap> {
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long startTime = 0L, endTime = 0L;
-
+        long startTime = 0L, endTime = 0L, nbFail = 0L;
         AbstractList list = new ArrayList<>();
 
         CollisionKeyFactory factory = new CollisionKeyFactory();
@@ -57,11 +57,15 @@ public class MapTester extends Tester<AbstractMap> {
                 endTime = System.nanoTime();
                 break;
             case READ:
+                Object returnValue;
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.get(list.get(i));
+                    returnValue = object.get(list.get(i));
+                    if (returnValue == null)
+                        nbFail++;
                 }
                 endTime = System.nanoTime();
+                Benchmark.nbReadFail.addAndGet(nbFail);
                 break;
         }
 
