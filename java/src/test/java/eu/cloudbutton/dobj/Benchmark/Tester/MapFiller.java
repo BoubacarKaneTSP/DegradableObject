@@ -26,14 +26,14 @@ public class MapFiller extends Filler<AbstractMap> {
         factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
         int nbTask = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(nbTask);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
         List<Future<Void>> futures = new ArrayList<>();
 
 
 
         Callable<Void> callable = () -> {
 
-            System.out.println("Je suis le thread : " + Thread.currentThread().getName() + " et je commence à ajouter mes" + nbOps/nbTask +" objets");
+            System.out.println("Je suis le thread : " + Thread.currentThread().getName() + " et je commence à ajouter mes " + nbOps/nbTask +" objets");
             for (int i = 0; i < nbOps/nbTask; i++) {
                 object.put(factory.getCollisionKey(), i);
             }
