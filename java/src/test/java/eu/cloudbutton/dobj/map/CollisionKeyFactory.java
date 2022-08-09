@@ -40,11 +40,13 @@ public class CollisionKeyFactory {
         List<Integer> data = new DiscreteApproximate(1, 1.315).generate(bound);
         int i = 0;
 
-        int max = 10;
+        int nbUsers = 1000000;
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        long max = (long) ((long) nbUsers * ratio);
 
         for (int val: data){
             if (val >= max) {
-                data.set(i, max);
+                data.set(i, (int) max);
             }
             if (val < 0)
                 data.set(i, 0);
