@@ -116,7 +116,7 @@ public class Benchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            Object object;
+            Object object = null;
 
             int nbCurrentThread = 1;
 
@@ -136,26 +136,32 @@ public class Benchmark {
                 timeAdd = new AtomicLong(0);
                 timeRemove = new AtomicLong(0);
                 timeRead = new AtomicLong(0);
-                for (int a = 0; a < nbTest; a++) {
+                for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
 
-                    object = Factory.createObject(type);
+                    // We re-fill the object only if this the first time we use it and we only test READ
+                    if ((nbCurrentThread == 1 || (nbCurrentThread == 2 && _asymmetric)) && Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] == 100){
+                        if (_nbTest == 0)
+                            object = Factory.createObject(type);
 
-                    if (object instanceof FuzzyCounter)
-                        ((FuzzyCounter) object).setN(nbCurrentThread);
+                        if (object instanceof FuzzyCounter)
+                            ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
+                        if (_nbTest == 0) {
+                            FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
 
-                    if (_p)
-                        System.out.println("* Start filling *");
 
-                    Filler filler = factoryFiller.createFiller();
-                    filler.fill();
+                            if (_p)
+                                System.out.println("* Start filling *");
 
-                    if (_p)
-                        System.out.println("* End filling *");
+                            Filler filler = factoryFiller.createFiller();
+                            filler.fill();
+                        }
+                        if (_p)
+                            System.out.println("* End filling *");
 
-                    if (object instanceof DegradableQueue)
-                        ((DegradableQueue)object).resetNbFor();
+                        if (object instanceof DegradableQueue)
+                            ((DegradableQueue)object).resetNbFor();
+                    }
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
