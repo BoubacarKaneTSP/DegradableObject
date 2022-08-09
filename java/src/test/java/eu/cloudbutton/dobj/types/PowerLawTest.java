@@ -18,20 +18,21 @@ public class PowerLawTest {
             listAlpha.add(i);
         }*/
 
-        listAlpha.add(2.0);
+        listAlpha.add(1.315);
 
         for (double alpha : listAlpha){
-            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000000);
+            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
 
+            int nbUsers = 1000000;
+            double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+            long max = (long) ((long) nbUsers * ratio);
 
-            int i = 0, nbMax = 0, max = Collections.max(data), avg = 0;;
-
-            max = 4;
+            int i = 0, nbMax = 0, avg = 0;;
 
             for (int val: data){
                 if (val >= max) {
                     nbMax++;
-                    data.set(i,max);
+                    data.set(i, (int) max);
                 }
                 if (val < 0)
                     data.set(i, 0);
