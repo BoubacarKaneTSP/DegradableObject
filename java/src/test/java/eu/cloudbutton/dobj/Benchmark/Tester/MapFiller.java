@@ -28,7 +28,7 @@ public class MapFiller extends Filler<AbstractMap> {
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
-        int nbTask = 10;
+        int nbTask = Runtime.getRuntime().availableProcessors();
 
         Callable<Void> callable = () -> {
 
