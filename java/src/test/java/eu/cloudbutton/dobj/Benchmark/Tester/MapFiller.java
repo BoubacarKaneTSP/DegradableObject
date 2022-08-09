@@ -35,6 +35,8 @@ public class MapFiller extends Filler<AbstractMap> {
 
             System.out.println("Je suis le thread : " + Thread.currentThread().getName() + " et je commence à ajouter mes " + nbOps/nbTask +" objets");
             for (int i = 0; i < nbOps/nbTask; i++) {
+                if (i%50000 == 0)
+                    System.out.println(i);
                 object.put(factory.getCollisionKey(), i);
             }
             System.out.println("Je suis le thread : " + Thread.currentThread().getName() + " et j'ai finis d'ajouter mes objets");
