@@ -25,11 +25,9 @@ public class MapFiller extends Filler<AbstractMap> {
 
         factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-        int nbTask = 1;
+        int nbTask = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(nbTask);
         List<Future<Void>> futures = new ArrayList<>();
-
-
 
         Callable<Void> callable = () -> {
 
