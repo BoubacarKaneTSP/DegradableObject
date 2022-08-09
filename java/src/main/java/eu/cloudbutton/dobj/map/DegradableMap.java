@@ -36,6 +36,10 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
     @SneakyThrows
     @Override
     public V get(Object key) {
+
+        if (key == null)
+            throw new NullPointerException();
+
         V value;
 
         value = local.get().get(key);
@@ -48,7 +52,8 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
             if (value != null)
                 return value;
         }
-        throw new NullPointerException();
+
+        return null;
     }
 
     @Override
