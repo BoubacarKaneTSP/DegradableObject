@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
+import eu.cloudbutton.dobj.Benchmark.Benchmark;
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
@@ -25,7 +26,7 @@ public class MapFiller extends Filler<AbstractMap> {
 
         factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-        int nbTask = Runtime.getRuntime().availableProcessors();
+        int nbTask = Benchmark.nbCurrentThread;
         ExecutorService executor = Executors.newFixedThreadPool(nbTask);
         List<Future<Void>> futures = new ArrayList<>();
 

@@ -36,6 +36,7 @@ public class Benchmark {
     public static AtomicLong nbReadFail;
     public static AtomicBoolean flag;
     public static boolean ratioFail;
+    public static int nbCurrentThread;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
