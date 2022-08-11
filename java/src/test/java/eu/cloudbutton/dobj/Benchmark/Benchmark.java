@@ -140,8 +140,8 @@ public class Benchmark {
                 for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
 
                     // We re-fill the object only if this the first time we use it and we only test READ
-                    if ((nbCurrentThread == 1 || (nbCurrentThread == 2 && _asymmetric)) && Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] == 100
-                    || Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] != 100){
+//                    if ((nbCurrentThread == 1 || (nbCurrentThread == 2 && _asymmetric)) && Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] == 100
+//                    || Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] != 100){
                         if (_nbTest == 0)
                             object = Factory.createObject(type);
 
@@ -163,7 +163,7 @@ public class Benchmark {
 
                         if (object instanceof DegradableQueue)
                             ((DegradableQueue)object).resetNbFor();
-                    }
+//                    }
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
