@@ -119,7 +119,7 @@ public class Benchmark {
             FileWriter fileWriter;
             Object object = null;
 
-            int nbCurrentThread = 1;
+            nbCurrentThread = 1;
 
             if (_asymmetric)
                 nbCurrentThread = 2;
