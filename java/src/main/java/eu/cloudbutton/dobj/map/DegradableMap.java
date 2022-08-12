@@ -16,7 +16,7 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
     private final List<List<Pair<K,V>>> mapView;
 
     // The default size of the tab
-    private static final int DEFAULT_SIZE = 100000;
+    private static final int DEFAULT_SIZE = 1000000;
 
     public DegradableMap(){
         listMap = new CopyOnWriteArrayList<>();
