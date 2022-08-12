@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj;
 import eu.cloudbutton.dobj.counter.*;
 import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.list.LinkedList;
+import eu.cloudbutton.dobj.list.List;
 import eu.cloudbutton.dobj.map.DegradableMap;
 import eu.cloudbutton.dobj.queue.DegradableQueue;
 import eu.cloudbutton.dobj.queue.MapQueue;
@@ -99,12 +100,12 @@ public class Factory {
 
     /* List */
 
-    public static List createList(String list) throws ClassNotFoundException {
+    public static AbstractList createList(String list) throws ClassNotFoundException {
 
         switch (list){
 
             case "List":
-                return new CopyOnWriteArrayList<>();
+                return new List();
             case "DegradableList":
                 return new DegradableList<>();
             case "LinkedList":

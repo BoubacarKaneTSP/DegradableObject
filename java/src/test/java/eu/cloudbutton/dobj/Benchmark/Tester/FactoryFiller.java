@@ -3,10 +3,7 @@ package eu.cloudbutton.dobj.Benchmark.Tester;
 import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.counter.AbstractCounter;
 
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractQueue;
-import java.util.AbstractSet;
+import java.util.*;
 
 public class FactoryFiller {
 
@@ -28,7 +25,7 @@ public class FactoryFiller {
             return new SetFiller((AbstractSet) object, nbOps, useCollisionKey);
         else if (object instanceof AbstractQueue)
             return new QueueFiller((AbstractQueue) object, nbOps);
-        else if (object instanceof AbstractList)
+        else if (object instanceof List)
             return new ListFiller((AbstractList) object, nbOps);
         else if (object instanceof AbstractCounter)
             return new CounterFiller((AbstractCounter) object, nbOps);

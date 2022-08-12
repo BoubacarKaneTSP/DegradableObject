@@ -34,7 +34,7 @@ public class ListTester extends Tester<AbstractList> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.contains(rand);
+                    object.get(rand);
                 }
                 endTime = System.nanoTime();
                 break;

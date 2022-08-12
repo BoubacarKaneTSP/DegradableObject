@@ -22,9 +22,13 @@ public class ListFiller extends Filler<AbstractList> {
         int nbTask = 10;
 
         Callable<Void> callable = () -> {
+
+            List localList = new ArrayList();
             for (long i = 0; i < nbOps/nbTask; i++) {
-                object.add(i);
+                localList.add(i);
             }
+            object.addAll(localList);
+            System.out.println(object.size());
             return null;
         };
 
