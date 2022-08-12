@@ -157,9 +157,10 @@ public class Benchmark {
 
                             Filler filler = factoryFiller.createFiller();
                             filler.fill();
+
+                            if (_p)
+                                System.out.println("* End filling *");
                         }
-                        if (_p)
-                            System.out.println("* End filling *");
 
                         if (object instanceof DegradableQueue)
                             ((DegradableQueue)object).resetNbFor();
