@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.counter.*;
 import eu.cloudbutton.dobj.list.*;
+import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.map.DegradableMap;
 import eu.cloudbutton.dobj.queue.DegradableQueue;
 import eu.cloudbutton.dobj.queue.MapQueue;
@@ -13,12 +14,10 @@ import eu.cloudbutton.dobj.counter.DegradableCounter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractQueue;
-import java.util.AbstractSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Factory {
 
@@ -100,10 +99,12 @@ public class Factory {
 
     /* List */
 
-    public static AbstractList createList(String list) throws ClassNotFoundException {
+    public static List createList(String list) throws ClassNotFoundException {
 
         switch (list){
 
+            case "List":
+                return new CopyOnWriteArrayList<>();
             case "DegradableList":
                 return new DegradableList<>();
             case "LinkedList":
