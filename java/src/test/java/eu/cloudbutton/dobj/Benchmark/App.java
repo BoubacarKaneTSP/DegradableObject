@@ -290,7 +290,7 @@ public class App {
                             else
                                 fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
                             printWriter = new PrintWriter(fileWriter);
-                            printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeTotalComputed) * 1_000_000_000);
+                            printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
 
                         if (_p){
@@ -459,7 +459,7 @@ public class App {
             long startTime = 0L, endTime= 0L;
 
             int n, nbLocalUsers, nbAttempt = 0;
-            String userA = "", userB;
+            String userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
