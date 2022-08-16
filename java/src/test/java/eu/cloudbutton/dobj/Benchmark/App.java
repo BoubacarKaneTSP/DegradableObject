@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark;
 
+import org.javatuples.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -362,6 +363,7 @@ public class App {
             try{
 
                 opType type;
+                Pair<opType, Long> opTypeLongPair;
 
                 AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
                 AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
@@ -399,21 +401,20 @@ public class App {
 
                         type = chooseOperation();
 
-                        long elapsedTime = 0L;
-
                         if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
-                                elapsedTime += compute(type);
+                                opTypeLongPair = compute(type);
+                                nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
+                                Pair<opType, Long> finalOpTypeLongPair = opTypeLongPair;
+                                timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair.getValue1());
                             }
-
-                            elapsedTime = elapsedTime / nbRepeat;
                         }else{
-                            elapsedTime = compute(type);
+                            opTypeLongPair = compute(type);
+                            nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
+                            Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
+                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());
                         }
 
-                        nbLocalOperations.compute(type, (key, value) -> value + 1);
-                        long finalElapsedTime = elapsedTime;
-                        timeLocalOperations.compute(type, (key, value) -> value + finalElapsedTime);
                     }
                 }
 
@@ -454,7 +455,8 @@ public class App {
 
             return type;
         }
-        public long compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+
+        public Pair<opType, Long> compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
 
@@ -464,6 +466,7 @@ public class App {
             nbLocalUsers = arrayLocalUsers.get().size();
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
 
+            opType typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
             * - When doing unfollow, all user handle by thread i do not follow anyone.
@@ -475,7 +478,7 @@ public class App {
                 nbAttempt ++;
 
                 if (nbAttempt >= nbAttemptMax)
-                    type = chooseOperation();
+                    typeComputed = chooseOperation();
 
                 int val = random.nextInt(nbLocalUsers);
 
@@ -483,7 +486,7 @@ public class App {
 
                 Queue<String> listFollow = usersFollow.get().get(userA);
 
-                switch (type){
+                switch (typeComputed){
                     case ADD:
                         if (_completionTime){
                             database.addUser();
@@ -563,9 +566,9 @@ public class App {
                 }
 
                 if (_completionTime)
-                    return -1;
+                    return null;
 
-                return endTime - startTime;
+                return new Pair<>(typeComputed,endTime - startTime);
             }
         }
     }
