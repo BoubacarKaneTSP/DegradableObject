@@ -41,7 +41,9 @@ labels.append('$S_1$')
 labels.append('$S_2$')
 
 for numprocess, resultat, name, linestyle, marker  in zip(numprocesses,resultats,sys.argv[1:], linestyle_tuple, markers):
-    label=name[:len(name)-4].replace("_", " ")
+    list_split_label = name.split("/")
+    label = list_split_label.pop()
+    label=label[:len(label)-4].replace("_", " ")
     plt.plot(numprocess, resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label= label)
 
 
