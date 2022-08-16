@@ -200,8 +200,6 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
 
         for (Node<E> t = tail, p = t;;) {
 
-            countNbFor.incrementAndGet();
-
             Node<E> q = p.next;
             if (q == null) {
                 // p is last node
@@ -225,14 +223,6 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
                 // Check for tail updates after two hops.
                 p = (p != t && t != (t = tail)) ? t : q;
         }
-    }
-
-    public void resetNbFor(){
-        countNbFor = new DegradableCounter();
-    }
-
-    public long getNbFor(){
-        return countNbFor.read();
     }
 
     @Override
