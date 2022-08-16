@@ -161,9 +161,6 @@ public class Benchmark {
                             if (_p)
                                 System.out.println("* End filling *");
                         }
-
-                        if (object instanceof DegradableQueue)
-                            ((DegradableQueue)object).resetNbFor();
                     }
 
                     List<Callable<Void>> callables = new ArrayList<>();
