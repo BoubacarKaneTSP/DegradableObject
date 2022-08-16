@@ -176,28 +176,5 @@ public class Database {
     public void showTimeline(String user){
         mapTimelines.get(user).read();
     }
-
-    public Database copy() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        Database copyDatabase = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbThread);
-
-/*
-        for (String user: this.getMapFollowers().keySet()){
-            AbstractSet copySet = Factory.createSet(copyDatabase.getTypeSet());
-
-            copySet.addAll(mapFollowers.get(user));
-            copyDatabase.getMapFollowers().put(user, copySet);
-        }
-
-        for (String user: this.getMapTimelines().keySet()){
-            Timeline<String> copyTimeline = new Timeline<>(Factory.createQueue(copyDatabase.getTypeQueue()), Factory.createCounter(copyDatabase.getTypeCounter()));
-
-            for (String msg: mapTimelines.get(user).read()){
-                copyTimeline.add(msg);
-            }
-            copyDatabase.getMapTimelines().put(user, copyTimeline);
-        }
-*/
-
-        return copyDatabase;
-    }
+    
 }
