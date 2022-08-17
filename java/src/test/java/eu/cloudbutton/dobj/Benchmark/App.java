@@ -311,7 +311,7 @@ public class App {
                         if (_breakdown){
                             System.out.print("-" + op);
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(" : " + nbOperations.get(op).get() + " operations, " + timeOperations.get(op).get() / (double) 1_000_000_000 + " seconds");
+                            System.out.println(": Nb op : " + nbOperations.get(op).get() + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%");
                         }
                     }
                 }
