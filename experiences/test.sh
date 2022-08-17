@@ -219,5 +219,5 @@ then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
 elif [[ $typeTest == "Retwis" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $quickTest
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $breakdown $quickTest
 fi
