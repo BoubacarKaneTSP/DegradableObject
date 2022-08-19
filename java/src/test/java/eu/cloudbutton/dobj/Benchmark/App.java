@@ -267,6 +267,7 @@ public class App {
                     else {
                         System.out.print(" Throughput (op/s) for all operations : ");
                         System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
+                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000 + " micro ssecondes");
                     }
 
 
@@ -311,7 +312,9 @@ public class App {
                         if (_breakdown){
                             System.out.print("-" + op);
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(": Nb op : " + nbOperations.get(op).get() + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%");
+                            System.out.println(": Nb op : " + nbOperations.get(op).get()
+                                    + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%"
+                                    + ", temps d'exécution : " + timeOperations.get(op).get()/ 1_000_000 + " micro ssecondes");
                         }
                     }
                 }
