@@ -141,7 +141,7 @@ public class Benchmark {
 
 //                     We re-fill the object only if this the first time we use it and we only test READ
                     if ((nbCurrentThread == 1 || (nbCurrentThread == 2 && _asymmetric)) && Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] == 100
-                    || Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] != 100){
+                    || Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] != 95){
                         if (_nbTest == 0)
                             object = Factory.createObject(type);
 
