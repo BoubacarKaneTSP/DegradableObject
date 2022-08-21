@@ -97,7 +97,7 @@ public class App {
 
     private Database database;
 
-    int NB_USERS = 100000;
+    int NB_USERS = 1000000;
 
     int nbSign = 5;
 
