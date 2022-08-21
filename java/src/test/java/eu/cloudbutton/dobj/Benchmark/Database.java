@@ -102,6 +102,8 @@ public class Database {
 
         //adding users
 
+        System.out.println("Adding users");
+
         List<String> localUsers = new ArrayList<>();
         userPerThread = nbUsers / nbThread;
 
@@ -117,6 +119,7 @@ public class Database {
         latchDatabase.countDown();
         latchDatabase.await();
 
+        System.out.println("Following phase");
         //Following phase
 
         for (String userA: usersFollow.get().keySet()){
