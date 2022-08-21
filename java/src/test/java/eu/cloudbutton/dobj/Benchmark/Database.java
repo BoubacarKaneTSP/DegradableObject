@@ -131,8 +131,8 @@ public class Database {
                 n = random.nextInt(usersProbability.size());
                 userB = usersProbability.get(n);
 
-//                followUser(userA, userB);
-//                usersFollow.get().get(userA).add(userB);
+                followUser(userA, userB);
+                usersFollow.get().get(userA).add(userB);
             }
         }
 
