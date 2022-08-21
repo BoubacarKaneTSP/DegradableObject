@@ -132,7 +132,7 @@ public class Database {
                 userB = usersProbability.get(n);
 
 //                followUser(userA, userB);
-                usersFollow.get().get(userA).add(userB);
+//                usersFollow.get().get(userA).add(userB);
             }
         }
 
