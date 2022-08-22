@@ -55,7 +55,7 @@ public class App {
     private int _nbTest = 1;
 
     @Option(name = "-nbOps", usage = "Number of operation done")
-    private long _nbOps = 1_000_000;
+    private long _nbOps = 500_000;
 
     @Option(name = "-time", usage = "test time (seconds)")
     private long _time = 20;
