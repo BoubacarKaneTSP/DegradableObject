@@ -18,7 +18,7 @@ public class PowerLawTest {
             listAlpha.add(i);
         }*/
 
-        listAlpha.add(1.315);
+        listAlpha.add(1.48);
 
         for (double alpha : listAlpha){
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
