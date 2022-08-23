@@ -64,13 +64,13 @@ public class App {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.39;
+    private double _alphaInit = 1.5;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.39;
+    private double _alphaMin = 1.3;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
-    private double _alphaStep = 0.5;
+    private double _alphaStep = 0.01;
 
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
@@ -247,9 +247,9 @@ public class App {
                 if (_s){
 
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_"+alpha+".txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_"+alpha+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
