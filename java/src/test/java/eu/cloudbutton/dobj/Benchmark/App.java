@@ -70,7 +70,7 @@ public class App {
     private double _alphaMin = 1.3;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
-    private double _alphaStep = 0.01;
+    private double _alphaStep = 0.02;
 
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
@@ -145,7 +145,7 @@ public class App {
 
         List<Double> listAlpha = new ArrayList<>();
 
-        for (double i = _alphaInit ; i >= _alphaMin; i-=_alphaStep) {
+        for (double i = _alphaInit ; i > _alphaMin; i-=_alphaStep) {
             listAlpha.add(i);
         }
 
@@ -246,14 +246,18 @@ public class App {
 
                 if (_s){
 
+                    String strAlpha = Double.toString(alpha).replace(".","");
+                    /*
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_"+alpha+".txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_"+strAlpha+".txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_"+alpha+".txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_"+strAlpha+".txt", true);*/
+
+                    fileWriter = new FileWriter(nbCurrThread+"_thread_Degradable.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(nbCurrThread +" "+ timeTotal);
+                        printWriter.println(strAlpha +" "+ timeTotal);
                     else
                         printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                 }
