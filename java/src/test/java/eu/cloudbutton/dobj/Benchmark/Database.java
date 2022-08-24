@@ -29,6 +29,12 @@ public class Database {
     private final ThreadLocal<String> threadName;
     private final List<String> usersProbability;
 
+    ///////////////////////////////////////
+
+    /*private final AbstractMap<String, Long> users; // Associate an userID for each user
+    private final AbstractMap<String, AbstractMap<String, String>> userInfo;
+    private final AbstractMap<> */
+
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
         Class cls;
@@ -77,6 +83,9 @@ public class Database {
         userID = ThreadLocal.withInitial(() -> new BoxLong());
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
+
+        /////////////////////////////
+
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
