@@ -4,9 +4,10 @@ package eu.cloudbutton.dobj.types;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PowerLawTest {
 
@@ -50,6 +51,7 @@ public class PowerLawTest {
             System.out.println("Q3 : " + data.get(3*data.size()/4) + " => " + data.get(3*data.size()/4) / (double) max * 100 +"%");
             System.out.println("nbMax : " + nbMax);
             System.out.println("avg : " + avg/data.size());
+
         }
 
     }

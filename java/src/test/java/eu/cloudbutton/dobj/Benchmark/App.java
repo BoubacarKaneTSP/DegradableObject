@@ -351,9 +351,9 @@ public class App {
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private ThreadLocal<Map<String, Queue<String>>> usersFollow; // Local map that associate to each user, the list of user that it follows
+        private ThreadLocal<Map<Long, Queue<Long>>> usersFollow; // Local map that associate to each user handled by a thread, the list of user that it follows
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private ThreadLocal<List<String>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread
+        private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread
         private int nbRepeat = 1000;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
@@ -387,12 +387,10 @@ public class App {
                 latch.await();
 
                 usersProbabilitySize.set(database.getUsersProbability().size());
-                arrayLocalUsers.set(new ArrayList<>(usersFollow.get().keySet()));
+                arrayLocalUsers.set(new ArrayList(usersFollow.get().keySet()));
 
                 while (flagComputing.get()) { // warm up
-
                     type = chooseOperation();
-
                     compute(type);
                 }
 
@@ -401,7 +399,6 @@ public class App {
                     for (int i = 0; i < _nbOps; i++) {
                         type = chooseOperation();
                         compute(type);
-
                     }
                 }else{
                     while (!flagComputing.get()){
@@ -418,10 +415,9 @@ public class App {
                         }else{
                             opTypeLongPair = compute(type);
                             nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
-                            Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
-                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());
+                            Pair<opType, Long> finalOpTypeLongPair = opTypeLongPair;
+                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair.getValue1());
                         }
-
                     }
                 }
 
@@ -468,11 +464,10 @@ public class App {
             long startTime = 0L, endTime= 0L;
 
             int n, nbLocalUsers, nbAttempt = 0;
-            String userA, userB;
+            Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
-            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
-
+            int nbAttemptMax = (int) (Math.log(0.01)/(Math.log((nbLocalUsers-1) / (double) nbLocalUsers)));
             opType typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
@@ -491,7 +486,7 @@ public class App {
 
                 userA = arrayLocalUsers.get().get(val);
 
-                Queue<String> listFollow = usersFollow.get().get(userA);
+                Queue<Long> listFollow = usersFollow.get().get(userA);
 
                 switch (typeComputed){
                     case ADD:
@@ -558,11 +553,11 @@ public class App {
                         break;
                     case READ:
                         if (_completionTime){
-                            database.showTimeline(userA);
+                            database.read(userA);
 
                         }else{
                             startTime = System.nanoTime();
-                            database.showTimeline(userA);
+                            database.read(userA);
                             endTime = System.nanoTime();
                         }
 
