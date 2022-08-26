@@ -151,7 +151,6 @@ public class Database {
 //        Following phase
 
         int usersProbabilitySize = usersProbability.size();
-        System.out.println(usersProbabilitySize);
         for (Long userA: usersFollow.get().keySet()){
 
             int nbFollow = data.get(random.nextInt(bound));
