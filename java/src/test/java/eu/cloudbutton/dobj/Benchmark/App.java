@@ -247,12 +247,13 @@ public class App {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-                    if (nbCurrThread == 1)
+
+                    /*if (nbCurrThread == 1)
                         fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);*/
 
-//                    fileWriter = new FileWriter(nbCurrThread+"_thread_with_DegradableMap.txt", true);
+                    fileWriter = new FileWriter("_alpha"+strAlpha+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
