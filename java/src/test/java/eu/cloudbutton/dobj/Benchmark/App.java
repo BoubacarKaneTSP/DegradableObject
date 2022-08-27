@@ -256,7 +256,7 @@ public class App {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(strAlpha +" "+ timeTotal);
+                        printWriter.println(nbCurrThread +" "+ timeTotal);
                     else
                         printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                 }
