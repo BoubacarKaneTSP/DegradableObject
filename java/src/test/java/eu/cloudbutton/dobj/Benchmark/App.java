@@ -253,7 +253,7 @@ public class App {
                     else
                         fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);*/
 
-                    fileWriter = new FileWriter("juc_nbThread_"+nbCurrThread+".txt", true);
+                    fileWriter = new FileWriter("Degradable_nbThread_"+nbCurrThread+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
