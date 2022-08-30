@@ -18,7 +18,7 @@ public class PowerLawCollisionKeyTest {
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
         AbstractMap<AbstractCollisionKey, String> collisionMap = new DegradableMap<>();
-        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+        AbstractMap<String, String> map = new DegradableMap<>();
         CollisionKeyFactory factory = new CollisionKeyFactory();
 
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -27,9 +27,10 @@ public class PowerLawCollisionKeyTest {
         Callable<Void> callable = () -> {
             factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-            for (int i = 0; i < 100_000; i++) {
-                collisionMap.put(factory.getCollisionKey(), "value");
-//                map.put(currentThreadName +"_"+ i , "value");
+            for (int i = 0; i < 10_000; i++) {
+//                collisionMap.put(factory.getCollisionKey(), "value");
+                map.put(Thread.currentThread().getName(), String.valueOf(i));
+                map.get(Thread.currentThread().getName());
             }
             return null;
         };
@@ -38,7 +39,7 @@ public class PowerLawCollisionKeyTest {
 
         start = System.nanoTime();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             futures.add(executor.submit(callable));
         }
 
@@ -46,6 +47,7 @@ public class PowerLawCollisionKeyTest {
             future.get();
         }
 
+        System.out.println(((DegradableMap)map).getListMap());
         end = System.nanoTime();
         double timeElapsed =  (end - start) / 1000000000.0;
 

@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.map;
 
+import eu.cloudbutton.dobj.counter.BoxLong;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.javatuples.Pair;
 
@@ -11,29 +13,44 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
+    @Getter
     private final List<ConcurrentHashMap<K,V>> listMap;
     private final ThreadLocal<ConcurrentHashMap<K,V>> local;
-//    private final List<List<Pair<K,V>>> mapView;
-
-    // The default size of the tab
-    private static final int DEFAULT_SIZE = 1000;
+//    private final ThreadLocal<BoxLong> index;
+//    private final ConcurrentHashMap<K, Integer> mapIndex;
 
     public DegradableMap(){
         listMap = new CopyOnWriteArrayList<>();
-       /* mapView = new CopyOnWriteArrayList<>();
-        for (int i = 0; i < DEFAULT_SIZE; i++) {
-            mapView.add(new CopyOnWriteArrayList<>());
-        }*/
+//        mapIndex = new ConcurrentHashMap<>();
+       /* index = ThreadLocal.withInitial(() -> {
+            BoxLong boxLong = new BoxLong();
+            boxLong.setVal(-1);
+            return boxLong;
+        });
+*/
         local = ThreadLocal.withInitial(() -> {
             ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
             return m;
         });
+
     }
 
     @Override
     public V put(K key, V value) {
-//        mapView.get(key.hashCode()%DEFAULT_SIZE).add(new Pair<>(key,value));
+/*
+        if (index.get().getVal() == -1) {
+           *//* for (AbstractMap map: listMap){
+                System.out.println(map);
+            }*//*
+            index.get().setVal(listMap.indexOf(local.get()));
+            System.out.println(listMap.get((int) index.get().getVal()) == local.get() );
+//            System.out.println("size listmap : "+listMap.size());
+//            System.out.println(index.get());
+        }
+
+        mapIndex.put(key, (int) index.get().getVal());*/
+
         return  local.get().put(key, value);
     }
 
@@ -48,11 +65,12 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
         if (key == null)
             throw new NullPointerException();
+/*
 
-/*        for (Pair<K,V> pair: mapView.get(key.hashCode()%DEFAULT_SIZE)){
-            if (pair.getValue0().equals(key))
-                return pair.getValue1();
-        }*/
+        if (key == null || mapIndex.get(key) == null)
+            throw new NullPointerException();
+*/
+
 
         V value;
 
@@ -62,9 +80,11 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
             return value;
 
         for (AbstractMap<K,V> map : listMap){
-            value = map.get(key);
-            if (value != null)
-                return value;
+            if (map != local.get()){
+                value = map.get(key);
+                if (value != null)
+                    return value;
+            }
         }
 
         return null;

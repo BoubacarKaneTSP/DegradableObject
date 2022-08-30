@@ -253,13 +253,13 @@ public class App {
                     else
                         fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);*/
 
-                    fileWriter = new FileWriter("juc_alpha"+strAlpha+".txt", true);
+                    fileWriter = new FileWriter("juc_nbThread_"+nbCurrThread+".txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(nbCurrThread +" "+ timeTotal);
+                        printWriter.println(strAlpha +" "+ timeTotal);
                     else
-                        printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+                        printWriter.println(strAlpha +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                 }
 
                 if (_p){
