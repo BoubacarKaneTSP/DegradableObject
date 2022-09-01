@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.Benchmark;
 import eu.cloudbutton.dobj.counter.AbstractCounter;
 import eu.cloudbutton.dobj.counter.BoxLong;
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.Timeline;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -25,8 +24,6 @@ public class Database {
     private final double alpha;
     private final int nbThread;
     private final ThreadLocalRandom random;
-    private final AbstractMap<String, AbstractSet<String>> mapFollowers;
-    private final AbstractMap<String, Timeline<String>> mapTimelines;
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
 
@@ -37,7 +34,7 @@ public class Database {
     private final AbstractMap<Long, AbstractMap<String, String>> mapUser; // Stores the information for each user
     private final AbstractMap<Long, AbstractMap<String, String>> mapPost; // Stores the information for each post
     private final AbstractMap<Long, AbstractSet<Long>> followers; // Stores the followers for each users
-    private final AbstractMap<Long, AbstractSet<Long>> following; // Stores the following for each users
+//    private final AbstractMap<Long, AbstractSet<Long>> following; // Stores the following for each users
     private final AbstractQueue<Long> timeline; // Stores the last 1000 post posted. We need this queue to conserve the order of the posts
     private final AbstractCounter next_user_ID; // A counter generating a unique ID for each user
     private final AbstractCounter next_post_ID; // A counter generating a unique ID for each post
@@ -86,8 +83,6 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         this.random = ThreadLocalRandom.current();
-        mapFollowers = factory.getMap();
-        mapTimelines = factory.getMap();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
 
@@ -97,7 +92,7 @@ public class Database {
         mapUser = factory.getMap();
         mapPost = factory.getMap();
         followers = factory.getMap();
-        following = factory.getMap();
+//        following = factory.getMap();
         timeline = new ConcurrentLinkedQueue<>(); // We cannot use the DegradableQueue here since many thread may use poll()
         next_user_ID = factory.getCounter();
         next_post_ID = factory.getCounter();
@@ -188,7 +183,7 @@ public class Database {
         // and two set for storing the followers and the following of the new user
         posts.put(ID, factory.getQueue());
         followers.put(ID, factory.getSet());
-        following.put(ID, factory.getSet());
+//        following.put(ID, factory.getSet());
 
         return ID;
     }
@@ -264,7 +259,7 @@ public class Database {
     public void showPost(Long post_ID){
 
         String username, body, strPost_Id;
-        Long elapsedTime, user_ID;
+        long elapsedTime, user_ID;
 
         user_ID = Long.parseLong(mapPost.get(post_ID).get("userID"));
         username = mapUser.get(user_ID).get("username");

@@ -246,18 +246,17 @@ public class App {
 
                 if (_s){
 
-                    String strAlpha = Double.toString(alpha).replace(".","");
-                    /*
+//                    String strAlpha = Double.toString(alpha).replace(".","");
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_"+strAlpha+".txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_"+strAlpha+".txt", true);*/
+                        fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
 
-                    fileWriter = new FileWriter(nbCurrThread+"_thread_juc.txt", true);
+//                    fileWriter = new FileWriter(nbCurrThread+"_thread_juc.txt", true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(strAlpha +" "+ timeTotal);
+                        printWriter.println(nbCurrThread +" "+ timeTotal);
                     else
                         printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                 }
