@@ -145,7 +145,7 @@ public class App {
 
         List<Double> listAlpha = new ArrayList<>();
 
-        for (double i = _alphaInit ; i > _alphaMin; i-=_alphaStep) {
+        for (double i = _alphaInit ; i >= _alphaMin; i-=_alphaStep) {
             listAlpha.add(i);
         }
 
