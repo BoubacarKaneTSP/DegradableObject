@@ -1,0 +1,4 @@
+Nb user : 1_000_000
+Nb ops done : 500_000
+Warming Up time : 10s
+Nb tests : 10
