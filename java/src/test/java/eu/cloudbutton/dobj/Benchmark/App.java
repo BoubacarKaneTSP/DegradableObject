@@ -248,9 +248,9 @@ public class App {
 
 //                    String strAlpha = Double.toString(alpha).replace(".","");
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_all_Degradable.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_all_Degradable.txt", true);
 
 //                    fileWriter = new FileWriter(nbCurrThread+"_thread_juc.txt", true);
 
@@ -291,9 +291,9 @@ public class App {
 
                         if (_s){
                             if (nbCurrThread == 1)
-                                fileWriter = new FileWriter("retwis_"+op+"_operations.txt", false);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_all_Degradable.txt", false);
                             else
-                                fileWriter = new FileWriter("retwis_"+op+"_operations.txt", true);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_all_Degradable.txt", true);
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
