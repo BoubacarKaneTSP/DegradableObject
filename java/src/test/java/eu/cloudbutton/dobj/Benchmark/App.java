@@ -248,9 +248,9 @@ public class App {
 
 //                    String strAlpha = Double.toString(alpha).replace(".","");
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_all_Degradable.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_all_Degradable.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);
 
 //                    fileWriter = new FileWriter(nbCurrThread+"_thread_juc.txt", true);
 
