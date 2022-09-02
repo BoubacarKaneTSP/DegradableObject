@@ -37,7 +37,7 @@ public class CollisionKeyFactory {
 
     private void fillListHashCode(){
 
-        List<Integer> data = new DiscreteApproximate(1, 1.315).generate(bound);
+        List<Integer> data = new DiscreteApproximate(1, 1.39).generate(bound);
         int i = 0;
 
         int nbUsers = 1000000;
