@@ -64,10 +64,10 @@ public class App {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.5;
+    private double _alphaInit = 1.39;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.3;
+    private double _alphaMin = 1.39;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.02;
@@ -249,9 +249,9 @@ public class App {
                     String strAlpha = Double.toString(alpha).replace(".","");
 
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_juc.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_juc.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);
 
 //                    fileWriter = new FileWriter("with_DegradableMap_nbThread_"+nbCurrThread+".txt", true);
 
