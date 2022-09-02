@@ -7,6 +7,7 @@ import org.javatuples.Pair;
 
 import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -14,20 +15,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
     @Getter
-    private final List<ConcurrentHashMap<K,V>> listMap;
-    private final ThreadLocal<ConcurrentHashMap<K,V>> local;
-//    private final ThreadLocal<BoxLong> index;
-//    private final ConcurrentHashMap<K, Integer> mapIndex;
+    private final List<Map<K,V>> listMap;
+    private final ThreadLocal<Map<K,V>> local;
+    private final ConcurrentHashMap<K, Map<K,V>> mapIndex;
 
     public DegradableMap(){
         listMap = new CopyOnWriteArrayList<>();
-//        mapIndex = new ConcurrentHashMap<>();
-       /* index = ThreadLocal.withInitial(() -> {
-            BoxLong boxLong = new BoxLong();
-            boxLong.setVal(-1);
-            return boxLong;
-        });
-*/
+        mapIndex = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
             ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
@@ -38,25 +32,17 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
     @Override
     public V put(K key, V value) {
-/*
-        if (index.get().getVal() == -1) {
-           *//* for (AbstractMap map: listMap){
-                System.out.println(map);
-            }*//*
-            index.get().setVal(listMap.indexOf(local.get()));
-            System.out.println(listMap.get((int) index.get().getVal()) == local.get() );
-//            System.out.println("size listmap : "+listMap.size());
-//            System.out.println(index.get());
-        }
-
-        mapIndex.put(key, (int) index.get().getVal());*/
-
-        return  local.get().put(key, value);
+        V ret = local.get().put(key, value);
+        if (ret==null)
+            mapIndex.put(key,local.get());
+        return ret;
     }
 
     @Override
     public V remove(Object key) {
-        return local.get().remove(key);
+        V ret = local.get().remove(key);
+        mapIndex.remove(key);
+        return ret;
     }
 
     @SneakyThrows
@@ -65,12 +51,6 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
 
         if (key == null)
             throw new NullPointerException();
-/*
-
-        if (key == null || mapIndex.get(key) == null)
-            throw new NullPointerException();
-*/
-
 
         V value;
 
@@ -79,9 +59,13 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         if (value != null)
             return value;
 
-        for (AbstractMap<K,V> map : listMap){
-            if (map != local.get()){
-                value = map.get(key);
+        Map<K,V> map = mapIndex.get(key);
+        if (map != null)
+            return map.get(key);
+
+        for (Map<K,V> amap : listMap){
+            if (amap != local.get()){
+                value = amap.get(key);
                 if (value != null)
                     return value;
             }
@@ -99,7 +83,7 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
     public int size(){
         int size = 0;
 
-        for (AbstractMap<K,V> map: listMap){
+        for (Map<K,V> map: listMap){
             size += map.size();
         }
 
