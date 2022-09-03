@@ -1,15 +1,13 @@
 package eu.cloudbutton.dobj.queue;
 
-import eu.cloudbutton.dobj.counter.DegradableCounter;
+import eu.cloudbutton.dobj.counter.CounterIncrementOnly;
+import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
-import java.util.AbstractQueue;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -20,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @param <E>
  * @author Boubacar Kane
  */
-public class DegradableQueue<E> extends AbstractQueue<E> {
+public class DegradableQueue<E> implements Queue<E> {
 
     private static class Node<E> {
         volatile E item;
@@ -71,7 +69,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     private transient Node<E> head;
     private transient volatile Node<E> tail;
     private final CopyOnWriteArrayList<Long> listNbFor;
-    private DegradableCounter countNbFor;
+    private CounterIncrementOnly countNbFor;
 
     /**
      * Create an empty queue.
@@ -79,7 +77,7 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     public DegradableQueue() {
         tail = head = new Node<>(null);
         listNbFor = new CopyOnWriteArrayList<>();
-        countNbFor = new DegradableCounter();
+        countNbFor = new CounterIncrementOnly();
     }
 
     /**
@@ -93,6 +91,18 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
      */
     public Iterator<E> iterator() {
         return new Itr();
+    }
+
+    @NotNull
+    @Override
+    public Object[] toArray() {
+        return new Object[0];
+    }
+
+    @NotNull
+    @Override
+    public <T> T[] toArray(@NotNull T[] a) {
+        return null;
     }
 
     private class Itr implements Iterator<E> {
@@ -185,8 +195,48 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return false;
+    }
+
+    @Override
     public boolean add(E e){
         return offer(e);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return false;
+    }
+
+    @Override
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(@NotNull Collection<? extends E> c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public void clear() {
+
     }
 
     /**
@@ -265,6 +315,11 @@ public class DegradableQueue<E> extends AbstractQueue<E> {
 
         return null;
 
+    }
+
+    @Override
+    public E element() {
+        return null;
     }
 
     @Override

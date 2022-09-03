@@ -1,122 +1,92 @@
 package eu.cloudbutton.dobj.set;
 
+import eu.cloudbutton.dobj.map.DegradableMap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-public class DegradableSet<T> extends AbstractSet<T> {
+public class DegradableSet<T> implements Set<T> {
 
-    private final CopyOnWriteArrayList<ConcurrentSkipListSet<T>> set;
-    private final ThreadLocal<ConcurrentSkipListSet<T>> local;
+    private final DegradableMap<T, Object> set;
 
     public DegradableSet() {
-        this.set = new CopyOnWriteArrayList<>();
-        this.local = ThreadLocal.withInitial(() -> {
-            ConcurrentSkipListSet<T> l = new ConcurrentSkipListSet<>();
-            set.add(l);
-            return l;
-        });
+        this.set = new DegradableMap<>();
     }
 
-    public static class setsIterator<V> implements Iterator<V> {
 
-        Iterator<ConcurrentSkipListSet<V>> _inUnion;
-        Iterator<V> _inSet;
-        Collection<ConcurrentSkipListSet<V>> _elements;
-
-        public setsIterator(Collection<ConcurrentSkipListSet<V>> elts) {
-
-            _elements = elts;
-
-
-            Iterator<ConcurrentSkipListSet<V>> itr = _elements.iterator();
-
-            if (itr.hasNext()){
-                _inUnion = _elements.iterator();
-                _inSet = _inUnion.next().iterator();
-            }
-        }
-
-        public boolean hasNext() {
-
-            if (_inUnion == null) return false;
-
-            if (!_inSet.hasNext()) {
-                do {
-                    if (!_inUnion.hasNext()) return false;
-                    _inSet = _inUnion.next().iterator();
-                } while (!_inSet.hasNext());
-            }
-            return true;
-        }
-
-        public V next() {
-            if (!_inSet.hasNext()) {
-                do {
-                    if (!_inUnion.hasNext()) throw new NoSuchElementException();
-                    _inSet = _inUnion.next().iterator();
-                } while (!_inSet.hasNext());
-            }
-            return _inSet.next();
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-    }
-
+    @NotNull
     @Override
-    public Iterator<T> iterator() {
+    public Object[] toArray() {
+        return new Object[0];
+    }
 
-        /*CopyOnWriteArrayList<ConcurrentSkipListSet<T>> copy = new CopyOnWriteArrayList();
-        copy.add(new ConcurrentSkipListSet<>());*/
-        return new setsIterator<>(set);
+    @NotNull
+    @Override
+    public <T1> T1[] toArray(@NotNull T1[] a) {
+        return null;
     }
 
     @Override
     public int size() {
-        int size = 0;
-        for (AbstractSet s: set){
-            size += s.size();
-        }
-        return size;
+
+        return set.size();
     }
 
     @Override
-    public boolean add(T val) {
-        return local.get().add(val);
-    }
-
-    public java.util.Set<T> read() {
-        java.util.Set<T> result = new HashSet<>();
-        for (ConcurrentSkipListSet<T> val : set){
-            result.addAll(val);
-        }
-        return result;
-    }
-
-    @Override
-    public boolean remove(Object val) {
-        return local.get().remove(val);
-    }
-
-    @Override
-    public boolean contains(Object val) {
-        for (ConcurrentSkipListSet<T> s : set){
-            if (s.contains(val)) return true;
-        }
+    public boolean isEmpty() {
         return false;
     }
 
     @Override
+    public boolean add(T val) {
+        return set.put(val,0) == null;
+    }
+
+    @Override
+    public boolean remove(Object val) {
+        return set.remove(val) != null;
+    }
+
+    @Override
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(@NotNull Collection<? extends T> c) {
+        return false;
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public boolean contains(Object val) {
+        return set.containsKey(val);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<T> iterator() {
+        return set.iterator();
+    }
+
+    @Override
     public String toString(){
-        Set<T> set;
-
-        set = read();
-
-        return set.toString();
+        return set.keySet().toString();
     }
 
 }

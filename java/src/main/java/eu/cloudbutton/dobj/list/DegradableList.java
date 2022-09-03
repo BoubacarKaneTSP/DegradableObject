@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.list;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Boubacar Kane
  * */
-public class DegradableList<T> extends AbstractList<T>{
+public class DegradableList<T> implements List<T>{
 
     private final ConcurrentMap<Thread, ConcurrentLinkedQueue<T>> list;
     private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
@@ -124,12 +126,60 @@ public class DegradableList<T> extends AbstractList<T>{
     }
 
     @Override
+    public T set(int index, T element) {
+        return null;
+    }
+
+    @Override
+    public void add(int index, T element) {
+
+    }
+
+    @Override
+    public T remove(int index) {
+        return null;
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        return 0;
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return 0;
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<T> listIterator() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<T> listIterator(int index) {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<T> subList(int fromIndex, int toIndex) {
+        return null;
+    }
+
+    @Override
     public boolean containsAll(Collection<?> c) {
         return false;
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(int index, @NotNull Collection<? extends T> c) {
         return false;
     }
 

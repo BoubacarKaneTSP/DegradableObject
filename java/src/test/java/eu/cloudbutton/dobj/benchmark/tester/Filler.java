@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;

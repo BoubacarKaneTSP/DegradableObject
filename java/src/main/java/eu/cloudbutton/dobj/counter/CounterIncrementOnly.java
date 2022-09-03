@@ -4,14 +4,13 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class build a Counter on top of a Snapshot object.
  *
  * @author Boubacar Kane
  * */
-public class DegradableCounter extends AbstractCounter {
+public class CounterIncrementOnly implements Counter {
 
     private final CopyOnWriteArrayList<BoxLong> count;
     private final ThreadLocal<BoxLong> local;
@@ -31,7 +30,7 @@ public class DegradableCounter extends AbstractCounter {
     /**
      * Creates a new Counter initialized with the initial value 0.
      */
-    public DegradableCounter() {
+    public CounterIncrementOnly() {
         this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
             BoxLong l = new BoxLong();

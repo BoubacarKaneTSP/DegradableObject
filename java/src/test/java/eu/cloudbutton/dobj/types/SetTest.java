@@ -6,10 +6,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractList;
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class SetTest {
@@ -37,7 +34,7 @@ public class SetTest {
 
     private static void doAdd(AbstractSet set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+        List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             set.add("v1");
             set.add("v2");
@@ -65,7 +62,7 @@ public class SetTest {
 
     private static void doTestIterator(AbstractSet<String> set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+        List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             String name = Thread.currentThread().getName();
             set.add(name +" : v1");

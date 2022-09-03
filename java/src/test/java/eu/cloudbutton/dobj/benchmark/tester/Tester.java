@@ -1,9 +1,8 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
-import eu.cloudbutton.dobj.Benchmark.Benchmark;
+import eu.cloudbutton.dobj.benchmark.Microbenchmark;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -43,7 +42,7 @@ public abstract class Tester<T> implements Callable<Void> {
 
         try{
             // warm up
-            while (Benchmark.flag.get()) {
+            while (Microbenchmark.flag.get()) {
 
                 n = this.random.nextInt(100);
 
@@ -61,7 +60,7 @@ public abstract class Tester<T> implements Callable<Void> {
             latch.await();
 
             // compute
-            while (!Benchmark.flag.get()) {
+            while (!Microbenchmark.flag.get()) {
                 n = this.random.nextInt(100);
 
                 if (n < ratios[0]) {
@@ -104,17 +103,17 @@ public abstract class Tester<T> implements Callable<Void> {
             e.printStackTrace();
         }
 
-        Benchmark.nbAdd.addAndGet(add);
-        Benchmark.nbRemove.addAndGet(remove);
-        Benchmark.nbRead.addAndGet(read);
+        Microbenchmark.nbAdd.addAndGet(add);
+        Microbenchmark.nbRemove.addAndGet(remove);
+        Microbenchmark.nbRead.addAndGet(read);
 
-        Benchmark.nbAddFail.addAndGet(addFail);
-        Benchmark.nbRemoveFail.addAndGet(removeFail);
-        Benchmark.nbReadFail.addAndGet(readFail);
+        Microbenchmark.nbAddFail.addAndGet(addFail);
+        Microbenchmark.nbRemoveFail.addAndGet(removeFail);
+        Microbenchmark.nbReadFail.addAndGet(readFail);
 
-        Benchmark.timeAdd.addAndGet(timeAdd);
-        Benchmark.timeRemove.addAndGet(timeRemove);
-        Benchmark.timeRead.addAndGet(timeRead);
+        Microbenchmark.timeAdd.addAndGet(timeAdd);
+        Microbenchmark.timeRemove.addAndGet(timeRemove);
+        Microbenchmark.timeRead.addAndGet(timeRead);
 
         return null;
     }

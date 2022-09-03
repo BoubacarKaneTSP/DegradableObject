@@ -1,6 +1,4 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
-
-import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import java.util.AbstractQueue;
 import java.util.ArrayList;

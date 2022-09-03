@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Benchmark;
+package eu.cloudbutton.dobj.benchmark;
 
 import org.javatuples.Pair;
 import org.kohsuke.args4j.CmdLineException;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class App {
+public class Retwis {
 
     enum opType{
         ADD,
@@ -102,7 +102,7 @@ public class App {
     int nbSign = 5;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        new App().doMain(args);
+        new Retwis().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -371,8 +371,8 @@ public class App {
                 opType type;
                 Pair<opType, Long> opTypeLongPair;
 
-                AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
-                AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
+                Map<opType, Integer> nbLocalOperations = new HashMap<>();
+                Map<opType, Long> timeLocalOperations = new HashMap<>();
 
                 for (opType op: opType.values()){
                     nbLocalOperations.put(op, 0);

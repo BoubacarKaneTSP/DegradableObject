@@ -4,10 +4,7 @@ import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.AbstractList;
-import java.util.AbstractQueue;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class QueueTest {
@@ -31,7 +28,7 @@ public class QueueTest {
 
     private static void doAppend(AbstractQueue<Integer> list) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+        List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             list.add(1);
             list.add(2);

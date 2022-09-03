@@ -25,9 +25,9 @@ public class CollisionKeyFactory {
         constructorCollisionKey = collisionKeyClass.getConstructor();
     }
 
-    public AbstractCollisionKey getCollisionKey() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public CollisionKey getCollisionKey() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        AbstractCollisionKey collisionKey = constructorCollisionKey.newInstance();
+        CollisionKey collisionKey = constructorCollisionKey.newInstance();
 
         if (collisionKey instanceof PowerLawCollisionKey)
             collisionKey.setHash(listHashCode.get(random.nextInt(bound)));

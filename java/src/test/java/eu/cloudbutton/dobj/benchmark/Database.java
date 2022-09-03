@@ -1,8 +1,9 @@
-package eu.cloudbutton.dobj.Benchmark;
+package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 import eu.cloudbutton.dobj.counter.BoxLong;
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -29,15 +30,15 @@ public class Database {
 
     ///////////////////////////////////////
 
-    private final AbstractMap<String, Long> users; // Associate an userID for each user
-    private final AbstractMap<Long,AbstractQueue<Long>> posts; // Stores for each user a queue containing all the posts
-    private final AbstractMap<Long, AbstractMap<String, String>> mapUser; // Stores the information for each user
-    private final AbstractMap<Long, AbstractMap<String, String>> mapPost; // Stores the information for each post
-    private final AbstractMap<Long, AbstractSet<Long>> followers; // Stores the followers for each users
-//    private final AbstractMap<Long, AbstractSet<Long>> following; // Stores the following for each users
-    private final AbstractQueue<Long> timeline; // Stores the last 1000 post posted. We need this queue to conserve the order of the posts
-    private final AbstractCounter next_user_ID; // A counter generating a unique ID for each user
-    private final AbstractCounter next_post_ID; // A counter generating a unique ID for each post
+    private final Map<String, Long> users; // Associate an userID for each user
+    private final Map<Long,Queue<Long>> posts; // Stores for each user a queue containing all the posts
+    private final Map<Long, Map<String, String>> mapUser; // Stores the information for each user
+    private final Map<Long, Map<String, String>> mapPost; // Stores the information for each post
+    private final Map<Long, Set<Long>> followers; // Stores the followers for each users
+//    private final Map<Long, Set<Long>> following; // Stores the following for each users
+    private final Queue<Long> timeline; // Stores the last 1000 post posted. We need this queue to conserve the order of the posts
+    private final Counter next_user_ID; // A counter generating a unique ID for each user
+    private final Counter next_post_ID; // A counter generating a unique ID for each post
     private final ThreadLocal<BoxLong> head_or_tail;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -98,6 +99,9 @@ public class Database {
         next_post_ID = factory.getCounter();
         head_or_tail = ThreadLocal.withInitial(BoxLong::new);
         head_or_tail.get().setVal(0);
+        if (next_user_ID instanceof FuzzyCounter)
+            ((FuzzyCounter) next_user_ID).setN(nbThread);
+            ((FuzzyCounter) next_post_ID).setN(nbThread);
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -123,12 +127,8 @@ public class Database {
 
         //adding users
 
-//        System.out.println("Adding users");
-
         List<Long> localUsers = new ArrayList<>();
         userPerThread = nbUsers / nbThread;
-
-//        System.out.println("userPerThread : " + userPerThread);
 
         for (int id = 0; id < userPerThread; id++) {
             user = addUser();
@@ -157,10 +157,6 @@ public class Database {
                 usersFollow.get().get(userA).add(userB);
             }
         }
-
-//        System.out.println(Thread.currentThread().getName() + " : " +val/m);
-
-
     }
 
     public Long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -172,7 +168,7 @@ public class Database {
 
         users.put(username, ID);
 
-        AbstractMap<String,String> infoUser = factory.getMap();
+        Map<String,String> infoUser = factory.getMap();
         infoUser.put("username", username);
         infoUser.put("password", password);
 
@@ -210,7 +206,7 @@ public class Database {
         Long post_ID = next_post_ID.incrementAndGet();
 
         // Create the post
-        AbstractMap<String, String> infoMsg = factory.getMap();
+        Map<String, String> infoMsg = factory.getMap();
         infoMsg.put("userID", Long.toString(user_ID));
         infoMsg.put("time", Long.toString(System.nanoTime()));
         infoMsg.put("body", msg);

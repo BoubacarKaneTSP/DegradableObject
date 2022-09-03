@@ -1,15 +1,12 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.Benchmark.Benchmark;
-import eu.cloudbutton.dobj.map.AbstractCollisionKey;
-import eu.cloudbutton.dobj.map.CollisionKeyFactory;
-import eu.cloudbutton.dobj.map.DegradableMap;
-import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
+import eu.cloudbutton.dobj.map.*;
 import org.testng.annotations.Test;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class PowerLawCollisionKeyTest {
@@ -17,8 +14,8 @@ public class PowerLawCollisionKeyTest {
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
-        AbstractMap<AbstractCollisionKey, String> collisionMap = new DegradableMap<>();
-        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+        Map<CollisionKey, String> collisionMap = new DegradableMap<>();
+        Map<String, String> map = new ConcurrentHashMap<>();
         CollisionKeyFactory factory = new CollisionKeyFactory();
 
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -26,7 +23,7 @@ public class PowerLawCollisionKeyTest {
 
         Callable<Void> callable = () -> {
             factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
-
+            String currentThreadName = Thread.currentThread().getName();
             for (int i = 0; i < 100_000; i++) {
                 collisionMap.put(factory.getCollisionKey(), "value");
 //                map.put(currentThreadName +"_"+ i , "value");
@@ -53,7 +50,6 @@ public class PowerLawCollisionKeyTest {
         System.out.println("Time elapsed filling the hashmap => " + timeElapsed + " seconds.");
         System.out.println("Current map size => " + map.size());
         System.out.println("Current collisionMap size => " + collisionMap.size());
-
     }
 
 }

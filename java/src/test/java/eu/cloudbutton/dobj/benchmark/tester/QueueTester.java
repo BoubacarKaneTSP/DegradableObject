@@ -1,9 +1,6 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import java.util.AbstractQueue;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 
 public class QueueTester extends Tester<AbstractQueue> {

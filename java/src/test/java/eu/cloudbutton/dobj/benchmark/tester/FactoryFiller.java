@@ -1,7 +1,7 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.Noop;
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 
 import java.util.*;
 
@@ -27,8 +27,8 @@ public class FactoryFiller {
             return new QueueFiller((AbstractQueue) object, nbOps);
         else if (object instanceof List)
             return new ListFiller((AbstractList) object, nbOps);
-        else if (object instanceof AbstractCounter)
-            return new CounterFiller((AbstractCounter) object, nbOps);
+        else if (object instanceof Counter)
+            return new CounterFiller((Counter) object, nbOps);
         else if (object instanceof Noop)
             return new NoopFiller((Noop) object, nbOps);
         else

@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
@@ -41,12 +41,12 @@ public class CounterTest {
         factory.setFactoryCounter(cls);
 //        testDifferentRead((FuzzyCounter) factory.getCounter());
 
-        cls = Class.forName("eu.cloudbutton.dobj.counter.DegradableCounter");
+        cls = Class.forName("eu.cloudbutton.dobj.counter.CounterIncrementOnly");
         factory.setFactoryCounter(cls);
         doIncrement(factory.getCounter());
     }
 
-    private static void doIncrement(AbstractCounter count) throws ExecutionException, InterruptedException {
+    private static void doIncrement(Counter count) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();

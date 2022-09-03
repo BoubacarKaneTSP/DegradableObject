@@ -1,36 +1,121 @@
 package eu.cloudbutton.dobj.map;
 
 import lombok.SneakyThrows;
-import org.javatuples.Pair;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class DegradableMap<K,V> extends AbstractMap<K,V> {
+public class DegradableMap<K,V> implements Map<K,V> {
 
-    private final List<ConcurrentHashMap<K,V>> listMap;
-    private final ThreadLocal<ConcurrentHashMap<K,V>> local;
-//    private final List<List<Pair<K,V>>> mapView;
-
-    // The default size of the tab
-    private static final int DEFAULT_SIZE = 1000;
+    private final List<Map<K,V>> listMap;
+    private final ThreadLocal<Map<K,V>> local;
 
     public DegradableMap(){
         listMap = new CopyOnWriteArrayList<>();
-       /* mapView = new CopyOnWriteArrayList<>();
-        for (int i = 0; i < DEFAULT_SIZE; i++) {
-            mapView.add(new CopyOnWriteArrayList<>());
-        }*/
         local = ThreadLocal.withInitial(() -> {
-            ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
+            Map<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
             return m;
         });
     }
 
+    public static class KeyIterator<K,V> implements Iterator<K> {
+
+        Iterator<Map<K,V>> _inUnion;
+        Iterator<K> _inMap;
+        Collection<Map<K,V>> _elements;
+
+        public KeyIterator(Collection<Map<K,V>> elts) {
+
+            _elements = elts;
+
+
+            Iterator<Map<K,V>> itr = _elements.iterator();
+
+            if (itr.hasNext()){
+                _inUnion = _elements.iterator();
+                _inMap = _inUnion.next().keySet().iterator();
+            }
+        }
+
+        public boolean hasNext() {
+
+            if (_inUnion == null) return false;
+
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) return false;
+                    _inMap = _inUnion.next().keySet().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return true;
+        }
+
+        public K next() {
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) throw new NoSuchElementException();
+                    _inMap = _inUnion.next().keySet().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return _inMap.next();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    }
+
+    public static class ValueIterator<K,V> implements Iterator<V> {
+
+        Iterator<Map<K,V>> _inUnion;
+        Iterator<V> _inMap;
+        Collection<Map<K,V>> _elements;
+
+        public ValueIterator(Collection<Map<K,V>> elts) {
+
+            _elements = elts;
+
+
+            Iterator<Map<K,V>> itr = _elements.iterator();
+
+            if (itr.hasNext()){
+                _inUnion = _elements.iterator();
+                _inMap = _inUnion.next().values().iterator();
+            }
+        }
+
+        public boolean hasNext() {
+
+            if (_inUnion == null) return false;
+
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) return false;
+                    _inMap = _inUnion.next().values().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return true;
+        }
+
+        public V next() {
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) throw new NoSuchElementException();
+                    _inMap = _inUnion.next().values().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return _inMap.next();
+        }
+
+    }
+
+    public Iterator<K> iterator() {
+        return new KeyIterator<>(listMap);
+    }
     @Override
     public V put(K key, V value) {
 //        mapView.get(key.hashCode()%DEFAULT_SIZE).add(new Pair<>(key,value));
@@ -42,17 +127,39 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         return local.get().remove(key);
     }
 
+    @Override
+    public void putAll(@NotNull Map<? extends K, ? extends V> m) {
+
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @NotNull
+    @Override
+    public Set<K> keySet() {
+        Set<K> kSet = null;
+
+        for (Map<K,V> map: listMap)
+            kSet.addAll(map.keySet());
+
+        return kSet;
+    }
+
+    @NotNull
+    @Override
+    public Collection<V> values() {
+        return null;
+    }
+
     @SneakyThrows
     @Override
     public V get(Object key) {
 
         if (key == null)
             throw new NullPointerException();
-
-/*        for (Pair<K,V> pair: mapView.get(key.hashCode()%DEFAULT_SIZE)){
-            if (pair.getValue0().equals(key))
-                return pair.getValue1();
-        }*/
 
         V value;
 
@@ -61,7 +168,7 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
         if (value != null)
             return value;
 
-        for (AbstractMap<K,V> map : listMap){
+        for (Map<K,V> map : listMap){
             value = map.get(key);
             if (value != null)
                 return value;
@@ -79,10 +186,25 @@ public class DegradableMap<K,V> extends AbstractMap<K,V> {
     public int size(){
         int size = 0;
 
-        for (AbstractMap<K,V> map: listMap){
+        for (Map<K,V> map: listMap){
             size += map.size();
         }
 
         return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return false;
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return false;
     }
 }

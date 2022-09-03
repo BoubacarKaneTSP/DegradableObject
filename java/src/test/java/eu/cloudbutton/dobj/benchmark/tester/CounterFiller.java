@@ -1,14 +1,14 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class CounterFiller extends Filler<AbstractCounter> {
+public class CounterFiller extends Filler<Counter> {
 
-    public CounterFiller(AbstractCounter object, long nbOps) {
+    public CounterFiller(Counter object, long nbOps) {
         super(object, nbOps);
     }
 

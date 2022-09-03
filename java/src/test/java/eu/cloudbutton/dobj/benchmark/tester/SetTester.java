@@ -1,38 +1,40 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
-import eu.cloudbutton.dobj.Benchmark.Benchmark;
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
-import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-public class MapTester extends Tester<AbstractMap> {
+public class SetTester extends Tester<AbstractSet> {
 
     private boolean useCollisionKey;
 
-    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
-        super(object, ratios, latch);
+    public SetTester(AbstractSet set, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
+        super(set, ratios, latch);
         this.useCollisionKey = useCollisionKey;
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long startTime = 0L, endTime = 0L, nbFail = 0L;
+        long startTime = 0L, endTime = 0L;
+
         AbstractList list = new ArrayList<>();
 
-        CollisionKeyFactory factory = new CollisionKeyFactory();
+        CollisionKeyFactory factory = null;
 
-        factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
+        if (useCollisionKey){
+            factory = new CollisionKeyFactory();
+            factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
+        }
 
         for (int i = 0; i < nbRepeat; i++) {
             int rand = random.nextInt(ITEM_PER_THREAD);
             String iid = Thread.currentThread().getId()  + Long.toString(rand);
-//        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
 
             if (useCollisionKey)
                 list.add(factory.getCollisionKey());
@@ -44,8 +46,8 @@ public class MapTester extends Tester<AbstractMap> {
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 2; i++) {
-                    object.put(list.get(i), i);
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.add(list.get(i));
                 }
                 endTime = System.nanoTime();
                 break;
@@ -57,18 +59,14 @@ public class MapTester extends Tester<AbstractMap> {
                 endTime = System.nanoTime();
                 break;
             case READ:
-                Object returnValue;
                 startTime = System.nanoTime();
-                for (int i = 0; i < 7; i++) {
-                    returnValue = object.get(list.get(i));
-                    if (returnValue == null)
-                        nbFail++;
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.contains(list.get(i));
                 }
                 endTime = System.nanoTime();
-                Benchmark.nbReadFail.addAndGet(nbFail);
                 break;
         }
 
-        return (endTime - startTime) / nbRepeat;
+        return (endTime - startTime)/nbRepeat;
     }
 }

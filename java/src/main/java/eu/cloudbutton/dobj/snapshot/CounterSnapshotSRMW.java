@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.snapshot;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 import org.javatuples.Pair;
 
 /**
@@ -8,7 +8,7 @@ import org.javatuples.Pair;
  *
  * @author Boubacar Kane
  * */
-public class CounterSnapshotSRMW extends AbstractCounter {
+public class CounterSnapshotSRMW implements Counter {
 
     private final SnapshotSRMW<Integer> snapobject;
     private final ThreadLocal<Integer> counterThreadLocal;
