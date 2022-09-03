@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.map;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,15 +8,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class DegradableMap<K,V> implements Map<K,V> {
+public class MapMCWMCR<K,V> implements Map<K,V> {
 
+    @Getter
     private final List<Map<K,V>> listMap;
     private final ThreadLocal<Map<K,V>> local;
+    private final ConcurrentHashMap<K, Map<K,V>> mapIndex;
 
-    public DegradableMap(){
+    public MapMCWMCR(){
         listMap = new CopyOnWriteArrayList<>();
+        mapIndex = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
-            Map<K, V> m = new ConcurrentHashMap<>();
+            ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
             return m;
         });
@@ -116,15 +120,20 @@ public class DegradableMap<K,V> implements Map<K,V> {
     public Iterator<K> iterator() {
         return new KeyIterator<>(listMap);
     }
+
     @Override
     public V put(K key, V value) {
-//        mapView.get(key.hashCode()%DEFAULT_SIZE).add(new Pair<>(key,value));
-        return  local.get().put(key, value);
+        V ret = local.get().put(key, value);
+        if (ret==null)
+            mapIndex.put(key,local.get());
+        return ret;
     }
 
     @Override
     public V remove(Object key) {
-        return local.get().remove(key);
+        V ret = local.get().remove(key);
+        mapIndex.remove(key);
+        return ret;
     }
 
     @Override
@@ -140,12 +149,7 @@ public class DegradableMap<K,V> implements Map<K,V> {
     @NotNull
     @Override
     public Set<K> keySet() {
-        Set<K> kSet = null;
-
-        for (Map<K,V> map: listMap)
-            kSet.addAll(map.keySet());
-
-        return kSet;
+        return null;
     }
 
     @NotNull
@@ -168,10 +172,16 @@ public class DegradableMap<K,V> implements Map<K,V> {
         if (value != null)
             return value;
 
-        for (Map<K,V> map : listMap){
-            value = map.get(key);
-            if (value != null)
-                return value;
+        Map<K,V> map = mapIndex.get(key);
+        if (map != null)
+            return map.get(key);
+
+        for (Map<K,V> amap : listMap){
+            if (amap != local.get()){
+                value = amap.get(key);
+                if (value != null)
+                    return value;
+            }
         }
 
         return null;

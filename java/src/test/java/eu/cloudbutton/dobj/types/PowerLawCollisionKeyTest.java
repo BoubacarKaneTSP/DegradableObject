@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.types;
 import eu.cloudbutton.dobj.map.*;
 import org.testng.annotations.Test;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,7 @@ public class PowerLawCollisionKeyTest {
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
-        Map<CollisionKey, String> collisionMap = new DegradableMap<>();
+        Map<CollisionKey, String> collisionMap = new MapMCWMCR<>();
         Map<String, String> map = new ConcurrentHashMap<>();
         CollisionKeyFactory factory = new CollisionKeyFactory();
 

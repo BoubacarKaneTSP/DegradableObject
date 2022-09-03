@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @param <E>
  * @author Boubacar Kane
  */
-public class DegradableQueue<E> implements Queue<E> {
+public class QueueMASP<E> implements Queue<E> {
 
     private static class Node<E> {
         volatile E item;
@@ -74,7 +74,7 @@ public class DegradableQueue<E> implements Queue<E> {
     /**
      * Create an empty queue.
      */
-    public DegradableQueue() {
+    public QueueMASP() {
         tail = head = new Node<>(null);
         listNbFor = new CopyOnWriteArrayList<>();
         countNbFor = new CounterIncrementOnly();
@@ -375,9 +375,9 @@ public class DegradableQueue<E> implements Queue<E> {
     static {
         try {
             MethodHandles.Lookup l = MethodHandles.lookup();
-            HEAD = l.findVarHandle(DegradableQueue.class, "head",
+            HEAD = l.findVarHandle(QueueMASP.class, "head",
                     Node.class);
-            TAIL = l.findVarHandle(DegradableQueue.class, "tail",
+            TAIL = l.findVarHandle(QueueMASP.class, "tail",
                    Node.class);
             ITEM = l.findVarHandle(Node.class, "item", Object.class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);

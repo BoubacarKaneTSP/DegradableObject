@@ -1,17 +1,17 @@
 package eu.cloudbutton.dobj.set;
 
-import eu.cloudbutton.dobj.map.DegradableMap;
+import eu.cloudbutton.dobj.map.MapMCWMCR;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Set;
 
-public class DegradableSet<T> implements Set<T> {
+public class SetMCWMCR<T> implements Set<T> {
 
-    private final DegradableMap<T, Object> set;
+    private final MapMCWMCR<T, Object> set;
 
-    public DegradableSet() {
-        this.set = new DegradableMap<>();
+    public SetMCWMCR() {
+        this.set = new MapMCWMCR<>();
     }
 
 

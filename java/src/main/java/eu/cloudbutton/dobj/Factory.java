@@ -4,11 +4,11 @@ import eu.cloudbutton.dobj.counter.*;
 import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.list.ListJUC;
-import eu.cloudbutton.dobj.map.DegradableMap;
-import eu.cloudbutton.dobj.queue.DegradableQueue;
+import eu.cloudbutton.dobj.map.MapMCWMCR;
+import eu.cloudbutton.dobj.queue.QueueMASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
-import eu.cloudbutton.dobj.set.DegradableSet;
+import eu.cloudbutton.dobj.set.SetMCWMCR;
 import eu.cloudbutton.dobj.set.SetJUC;
 import eu.cloudbutton.dobj.snapshot.*;
 import eu.cloudbutton.dobj.counter.CounterIncrementOnly;
@@ -133,7 +133,7 @@ public class Factory {
             case "Set":
                 return new SetJUC<>();
             case "DegradableSet":
-                return new DegradableSet<>();
+                return new SetMCWMCR<>();
             case "SetSnapshot":
                 return new SetSnapshot<>();
             case "SetSnapshotSRMW":
@@ -154,7 +154,7 @@ public class Factory {
             case "Queue":
                 return new ConcurrentLinkedQueue<>();
             case "DegradableQueue":
-                return new DegradableQueue<>();
+                return new QueueMASP<>();
             case "MapQueue":
                 return new MapQueue<>();
             default:
@@ -172,7 +172,7 @@ public class Factory {
             case "Map":
                 return new ConcurrentHashMap<>();
             case "DegradableMap":
-                return new DegradableMap<>();
+                return new MapMCWMCR<>();
             default:
                 throw new ClassNotFoundException();
         }

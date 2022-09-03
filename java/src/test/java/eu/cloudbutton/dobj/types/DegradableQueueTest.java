@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -22,7 +21,7 @@ public class DegradableQueueTest {
 
     @Test
     void offer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.queue.DegradableQueue");
+        Class cls = Class.forName("eu.cloudbutton.dobj.queue.QueueMASP");
         factory.setFactoryQueue(cls);
         doOffer(factory.getQueue());
     }

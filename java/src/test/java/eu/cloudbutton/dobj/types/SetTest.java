@@ -20,14 +20,14 @@ public class SetTest {
 
     @Test
     void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-       Class cls = Class.forName("eu.cloudbutton.dobj.set.DegradableSet");
+       Class cls = Class.forName("eu.cloudbutton.dobj.set.SetMCWMCR");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
     }
 
     @Test
     void testIterator() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.set.DegradableSet");
+        Class cls = Class.forName("eu.cloudbutton.dobj.set.SetMCWMCR");
         factory.setFactorySet(cls);
         doTestIterator(factory.getSet());
     }
