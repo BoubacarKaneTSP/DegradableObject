@@ -7,7 +7,6 @@ import eu.cloudbutton.dobj.list.ListJUC;
 import eu.cloudbutton.dobj.map.MapMCWMCR;
 import eu.cloudbutton.dobj.queue.QueueMASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
-import eu.cloudbutton.dobj.set.SkipListSetMCWMCR;
 import eu.cloudbutton.dobj.set.SetMCWMCR;
 import eu.cloudbutton.dobj.set.SetJUC;
 import eu.cloudbutton.dobj.snapshot.*;
@@ -138,8 +137,6 @@ public class Factory {
                 return new SetSnapshot<>();
             case "SetSnapshotSRMW":
                 return new SetSnapshotSRMW<>();
-            case "ConcurrentHashSet":
-                return new SkipListSetMCWMCR<>();
             default:
                 throw new ClassNotFoundException();
         }
