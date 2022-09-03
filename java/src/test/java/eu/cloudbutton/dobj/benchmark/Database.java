@@ -232,12 +232,14 @@ public class Database {
 
     public void read(Long user_ID){
 
-        if (head_or_tail.get().getVal()%2 == 0){ // We print the timeline and the users' post every other time
+        long val = head_or_tail.get().getVal();
+
+        if (val%2 == 0){ // We print the timeline and the users' post every other time
             showTimeline();
         }else{
             showUsersPost(user_ID);
         }
-
+        head_or_tail.get().setVal(val+1);
     }
 
     public void showTimeline(){
@@ -257,9 +259,10 @@ public class Database {
         String username, body, strPost_Id;
         long elapsedTime, user_ID;
 
-        user_ID = Long.parseLong(mapPost.get(post_ID).get("userID"));
+        Map<String, String> infoPost = mapPost.get(post_ID);
+        user_ID = Long.parseLong(infoPost.get("userID"));
         username = mapUser.get(user_ID).get("username");
-        body = mapPost.get(post_ID).get("body");
-        elapsedTime = System.nanoTime() - Long.parseLong(mapPost.get(post_ID).get("time"));
+        body = infoPost.get("body");
+        elapsedTime = System.nanoTime() - Long.parseLong(infoPost.get("time"));
     }
 }

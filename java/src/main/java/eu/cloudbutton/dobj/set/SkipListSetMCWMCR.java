@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConcurrentHashSet<T> implements Set<T> {
+public class SkipListSetMCWMCR<T> implements Set<T> {
 
     private final Map<T, Object> set;
 
-    public ConcurrentHashSet() {
+    public SkipListSetMCWMCR() {
         this.set = new ConcurrentHashMap<>();
     }
 

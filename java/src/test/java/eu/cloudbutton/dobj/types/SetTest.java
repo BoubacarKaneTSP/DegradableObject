@@ -32,7 +32,7 @@ public class SetTest {
         doTestIterator(factory.getSet());
     }
 
-    private static void doAdd(AbstractSet set) throws ExecutionException, InterruptedException {
+    private static void doAdd(Set set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(4);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
@@ -60,7 +60,7 @@ public class SetTest {
         assertEquals(set.contains("v3"), true,"error in contains methods");
     }
 
-    private static void doTestIterator(AbstractSet<String> set) throws ExecutionException, InterruptedException {
+    private static void doTestIterator(Set<String> set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
@@ -74,13 +74,12 @@ public class SetTest {
             return null;
         };
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             futures.add(executor.submit(callable));
         }
 
         for (Future<Void> future : futures) {
             future.get();
         }
-
     }
 }

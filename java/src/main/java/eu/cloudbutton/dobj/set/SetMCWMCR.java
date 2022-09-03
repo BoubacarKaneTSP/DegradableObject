@@ -14,7 +14,6 @@ public class SetMCWMCR<T> implements Set<T> {
         this.set = new MapMCWMCR<>();
     }
 
-
     @NotNull
     @Override
     public Object[] toArray() {

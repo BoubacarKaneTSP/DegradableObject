@@ -7,7 +7,7 @@ import eu.cloudbutton.dobj.list.ListJUC;
 import eu.cloudbutton.dobj.map.MapMCWMCR;
 import eu.cloudbutton.dobj.queue.QueueMASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
-import eu.cloudbutton.dobj.set.ConcurrentHashSet;
+import eu.cloudbutton.dobj.set.SkipListSetMCWMCR;
 import eu.cloudbutton.dobj.set.SetMCWMCR;
 import eu.cloudbutton.dobj.set.SetJUC;
 import eu.cloudbutton.dobj.snapshot.*;
@@ -43,19 +43,19 @@ public class Factory {
         constructorQueue = queueClass.getConstructor();
     }
 
-    public AbstractMap getMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Map getMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorMap.newInstance();
     }
     public Counter getCounter() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorCounter.newInstance();
     }
-    public AbstractSet getSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Set getSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorSet.newInstance();
     }
-    public AbstractQueue getQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Queue getQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorQueue.newInstance();
     }
-    public AbstractList getList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public List getList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorList.newInstance();
     }
 
@@ -132,14 +132,14 @@ public class Factory {
 
             case "Set":
                 return new SetJUC<>();
-            case "DegradableSet":
+            case "SetMCWMCR":
                 return new SetMCWMCR<>();
             case "SetSnapshot":
                 return new SetSnapshot<>();
             case "SetSnapshotSRMW":
                 return new SetSnapshotSRMW<>();
             case "ConcurrentHashSet":
-                return new ConcurrentHashSet<>();
+                return new SkipListSetMCWMCR<>();
             default:
                 throw new ClassNotFoundException();
         }

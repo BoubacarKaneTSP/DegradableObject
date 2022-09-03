@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.*;
 
 public class DegradableQueueTest {
@@ -26,7 +27,7 @@ public class DegradableQueueTest {
         doOffer(factory.getQueue());
     }
 
-    private static void doOffer(AbstractQueue<Integer> queue) throws ExecutionException, InterruptedException {
+    private static void doOffer(Queue<Integer> queue) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();

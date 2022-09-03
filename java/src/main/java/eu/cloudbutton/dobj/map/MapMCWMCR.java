@@ -13,7 +13,7 @@ public class MapMCWMCR<K,V> implements Map<K,V> {
     @Getter
     private final List<Map<K,V>> listMap;
     private final ThreadLocal<Map<K,V>> local;
-    private final ConcurrentHashMap<K, Map<K,V>> mapIndex;
+    private final Map<K, Map<K,V>> mapIndex;
 
     public MapMCWMCR(){
         listMap = new CopyOnWriteArrayList<>();
