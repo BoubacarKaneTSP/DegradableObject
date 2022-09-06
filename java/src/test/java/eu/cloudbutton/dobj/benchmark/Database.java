@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -27,7 +28,7 @@ public class Database {
     private final Map<Long, Set<Long>> mapFollowers;
     private final Map<Long, Set<Long>> mapFollowing;
     private final Map<Long, Timeline<String>> mapTimelines;
-    private final Counter userID;
+    private final Counter next_user_ID;
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
 
@@ -77,9 +78,12 @@ public class Database {
         mapFollowers = new ConcurrentHashMap<>();
         mapFollowing = factory.getMap();
         mapTimelines = factory.getMap();
-        userID = factory.getCounter();
+        next_user_ID = factory.getCounter();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
+
+        if (next_user_ID instanceof FuzzyCounter)
+            ((FuzzyCounter) next_user_ID).setN(nbThread);
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -142,13 +146,13 @@ public class Database {
 
     public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long user = userID.incrementAndGet();
+        long userID = next_user_ID.incrementAndGet();
 
-        mapFollowers.put(user, factory.getSet() );
-        mapFollowing.put(user, factory.getSet() );
-        mapTimelines.put(user, new Timeline(factory.getQueue()) );
+        mapFollowers.put(userID, factory.getSet() );
+        mapFollowing.put(userID, factory.getSet() );
+        mapTimelines.put(userID, new Timeline(factory.getQueue()) );
 
-        return user;
+        return userID;
     }
 
     // Adding user_A to the followers of user_B
