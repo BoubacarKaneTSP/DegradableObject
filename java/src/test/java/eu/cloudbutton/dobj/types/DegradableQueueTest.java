@@ -5,7 +5,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -22,7 +21,7 @@ public class DegradableQueueTest {
 
     @Test
     void offer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.queue.QueueMASP");
+        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueMASP");
         factory.setFactoryQueue(cls);
         doOffer(factory.getQueue());
     }

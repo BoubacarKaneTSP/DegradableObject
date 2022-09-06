@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.map;
+package eu.cloudbutton.dobj.mcwmcr;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

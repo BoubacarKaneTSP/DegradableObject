@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.map.*;
+import eu.cloudbutton.dobj.mcwmcr.MapMCWMCR;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

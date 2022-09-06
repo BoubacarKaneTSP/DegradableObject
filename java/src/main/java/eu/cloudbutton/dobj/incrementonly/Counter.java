@@ -1,23 +1,25 @@
-package eu.cloudbutton.dobj.counter;
+package eu.cloudbutton.dobj.incrementonly;
 
-public abstract class AbstractCounter {
-
+public interface Counter {
     /**
      * Increments the current value of the Counter.
+     *
      * @return the value of the counter after increment.
      */
-    public abstract long incrementAndGet();
+    long incrementAndGet();
 
     /**
      * Adds the given value to the current value of the Counter.
+     *
      * @param delta the value added to the Counter.
      * @return the value of the counter after adding delta.
      */
-    public abstract long addAndGet(int delta);
+    long addAndGet(int delta);
 
     /**
      * Returns the current value of the Counter.
+     *
      * @return the current value stored by this object.
      */
-    public abstract long read();
+    long read();
 }

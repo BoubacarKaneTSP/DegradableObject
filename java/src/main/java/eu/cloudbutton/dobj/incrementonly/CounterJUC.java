@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.counter;
+package eu.cloudbutton.dobj.incrementonly;
 
 import java.util.concurrent.atomic.AtomicLong;
 

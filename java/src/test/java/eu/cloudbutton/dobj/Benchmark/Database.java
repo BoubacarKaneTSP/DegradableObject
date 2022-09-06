@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.Benchmark;
 
-import eu.cloudbutton.dobj.counter.BoxLong;
+import eu.cloudbutton.dobj.incrementonly.BoxLong;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import lombok.Getter;

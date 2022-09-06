@@ -1,6 +1,6 @@
-package eu.cloudbutton.dobj.queue;
+package eu.cloudbutton.dobj.asymmetric;
 
-import eu.cloudbutton.dobj.counter.CounterIncrementOnly;
+import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
@@ -12,8 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * This class provide a Queue.
- * WIP.
+ * This class provide a concurrent Queue that support only one poller.
  *
  * @param <E>
  * @author Boubacar Kane

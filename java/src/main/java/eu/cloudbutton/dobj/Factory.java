@@ -1,16 +1,18 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.counter.*;
+import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.CounterJUC;
+import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.list.ListJUC;
-import eu.cloudbutton.dobj.map.MapMCWMCR;
-import eu.cloudbutton.dobj.queue.QueueMASP;
+import eu.cloudbutton.dobj.mcwmcr.MapMCWMCR;
+import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
-import eu.cloudbutton.dobj.set.SetMCWMCR;
+import eu.cloudbutton.dobj.mcwmcr.SetMCWMCR;
 import eu.cloudbutton.dobj.set.SetJUC;
 import eu.cloudbutton.dobj.snapshot.*;
-import eu.cloudbutton.dobj.counter.CounterIncrementOnly;
+import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

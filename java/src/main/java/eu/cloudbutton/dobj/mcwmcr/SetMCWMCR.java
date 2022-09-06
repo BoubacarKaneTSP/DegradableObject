@@ -1,6 +1,5 @@
-package eu.cloudbutton.dobj.set;
+package eu.cloudbutton.dobj.mcwmcr;
 
-import eu.cloudbutton.dobj.map.MapMCWMCR;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

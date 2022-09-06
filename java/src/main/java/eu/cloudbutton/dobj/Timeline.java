@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.counter.Counter;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 
 import java.util.*;
 

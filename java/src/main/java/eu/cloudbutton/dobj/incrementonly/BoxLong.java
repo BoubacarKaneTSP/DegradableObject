@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.counter;
+package eu.cloudbutton.dobj.incrementonly;
 
 import lombok.Data;
 

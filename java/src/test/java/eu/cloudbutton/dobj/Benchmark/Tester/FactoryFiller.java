@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.Benchmark.Tester;
 
 import eu.cloudbutton.dobj.Noop;
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.incrementonly.AbstractCounter;
 
 import java.util.*;
 

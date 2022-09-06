@@ -25,9 +25,9 @@ public class CollisionKeyFactory {
         constructorCollisionKey = collisionKeyClass.getConstructor();
     }
 
-    public AbstractCollisionKey getCollisionKey() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public CollisionKey getCollisionKey() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        AbstractCollisionKey collisionKey = constructorCollisionKey.newInstance();
+        CollisionKey collisionKey = constructorCollisionKey.newInstance();
 
         if (collisionKey instanceof PowerLawCollisionKey)
             collisionKey.setHash(listHashCode.get(random.nextInt(bound)));
@@ -37,7 +37,7 @@ public class CollisionKeyFactory {
 
     private void fillListHashCode(){
 
-        List<Integer> data = new DiscreteApproximate(1, 1.39).generate(bound);
+        List<Integer> data = new DiscreteApproximate(1, 1.315).generate(bound);
         int i = 0;
 
         int nbUsers = 1000000;
