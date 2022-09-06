@@ -1,15 +1,13 @@
 package eu.cloudbutton.dobj.counter;
 
-import lombok.SneakyThrows;
-
-public class FuzzyCounter extends AbstractCounter{
+public class FuzzyCounter implements Counter {
     
-    private final DegradableCounter counter;
+    private final CounterIncrementOnly counter;
     private int N; // Base increment based on the number of thread
     private final ThreadLocal<Long> ID;
     
     public FuzzyCounter(){
-        counter = new DegradableCounter();
+        counter = new CounterIncrementOnly();
         N = 1;
         ID = ThreadLocal.withInitial(() -> Thread.currentThread().getId());
     }

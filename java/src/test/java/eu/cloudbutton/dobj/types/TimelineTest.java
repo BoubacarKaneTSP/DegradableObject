@@ -35,7 +35,7 @@ public class TimelineTest {
 //        Timeline timeline = new Timeline(list, new DegradableCounter());
 
 /*        ExecutorService executor = Executors.newFixedThreadPool(3);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+        List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             timeline.add(1);
             timeline.add(2);

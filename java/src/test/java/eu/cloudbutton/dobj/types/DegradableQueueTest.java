@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -9,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.*;
 
 public class DegradableQueueTest {
@@ -22,12 +22,12 @@ public class DegradableQueueTest {
 
     @Test
     void offer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.queue.DegradableQueue");
+        Class cls = Class.forName("eu.cloudbutton.dobj.queue.QueueMASP");
         factory.setFactoryQueue(cls);
         doOffer(factory.getQueue());
     }
 
-    private static void doOffer(AbstractQueue<Integer> queue) throws ExecutionException, InterruptedException {
+    private static void doOffer(Queue<Integer> queue) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();

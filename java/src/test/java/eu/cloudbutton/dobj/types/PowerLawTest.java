@@ -4,9 +4,10 @@ package eu.cloudbutton.dobj.types;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PowerLawTest {
 
@@ -14,11 +15,11 @@ public class PowerLawTest {
     void add() {
         List<Double> listAlpha = new ArrayList<>();
 
-        for (double i = 1.32 ; i <= 1.51; i+=0.02) {
+        /*for (double i = 1.315 ; i <= 1.315; i+=0.025) {
             listAlpha.add(i);
-        }
+        }*/
 
-//        listAlpha.add(1.48);
+        listAlpha.add(1.48);
 
         for (double alpha : listAlpha){
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
@@ -41,7 +42,7 @@ public class PowerLawTest {
             }
 
             Collections.sort(data);
-//            System.out.println(data);
+            System.out.println(data);
             System.out.println();
             System.out.println("======= " + alpha + " =======");
             System.out.println("max : " + Collections.max(data) + " => " + Collections.max(data)/ (double) max * 100 +"%");
@@ -50,6 +51,7 @@ public class PowerLawTest {
             System.out.println("Q3 : " + data.get(3*data.size()/4) + " => " + data.get(3*data.size()/4) / (double) max * 100 +"%");
             System.out.println("nbMax : " + nbMax);
             System.out.println("avg : " + avg/data.size());
+
         }
 
     }

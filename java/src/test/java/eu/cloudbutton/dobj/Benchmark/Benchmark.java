@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.Benchmark;
 import eu.cloudbutton.dobj.Benchmark.Tester.*;
 import eu.cloudbutton.dobj.counter.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.queue.DegradableQueue;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;

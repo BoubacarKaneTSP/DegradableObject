@@ -3,22 +3,20 @@ package eu.cloudbutton.dobj;
 import eu.cloudbutton.dobj.counter.*;
 import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.list.LinkedList;
-import eu.cloudbutton.dobj.list.List;
-import eu.cloudbutton.dobj.map.DegradableMap;
-import eu.cloudbutton.dobj.queue.DegradableQueue;
+import eu.cloudbutton.dobj.list.ListJUC;
+import eu.cloudbutton.dobj.map.MapMCWMCR;
+import eu.cloudbutton.dobj.queue.QueueMASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
-import eu.cloudbutton.dobj.set.ConcurrentHashSet;
-import eu.cloudbutton.dobj.set.DegradableSet;
-import eu.cloudbutton.dobj.set.Set;
+import eu.cloudbutton.dobj.set.SetMCWMCR;
+import eu.cloudbutton.dobj.set.SetJUC;
 import eu.cloudbutton.dobj.snapshot.*;
-import eu.cloudbutton.dobj.counter.DegradableCounter;
+import eu.cloudbutton.dobj.counter.CounterIncrementOnly;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Factory {
 
@@ -26,12 +24,12 @@ public class Factory {
     private Constructor<? extends AbstractList> constructorList;
     private Constructor<? extends AbstractSet> constructorSet;
     private Constructor<? extends AbstractQueue> constructorQueue;
-    private Constructor<? extends AbstractCounter> constructorCounter;
+    private Constructor<? extends Counter> constructorCounter;
 
     public void setFactoryMap(Class<? extends AbstractMap> mapClass) throws NoSuchMethodException {
         constructorMap = mapClass.getConstructor();
     }
-    public void setFactoryCounter(Class<? extends AbstractCounter> counterClass) throws NoSuchMethodException {
+    public void setFactoryCounter(Class<? extends Counter> counterClass) throws NoSuchMethodException {
         constructorCounter = counterClass.getConstructor();
     }
     public void setFactorySet(Class<? extends AbstractSet> setClass) throws NoSuchMethodException{
@@ -44,19 +42,19 @@ public class Factory {
         constructorQueue = queueClass.getConstructor();
     }
 
-    public AbstractMap getMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Map getMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorMap.newInstance();
     }
-    public AbstractCounter getCounter() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Counter getCounter() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorCounter.newInstance();
     }
-    public AbstractSet getSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Set getSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorSet.newInstance();
     }
-    public AbstractQueue getQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Queue getQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorQueue.newInstance();
     }
-    public AbstractList getList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public List getList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorList.newInstance();
     }
 
@@ -79,14 +77,14 @@ public class Factory {
     }
     /* Counter */
 
-    public static AbstractCounter createCounter(String counter) throws ClassNotFoundException {
+    public static Counter createCounter(String counter) throws ClassNotFoundException {
 
         switch (counter){
 
             case "Counter":
-                return new Counter();
+                return new CounterJUC();
             case "DegradableCounter":
-                return new DegradableCounter();
+                return new CounterIncrementOnly();
             case "CounterSnapshot":
                 return new CounterSnapshot();
             case "CounterSnapshotSRMW":
@@ -100,14 +98,14 @@ public class Factory {
 
     /* List */
 
-    public static AbstractList createList(String list) throws ClassNotFoundException {
+    public static List createList(String list) throws ClassNotFoundException {
 
         switch (list){
 
             case "List":
-                return new List();
+                return new ListJUC();
             case "DegradableList":
-                return new DegradableList<>();
+                return new DegradableList();
             case "LinkedList":
                 return new LinkedList<>();
             case "DegradableLinkedList":
@@ -127,20 +125,18 @@ public class Factory {
 
     /* Set */
 
-    public static AbstractSet createSet(String set) throws ClassNotFoundException {
+    public static Set createSet(String set) throws ClassNotFoundException {
 
         switch (set){
 
             case "Set":
-                return new Set<>();
-            case "DegradableSet":
-                return new DegradableSet<>();
+                return new SetJUC<>();
+            case "SetMCWMCR":
+                return new SetMCWMCR<>();
             case "SetSnapshot":
                 return new SetSnapshot<>();
             case "SetSnapshotSRMW":
                 return new SetSnapshotSRMW<>();
-            case "ConcurrentHashSet":
-                return new ConcurrentHashSet<>();
             default:
                 throw new ClassNotFoundException();
         }
@@ -148,14 +144,14 @@ public class Factory {
 
     /* Queue */
 
-    public static AbstractQueue createQueue(String queue) throws ClassNotFoundException {
+    public static Queue createQueue(String queue) throws ClassNotFoundException {
 
         switch (queue){
 
             case "Queue":
                 return new ConcurrentLinkedQueue<>();
             case "DegradableQueue":
-                return new DegradableQueue<>();
+                return new QueueMASP<>();
             case "MapQueue":
                 return new MapQueue<>();
             default:
@@ -166,14 +162,14 @@ public class Factory {
 
     /* Map */
 
-    public static AbstractMap createMap(String map) throws ClassNotFoundException {
+    public static Map createMap(String map) throws ClassNotFoundException {
 
         switch (map){
 
             case "Map":
                 return new ConcurrentHashMap<>();
             case "DegradableMap":
-                return new DegradableMap<>();
+                return new MapMCWMCR<>();
             default:
                 throw new ClassNotFoundException();
         }

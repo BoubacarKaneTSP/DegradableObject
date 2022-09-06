@@ -1,9 +1,8 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Timeline<T> {
 
@@ -12,7 +11,7 @@ public class Timeline<T> {
     private final LinkedList<T> topk = new LinkedList<>();
     private final AbstractQueue<T> timeline;
 
-    public Timeline(AbstractQueue timeline, AbstractCounter size) {
+    public Timeline(AbstractQueue timeline, Counter size) {
         this.timeline = timeline;
     }
 

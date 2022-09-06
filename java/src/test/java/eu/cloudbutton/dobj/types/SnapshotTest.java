@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
+import eu.cloudbutton.dobj.counter.Counter;
 import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -52,7 +52,7 @@ public class SnapshotTest {
         //        doListTest(factory.createListSnapshot());
     }
 
-    public void doCounterTest(AbstractCounter snap) throws ExecutionException, InterruptedException {
+    public void doCounterTest(Counter snap) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         List<Future<Void>> futures = new ArrayList<>();
@@ -110,7 +110,7 @@ public class SnapshotTest {
             future.get();
         }
 
-        AbstractSet result = new HashSet();
+        Set<String> result = new HashSet<>();
         for (int i = 0; i < 1000; i++) {
             result.add("v"+i);
         }
@@ -124,7 +124,7 @@ public class SnapshotTest {
     public void doListTest(AbstractQueue snap) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+        List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
             snap.add("v1");
@@ -142,7 +142,7 @@ public class SnapshotTest {
             future.get();
         }
 
-        AbstractList result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         result.add("v1");
         result.add("v2");
         result.add("v3");

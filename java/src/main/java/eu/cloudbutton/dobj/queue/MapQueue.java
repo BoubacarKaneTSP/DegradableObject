@@ -1,10 +1,12 @@
 package eu.cloudbutton.dobj.queue;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MapQueue<T> extends AbstractQueue<T> implements Deque<T> {
+public class MapQueue<T> implements Queue<T>{
 
     private AtomicInteger head, tail;
     private ConcurrentSkipListMap<Integer, T> map;
@@ -20,36 +22,10 @@ public class MapQueue<T> extends AbstractQueue<T> implements Deque<T> {
         return map.values().iterator();
     }
 
-    @Override
-    public Iterator<T> descendingIterator() {
-        return null;
-    }
-
-    @Override
     public void addFirst(T t) {
         this.map.put(head.getAndIncrement(), t);
     }
 
-    @Override
-    public void addLast(T t) {
-    }
-
-    @Override
-    public boolean offerFirst(T t) {
-        return false;
-    }
-
-    @Override
-    public boolean offerLast(T t) {
-        return false;
-    }
-
-    @Override
-    public T removeFirst() {
-        return null;
-    }
-
-    @Override
     public T removeLast() {
 
         while (head.get() - tail.get() > 0){
@@ -61,58 +37,53 @@ public class MapQueue<T> extends AbstractQueue<T> implements Deque<T> {
     }
 
     @Override
-    public T pollFirst() {
-        return null;
-    }
-
-    @Override
-    public T pollLast() {
-        return null;
-    }
-
-    @Override
-    public T getFirst() {
-        return null;
-    }
-
-    @Override
-    public T getLast() {
-        return null;
-    }
-
-    @Override
-    public T peekFirst() {
-        return null;
-    }
-
-    @Override
-    public T peekLast() {
-        return null;
-    }
-
-    @Override
-    public boolean removeFirstOccurrence(Object o) {
-        return false;
-    }
-
-    @Override
-    public boolean removeLastOccurrence(Object o) {
-        return false;
-    }
-
-    @Override
-    public void push(T t) {
-
-    }
-
-    @Override
-    public T pop() {
-        return null;
-    }
-
-    @Override
     public int size() {
         return map.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return false;
+    }
+
+    @Override
+    public boolean add(T t) {
+        return false;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return false;
+    }
+
+    @Override
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(@NotNull Collection<? extends T> c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public void clear() {
+
     }
 
     @Override
@@ -144,5 +115,11 @@ public class MapQueue<T> extends AbstractQueue<T> implements Deque<T> {
     @Override
     public Object[] toArray(){
         return map.values().toArray();
+    }
+
+    @NotNull
+    @Override
+    public <T1> T1[] toArray(@NotNull T1[] a) {
+        return null;
     }
 }

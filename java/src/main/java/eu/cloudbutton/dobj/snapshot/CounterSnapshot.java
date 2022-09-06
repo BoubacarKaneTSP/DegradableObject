@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.snapshot;
 
-import eu.cloudbutton.dobj.counter.AbstractCounter;
 import eu.cloudbutton.dobj.counter.Counter;
+import eu.cloudbutton.dobj.counter.CounterJUC;
 import org.javatuples.Triplet;
 
 import java.util.ArrayList;
@@ -15,11 +15,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Boubacar Kane
  * */
-public class CounterSnapshot extends AbstractCounter {
+public class CounterSnapshot implements Counter {
 
-    private final Snapshot<Counter> snapobject;
-    private final ThreadLocal<Triplet<Counter, AtomicInteger, List<Counter>>> tripletThreadLocal;
-    private final ConcurrentMap<Thread, List<Counter>> embedded_snaps;
+    private final Snapshot<CounterJUC> snapobject;
+    private final ThreadLocal<Triplet<CounterJUC, AtomicInteger, List<CounterJUC>>> tripletThreadLocal;
+    private final ConcurrentMap<Thread, List<CounterJUC>> embedded_snaps;
 
     /**
      * Creates a new Counter initialized with the initial value 0.
@@ -27,7 +27,7 @@ public class CounterSnapshot extends AbstractCounter {
     public CounterSnapshot() {
         snapobject = new Snapshot<>(new ConcurrentHashMap<>());
         tripletThreadLocal = ThreadLocal.withInitial(() -> {
-            Triplet<Counter, AtomicInteger, List<Counter>> triplet = new Triplet<>(new Counter(), new AtomicInteger(), new ArrayList<>());
+            Triplet<CounterJUC, AtomicInteger, List<CounterJUC>> triplet = new Triplet<>(new CounterJUC(), new AtomicInteger(), new ArrayList<>());
             snapobject.obj.put(Thread.currentThread(), triplet);
             return triplet;
         });
@@ -42,7 +42,7 @@ public class CounterSnapshot extends AbstractCounter {
      */
     @Override
     public long incrementAndGet() {
-        List<Counter> embedded_snap = snapobject.snap();
+        List<CounterJUC> embedded_snap = snapobject.snap();
         tripletThreadLocal.get().getValue0().incrementAndGet();
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
@@ -57,7 +57,7 @@ public class CounterSnapshot extends AbstractCounter {
      */
     @Override
     public long addAndGet(int delta) {
-        List<Counter> embedded_snap = snapobject.snap();
+        List<CounterJUC> embedded_snap = snapobject.snap();
         tripletThreadLocal.get().getValue0().addAndGet(delta);
         tripletThreadLocal.get().getValue1().incrementAndGet();
         embedded_snaps.put(Thread.currentThread(), embedded_snap);
@@ -73,11 +73,11 @@ public class CounterSnapshot extends AbstractCounter {
     @Override
     public long read(){
 
-        List<Counter> list = snapobject.snap();
+        List<CounterJUC> list = snapobject.snap();
 
         int result = 0;
 
-        for (Counter count : list) {
+        for (CounterJUC count : list) {
             result += count.read();
         }
         return result;
