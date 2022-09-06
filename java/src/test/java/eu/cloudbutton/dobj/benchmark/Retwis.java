@@ -248,9 +248,9 @@ public class Retwis {
 
 //                    String strAlpha = Double.toString(alpha).replace(".","");
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_QueueMASP.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_with_QueueMASP.txt", true);
 
 //                    fileWriter = new FileWriter(nbCurrThread+"_thread_juc.txt", true);
 
@@ -270,7 +270,7 @@ public class Retwis {
                     else {
                         System.out.print(" Throughput (op/s) for all operations : ");
                         System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
-                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000 + " micro ssecondes");
+                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000 + " milli ssecondes");
                     }
 
 
@@ -291,9 +291,9 @@ public class Retwis {
 
                         if (_s){
                             if (nbCurrThread == 1)
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_all_Degradable.txt", false);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_with_QueueMASP.txt", false);
                             else
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_all_Degradable.txt", true);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_with_QueueMASP.txt", true);
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
@@ -317,7 +317,7 @@ public class Retwis {
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                             System.out.println(": Nb op : " + nbOperations.get(op).get()
                                     + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%"
-                                    + ", temps d'exécution : " + timeOperations.get(op).get()/ 1_000_000 + " micro ssecondes");
+                                    + ", temps d'exécution : " + timeOperations.get(op).get()/ 1_000_000 + " milli secondes");
                         }
                     }
                 }
