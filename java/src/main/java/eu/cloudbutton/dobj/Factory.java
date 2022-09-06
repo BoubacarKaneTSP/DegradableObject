@@ -11,7 +11,6 @@ import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.mcwmcr.SetMCWMCR;
 import eu.cloudbutton.dobj.set.SetJUC;
-import eu.cloudbutton.dobj.snapshot.*;
 import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 
 import java.lang.reflect.Constructor;
@@ -85,12 +84,8 @@ public class Factory {
 
             case "Counter":
                 return new CounterJUC();
-            case "DegradableCounter":
+            case "CounterIncrementOnly":
                 return new CounterIncrementOnly();
-            case "CounterSnapshot":
-                return new CounterSnapshot();
-            case "CounterSnapshotSRMW":
-                return new CounterSnapshotSRMW();
             case "FuzzyCounter":
                 return new FuzzyCounter();
             default:
@@ -112,14 +107,6 @@ public class Factory {
                 return new LinkedList<>();
             case "DegradableLinkedList":
                 return new DegradableLinkedList<>();
-            case "ListSnapshot":
-                return new ListSnapshot<>();
-            case "ListSnapshotSRMW":
-                return new ListSnapshotSRMW<>();
-            case "LinkedListSnapshot":
-                return new LinkedListSnapshot<>();
-            case "LinkedListSnapshotSRMW":
-                return new LinkedListSnapshotSRMW<>();
             default:
                 throw new ClassNotFoundException();
         }
@@ -135,10 +122,6 @@ public class Factory {
                 return new SetJUC<>();
             case "SetMCWMCR":
                 return new SetMCWMCR<>();
-            case "SetSnapshot":
-                return new SetSnapshot<>();
-            case "SetSnapshotSRMW":
-                return new SetSnapshotSRMW<>();
             default:
                 throw new ClassNotFoundException();
         }
@@ -152,7 +135,7 @@ public class Factory {
 
             case "Queue":
                 return new ConcurrentLinkedQueue<>();
-            case "DegradableQueue":
+            case "QueueMASP":
                 return new QueueMASP<>();
             case "MapQueue":
                 return new MapQueue<>();
@@ -170,7 +153,7 @@ public class Factory {
 
             case "Map":
                 return new ConcurrentHashMap<>();
-            case "DegradableMap":
+            case "MapMCWMCR":
                 return new MapMCWMCR<>();
             default:
                 throw new ClassNotFoundException();
