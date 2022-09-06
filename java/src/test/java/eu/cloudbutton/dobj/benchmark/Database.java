@@ -99,9 +99,10 @@ public class Database {
         next_post_ID = factory.getCounter();
         head_or_tail = ThreadLocal.withInitial(BoxLong::new);
         head_or_tail.get().setVal(0);
-        if (next_user_ID instanceof FuzzyCounter)
+        if (next_user_ID instanceof FuzzyCounter){
             ((FuzzyCounter) next_user_ID).setN(nbThread);
             ((FuzzyCounter) next_post_ID).setN(nbThread);
+	}
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
