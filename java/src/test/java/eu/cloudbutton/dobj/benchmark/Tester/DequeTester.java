@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.Tester;
 
 import java.util.Deque;
 import java.util.NoSuchElementException;

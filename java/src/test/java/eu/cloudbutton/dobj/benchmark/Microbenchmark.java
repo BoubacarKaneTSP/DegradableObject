@@ -1,6 +1,6 @@
-package eu.cloudbutton.dobj.Benchmark;
+package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.Benchmark.Tester.*;
+import eu.cloudbutton.dobj.benchmark.Tester.*;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
-public class Benchmark {
+public class Microbenchmark {
 
     public static AtomicLong timeAdd;
     public static AtomicLong timeRemove;
@@ -65,7 +65,7 @@ public class Benchmark {
     public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        new Benchmark().doMain(args);
+        new Microbenchmark().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, ExecutionException {

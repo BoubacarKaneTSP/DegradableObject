@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Benchmark;
+package eu.cloudbutton.dobj.benchmark;
 
 import org.javatuples.Pair;
 import org.kohsuke.args4j.CmdLineException;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class App {
+public class Retwis {
 
     enum opType{
         ADD,
@@ -102,7 +102,7 @@ public class App {
     int nbSign = 5;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        new App().doMain(args);
+        new Retwis().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -249,9 +249,9 @@ public class App {
                     String strAlpha = Double.toString(alpha).replace(".","");
 
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_juc.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_with_DegradableMap.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_juc.txt", true);
 
 //                    fileWriter = new FileWriter("with_DegradableMap_nbThread_"+nbCurrThread+".txt", true);
 
@@ -271,7 +271,7 @@ public class App {
                     else {
                         System.out.print(" Throughput (op/s) for all operations : ");
                         System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
-                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000 + " micro ssecondes");
+                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000 + " milli ssecondes");
                     }
 
 
@@ -292,9 +292,9 @@ public class App {
 
                         if (_s){
                             if (nbCurrThread == 1)
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_with_DegradableMap.txt", false);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_juc.txt", false);
                             else
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_with_DegradableMap.txt", true);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_juc.txt", true);
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
@@ -318,7 +318,7 @@ public class App {
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                             System.out.println(": Nb op : " + nbOperations.get(op).get()
                                     + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%"
-                                    + ", temps d'exécution : " + timeOperations.get(op).get()/ 1_000_000 + " micro ssecondes");
+                                    + ", temps d'exécution : " + timeOperations.get(op).get()/ 1_000_000 + " milli ssecondes");
                         }
                     }
                 }
@@ -351,9 +351,9 @@ public class App {
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private ThreadLocal<Map<String, Queue<String>>> usersFollow; // Local map that associate to each user, the list of user that it follows
+        private ThreadLocal<Map<Long, Queue<Long>>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private ThreadLocal<List<String>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread
+        private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread
         private int nbRepeat = 1000;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
@@ -468,7 +468,7 @@ public class App {
             long startTime = 0L, endTime= 0L;
 
             int n, nbLocalUsers, nbAttempt = 0;
-            String userA, userB;
+            Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
@@ -491,7 +491,7 @@ public class App {
 
                 userA = arrayLocalUsers.get().get(val);
 
-                Queue<String> listFollow = usersFollow.get().get(userA);
+                Queue<Long> listFollow = usersFollow.get().get(userA);
 
                 switch (typeComputed){
                     case ADD:
@@ -546,7 +546,7 @@ public class App {
 
                         break;
                     case TWEET:
-                        String msg = "msg from " + userA;
+                        String msg = "msg from user : " + userA;
                         if (_completionTime){
                             database.tweet(userA, msg);
                         }else{

@@ -50,7 +50,7 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
     t)
       typeTest="$OPTARG"
 
-      if [[ $typeTest == "Benchmark" ]]
+      if [[ $typeTest == "Microbenchmark" ]]
       then
          sum=0
           if [[ $typeCounter != "" ]]
@@ -103,7 +103,7 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
         echo "The queue used is : $typeQueue"
         echo "The map used is : $typeMap"
       else
-        echo "Test type must be Benchmark or Retwis." >&2
+        echo "Test type must be Microbenchmark or Retwis." >&2
         exit 1
       fi
       ;;
@@ -212,12 +212,12 @@ echo "The number of test is : $nbTest"
 echo "Number of object initially added : $nbInitialAdd"
 echo "Status of collisionKey : $collisionKey"
 
-if [[ $typeTest == "Benchmark" ]]
+if [[ $typeTest == "Microbenchmark" ]]
 then
 
-  #CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -verbose:gc eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save $printFail $asymmetric $collisionKey $quickTest
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
+  #CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -verbose:gc eu.cloudbutton.dobj.cenchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save $printFail $asymmetric $collisionKey $quickTest
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
 elif [[ $typeTest == "Retwis" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.App -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $breakdown $quickTest
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $breakdown $quickTest
 fi

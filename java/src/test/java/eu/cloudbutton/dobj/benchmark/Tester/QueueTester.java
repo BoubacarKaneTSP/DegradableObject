@@ -1,11 +1,11 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.Tester;
 
-import java.util.*;
+import java.util.AbstractQueue;
 import java.util.concurrent.CountDownLatch;
 
-public class ListTester extends Tester<AbstractList> {
+public class QueueTester extends Tester<AbstractQueue> {
 
-    public ListTester(AbstractList list, int[] ratios, CountDownLatch latch) {
+    public QueueTester(AbstractQueue list, int[] ratios, CountDownLatch latch) {
         super(list, ratios, latch);
     }
 
@@ -14,27 +14,27 @@ public class ListTester extends Tester<AbstractList> {
 
         long startTime = 0L, endTime = 0L;
 
-        int rand = random.nextInt(ITEM_PER_THREAD);
+        int rand = random.nextInt(Integer.MAX_VALUE);
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.add(rand);
+                    object.offer(rand);
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(rand);
+                    object.poll();
                 }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.get(rand);
+                    object.contains(rand);
                 }
                 endTime = System.nanoTime();
                 break;

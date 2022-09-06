@@ -9,9 +9,9 @@ public class Timeline<T> {
     private final static int LENGTH=50;
 
     private final LinkedList<T> topk = new LinkedList<>();
-    private final AbstractQueue<T> timeline;
+    private final Queue<T> timeline;
 
-    public Timeline(AbstractQueue timeline, Counter size) {
+    public Timeline(Queue timeline) {
         this.timeline = timeline;
     }
 

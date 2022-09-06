@@ -1,13 +1,14 @@
-package eu.cloudbutton.dobj.Benchmark;
+package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.incrementonly.BoxLong;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,18 +24,19 @@ public class Database {
     private final double alpha;
     private final int nbThread;
     private final ThreadLocalRandom random;
-    private final AbstractMap<String, AbstractSet<String>> mapFollowers;
-    private final AbstractMap<String, Timeline<String>> mapTimelines;
-    private final ThreadLocal<BoxLong> userID;
+    private final Map<Long, Set<Long>> mapFollowers;
+    private final Map<Long, Set<Long>> mapFollowing;
+    private final Map<Long, Timeline<String>> mapTimelines;
+    private final Counter userID;
     private final ThreadLocal<String> threadName;
-    private final List<String> usersProbability;
+    private final List<Long> usersProbability;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
         Class cls;
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.counter."+typeCounter);
+            cls = Class.forName("eu.cloudbutton.dobj.incrementonly."+typeCounter);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeCounter);
         }
@@ -42,7 +44,7 @@ public class Database {
         factory.setFactoryCounter(cls);
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.set."+typeSet);
+            cls = Class.forName("eu.cloudbutton.dobj.mcwmcr."+typeSet);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeSet);
         }
@@ -50,7 +52,7 @@ public class Database {
         factory.setFactorySet(cls);
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.queue."+typeQueue);
+            cls = Class.forName("eu.cloudbutton.dobj.asymmetric."+typeQueue);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeQueue);
         }
@@ -58,7 +60,7 @@ public class Database {
         factory.setFactoryQueue(cls);
 
         try{
-            cls = Class.forName("eu.cloudbutton.dobj.map."+typeMap);
+            cls = Class.forName("eu.cloudbutton.dobj.mcwmcr."+typeMap);
         }catch (ClassNotFoundException e){
             cls = Class.forName("java.util.concurrent."+typeMap);
         }
@@ -72,16 +74,17 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         this.random = ThreadLocalRandom.current();
-        mapFollowers = factory.getMap();
+        mapFollowers = new ConcurrentHashMap<>();
+        mapFollowing = factory.getMap();
         mapTimelines = factory.getMap();
-        userID = ThreadLocal.withInitial(() -> new BoxLong());
+        userID = factory.getCounter();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
     }
 
-    public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<String, Queue<String>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         int n, userPerThread;
-        String user, userB;
+        long user, userB;
 
         int bound = 1000;
 
@@ -104,7 +107,7 @@ public class Database {
 
 //        System.out.println("Adding users");
 
-        List<String> localUsers = new ArrayList<>();
+        List<Long> localUsers = new ArrayList<>();
         userPerThread = nbUsers / nbThread;
 
 //        System.out.println("userPerThread : " + userPerThread);
@@ -124,7 +127,7 @@ public class Database {
 //        System.out.println("Following phase");
         //Following phase
 
-        for (String userA: usersFollow.get().keySet()){
+        for (Long userA: usersFollow.get().keySet()){
 
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j <= nbFollow; j++){
@@ -135,48 +138,41 @@ public class Database {
                 usersFollow.get().get(userA).add(userB);
             }
         }
-
-//        System.out.println(Thread.currentThread().getName() + " : " +val/m);
-
-
     }
 
-    public String addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long val = userID.get().getVal();
+        long user = userID.incrementAndGet();
 
-        String user = "User_" + threadName.get() + "_" + val;
-        userID.get().setVal(val + 1);
-
-        mapFollowers.put(user,
-                factory.getSet()
-        );
-        mapTimelines.put(user,
-                new Timeline(factory.getQueue(),
-                        factory.getCounter()
-                )
-        );
+        mapFollowers.put(user, factory.getSet() );
+        mapFollowing.put(user, factory.getSet() );
+        mapTimelines.put(user, new Timeline(factory.getQueue()) );
 
         return user;
-
     }
 
-    public void followUser(String userA, String userB){
+    // Adding user_A to the followers of user_B
+    // and user_B to the following of user_A
+    public void followUser(Long userA, Long userB){
         mapFollowers.get(userB).add(userA);
+        mapFollowing.get(userA).add(userB);
     }
 
-    public void unfollowUser(String userA, String userB){
+    // Removing user_A to the followers of user_B
+    // and user_B to the following of user_A
+    public void unfollowUser(Long userA, Long userB){
         mapFollowers.get(userB).remove(userA);
+        mapFollowing.get(userA).remove(userB);
     }
 
-    public void tweet(String user, String msg){
+    public void tweet(Long user, String msg){
 
-        for (String follower : mapFollowers.get(user)) {
+        for (long follower : mapFollowers.get(user)) {
             mapTimelines.get(follower).add(msg);
         }
     }
 
-    public void showTimeline(String user){
+    public void showTimeline(Long user){
         mapTimelines.get(user).read();
     }
     

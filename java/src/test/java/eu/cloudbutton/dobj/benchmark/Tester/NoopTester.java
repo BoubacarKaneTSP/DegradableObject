@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.Tester;
 
 import eu.cloudbutton.dobj.Noop;
 

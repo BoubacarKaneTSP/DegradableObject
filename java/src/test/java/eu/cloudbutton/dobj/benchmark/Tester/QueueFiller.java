@@ -1,15 +1,13 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.Tester;
 
-import eu.cloudbutton.dobj.map.CollisionKeyFactory;
-
-import java.util.AbstractList;
+import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class ListFiller extends Filler<AbstractList> {
+public class QueueFiller extends Filler<AbstractQueue> {
 
-    public ListFiller(AbstractList object, long nbOps) {
+    public QueueFiller(AbstractQueue object, long nbOps) {
         super(object, nbOps);
     }
 
@@ -22,13 +20,9 @@ public class ListFiller extends Filler<AbstractList> {
         int nbTask = 10;
 
         Callable<Void> callable = () -> {
-
-            List localList = new ArrayList();
-            for (long i = 0; i < nbOps/nbTask; i++) {
-                localList.add(i);
+            for (int i = 0; i < nbOps/nbTask; i++) {
+                object.add(i);
             }
-            object.addAll(localList);
-            System.out.println(object.size());
             return null;
         };
 

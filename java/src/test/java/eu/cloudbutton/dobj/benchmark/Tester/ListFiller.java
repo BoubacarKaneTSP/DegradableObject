@@ -1,14 +1,13 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.Tester;
 
-import eu.cloudbutton.dobj.incrementonly.AbstractCounter;
-
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class CounterFiller extends Filler<AbstractCounter> {
+public class ListFiller extends Filler<AbstractList> {
 
-    public CounterFiller(AbstractCounter object, long nbOps) {
+    public ListFiller(AbstractList object, long nbOps) {
         super(object, nbOps);
     }
 
@@ -21,9 +20,13 @@ public class CounterFiller extends Filler<AbstractCounter> {
         int nbTask = 10;
 
         Callable<Void> callable = () -> {
-            for (int i = 0; i < nbOps/nbTask; i++) {
-                object.incrementAndGet();
+
+            List localList = new ArrayList();
+            for (long i = 0; i < nbOps/nbTask; i++) {
+                localList.add(i);
             }
+            object.addAll(localList);
+            System.out.println(object.size());
             return null;
         };
 
@@ -34,6 +37,7 @@ public class CounterFiller extends Filler<AbstractCounter> {
         for (Future<Void> future : futures) {
             future.get();
         }
+
 
     }
 }

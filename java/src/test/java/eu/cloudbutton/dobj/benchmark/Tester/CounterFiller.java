@@ -1,15 +1,14 @@
-package eu.cloudbutton.dobj.Benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.Tester;
 
-import eu.cloudbutton.dobj.map.CollisionKeyFactory;
+import eu.cloudbutton.dobj.incrementonly.AbstractCounter;
 
-import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class QueueFiller extends Filler<AbstractQueue> {
+public class CounterFiller extends Filler<AbstractCounter> {
 
-    public QueueFiller(AbstractQueue object, long nbOps) {
+    public CounterFiller(AbstractCounter object, long nbOps) {
         super(object, nbOps);
     }
 
@@ -23,7 +22,7 @@ public class QueueFiller extends Filler<AbstractQueue> {
 
         Callable<Void> callable = () -> {
             for (int i = 0; i < nbOps/nbTask; i++) {
-                object.add(i);
+                object.incrementAndGet();
             }
             return null;
         };
@@ -35,7 +34,6 @@ public class QueueFiller extends Filler<AbstractQueue> {
         for (Future<Void> future : futures) {
             future.get();
         }
-
 
     }
 }
