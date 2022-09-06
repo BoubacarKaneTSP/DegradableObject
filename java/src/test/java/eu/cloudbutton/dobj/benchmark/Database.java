@@ -35,7 +35,7 @@ public class Database {
     private final Map<Long, Map<String, String>> mapUser; // Stores the information for each user
     private final Map<Long, Map<String, String>> mapPost; // Stores the information for each post
     private final Map<Long, Set<Long>> followers; // Stores the followers for each users
-//    private final Map<Long, Set<Long>> following; // Stores the following for each users
+    private final Map<Long, Set<Long>> following; // Stores the following for each users
     private final Queue<Long> timeline; // Stores the last 1000 post posted. We need this queue to conserve the order of the posts
     private final Counter next_user_ID; // A counter generating a unique ID for each user
     private final Counter next_post_ID; // A counter generating a unique ID for each post
@@ -93,7 +93,7 @@ public class Database {
         mapUser = factory.getMap();
         mapPost = factory.getMap();
         followers = factory.getMap();
-//        following = factory.getMap();
+        following = factory.getMap();
         timeline = new ConcurrentLinkedQueue<>(); // We cannot use the DegradableQueue here since many thread may use poll()
         next_user_ID = factory.getCounter();
         next_post_ID = factory.getCounter();
@@ -179,7 +179,7 @@ public class Database {
         // and two set for storing the followers and the following of the new user
         posts.put(ID, factory.getQueue());
         followers.put(ID, factory.getSet());
-//        following.put(ID, factory.getSet());
+        following.put(ID, factory.getSet());
 
         return ID;
     }
@@ -189,7 +189,7 @@ public class Database {
         // Adding user_A to the followers of user_B
         // and user_B to the following of user_A
         followers.get(userB_ID).add(userA_ID);
-//        following.get(userA_ID).add(userB_ID);
+        following.get(userA_ID).add(userB_ID);
     }
 
     public void unfollowUser(Long userA_ID, Long userB_ID){ // userA unfollow userB
@@ -197,7 +197,7 @@ public class Database {
         // Removing user_A to the followers of user_B
         // and user_B to the following of user_A
         followers.get(userB_ID).remove(userA_ID);
-//        following.get(userA_ID).remove(userB_ID);
+        following.get(userA_ID).remove(userB_ID);
     }
 
     public void tweet(Long user_ID, String msg) throws InvocationTargetException, InstantiationException, IllegalAccessException {

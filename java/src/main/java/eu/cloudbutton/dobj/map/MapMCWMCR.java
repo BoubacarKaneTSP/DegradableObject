@@ -123,6 +123,10 @@ public class MapMCWMCR<K,V> implements Map<K,V> {
 
     @Override
     public V put(K key, V value) {
+
+        if (key == null || value == null)
+            throw new NullPointerException();
+
         V ret = local.get().put(key, value);
         if (ret==null)
             mapIndex.put(key,local.get());
@@ -131,8 +135,11 @@ public class MapMCWMCR<K,V> implements Map<K,V> {
 
     @Override
     public V remove(Object key) {
+        if (key == null)
+            throw new NullPointerException();
         V ret = local.get().remove(key);
-        mapIndex.remove(key);
+        if (ret != null)
+            mapIndex.remove(key);
         return ret;
     }
 
