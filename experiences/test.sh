@@ -211,6 +211,7 @@ echo "The warming up time is : $warmingUpTime"
 echo "The number of test is : $nbTest"
 echo "Number of object initially added : $nbInitialAdd"
 echo "Status of collisionKey : $collisionKey"
+echo "Status of multipleOperation : $multipleOperation"
 
 if [[ $typeTest == "Microbenchmark" ]]
 then

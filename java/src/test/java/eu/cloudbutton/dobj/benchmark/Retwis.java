@@ -243,6 +243,9 @@ public class Retwis {
                     timeTotalComputed += timeOperations.get(op).get();
                 }
 
+                if (_p)
+                    System.out.println("Results :");
+
                 long nbOp, timeOp;
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
@@ -427,6 +430,8 @@ public class Retwis {
                     }
                 }
 
+                if (_p)
+                    System.out.println("Aggregating nbOp and timeOp");
 
                 for (opType op: opType.values()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
