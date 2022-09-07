@@ -612,6 +612,7 @@ public class Retwis {
                 if (_p)
                     System.out.println("Launching the coordinator");
 
+                System.out.println(flagWarmingUp);
                 if (flagWarmingUp.get()){
                     if (_p)
                         System.out.println("Filling the database with "+ NB_USERS +" users" );
