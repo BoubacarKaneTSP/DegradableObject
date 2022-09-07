@@ -401,7 +401,7 @@ public class Retwis {
                 usersProbabilitySize.set(database.getUsersProbability().size());
                 arrayLocalUsers.set(new ArrayList<>(usersFollow.get().keySet()));
 
-                while (flagComputing.get()) { // warm up
+                while (flagWarmingUp.get()) { // warm up
 
                     type = chooseOperation();
 
@@ -416,7 +416,7 @@ public class Retwis {
 
                     }
                 }else{
-                    while (!flagComputing.get()){
+                    while (flagComputing.get()){
 
                         type = chooseOperation();
 
@@ -612,7 +612,7 @@ public class Retwis {
                 if (_p)
                     System.out.println("Launching the coordinator");
 
-                System.out.println(flagWarmingUp);
+                System.out.println("FW : " + flagWarmingUp);
                 if (flagWarmingUp.get()){
                     if (_p)
                         System.out.println("Filling the database with "+ NB_USERS +" users" );
@@ -626,12 +626,10 @@ public class Retwis {
 
                     TimeUnit.SECONDS.sleep(_wTime);
 
-                    flagComputing.set(false);
+                    flagWarmingUp.set(false);
                     System.out.println("Done warming up");
                 }
                 else{
-                    if (_completionTime)
-                        flagComputing.set(false);
                     latch.countDown();
                     latch.await();
                 }
@@ -640,7 +638,7 @@ public class Retwis {
                     if (_p)
                         System.out.println("Computing the throughput for "+ _time +" seconds");
                     TimeUnit.SECONDS.sleep(_time);
-                    flagComputing.set(true);
+                    flagComputing.set(false);
 		            System.out.println("Done computing the throughput");
                 }else{
                     if (_p)
