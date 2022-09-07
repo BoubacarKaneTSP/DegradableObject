@@ -608,6 +608,7 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(_wTime);
 
                     flagComputing.set(false);
+		    System.out.println("Done warming up");
                 }
                 else{
                     flagComputing.set(false);
@@ -620,6 +621,7 @@ public class Retwis {
                         System.out.println("Computing the throughput for "+ _time +" seconds");
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(true);
+		    System.out.println("Done computing the throughput");
                 }else{
                     if (_p)
                         System.out.println("Computing the completion time for " + _nbOps + " operations");
