@@ -187,6 +187,8 @@ public class Retwis {
                     }
 
                     if (nbCurrTest == 1) {
+                        if (_p)
+                            System.out.println("Initialize nbOp and timeOp");
                         nbOperations = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
 
@@ -249,9 +251,9 @@ public class Retwis {
                     String strAlpha = Double.toString(alpha).replace(".","");
 
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_S.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_juc.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_S.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_juc.txt", true);
 
 //                    fileWriter = new FileWriter("with_DegradableMap_nbThread_"+nbCurrThread+".txt", true);
 
@@ -271,7 +273,7 @@ public class Retwis {
                     else {
                         System.out.print(" Throughput (op/s) for all operations : ");
                         System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
-                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000 + " milli ssecondes");
+                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000_000 + " ssecondes");
                     }
 
 
@@ -292,9 +294,9 @@ public class Retwis {
 
                         if (_s){
                             if (nbCurrThread == 1)
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_S.txt", false);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_juc.txt", false);
                             else
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_S.txt", true);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_juc.txt", true);
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
@@ -594,13 +596,13 @@ public class Retwis {
 
                 if (flagWarmingUp.get()){
                     if (_p)
-                        System.out.println("Filling the database");
+                        System.out.println("Filling the database with "+ NB_USERS +" users" );
 
                     latch.countDown();
                     latch.await();
 
                     if (_p){
-                        System.out.println("Warming up");
+                        System.out.println("Warming up for " + _wTime + " seconds");
                     }
 
                     TimeUnit.SECONDS.sleep(_wTime);
@@ -613,13 +615,14 @@ public class Retwis {
                     latch.await();
                 }
 
-                if (_p){
-                    System.out.println("Computing");
-                }
-
                 if (! _completionTime) {
+                    if (_p)
+                        System.out.println("Computing the throughput for "+ _time +" seconds");
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(true);
+                }else{
+                    if (_p)
+                        System.out.println("Computing the completion time for " + _nbOps + " operations");
                 }
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
