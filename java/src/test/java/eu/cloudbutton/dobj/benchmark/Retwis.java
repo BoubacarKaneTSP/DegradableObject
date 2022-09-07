@@ -254,11 +254,11 @@ public class Retwis {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-
+                    String nameFile = "Q_M_S.txt";
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_Q_M_S.txt", false);
+                        fileWriter = new FileWriter(nameFile, false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_Q_M_S.txt", true);
+                        fileWriter = new FileWriter(nameFile, true);
 
 //                    fileWriter = new FileWriter("with_DegradableMap_nbThread_"+nbCurrThread+".txt", true);
 
@@ -297,11 +297,12 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
+                        String nameFile = "retwis_"+op+"_operations_Q_M_S.txt";
                         if (_s){
                             if (nbCurrThread == 1)
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_Q_M_S.txt", false);
+                                fileWriter = new FileWriter( nameFile, false);
                             else
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_Q_M_S.txt", true);
+                                fileWriter = new FileWriter(nameFile, true);
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
