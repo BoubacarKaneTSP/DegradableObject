@@ -392,6 +392,8 @@ public class Retwis {
                     timeLocalOperations.put(op, 0L);
                 }
 
+                if (_p)
+                    System.out.println("Filling the database with "+ NB_USERS +" users" );
                 database.fill(NB_USERS, latchFillDatabase, usersFollow);
 
                 latch.countDown();
@@ -614,8 +616,6 @@ public class Retwis {
 
                 System.out.println("FW : " + flagWarmingUp);
                 if (flagWarmingUp.get()){
-                    if (_p)
-                        System.out.println("Filling the database with "+ NB_USERS +" users" );
 
                     latch.countDown();
                     latch.await();
