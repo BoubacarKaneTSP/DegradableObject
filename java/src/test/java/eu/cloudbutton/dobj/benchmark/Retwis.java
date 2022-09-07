@@ -630,7 +630,8 @@ public class Retwis {
                     System.out.println("Done warming up");
                 }
                 else{
-                    flagComputing.set(false);
+                    if (_completionTime)
+                        flagComputing.set(false);
                     latch.countDown();
                     latch.await();
                 }
