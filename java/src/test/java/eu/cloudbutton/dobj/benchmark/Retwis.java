@@ -215,6 +215,10 @@ public class Retwis {
 
                     if (_completionTime)
                         startTime = System.nanoTime();
+
+                    if (_p)
+                        System.out.println("Invoke all callables");
+
                     futures = executor.invokeAll(callables);
 
                     try{
