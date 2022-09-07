@@ -256,9 +256,9 @@ public class Retwis {
                     String strAlpha = Double.toString(alpha).replace(".","");
 
                     if (nbCurrThread == 1)
-                        fileWriter = new FileWriter("retwis_ALL_operations_Q.txt", false);
+                        fileWriter = new FileWriter("retwis_ALL_operations_Q_M_S.txt", false);
                     else
-                        fileWriter = new FileWriter("retwis_ALL_operations_Q.txt", true);
+                        fileWriter = new FileWriter("retwis_ALL_operations_Q_M_S.txt", true);
 
 //                    fileWriter = new FileWriter("with_DegradableMap_nbThread_"+nbCurrThread+".txt", true);
 
@@ -299,9 +299,9 @@ public class Retwis {
 
                         if (_s){
                             if (nbCurrThread == 1)
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_Q.txt", false);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_Q_M_S.txt", false);
                             else
-                                fileWriter = new FileWriter("retwis_"+op+"_operations_Q.txt", true);
+                                fileWriter = new FileWriter("retwis_"+op+"_operations_Q_M_S.txt", true);
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
