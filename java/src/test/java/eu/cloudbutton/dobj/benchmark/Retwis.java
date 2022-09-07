@@ -609,6 +609,9 @@ public class Retwis {
         public Void call() throws Exception {
             try {
 
+                if (_p)
+                    System.out.println("Launching the coordinator");
+
                 if (flagWarmingUp.get()){
                     if (_p)
                         System.out.println("Filling the database with "+ NB_USERS +" users" );
@@ -623,7 +626,7 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(_wTime);
 
                     flagComputing.set(false);
-		    System.out.println("Done warming up");
+                    System.out.println("Done warming up");
                 }
                 else{
                     flagComputing.set(false);
@@ -636,7 +639,7 @@ public class Retwis {
                         System.out.println("Computing the throughput for "+ _time +" seconds");
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(true);
-		    System.out.println("Done computing the throughput");
+		            System.out.println("Done computing the throughput");
                 }else{
                     if (_p)
                         System.out.println("Computing the completion time for " + _nbOps + " operations");
