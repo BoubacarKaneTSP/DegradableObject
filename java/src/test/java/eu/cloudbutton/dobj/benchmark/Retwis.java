@@ -153,7 +153,7 @@ public class Retwis {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            long startTime, endTime, timeTotal = 0L;
+            long startTime = 0, endTime, timeTotal = 0L;
 
 
             if (_p){
@@ -213,8 +213,8 @@ public class Retwis {
                     List<Future<Void>> futures;
 
 
-
-                    startTime = System.nanoTime();
+                    if (_completionTime)
+                        startTime = System.nanoTime();
                     futures = executor.invokeAll(callables);
 
                     try{
@@ -226,13 +226,16 @@ public class Retwis {
                         System.exit(0);
                     }
 
-                    endTime = System.nanoTime();
-                    timeTotal = endTime - startTime;
+                    if (_completionTime) {
+                        endTime = System.nanoTime();
+                        timeTotal = endTime - startTime;
+                    }
 
                     if (flagWarmingUp.get())
                         timeTotal -= _wTime * 1_000_000_000;
 
-                    TimeUnit.SECONDS.sleep(5);
+                    System.out.println("End of test num : " + nbCurrTest);
+                    TimeUnit.SECONDS.sleep(1);
                     executor.shutdown();
                 }
 
@@ -437,6 +440,9 @@ public class Retwis {
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
                 }
+
+                if (_p)
+                    System.out.println("End of aggregating nbOp and timeOp");
 
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
                 e.printStackTrace();
