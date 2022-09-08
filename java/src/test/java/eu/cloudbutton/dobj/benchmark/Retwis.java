@@ -254,7 +254,7 @@ public class Retwis {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-                    String nameFile = "JUC.txt";
+                    String nameFile = "Q_M_S_TWEET_ONLY.txt";
                     if (nbCurrThread == 1)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -297,7 +297,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = "retwis_"+op+"_operations_Q_M_S.txt";
+                        String nameFile = "retwis_"+op+"_operations_Q_M_S_TWEET_ONLY.txt";
                         if (_s){
                             if (nbCurrThread == 1)
                                 fileWriter = new FileWriter( nameFile, false);
