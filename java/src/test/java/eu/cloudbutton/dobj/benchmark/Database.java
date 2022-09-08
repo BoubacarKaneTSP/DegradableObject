@@ -9,10 +9,7 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 
 @Getter
 public class Database {
@@ -148,7 +145,7 @@ public class Database {
 
         long userID = next_user_ID.incrementAndGet();
 
-        mapFollowers.put(userID, factory.getSet() );
+        mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapFollowing.put(userID, factory.getSet() );
         mapTimelines.put(userID, new Timeline(factory.getQueue()) );
 

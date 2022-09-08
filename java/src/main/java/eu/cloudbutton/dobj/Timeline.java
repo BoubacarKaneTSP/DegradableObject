@@ -1,7 +1,5 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.incrementonly.Counter;
-
 import java.util.*;
 
 public class Timeline<T> {
