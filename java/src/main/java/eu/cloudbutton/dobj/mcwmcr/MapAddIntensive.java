@@ -8,16 +8,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MapMCWMCR<K,V> implements Map<K,V> {
+public class MapAddIntensive<K,V> implements Map<K,V> {
 
     @Getter
     private final List<Map<K,V>> listMap;
     private final ThreadLocal<Map<K,V>> local;
-    private final Map<K, Map<K,V>> mapIndex;
 
-    public MapMCWMCR(){
+    public MapAddIntensive(){
         listMap = new CopyOnWriteArrayList<>();
-        mapIndex = new ConcurrentHashMap<>();
         local = ThreadLocal.withInitial(() -> {
             ConcurrentHashMap<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
@@ -128,8 +126,6 @@ public class MapMCWMCR<K,V> implements Map<K,V> {
             throw new NullPointerException();
 
         V ret = local.get().put(key, value);
-        if (ret==null)
-            mapIndex.put(key,local.get());
         return ret;
     }
 
@@ -138,8 +134,6 @@ public class MapMCWMCR<K,V> implements Map<K,V> {
         if (key == null)
             throw new NullPointerException();
         V ret = local.get().remove(key);
-        if (ret != null)
-            mapIndex.remove(key);
         return ret;
     }
 
@@ -178,10 +172,6 @@ public class MapMCWMCR<K,V> implements Map<K,V> {
 
         if (value != null)
             return value;
-
-        Map<K,V> map = mapIndex.get(key);
-        if (map != null)
-            return map.get(key);
 
         for (Map<K,V> amap : listMap){
             if (amap != local.get()){

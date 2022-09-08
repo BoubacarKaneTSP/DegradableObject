@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.map.*;
-import eu.cloudbutton.dobj.mcwmcr.MapMCWMCR;
+import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class PowerLawCollisionKeyTest {
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
-        Map<CollisionKey, String> collisionMap = new MapMCWMCR<>();
+        Map<CollisionKey, String> collisionMap = new MapReadIntensive<>();
         Map<String, String> map = new ConcurrentHashMap<>();
         CollisionKeyFactory factory = new CollisionKeyFactory();
 

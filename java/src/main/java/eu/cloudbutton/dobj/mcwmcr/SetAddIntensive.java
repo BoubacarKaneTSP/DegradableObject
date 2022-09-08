@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.Set;
 
-public class SetMCWMCR<T> implements Set<T> {
+public class SetAddIntensive<T> implements Set<T> {
 
-    private final MapMCWMCR<T, Object> set;
+    private final MapAddIntensive<T, Object> set;
 
-    public SetMCWMCR() {
-        this.set = new MapMCWMCR<>();
+    public SetAddIntensive() {
+        this.set = new MapAddIntensive<>();
     }
 
     @NotNull
