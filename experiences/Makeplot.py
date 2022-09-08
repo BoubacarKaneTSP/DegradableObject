@@ -45,10 +45,10 @@ for numprocess, resultat, name, linestyle, marker  in zip(numprocesses,resultats
     label = list_split_label.pop()
     label=label[:len(label)-4].replace("_", " ")
 
-    int_resultat = []
-    for res in resultat:
-        int_resultat.append(int(res)/1000000000)
-    plt.plot(numprocess, int_resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label= label)
+    # int_resultat = []
+    # for res in resultat:
+    #     int_resultat.append(int(res)/1000000000)
+    plt.plot(numprocess, resultat, marker = marker, linestyle = linestyle, linewidth=2, markersize=12, label= label)
 
 
 SIZE = 25
@@ -66,7 +66,7 @@ plt.gca().spines['right'].set_visible(False)
 plt.gca().spines['top'].set_visible(False)
 plt.gca().tick_params(axis='both', which='major', labelsize=SIZE, length=SIZE)
 plt.gca().tick_params(axis='both', which='minor', labelsize=SIZE, length=SIZE)
-plt.ylabel("Completion time (s)", fontsize=SIZE)
+plt.ylabel("Throughput", fontsize=SIZE)
 plt.xlabel("# processes", fontsize=SIZE)
 plt.legend(bbox_to_anchor=(0., 1.04, 1., 1.), loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
 plt.yscale("log")
