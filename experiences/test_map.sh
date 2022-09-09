@@ -15,5 +15,5 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 #  done
 #done
 
-./test.sh -m Map -t Benchmark -r "0 5 95" -p -e -w 30 -u 5 -n 5 -k -i 500000
-./test.sh -m DegradableMap -t Benchmark -r "0 5 95" -p -e -w 30 -u 5 -n 5 -k -i 500000
+./test.sh -m Map -t Benchmark -r "0 0 100" -p -e -w 30 -u 5 -n 5 -k -i 500000
+./test.sh -m DegradableMap -t Benchmark -r "0 0 100" -p -e -w 30 -u 5 -n 5 -k -i 500000
