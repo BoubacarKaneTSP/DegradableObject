@@ -26,8 +26,9 @@ collisionKey=""
 quickTest=""
 nbInitialAdd=1000
 breakdown=""
+tag=""
 
-while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
@@ -152,6 +153,9 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
     b)
       breakdown="-breakdown"
       ;;
+    h)
+      tag="$OPTARG"
+      ;;
     o)
       echo "script usage: $(basename \$0)
       [-c] counter type,
@@ -174,7 +178,8 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
       [-v] testing only one and max nbThreads,
       [-z] Computing the completionTime for Retwis,
       [-y] Computing multiple time the same operation for Retwis,
-      [-b] Print the details results for all operations">&2
+      [-b] Print the details results for all operations
+      [-h] Tag associated with the name of the result file">&2
       exit 1
       ;;
     ?)
@@ -198,7 +203,8 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zyb' OPTION; do
       [-v] Testing only one and max nbThreads,
       [-z] Computing the completionTime for Retwis,
       [-y] Computing multiple time the same operation for Retwis,
-      [-b] Print the details results for all operations">&2
+      [-b] Print the details results for all operations
+      [-h] Tag associated with the name of the result file">&2
       exit 1
       ;;
   esac
@@ -220,5 +226,5 @@ then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime -nbOps $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
 elif [[ $typeTest == "Retwis" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $breakdown $quickTest
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $workloadTime $warmingUpTime $completionTime $multipleOperation $print $save $breakdown $quickTest $tag
 fi
