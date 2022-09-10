@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.CounterJUC;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
@@ -75,7 +76,7 @@ public class Database {
         mapFollowers = new ConcurrentHashMap<>();
         mapFollowing = factory.getMap();
         mapTimelines = new ConcurrentHashMap<>();
-        next_user_ID = factory.getCounter();
+        next_user_ID = new CounterJUC();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
 
@@ -147,7 +148,7 @@ public class Database {
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapFollowing.put(userID, factory.getSet() );
-        mapTimelines.put(userID, new Timeline(factory.getQueue()) );
+        mapTimelines.put(userID, new Timeline(factory.getQueue(), factory.getCounter()) );
 
         return userID;
     }
@@ -169,7 +170,7 @@ public class Database {
     public void tweet(Long user, String msg){
 
         for (long follower : mapFollowers.get(user)) {
-//            mapTimelines.get(follower).add(msg);
+            mapTimelines.get(follower).add(msg);
         }
     }
 
