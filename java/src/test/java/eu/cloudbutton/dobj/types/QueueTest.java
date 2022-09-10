@@ -1,9 +1,11 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -17,22 +19,38 @@ public class QueueTest {
     }
 
     @Test
-    void append() throws ExecutionException, InterruptedException {
-       /* doAppend(factory.createList());
-        doAppend(factory.createDegradableList());
-        doAppend(factory.createListSnapshot());
-        doAppend(factory.createDegradableLinkedList());
-        doAppend(factory.createLinkedList());
-        doAppend(factory.createLinkedListSnapshot());*/
+    void append() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Factory factory = new Factory();
+
+        Class cls;
+
+        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueMASP");
+        factory.setFactoryQueue(cls);
+        doConcurrentAppend(factory.getQueue());
+
+        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
+        factory.setFactoryQueue(cls);
+        doAppend(factory.getQueue());
     }
 
-    private static void doAppend(AbstractQueue<Integer> list) throws ExecutionException, InterruptedException {
+    private static void doAppend(Queue<Integer> queue){
+
+        for (int i = 0; i < 100; i++) {
+            queue.add(i);
+            System.out.println(i);
+            if (i%2 == 0)
+                queue.poll();
+        }
+
+        System.out.println(queue);
+    }
+    private static void doConcurrentAppend(Queue<Integer> queue) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
-            list.add(1);
-            list.add(2);
-            list.add(3);
+            queue.add(1);
+            queue.add(2);
+            queue.add(3);
             return null;
         };
 
@@ -44,24 +62,18 @@ public class QueueTest {
             future.get();
         }
 
-        list.poll();
-        list.add(1);
-        list.add(2);
-        list.add(3);
+        queue.poll();
+        queue.add(1);
+        queue.add(2);
+        queue.add(3);
 
-        Iterator<Integer> it = list.iterator();
+        /*Iterator<Integer> it = list.iterator();
         int i = 0;
 
         while (it.hasNext()) {
             System.out.println(it.next());
             i++;
-        }
+        }*/
 
-        System.out.println("size : " + i);
-        /*
-        assertTrue(list.contains(1), "Failed adding elements in the list");
-        assertTrue(list.contains(2), "Failed adding elements in the list");
-        assertTrue(list.contains(3), "Failed adding elements in the list");
-        */
     }
 }

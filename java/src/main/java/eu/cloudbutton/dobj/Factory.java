@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj;
 
+import eu.cloudbutton.dobj.asymmetric.QueueMASP;
+import eu.cloudbutton.dobj.asymmetric.SetMWSR;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.CounterJUC;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
@@ -7,7 +9,7 @@ import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.list.ListJUC;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
-import eu.cloudbutton.dobj.asymmetric.QueueMASP;
+import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.set.SetJUC;
@@ -122,6 +124,8 @@ public class Factory {
                 return new SetJUC<>();
             case "SetMCWMCR":
                 return new SetReadIntensive<>();
+            case "SetMWSR":
+                return new SetMWSR<>();
             default:
                 throw new ClassNotFoundException();
         }
@@ -139,6 +143,8 @@ public class Factory {
                 return new QueueMASP<>();
             case "MapQueue":
                 return new MapQueue<>();
+            case "QueueSASP":
+                return new QueueSASP<>();
             default:
                 throw new ClassNotFoundException();
 

@@ -52,11 +52,13 @@ public class SetTester extends Tester<AbstractSet> {
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(list.get(i));
+                if(Thread.currentThread().getName().equals("pool-1-thread-1")){
+                    startTime = System.nanoTime();
+                    for (int i = 0; i < nbRepeat; i++) {
+                        object.remove(list.get(i));
+                    }
+                    endTime = System.nanoTime();
                 }
-                endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();

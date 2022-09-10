@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @param <E>
  * @author Boubacar Kane
  */
-public class QueueMASP<E> implements Queue<E> {
+public class QueueSASP<E> implements Queue<E> {
 
     private static class Node<E> {
         volatile E item;
@@ -73,7 +73,7 @@ public class QueueMASP<E> implements Queue<E> {
     /**
      * Create an empty queue.
      */
-    public QueueMASP() {
+    public QueueSASP() {
         tail = head = new Node<>(null);
         listNbFor = new CopyOnWriteArrayList<>();
         countNbFor = new CounterIncrementOnly();
@@ -236,6 +236,11 @@ public class QueueMASP<E> implements Queue<E> {
     @Override
     public void clear() {
 
+        int size = size();
+
+        for (int i = 0; i < size; i++) {
+            poll();
+        }
     }
 
     /**
@@ -245,33 +250,13 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public boolean offer(E e) {
+
         final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
-        for (Node<E> t = tail, p = t;;) {
+        tail.next = newNode;
+        tail = newNode;
 
-            Node<E> q = p.next;
-            if (q == null) {
-                // p is last node
-                if (NEXT.compareAndSet(p, null, newNode)) {
-                    // Successful CAS is the linearization point
-                    // for e to become an element of this queue,
-                    // and for newNode to become "live".
-                    if (p != t) // hop two nodes at a time; failure is OK
-                        TAIL.weakCompareAndSet(this, t, newNode);
-                    return true;
-                }
-                // Lost CAS race to another thread; re-read next
-            }
-            else if (p == q)
-                // We have fallen off list.  If tail is unchanged, it
-                // will also be off-list, in which case we need to
-                // jump to head, from which all live nodes are always
-                // reachable.  Else the new tail is a better bet.
-                p = (t != (t = tail)) ? t : head;
-            else
-                // Check for tail updates after two hops.
-                p = (p != t && t != (t = tail)) ? t : q;
-        }
+        return true;
     }
 
     @Override
@@ -285,30 +270,10 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public E poll() {
-/*        restartFromHead: for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
-                final E item;
-                if ((item = p.item) != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-                    if (p != h) // hop two nodes at a time
-                        updateHead(h, ((q = p.next) != null) ? q : p);
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-            }
-        }*/
-	
 
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-//            head.item = null;
             return item;
         }
 
@@ -341,7 +306,6 @@ public class QueueMASP<E> implements Queue<E> {
 
         return s;
     }
-
     /**
      * Tries to CAS head to p. If successful, repoint old head to itself
      * as sentinel for succ(), below.
@@ -370,7 +334,6 @@ public class QueueMASP<E> implements Queue<E> {
             throw new NullPointerException();
     }
 
-
     /**
      * Returns the successor of p, or the head node if p.next has been
      * linked to self, which will only be true if traversing with a
@@ -390,10 +353,10 @@ public class QueueMASP<E> implements Queue<E> {
     static {
         try {
             MethodHandles.Lookup l = MethodHandles.lookup();
-            HEAD = l.findVarHandle(QueueMASP.class, "head",
+            HEAD = l.findVarHandle(QueueSASP.class, "head",
                     Node.class);
-            TAIL = l.findVarHandle(QueueMASP.class, "tail",
-                   Node.class);
+            TAIL = l.findVarHandle(QueueSASP.class, "tail",
+                    Node.class);
             ITEM = l.findVarHandle(Node.class, "item", Object.class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
         } catch (ReflectiveOperationException e) {

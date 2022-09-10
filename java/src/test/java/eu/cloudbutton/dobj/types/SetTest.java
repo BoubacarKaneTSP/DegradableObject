@@ -20,7 +20,7 @@ public class SetTest {
 
     @Test
     void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-       Class cls = Class.forName("eu.cloudbutton.dobj.mcwmcr.SetReadIntensive");
+       Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.SetMWSR");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
     }
@@ -33,9 +33,11 @@ public class SetTest {
     }
 
     private static void doAdd(Set set) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
+            if(Thread.currentThread().getName().equals("pool-1-thread-1"))
+                set.remove("v3");
             set.add("v1");
             set.add("v2");
             set.add("v3");
@@ -49,6 +51,8 @@ public class SetTest {
         for (Future<Void> future :futures){
             future.get();
         }
+
+        System.out.println(set);
 
         java.util.Set<String> result = new HashSet<>();
         result.add("v1");

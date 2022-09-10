@@ -121,18 +121,12 @@ public class MapAddIntensive<K,V> implements Map<K,V> {
 
     @Override
     public V put(K key, V value) {
-
-        if (key == null || value == null)
-            throw new NullPointerException();
-
         V ret = local.get().put(key, value);
         return ret;
     }
 
     @Override
     public V remove(Object key) {
-        if (key == null)
-            throw new NullPointerException();
         V ret = local.get().remove(key);
         return ret;
     }

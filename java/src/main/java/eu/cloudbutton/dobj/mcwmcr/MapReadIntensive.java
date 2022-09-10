@@ -217,6 +217,10 @@ public class MapReadIntensive<K,V> implements Map<K,V> {
 
     @Override
     public boolean containsKey(Object key) {
+        for (Map m : listMap){
+            if (m.containsKey(key))
+                return true;
+        }
         return false;
     }
 
