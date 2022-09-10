@@ -4,16 +4,14 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-##for nbThread in "1" "2" "3" "4"
-#for nbThread in "1" "10" "20" "30" "40"
-#do
-#  for nbInitialAdd in "1000" "5000" "10000" "50000" "100000" "200000" "300000" "400000" "500000" "600000" "700000" "800000" "900000" "1000000"
-##  for nbInitialAdd in "10" "50" "100" "500"
-#  do
-##    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type Map -ratios "100 0 0" -nbThreads $nbThread -nbTest 1 -time 5 -wTime 1 -nbOps $nbInitialAdd -p -s -collisionKey >> "Map_${nbThread}_thread.txt"
-#    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type DegradableMap -ratios "100 0 0" -nbThreads $nbThread -nbTest 3 -time 15 -wTime 5 -nbOps $nbInitialAdd -p -s -collisionKey >> "DMap_${nbThread}_thread.txt"
-#  done
-#done
+./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 10 -b -tag "JUC"
+./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 10 -b -tag "Q"
+./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m MapAddIntensive -t Retwis -p -e  -w 30 -u 10 -n 10 -b -tag "Q_M"
+./test.sh -c CounterJUC -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 10 -b -tag "Q_M_S"
+./test.sh -c CounterIncrementOnly -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 10 -b -tag "Q_M_S_C"
 
-./test.sh -m Map -t Benchmark -r "0 0 100" -p -e -w 30 -u 5 -n 5 -k -i 500000
-./test.sh -m DegradableMap -t Benchmark -r "0 0 100" -p -e -w 30 -u 5 -n 5 -k -i 500000
+./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 10 -z -tag "JUC_CompletionTime"
+./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 10 -z -tag "Q_CompletionTime"
+./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m MapAddIntensive -t Retwis -p -e  -w 30 -u 10 -n 10 -z -tag "Q_M_CompletionTime"
+./test.sh -c CounterJUC -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 10 -z -tag "Q_M_S_CompletionTime"
+./test.sh -c CounterIncrementOnly -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 10 -z -tag "Q_M_S_C_CompletionTime"

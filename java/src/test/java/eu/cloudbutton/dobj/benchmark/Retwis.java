@@ -90,6 +90,9 @@ public class Retwis {
     @Option(name = "-breakdown", handler = ExplicitBooleanOptionHandler.class, usage = "Print the details results for all operations")
     public boolean _breakdown = false;
 
+    @Option(name="-tag", required = true, usage = "tag of result's file")
+    private String _tag;
+
     private AtomicBoolean flagComputing,flagWarmingUp;
 
     private Map<opType, AtomicInteger> nbOperations;
@@ -254,7 +257,7 @@ public class Retwis {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-                    String nameFile = "Q_M_S_CompletionTime.txt";
+                    String nameFile = _tag+".txt";
                     if (nbCurrThread == 1)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -297,7 +300,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = op+".txt";
+                        String nameFile = op+"_"+_tag+".txt";
                         if (_s){
                             if (nbCurrThread == 1)
                                 fileWriter = new FileWriter( nameFile, false);
