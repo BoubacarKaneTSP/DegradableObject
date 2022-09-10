@@ -55,7 +55,7 @@ public class Retwis {
     private int _nbTest = 1;
 
     @Option(name = "-nbOps", usage = "Number of operation done")
-    private long _nbOps = 500_000;
+    private long _nbOps = 1_000_000;
 
     @Option(name = "-time", usage = "test time (seconds)")
     private long _time = 20;
@@ -254,7 +254,7 @@ public class Retwis {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-                    String nameFile = "Q_M_S_C_CompletionTime.txt";
+                    String nameFile = "Q_M_S_CompletionTime.txt";
                     if (nbCurrThread == 1)
                         fileWriter = new FileWriter(nameFile, false);
                     else

@@ -169,7 +169,7 @@ public class Database {
     public void tweet(Long user, String msg){
 
         for (long follower : mapFollowers.get(user)) {
-            mapTimelines.get(follower).add(msg);
+//            mapTimelines.get(follower).add(msg);
         }
     }
 
