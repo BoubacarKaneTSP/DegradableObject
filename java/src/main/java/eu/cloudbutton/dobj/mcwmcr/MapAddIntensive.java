@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MapAddIntensive<K,V> implements Map<K,V> {
@@ -18,7 +17,7 @@ public class MapAddIntensive<K,V> implements Map<K,V> {
     public MapAddIntensive(){
         listMap = new CopyOnWriteArrayList<>();
         local = ThreadLocal.withInitial(() -> {
-            Map<K, V> m = new ConcurrentSkipListMap<>();
+            Map<K, V> m = new ConcurrentHashMap<>();
             listMap.add(m);
             return m;
         });
