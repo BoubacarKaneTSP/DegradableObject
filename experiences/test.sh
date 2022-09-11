@@ -154,7 +154,7 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:' OPTION; do
       breakdown="-breakdown"
       ;;
     h)
-      tag="$OPTARG"
+      tag="-tag $OPTARG"
       ;;
     o)
       echo "script usage: $(basename \$0)

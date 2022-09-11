@@ -72,6 +72,9 @@ public class Retwis {
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.02;
 
+    @Option(name="-tag", required = false, usage = "tag of result's file")
+    private String _tag;
+
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
 
@@ -89,9 +92,6 @@ public class Retwis {
 
     @Option(name = "-breakdown", handler = ExplicitBooleanOptionHandler.class, usage = "Print the details results for all operations")
     public boolean _breakdown = false;
-
-    @Option(name="-tag", required = true, usage = "tag of result's file")
-    private String _tag;
 
     private AtomicBoolean flagComputing,flagWarmingUp;
 
