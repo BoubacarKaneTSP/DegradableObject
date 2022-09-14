@@ -110,8 +110,8 @@ public class Database {
 //        System.out.println("Adding users");
 
         List<Long> localUsers = new ArrayList<>();
-        userPerThread = nbUsers / nbThread;
-
+//        userPerThread = nbUsers / nbThread;
+        userPerThread = 1;
 //        System.out.println("userPerThread : " + userPerThread);
 
         for (int id = 0; id < userPerThread; id++) {

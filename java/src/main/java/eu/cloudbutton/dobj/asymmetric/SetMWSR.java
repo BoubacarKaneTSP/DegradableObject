@@ -12,7 +12,6 @@ public class SetMWSR<T> implements Set<T> {
     private final ThreadLocal<Queue<T>> local;
 
     public SetMWSR(){
-
         set = new TreeSet<>();
         queueList = new CopyOnWriteArrayList<>();
         local = ThreadLocal.withInitial(() -> {
@@ -70,7 +69,6 @@ public class SetMWSR<T> implements Set<T> {
 
     @Override
     public boolean addAll(@NotNull Collection c) {
-
         for (Object o: c)
             local.get().add((T)o);
 
