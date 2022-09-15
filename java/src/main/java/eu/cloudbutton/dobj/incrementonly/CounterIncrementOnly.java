@@ -13,9 +13,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CounterIncrementOnly implements Counter {
 
     private final CopyOnWriteArrayList<BoxedLong> count;
-    private final ThreadLocal<BoxedLong> local;
+    protected final ThreadLocal<BoxedLong> local;
 
-    private static final sun.misc.Unsafe UNSAFE;
+    protected static final sun.misc.Unsafe UNSAFE;
 
     static {
         try {
@@ -79,6 +79,16 @@ public class CounterIncrementOnly implements Counter {
             total += v.val;
         }
         return total;
+    }
+
+    @Override
+    public long decrementAndGet(int delta) {
+        return 0;
+    }
+
+    @Override
+    public long decrementAndGet() {
+        return 0;
     }
 
 }

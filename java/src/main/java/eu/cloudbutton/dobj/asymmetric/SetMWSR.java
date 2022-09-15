@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.asymmetric;
 
+import org.javatuples.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -8,14 +9,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class SetMWSR<T> implements Set<T> {
 
     private final Set<T> set;
-    private final List<Queue<T>> queueList;
-    private final ThreadLocal<Queue<T>> local;
+    private final List<QueueSASP<T>> queueList;
+    private final ThreadLocal<QueueSASP<T>> local;
 
     public SetMWSR(){
         set = new TreeSet<>();
         queueList = new CopyOnWriteArrayList<>();
         local = ThreadLocal.withInitial(() -> {
-           Queue<T> queue = new QueueSASP<>();
+           QueueSASP<T> queue = new QueueSASP<>();
            queueList.add(queue);
            return queue;
         });
@@ -23,6 +24,7 @@ public class SetMWSR<T> implements Set<T> {
 
     @Override
     public int size() {
+        update();
         return set.size();
     }
 
@@ -33,16 +35,14 @@ public class SetMWSR<T> implements Set<T> {
 
     @Override
     public boolean contains(Object o) {
-        for (Queue queue: queueList){
-            set.addAll(queue);
-            queue.clear();
-        }
+        update();
         return set.contains(o);
     }
 
     @NotNull
     @Override
     public Iterator iterator() {
+        update();
         return set.iterator();
     }
 
@@ -54,17 +54,12 @@ public class SetMWSR<T> implements Set<T> {
 
     @Override
     public boolean add(Object o) {
-        local.get().add((T) o);
-        return true;
+        return local.get().add((T) o);
     }
 
     @Override
     public boolean remove(Object o) {
-        for (Queue queue: queueList){
-            set.addAll(queue);
-            queue.clear();
-        }
-        return set.remove(o);
+        return local.get().remove(o);
     }
 
     @Override
@@ -106,5 +101,18 @@ public class SetMWSR<T> implements Set<T> {
     @Override
     public String toString(){
         return set.toString();
+    }
+
+    private void update(){
+        for (QueueSASP<T> queue: queueList){
+            Set<Pair<T, Boolean>> eltsFlushed = queue.flush();
+
+            for (Pair<T, Boolean> element: eltsFlushed){
+                if (element.getValue1())
+                    set.add(element.getValue0());
+                else
+                    set.remove(element.getValue0());
+            }
+        }
     }
 }

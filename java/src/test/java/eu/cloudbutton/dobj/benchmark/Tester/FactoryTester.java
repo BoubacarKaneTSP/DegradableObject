@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
-import eu.cloudbutton.dobj.incrementonly.AbstractCounter;
 import eu.cloudbutton.dobj.Noop;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 
 import java.util.AbstractList;
 import java.util.AbstractMap;
@@ -34,8 +34,8 @@ public class FactoryTester {
             return new QueueTester((AbstractQueue) object, ratios, latch);
         else if (object instanceof AbstractList)
             return new ListTester((AbstractList) object, ratios, latch);
-        else if (object instanceof AbstractCounter)
-            return new CounterTester((AbstractCounter) object, ratios, latch);
+        else if (object instanceof Counter)
+            return new CounterTester((Counter) object, ratios, latch);
         else if (object instanceof Noop)
             return new NoopTester((Noop) object, ratios, latch);
         else

@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.asymmetric;
 
+import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
@@ -68,7 +69,7 @@ public class QueueMASP<E> implements Queue<E> {
     private transient Node<E> head;
     private transient volatile Node<E> tail;
     private final CopyOnWriteArrayList<Long> listNbFor;
-    private CounterIncrementOnly countNbFor;
+    private Counter size;
 
     /**
      * Create an empty queue.
@@ -76,7 +77,7 @@ public class QueueMASP<E> implements Queue<E> {
     public QueueMASP() {
         tail = head = new Node<>(null);
         listNbFor = new CopyOnWriteArrayList<>();
-        countNbFor = new CounterIncrementOnly();
+        size = new CounterMISD();
     }
 
     /**
@@ -184,13 +185,8 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public int size() {
-        int ret = 0;
-        for (Node<E> p = head;;) {
-            if (p.item != null) ret++;
-            if (p.next==null) break;
-            p = p.next;
-        }
-        return ret;
+
+        return (int) size.read();
     }
 
     @Override
@@ -247,6 +243,8 @@ public class QueueMASP<E> implements Queue<E> {
     public boolean offer(E e) {
         final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
+        size.incrementAndGet();
+
         for (Node<E> t = tail, p = t;;) {
 
             Node<E> q = p.next;
@@ -285,30 +283,12 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public E poll() {
-/*        restartFromHead: for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
-                final E item;
-                if ((item = p.item) != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-                    if (p != h) // hop two nodes at a time
-                        updateHead(h, ((q = p.next) != null) ? q : p);
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-            }
-        }*/
-	
+
+        size.decrementAndGet();
 
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-//            head.item = null;
             return item;
         }
 

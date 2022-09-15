@@ -32,6 +32,16 @@ public class FuzzyCounter implements Counter {
         return (counter.read() * N) + ID.get();
     }
 
+    @Override
+    public long decrementAndGet(int delta) {
+        return 0;
+    }
+
+    @Override
+    public long decrementAndGet() {
+        return 0;
+    }
+
     public void setN(int nbThread)   {
         N = nbThread;
     }

@@ -1,12 +1,12 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
-import eu.cloudbutton.dobj.incrementonly.AbstractCounter;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 
 import java.util.concurrent.CountDownLatch;
 
-public class CounterTester extends Tester<AbstractCounter> {
+public class CounterTester extends Tester<Counter> {
 
-    public CounterTester(AbstractCounter counter, int[] ratios, CountDownLatch latch) {
+    public CounterTester(Counter counter, int[] ratios, CountDownLatch latch) {
         super(counter, ratios, latch);
     }
 

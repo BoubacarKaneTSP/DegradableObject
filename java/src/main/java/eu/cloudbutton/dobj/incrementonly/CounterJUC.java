@@ -56,4 +56,14 @@ public class CounterJUC implements Counter {
         return count.longValue();
     }
 
+    @Override
+    public long decrementAndGet(int delta) {
+        return 0;
+    }
+
+    @Override
+    public long decrementAndGet() {
+        return count.decrementAndGet();
+    }
+
 }

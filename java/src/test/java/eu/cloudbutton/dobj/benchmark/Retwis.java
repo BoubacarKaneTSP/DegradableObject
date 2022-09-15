@@ -409,7 +409,7 @@ public class Retwis {
 
 
                 if (_completionTime){
-                    for (int i = 0; i < _nbOps; i++) {
+                    for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
                         compute(type);
 

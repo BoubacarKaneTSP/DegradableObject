@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.asymmetric;
 
 import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
+import org.javatuples.Pair;
 import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
@@ -21,14 +22,16 @@ public class QueueSASP<E> implements Queue<E> {
 
     private static class Node<E> {
         volatile E item;
+        volatile boolean opType;
         volatile Node<E> next;
 
         /**
          * Constructs a new node.  Uses relaxed write because item can
          * only be seen after publication via casNext.
          */
-        Node(E item) {
+        Node(E item, boolean opType) {
             UNSAFE.putObject(this, itemOffset, item);
+            this.opType = opType;
         }
 
         boolean casItem(E cmp, E val) {
@@ -74,7 +77,7 @@ public class QueueSASP<E> implements Queue<E> {
      * Create an empty queue.
      */
     public QueueSASP() {
-        tail = head = new Node<>(null);
+        tail = head = new Node<>(null, true);
         listNbFor = new CopyOnWriteArrayList<>();
         countNbFor = new CounterIncrementOnly();
     }
@@ -210,7 +213,12 @@ public class QueueSASP<E> implements Queue<E> {
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        final Node newNode = new Node<>(Objects.requireNonNull(o), false);
+
+        tail.next = newNode;
+        tail = newNode;
+
+        return true;
     }
 
     @Override
@@ -243,6 +251,17 @@ public class QueueSASP<E> implements Queue<E> {
         }
     }
 
+    public Set<Pair<E, Boolean>> flush(){
+
+        Set<Pair<E, Boolean>> eltsFlushed = new TreeSet<>();
+
+        for (Node<E> t = tail, h = head;  h != t ; h = h.next) {
+            eltsFlushed.add(new Pair<>(h.next.item,h.next.opType));
+        }
+
+        return eltsFlushed;
+    }
+
     /**
      * Inserts the specified element into this queue.
      * @param e
@@ -251,7 +270,7 @@ public class QueueSASP<E> implements Queue<E> {
     @Override
     public boolean offer(E e) {
 
-        final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
+        final Node<E> newNode = new Node<>(Objects.requireNonNull(e), true);
 
         tail.next = newNode;
         tail = newNode;

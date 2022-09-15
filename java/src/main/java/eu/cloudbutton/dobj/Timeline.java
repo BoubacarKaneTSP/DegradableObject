@@ -11,30 +11,20 @@ public class Timeline<T> {
 
     private final ThreadLocal<Queue<T>> topk;
     private final Queue<T> timeline;
-    private final Counter counter;
-    private final ThreadLocal<BoxedLong> lastTimelineSize;
 
     public Timeline(Queue timeline, Counter counter) {
         this.timeline = timeline;
-        this.counter = counter;
-        lastTimelineSize = ThreadLocal.withInitial(BoxedLong::new);
         topk = ThreadLocal.withInitial((LinkedList::new));
     }
 
     public void add(T elt){
         timeline.offer(elt);
-        counter.incrementAndGet();
    }
 
    public Queue<T> read(){
-        long nbEltAdded, counterValue;
 
-        counterValue = counter.read();
-        nbEltAdded = counterValue - lastTimelineSize.get().getVal();
-
-        lastTimelineSize.get().setVal(counterValue);
-
-        for (int i = 0; i < nbEltAdded; i++)
+        long queueSize = timeline.size();
+        for (int i = 0; i < queueSize; i++)
             topk.get().add(timeline.poll());
 
         int topkSize = topk.get().size();
