@@ -257,7 +257,7 @@ public class Retwis {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-                    String nameFile = _tag+".txt";
+                    String nameFile = "ALL_"+_tag+".txt";
                     if (nbCurrThread == 1)
                         fileWriter = new FileWriter(nameFile, false);
                     else

@@ -79,9 +79,6 @@ public class Database {
         next_user_ID = new CounterJUC();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
-
-        if (next_user_ID instanceof FuzzyCounter)
-            ((FuzzyCounter) next_user_ID).setN(nbThread);
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -148,7 +145,7 @@ public class Database {
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapFollowing.put(userID, factory.getSet() );
-        mapTimelines.put(userID, new Timeline(factory.getQueue(), factory.getCounter()) );
+        mapTimelines.put(userID, new Timeline(factory.getQueue()));
 
         return userID;
     }
