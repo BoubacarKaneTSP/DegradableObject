@@ -1,8 +1,5 @@
 package eu.cloudbutton.dobj;
 
-import eu.cloudbutton.dobj.incrementonly.BoxedLong;
-import eu.cloudbutton.dobj.incrementonly.Counter;
-
 import java.util.*;
 
 public class Timeline<T> {
@@ -12,7 +9,7 @@ public class Timeline<T> {
     private final ThreadLocal<Queue<T>> topk;
     private final Queue<T> timeline;
 
-    public Timeline(Queue timeline, Counter counter) {
+    public Timeline(Queue timeline) {
         this.timeline = timeline;
         topk = ThreadLocal.withInitial((LinkedList::new));
     }

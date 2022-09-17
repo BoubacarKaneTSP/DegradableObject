@@ -185,7 +185,6 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public int size() {
-
         return (int) size.read();
     }
 
