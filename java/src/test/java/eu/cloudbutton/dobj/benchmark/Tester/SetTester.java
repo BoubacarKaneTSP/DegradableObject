@@ -43,7 +43,6 @@ public class SetTester extends Tester<Set> {
                 list.add(iid);
         }
 
-        System.out.println(Thread.currentThread().getName());
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
@@ -53,8 +52,7 @@ public class SetTester extends Tester<Set> {
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
-                if(Thread.currentThread().getName().equals("pool-2-thread-1")){
-                    System.out.println("remove from : " + Thread.currentThread().getName());
+                if(Thread.currentThread().getName().contains("thread-1")){
                     startTime = System.nanoTime();
                     for (int i = 0; i < nbRepeat; i++) {
                         object.remove(list.get(i));
