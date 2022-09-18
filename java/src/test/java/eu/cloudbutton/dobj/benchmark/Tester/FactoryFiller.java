@@ -19,12 +19,12 @@ public class FactoryFiller {
 
     public Filler createFiller() throws ClassNotFoundException {
 
-        if (object instanceof AbstractMap)
-            return new MapFiller((AbstractMap) object, nbOps, useCollisionKey);
-        else if (object instanceof AbstractSet)
-            return new SetFiller((AbstractSet) object, nbOps, useCollisionKey);
+        if (object instanceof Map)
+            return new MapFiller((Map) object, nbOps, useCollisionKey);
+        else if (object instanceof Set)
+            return new SetFiller((Set) object, nbOps, useCollisionKey);
         else if (object instanceof AbstractQueue)
-            return new QueueFiller((AbstractQueue) object, nbOps);
+            return new QueueFiller((Queue) object, nbOps);
         else if (object instanceof List)
             return new ListFiller((AbstractList) object, nbOps);
         else if (object instanceof Counter)

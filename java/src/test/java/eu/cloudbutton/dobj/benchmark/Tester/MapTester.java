@@ -8,13 +8,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class MapTester extends Tester<AbstractMap> {
+public class MapTester extends Tester<Map> {
 
     private boolean useCollisionKey;
 
-    public MapTester(AbstractMap object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
+    public MapTester(Map object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
         super(object, ratios, latch);
         this.useCollisionKey = useCollisionKey;
     }

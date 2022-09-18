@@ -7,13 +7,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-public class SetTester extends Tester<AbstractSet> {
+public class SetTester extends Tester<Set> {
 
     private boolean useCollisionKey;
 
-    public SetTester(AbstractSet set, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
+    public SetTester(Set set, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
         super(set, ratios, latch);
         this.useCollisionKey = useCollisionKey;
     }

@@ -3,10 +3,7 @@ package eu.cloudbutton.dobj.benchmark.Tester;
 import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractQueue;
-import java.util.AbstractSet;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public class FactoryTester {
@@ -27,11 +24,11 @@ public class FactoryTester {
     public Tester createTester() throws ClassNotFoundException{
 
         if (object instanceof AbstractMap)
-            return new MapTester((AbstractMap) object, ratios, latch, useCollisionKey);
-        else if (object instanceof AbstractSet)
-            return new SetTester((AbstractSet) object, ratios, latch, useCollisionKey);
-        else if (object instanceof AbstractQueue)
-            return new QueueTester((AbstractQueue) object, ratios, latch);
+            return new MapTester((Map) object, ratios, latch, useCollisionKey);
+        else if (object instanceof Set)
+            return new SetTester((Set) object, ratios, latch, useCollisionKey);
+        else if (object instanceof Queue)
+            return new QueueTester((Queue) object, ratios, latch);
         else if (object instanceof AbstractList)
             return new ListTester((AbstractList) object, ratios, latch);
         else if (object instanceof Counter)

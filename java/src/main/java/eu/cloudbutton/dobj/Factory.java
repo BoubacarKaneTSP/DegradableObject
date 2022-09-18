@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Factory {
 
@@ -119,9 +120,8 @@ public class Factory {
     public static Set createSet(String set) throws ClassNotFoundException {
 
         switch (set){
-
             case "Set":
-                return new SetJUC<>();
+                return new ConcurrentSkipListSet<>();
             case "SetMCWMCR":
                 return new SetReadIntensive<>();
             case "SetMWSR":

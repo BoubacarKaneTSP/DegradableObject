@@ -8,13 +8,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
-public class MapFiller extends Filler<AbstractMap> {
+public class MapFiller extends Filler<Map> {
 
     private boolean useCollisionKey;
 
-    public MapFiller(AbstractMap map, long nbOps, boolean useCollisionKey) {
+    public MapFiller(Map map, long nbOps, boolean useCollisionKey) {
         super(map, nbOps);
         this.useCollisionKey = useCollisionKey;
     }

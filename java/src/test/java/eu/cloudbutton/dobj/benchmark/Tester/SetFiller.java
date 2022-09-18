@@ -7,13 +7,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
-public class SetFiller extends Filler<AbstractSet>{
+public class SetFiller extends Filler<Set>{
 
     private boolean useCollisionKey;
 
-    public SetFiller(AbstractSet set, long nbOps, boolean useCollisionKey) {
+    public SetFiller(Set set, long nbOps, boolean useCollisionKey) {
         super(set, nbOps);
         this.useCollisionKey = useCollisionKey;
     }

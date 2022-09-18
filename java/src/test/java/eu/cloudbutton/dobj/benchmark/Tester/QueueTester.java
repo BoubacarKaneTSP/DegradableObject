@@ -1,11 +1,11 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
-import java.util.AbstractQueue;
+import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 
-public class QueueTester extends Tester<AbstractQueue> {
+public class QueueTester extends Tester<Queue> {
 
-    public QueueTester(AbstractQueue list, int[] ratios, CountDownLatch latch) {
+    public QueueTester(Queue list, int[] ratios, CountDownLatch latch) {
         super(list, ratios, latch);
     }
 

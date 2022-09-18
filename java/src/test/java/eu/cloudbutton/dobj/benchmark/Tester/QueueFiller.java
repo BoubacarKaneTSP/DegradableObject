@@ -3,11 +3,12 @@ package eu.cloudbutton.dobj.benchmark.Tester;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.*;
 
-public class QueueFiller extends Filler<AbstractQueue> {
+public class QueueFiller extends Filler<Queue> {
 
-    public QueueFiller(AbstractQueue object, long nbOps) {
+    public QueueFiller(Queue object, long nbOps) {
         super(object, nbOps);
     }
 
