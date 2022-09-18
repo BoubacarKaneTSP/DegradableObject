@@ -20,9 +20,13 @@ public class Timeline<T> {
 
    public Queue<T> read(){
 
-        long queueSize = timeline.size();
+        long queueSize = 10;
+//        long queueSize = timeline.size();
+//        for (int i = 0; i < queueSize; i++)
+//            topk.get().add(timeline.poll());
+
         for (int i = 0; i < queueSize; i++)
-            topk.get().add(timeline.poll());
+            topk.get().add((T) "val");
 
         int topkSize = topk.get().size();
         for (int i = 0; i < topkSize - LENGTH; i++)
