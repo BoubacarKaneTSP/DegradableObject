@@ -137,7 +137,8 @@ public class Microbenchmark {
                 timeRemove = new AtomicLong(0);
                 timeRead = new AtomicLong(0);
                 for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
-
+                    if (_p)
+                        System.out.println("Test numero + " + _nbTest+1);
 //                     We re-fill the object only if this the first time we use it and we only test READ
 //                    if ((nbCurrentThread == 1 || (nbCurrentThread == 2 && _asymmetric)) && Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] == 100
 //                    || Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] != 100){
@@ -230,9 +231,9 @@ public class Microbenchmark {
                 totalREMOVE =  nbRemove.get() + nbRemoveFail.get();
                 totalREAD = nbRead.get() + nbReadFail.get();
 
-                throughputADD = (totalADD / (double) timeTotal) * 1_000_000_000;
-                throughputREMOVE = (totalREMOVE / (double) timeTotal) * 1_000_000_000;
-                throughputREAD = (totalREAD / (double) timeTotal) * 1_000_000_000;
+                throughputADD = (totalADD / (double) timeAdd.get()) * 1_000_000_000;
+                throughputREMOVE = (totalREMOVE / (double) timeRemove.get()) * 1_000_000_000;
+                throughputREAD = (totalREAD / (double) timeRead.get()) * 1_000_000_000;
 
                 throughputTotal = throughputADD + throughputREMOVE +throughputREAD;
 
@@ -250,7 +251,7 @@ public class Microbenchmark {
 
                 if (_p){
                     //Computing the operations that failed need to be done
-//                    System.out.println(nbOps + " " + throughputTotal);
+                    System.out.println();
                     System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
                     System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
                     System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
@@ -258,10 +259,7 @@ public class Microbenchmark {
                     System.out.println("Number of op computed :");
                     System.out.println("    - add: " + totalADD);
                     System.out.println("    - remove: " + totalREMOVE);
-                    System.out.println("    - read (unsuccessful): " + nbReadFail.get());
-                    System.out.println("    - ratio read unsuccessful: " + (nbReadFail.get() / (double) totalREAD ) *100);
                     System.out.println("    - read: " + totalREAD);
-//                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
                 nbCurrentThread *= 2;
@@ -298,8 +296,12 @@ public class Microbenchmark {
         @Override
         public Void call() throws Exception {
             try {
+                if (_p)
+                    System.out.println("Warming up.");
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
+                if (_p)
+                    System.out.println("Computing.");
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
             } catch (InterruptedException e) {

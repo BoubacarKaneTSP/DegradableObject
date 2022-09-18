@@ -54,6 +54,7 @@ public class SetTester extends Tester<Set> {
                 break;
             case REMOVE:
                 if(Thread.currentThread().getName().equals("pool-1-thread-1")){
+                    System.out.println("remove");
                     startTime = System.nanoTime();
                     for (int i = 0; i < nbRepeat; i++) {
                         object.remove(list.get(i));
@@ -64,7 +65,10 @@ public class SetTester extends Tester<Set> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.contains(list.get(i));
+                    for (Object o : object){
+
+                    }
+//                    object.contains(list.get(i));
                 }
                 endTime = System.nanoTime();
                 break;
