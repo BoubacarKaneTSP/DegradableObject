@@ -77,21 +77,21 @@ public abstract class Tester<T> implements Callable<Void> {
                 switch (type) {
                     case ADD:
                         if (elapsedTime != 0)
-                            add+= nbRepeat;
+                            add+= 1;
                         else
                             addFail++;
                         timeAdd += elapsedTime;
                         break;
                     case REMOVE:
                         if (elapsedTime != 0)
-                            remove+=nbRepeat;
+                            remove+=1;
                         else
                             removeFail++;
                         timeRemove += elapsedTime;
                         break;
                     case READ:
                         if (elapsedTime != 0)
-                            read+=nbRepeat;
+                            read+=1;
                         else
                             readFail++;
                         timeRead += elapsedTime;
