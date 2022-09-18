@@ -43,7 +43,7 @@ public class SetTester extends Tester<Set> {
                 list.add(iid);
         }
 
-
+        System.out.println(Thread.currentThread().getName());
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
