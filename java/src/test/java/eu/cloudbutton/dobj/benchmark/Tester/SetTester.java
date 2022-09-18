@@ -44,6 +44,7 @@ public class SetTester extends Tester<Set> {
         }
 
 
+        System.out.println(Thread.currentThread().getName());
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();

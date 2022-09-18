@@ -138,7 +138,7 @@ public class Microbenchmark {
                 timeRead = new AtomicLong(0);
                 for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
                     if (_p)
-                        System.out.println("Test numero + " + _nbTest+1);
+                        System.out.println("Test numero : " + (_nbTest+1));
 //                     We re-fill the object only if this the first time we use it and we only test READ
 //                    if ((nbCurrentThread == 1 || (nbCurrentThread == 2 && _asymmetric)) && Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] == 100
 //                    || Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray()[2] != 100){
