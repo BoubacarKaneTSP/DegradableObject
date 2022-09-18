@@ -40,6 +40,6 @@ public class QueueTester extends Tester<Queue> {
                 break;
         }
 
-        return (endTime - startTime)/nbRepeat;
+        return (endTime - startTime);
     }
 }

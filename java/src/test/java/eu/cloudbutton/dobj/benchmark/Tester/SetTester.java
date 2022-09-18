@@ -72,6 +72,6 @@ public class SetTester extends Tester<Set> {
                 break;
         }
 
-        return (endTime - startTime)/nbRepeat;
+        return (endTime - startTime);
     }
 }
