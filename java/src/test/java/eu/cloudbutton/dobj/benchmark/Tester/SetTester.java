@@ -45,6 +45,7 @@ public class SetTester extends Tester<Set> {
 
         switch (type) {
             case ADD:
+                System.out.println("A");
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.add(list.get(i));
@@ -52,6 +53,7 @@ public class SetTester extends Tester<Set> {
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
+                System.out.println("rem");
                 if(Thread.currentThread().getName().contains("thread-1")){
                     startTime = System.nanoTime();
                     for (int i = 0; i < nbRepeat; i++) {
@@ -61,6 +63,7 @@ public class SetTester extends Tester<Set> {
                 }
                 break;
             case READ:
+                System.out.println("L");
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     for (Object o : object){
@@ -71,6 +74,7 @@ public class SetTester extends Tester<Set> {
                 endTime = System.nanoTime();
                 break;
         }
+        System.out.println("O");
 
         return (endTime - startTime);
     }
