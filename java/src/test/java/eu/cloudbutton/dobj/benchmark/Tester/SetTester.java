@@ -65,7 +65,7 @@ public class SetTester extends Tester<Set> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    System.out.println("L");
+                    System.out.println("L"+i);
                     for (Object o : object){
                     }
 //                    object.contains(list.get(i));
