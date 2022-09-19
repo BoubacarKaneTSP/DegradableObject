@@ -67,7 +67,6 @@ public class SetTester extends Tester<Set> {
                 for (int i = 0; i < nbRepeat; i++) {
                     System.out.println("L");
                     for (Object o : object){
-                        System.out.println("L2");
                     }
 //                    object.contains(list.get(i));
                 }
