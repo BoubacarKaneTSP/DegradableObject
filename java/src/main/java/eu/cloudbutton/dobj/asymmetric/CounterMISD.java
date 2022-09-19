@@ -9,8 +9,11 @@ public class CounterMISD extends CounterIncrementOnly implements Counter {
         super();
     }
 
-    public void decrement(){
+    @Override
+    public long decrementAndGet(){
         local.get().val -=1 ;
         UNSAFE.storeFence();
+
+        return 0;
     }
 }
