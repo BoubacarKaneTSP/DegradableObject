@@ -105,7 +105,7 @@ public class SetMWSR<T> implements Set<T> {
 
     private void update(){
         for (QueueSASP<T> queue: queueList){
-//            Set<Pair<T, Boolean>> eltsFlushed = queue.flush();
+            Set<Pair<T, Boolean>> eltsFlushed = queue.flush();
 
 //            for (Pair<T, Boolean> element: eltsFlushed){
 //                if (element.getValue1())
