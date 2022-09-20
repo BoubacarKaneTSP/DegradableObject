@@ -283,7 +283,7 @@ public class QueueMASP<E> implements Queue<E> {
     @Override
     public E poll() {
 
-        size.decrementAndGet();
+//        size.decrementAndGet();
 
         if (head != tail){
             E item = head.next.item;
