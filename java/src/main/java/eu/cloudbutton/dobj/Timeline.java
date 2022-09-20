@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Timeline<T> {
 
@@ -14,8 +15,9 @@ public class Timeline<T> {
         topk = ThreadLocal.withInitial((LinkedList::new));
     }
 
-    public void add(T elt){
+    public void add(T elt) throws InterruptedException {
         timeline.offer(elt);
+        TimeUnit.NANOSECONDS.sleep(10);
    }
 
    public Queue<T> read(){
