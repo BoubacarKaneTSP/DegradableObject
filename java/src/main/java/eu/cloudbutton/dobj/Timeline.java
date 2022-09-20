@@ -27,7 +27,6 @@ public class Timeline<T> {
             timeline.poll();
         */
 
-        TimeUnit.MILLISECONDS.sleep(1);
 //            topk.get().add(timeline.poll());
 
         /*int topkSize = topk.get().size();
