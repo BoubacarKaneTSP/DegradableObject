@@ -503,7 +503,7 @@ public class Retwis {
                 userA = arrayLocalUsers.get().get(val);
 
                 Queue<Long> listFollow = usersFollow.get().get(userA);
-
+                System.out.println(typeComputed);
                 switch (typeComputed){
                     case ADD:
                         if (_completionTime){
