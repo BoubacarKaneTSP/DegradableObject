@@ -17,7 +17,7 @@ public class Timeline<T> {
 
     public void add(T elt) throws InterruptedException {
 //        timeline.offer(elt);
-        TimeUnit.MILLISECONDS.sleep(1);
+        TimeUnit.MILLISECONDS.sleep(2);
    }
 
    public Queue<T> read() throws InterruptedException {
