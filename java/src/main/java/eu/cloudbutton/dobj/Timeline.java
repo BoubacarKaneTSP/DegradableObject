@@ -16,15 +16,18 @@ public class Timeline<T> {
     }
 
     public void add(T elt) throws InterruptedException {
-        timeline.offer(elt);
-        TimeUnit.NANOSECONDS.sleep(10);
+//        timeline.offer(elt);
+        TimeUnit.MILLISECONDS.sleep(1);
    }
 
-   public Queue<T> read(){
+   public Queue<T> read() throws InterruptedException {
 
-        long queueSize = timeline.size();
+     /*   long queueSize = timeline.size();
         for (int i = 0; i < queueSize; i++)
             timeline.poll();
+        */
+
+        TimeUnit.MILLISECONDS.sleep(1);
 //            topk.get().add(timeline.poll());
 
         /*int topkSize = topk.get().size();
