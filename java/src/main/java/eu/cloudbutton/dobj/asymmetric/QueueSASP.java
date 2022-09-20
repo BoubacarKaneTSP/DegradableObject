@@ -256,8 +256,7 @@ public class QueueSASP<E> implements Queue<E> {
         Set<Pair<E, Boolean>> eltsFlushed = new TreeSet<>();
 
         for (Node<E> t = tail, h = head;  h != t ; h = h.next) {
-            new Pair<>(h.next.item,h.next.opType);
-//            eltsFlushed.add(new Pair<>(h.next.item,h.next.opType));
+            eltsFlushed.add(new Pair<>(h.next.item,h.next.opType));
         }
 
         return eltsFlushed;
