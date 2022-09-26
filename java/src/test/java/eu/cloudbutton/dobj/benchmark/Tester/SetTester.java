@@ -63,14 +63,16 @@ public class SetTester extends Tester<Set> {
                 }
                 break;
             case READ:
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    for (Object o : object){
-                        val += 1;
-                    }
+                if(Thread.currentThread().getName().contains("thread-1")) {
+                    startTime = System.nanoTime();
+                    for (int i = 0; i < nbRepeat; i++) {
+                        for (Object o : object) {
+                            val += 1;
+                        }
 //                    object.contains(list.get(i));
+                    }
+                    endTime = System.nanoTime();
                 }
-                endTime = System.nanoTime();
                 break;
         }
 

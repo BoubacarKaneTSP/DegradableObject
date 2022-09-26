@@ -113,6 +113,7 @@ public class SetMWSR<T> implements Set<T> {
                     try{
                         set.add(element.getValue0());
                     }catch (NullPointerException e){
+                        System.out.println(e);
                         System.out.println(element.getValue0());
                         System.exit(1);
                     }
