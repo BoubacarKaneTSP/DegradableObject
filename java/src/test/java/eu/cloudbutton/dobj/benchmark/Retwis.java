@@ -339,6 +339,11 @@ public class Retwis {
                 if (_s)
                     printWriter.close();
 
+                System.out.println(nbOperations);
+                System.out.println();
+                System.out.println(timeOperations);
+                System.out.println();
+
             }
 
 
@@ -478,7 +483,7 @@ public class Retwis {
 
             long startTime = 0L, endTime= 0L;
 
-            int n, nbLocalUsers, nbAttempt = 0;
+            int n, nbLocalUsers, nbAttempt = -1;
             Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
@@ -494,10 +499,10 @@ public class Retwis {
             * */
             restartOperation : for (;;){
                 nbAttempt ++;
-
-                if (nbAttempt >= nbAttemptMax)
+                if (nbAttempt > nbAttemptMax) {
                     typeComputed = chooseOperation();
-
+                    System.out.println("changing op");
+                }
                 int val = random.nextInt(nbLocalUsers);
 
                 userA = arrayLocalUsers.get().get(val);
@@ -512,8 +517,6 @@ public class Retwis {
                             database.addUser();
                             endTime = System.nanoTime();
                         }
-
-
                         break;
                     case FOLLOW:
                         n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
@@ -535,7 +538,6 @@ public class Retwis {
 //                        System.out.println(userA + " may not have a list of follow (Follow method)");
 //                        Make a "debug mode" to specify when a process doesn't handle userA
                         }
-
                         break;
                     case UNFOLLOW:
                         try{
@@ -553,7 +555,6 @@ public class Retwis {
                         }catch (NullPointerException e){
 //                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
                         }
-
                         break;
                     case TWEET:
                         String msg = "msg from user : " + userA;
@@ -564,7 +565,6 @@ public class Retwis {
                             database.tweet(userA, msg);
                             endTime = System.nanoTime();
                         }
-
                         break;
                     case READ:
                         if (_completionTime){
@@ -575,8 +575,6 @@ public class Retwis {
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
-
-
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
