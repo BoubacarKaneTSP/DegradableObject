@@ -235,7 +235,7 @@ public class Microbenchmark {
                 throughputREMOVE = (totalREMOVE / (double) timeRemove.get()) * 1_000_000_000;
                 throughputREAD = (totalREAD / (double) timeRead.get()) * 1_000_000_000;
 
-                throughputTotal = throughputADD + throughputREMOVE +throughputREAD;
+                throughputTotal = (totalADD+totalREAD+totalREMOVE)/(double) (timeAdd.get() + timeRemove.get() + timeRead.get()) * 1_000_000_000;
 
                 if (_s){
 
