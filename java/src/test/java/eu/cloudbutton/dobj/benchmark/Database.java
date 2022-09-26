@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.CounterJUC;
-import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -107,10 +106,9 @@ public class Database {
 //        System.out.println("Adding users");
 
         List<Long> localUsers = new ArrayList<>();
-//        userPerThread = nbUsers / nbThread;
-        userPerThread = 1;
+        userPerThread = nbUsers / nbThread;
+//        userPerThread = 1;
 //        System.out.println("userPerThread : " + userPerThread);
-
         for (int id = 0; id < userPerThread; id++) {
             user = addUser();
 

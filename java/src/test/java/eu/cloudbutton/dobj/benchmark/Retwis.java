@@ -100,7 +100,7 @@ public class Retwis {
 
     private Database database;
 
-    int NB_USERS = 1000000;
+    int NB_USERS = 100000;
 
     int nbSign = 5;
 
@@ -446,10 +446,16 @@ public class Retwis {
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
                 }
 
-
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
                 e.printStackTrace();
             }
+
+            int max = 0;
+            for (Set s :database.getMapFollowers().values()){
+                if (s.size() >= max)
+                    max = s.size();
+            }
+            System.out.println("nb follower : " + max);
             return null;
         }
 
@@ -501,7 +507,6 @@ public class Retwis {
                 nbAttempt ++;
                 if (nbAttempt > nbAttemptMax) {
                     typeComputed = chooseOperation();
-                    System.out.println("changing op");
                 }
                 int val = random.nextInt(nbLocalUsers);
 
