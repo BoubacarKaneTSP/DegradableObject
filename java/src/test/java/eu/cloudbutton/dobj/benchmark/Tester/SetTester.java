@@ -73,7 +73,6 @@ public class SetTester extends Tester<Set> {
                 endTime = System.nanoTime();
                 break;
         }
-        System.out.println("O");
 
         return (endTime - startTime);
     }
