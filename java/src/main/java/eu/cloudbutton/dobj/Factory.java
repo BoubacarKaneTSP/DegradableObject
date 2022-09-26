@@ -121,7 +121,7 @@ public class Factory {
 
         switch (set){
             case "Set":
-                return new TreeSet<>();
+                return new ConcurrentSkipListSet<>();
             case "SetMCWMCR":
                 return new SetReadIntensive<>();
             case "SetMWSR":
