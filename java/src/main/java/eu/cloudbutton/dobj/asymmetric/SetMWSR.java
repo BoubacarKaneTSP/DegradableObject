@@ -108,10 +108,15 @@ public class SetMWSR<T> implements Set<T> {
             Set<Pair<T, Boolean>> eltsFlushed = queue.flush();
 
             for (Pair<T, Boolean> element: eltsFlushed){
-                if (element.getValue0() == null)
-                    System.out.println("element null");
-                if (element.getValue1())
-                    set.add(element.getValue0());
+
+                if (element.getValue1()) {
+                    try{
+                        set.add(element.getValue0());
+                    }catch (NullPointerException e){
+                        System.out.println(element.getValue0());
+                        System.exit(1);
+                    }
+                }
                 else
                     set.remove(element.getValue0());
             }
