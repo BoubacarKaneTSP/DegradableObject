@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Timeline<T> {
 
@@ -21,13 +20,13 @@ public class Timeline<T> {
 
    public Queue<T> read() throws InterruptedException {
 
-        long queueSize = timeline.size();
-        for (int i = 0; i < queueSize; i++)
-            timeline.poll();
+       long queueSize = timeline.size();
 
-        topk.get().add(timeline.poll());
+       for (int i = 0; i < queueSize; i++)
+           topk.get().add(timeline.poll());
 
         int topkSize = topk.get().size();
+
         for (int i = 0; i < topkSize - LENGTH; i++)
             topk.get().poll();
 
