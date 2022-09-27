@@ -28,6 +28,7 @@ public class Database {
     private final Counter next_user_ID;
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
+    private final List<Long> localUsers;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
@@ -78,6 +79,7 @@ public class Database {
         next_user_ID = new CounterJUC();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
+        localUsers = new ArrayList<>();
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -105,7 +107,6 @@ public class Database {
 
 //        System.out.println("Adding users");
 
-        List<Long> localUsers = new ArrayList<>();
         userPerThread = nbUsers / nbThread;
 //        userPerThread = 1;
 

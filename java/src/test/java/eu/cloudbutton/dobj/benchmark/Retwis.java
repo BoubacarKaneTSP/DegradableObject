@@ -403,7 +403,8 @@ public class Retwis {
                 latch.await();
 
                 usersProbabilitySize.set(database.getUsersProbability().size());
-                arrayLocalUsers.set(new ArrayList<>(usersFollow.get().keySet()));
+                arrayLocalUsers.set(database.getLocalUsers());
+//                arrayLocalUsers.set(new ArrayList<>(usersFollow.get().keySet()));
 
                 while (flagWarmingUp.get()) { // warm up
 
