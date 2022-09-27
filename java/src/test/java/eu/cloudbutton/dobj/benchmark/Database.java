@@ -131,7 +131,16 @@ public class Database {
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j <= nbFollow; j++){
                 n = random.nextInt(usersProbability.size());
-                userB = usersProbability.get(n);
+                userB = 0;
+                try{
+                    userB = usersProbability.get(n);
+
+                }catch (NullPointerException e){
+                    System.out.println("usersProba : "+usersProbability);
+                    System.out.println("n : " + n);
+                    System.out.println("users proba get n : " + usersProbability.get(n));
+                    System.exit(1);
+                }
 
                 followUser(userA, userB);
                 usersFollow.get().get(userA).add(userB);
