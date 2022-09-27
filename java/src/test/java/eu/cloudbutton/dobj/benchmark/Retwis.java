@@ -449,13 +449,6 @@ public class Retwis {
             } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
                 e.printStackTrace();
             }
-
-            int max = 0;
-            for (Set s :database.getMapFollowers().values()){
-                if (s.size() >= max)
-                    max = s.size();
-            }
-            System.out.println("nb follower : " + max);
             return null;
         }
 
