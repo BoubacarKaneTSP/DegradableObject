@@ -112,8 +112,8 @@ public class Database {
         for (int id = 0; id < userPerThread; id++) {
             user = addUser();
 
-            usersFollow.get().put(user, new LinkedList<>());
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
+                usersFollow.get().put(user, new LinkedList<>());
                 localUsers.add(user);
             }
         }
