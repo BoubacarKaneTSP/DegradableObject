@@ -369,7 +369,7 @@ public class Retwis {
         private final CountDownLatch latchFillDatabase;
         private ThreadLocal<Map<Long, Queue<Long>>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread
+        private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread, a user is puted n times following a powerlaw
         private int nbRepeat = 1000;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
@@ -384,7 +384,6 @@ public class Retwis {
         public Void call(){
 
             try{
-
                 opType type;
                 Pair<opType, Long> opTypeLongPair;
 
@@ -403,22 +402,17 @@ public class Retwis {
                 latch.await();
 
                 usersProbabilitySize.set(database.getUsersProbability().size());
-                arrayLocalUsers.set(database.getLocalUsers());
-//                arrayLocalUsers.set(new ArrayList<>(usersFollow.get().keySet()));
+                arrayLocalUsers.set(database.getLocalUsers().get());
 
                 while (flagWarmingUp.get()) { // warm up
-
                     type = chooseOperation();
-
                     compute(type);
                 }
-
 
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
                         compute(type);
-
                     }
                 }else{
                     while (flagComputing.get()){
