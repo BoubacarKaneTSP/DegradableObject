@@ -134,7 +134,6 @@ public class Database {
                 userB = 0;
                 try{
                     userB = usersProbability.get(n);
-
                 }catch (NullPointerException e){
                     System.out.println("usersProba : "+usersProbability);
                     System.out.println("n : " + n);
