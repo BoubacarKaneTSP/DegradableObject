@@ -240,36 +240,35 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public boolean offer(E e) {
-//        final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
+        final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
-//        size.incrementAndGet();
+        size.incrementAndGet();
 
-//        for (Node<E> t = tail, p = t;;) {
-//
-//            Node<E> q = p.next;
-//            if (q == null) {
-//                // p is last node
-//                if (NEXT.compareAndSet(p, null, newNode)) {
-//                    // Successful CAS is the linearization point
-//                    // for e to become an element of this queue,
-//                    // and for newNode to become "live".
-//                    if (p != t) // hop two nodes at a time; failure is OK
-//                        TAIL.weakCompareAndSet(this, t, newNode);
-//                    return true;
-//                }
-//                // Lost CAS race to another thread; re-read next
-//            }
-//            else if (p == q)
-//                // We have fallen off list.  If tail is unchanged, it
-//                // will also be off-list, in which case we need to
-//                // jump to head, from which all live nodes are always
-//                // reachable.  Else the new tail is a better bet.
-//                p = (t != (t = tail)) ? t : head;
-//            else
-//                // Check for tail updates after two hops.
-//                p = (p != t && t != (t = tail)) ? t : q;
-//        }
-        return true;
+        for (Node<E> t = tail, p = t;;) {
+
+            Node<E> q = p.next;
+            if (q == null) {
+                // p is last node
+                if (NEXT.compareAndSet(p, null, newNode)) {
+                    // Successful CAS is the linearization point
+                    // for e to become an element of this queue,
+                    // and for newNode to become "live".
+                    if (p != t) // hop two nodes at a time; failure is OK
+                        TAIL.weakCompareAndSet(this, t, newNode);
+                    return true;
+                }
+                // Lost CAS race to another thread; re-read next
+            }
+            else if (p == q)
+                // We have fallen off list.  If tail is unchanged, it
+                // will also be off-list, in which case we need to
+                // jump to head, from which all live nodes are always
+                // reachable.  Else the new tail is a better bet.
+                p = (t != (t = tail)) ? t : head;
+            else
+                // Check for tail updates after two hops.
+                p = (p != t && t != (t = tail)) ? t : q;
+        }
     }
 
     @Override
@@ -283,8 +282,7 @@ public class QueueMASP<E> implements Queue<E> {
      */
     @Override
     public E poll() {
-
-//        size.decrementAndGet();
+        size.decrementAndGet();
 
         if (head != tail){
             E item = head.next.item;
