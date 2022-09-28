@@ -135,10 +135,10 @@ public class Database {
                 try{
                     userB = usersProbability.get(n);
                 }catch (NullPointerException e){
-                    System.out.println("usersProba : "+usersProbability);
+//                    System.out.println("usersProba : "+usersProbability);
                     System.out.println("n : " + n);
                     System.out.println("users proba get n : " + usersProbability.get(n));
-                    System.exit(1);
+                    System.exit(0);
                 }
 
                 followUser(userA, userB);
