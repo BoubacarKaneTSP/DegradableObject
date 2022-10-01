@@ -31,20 +31,11 @@ public class Microbenchmark {
         READ;
 
     }
-    public static AtomicLong timeAdd;
-    public static AtomicLong timeRemove;
-    public static AtomicLong timeRead;
-    public static AtomicLong nbAdd;
-    public static AtomicLong nbRemove;
-    public static AtomicLong nbRead;
-    public static AtomicLong nbAddFail;
-    public static AtomicLong nbRemoveFail;
-    public static AtomicLong nbReadFail;
     public static AtomicBoolean flag;
     public static boolean ratioFail;
     public static int nbCurrentThread;
-    public static Map<Retwis.opType, AtomicLong> nbOperations;
-    public static Map<Retwis.opType, AtomicLong> timeOperations;
+    public static Map<opType, AtomicLong> nbOperations;
+    public static Map<opType, AtomicLong> timeOperations;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -134,7 +125,7 @@ public class Microbenchmark {
                 nbOperations = new ConcurrentHashMap<>();
                 timeOperations = new ConcurrentHashMap<>();
 
-                for (Retwis.opType op : Retwis.opType.values()) {
+                for (opType op : opType.values()) {
                     nbOperations.put(op, new AtomicLong(0));
                     timeOperations.put(op, new AtomicLong(0));
                 }
