@@ -66,7 +66,6 @@ public class MapTester extends Tester<Map> {
                         nbFail++;
                 }
                 endTime = System.nanoTime();
-                Microbenchmark.nbReadFail.addAndGet(nbFail);
                 break;
         }
 
