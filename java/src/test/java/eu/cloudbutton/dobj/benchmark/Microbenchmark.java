@@ -122,6 +122,9 @@ public class Microbenchmark {
 
             for (;nbCurrentThread <= nbThreads; ) {
                 System.out.println();
+
+                if (_p)
+                    System.out.println("Nb threads = " + nbCurrentThread);
                 nbOperations = new ConcurrentHashMap<>();
                 timeOperations = new ConcurrentHashMap<>();
 
@@ -233,7 +236,6 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-
                     String nameFile = type + "_ALL.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2)) {
@@ -278,6 +280,11 @@ public class Microbenchmark {
 
                         if (_s)
                             printWriter.flush();
+                    }
+
+                    if (_p){
+                        System.out.println();
+                        System.out.println("Queue size : " + ((Queue)object).size());
                     }
                 }
 
