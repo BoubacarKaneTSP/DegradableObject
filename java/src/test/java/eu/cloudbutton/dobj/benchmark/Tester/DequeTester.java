@@ -3,6 +3,8 @@ package eu.cloudbutton.dobj.benchmark.Tester;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
+import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
+
 
 public class DequeTester extends Tester<Deque> {
 

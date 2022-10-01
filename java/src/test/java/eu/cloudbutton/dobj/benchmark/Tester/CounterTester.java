@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
 import eu.cloudbutton.dobj.incrementonly.Counter;
-
+import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import java.util.concurrent.CountDownLatch;
 
 public class CounterTester extends Tester<Counter> {

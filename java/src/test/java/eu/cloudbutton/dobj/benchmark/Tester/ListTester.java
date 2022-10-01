@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark.Tester;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 
 public class ListTester extends Tester<AbstractList> {
 
