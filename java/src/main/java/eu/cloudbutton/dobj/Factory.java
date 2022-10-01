@@ -145,6 +145,8 @@ public class Factory {
                 return new MapQueue<>();
             case "QueueSASP":
                 return new QueueSASP<>();
+            case "SequentialQueue":
+                return new java.util.LinkedList<>();
             default:
                 throw new ClassNotFoundException();
 

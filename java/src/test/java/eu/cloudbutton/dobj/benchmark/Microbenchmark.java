@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
@@ -26,7 +25,7 @@ import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 public class Microbenchmark {
 
 
-    enum opType{
+    public enum opType{
         ADD,
         REMOVE,
         READ;

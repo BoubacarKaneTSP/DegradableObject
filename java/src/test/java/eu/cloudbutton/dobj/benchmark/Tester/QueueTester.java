@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
+import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
+
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 

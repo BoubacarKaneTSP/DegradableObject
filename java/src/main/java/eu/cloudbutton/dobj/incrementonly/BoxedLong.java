@@ -6,4 +6,8 @@ import lombok.Data;
 public class BoxedLong {
 
     public long val;
+
+    public BoxedLong(){
+        val = 0;
+    }
 }
