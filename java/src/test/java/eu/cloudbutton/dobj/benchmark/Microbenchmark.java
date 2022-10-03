@@ -236,18 +236,18 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = "H.txt";
+                    String nameFile = "D.txt";
 /*
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
                     else
                         fileWriter = new FileWriter(nameFile, true);*/
 
-                    fileWriter = new FileWriter(nameFile, true);
+                    fileWriter = new FileWriter(nameFile, false);
                     printWriter = new PrintWriter(fileWriter);
                     System.out.println(fileWriter);
                     System.out.println(printWriter);
-                    printWriter.println(nbCurrentThread +" "+ throughputTotal);
+                    printWriter.println("hhhhhhhhhhh");
 
                     if (_p){
                         for (int j = 0; j < 10; j++) System.out.print("-");
