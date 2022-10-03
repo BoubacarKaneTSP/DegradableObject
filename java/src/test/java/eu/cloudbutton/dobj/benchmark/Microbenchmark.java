@@ -239,12 +239,13 @@ public class Microbenchmark {
                     String nameFile = type + "_ALL.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                        fileWriter = new FileWriter( nameFile, false);
+                        fileWriter = new FileWriter(nameFile, false);
                     else
                         fileWriter = new FileWriter(nameFile, true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread +" "+ throughputTotal);
+                    System.out.println(fileWriter);
+                    System.out.println(printWriter);
                     printWriter.println(nbCurrentThread +" "+ throughputTotal);
 
                     if (_p){
@@ -263,7 +264,7 @@ public class Microbenchmark {
                         nameFile = type + "_"+ op+".txt";
 
                         if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                            fileWriter = new FileWriter( nameFile, false);
+                            fileWriter = new FileWriter(nameFile, false);
                         else
                             fileWriter = new FileWriter(nameFile, true);
 
