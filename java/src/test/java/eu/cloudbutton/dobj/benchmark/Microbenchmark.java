@@ -243,7 +243,7 @@ public class Microbenchmark {
 
                     }
                     else {
-                        fileWriter = new FileWriter(nameFile + ".txt", true);
+                        fileWriter = new FileWriter(nameFile, true);
                     }
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(nbCurrentThread + " " + throughputTotal);
