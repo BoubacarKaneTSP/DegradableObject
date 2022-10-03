@@ -245,6 +245,7 @@ public class Microbenchmark {
 
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(nbCurrentThread +" "+ throughputTotal);
+                    printWriter.println(nbCurrentThread +" "+ throughputTotal);
 
                     if (_p){
                         for (int j = 0; j < 10; j++) System.out.print("-");
