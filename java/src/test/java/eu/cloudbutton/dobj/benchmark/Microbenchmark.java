@@ -237,12 +237,13 @@ public class Microbenchmark {
 
                 if (_s){
                     String nameFile = "H.txt";
-
+/*
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
                     else
-                        fileWriter = new FileWriter(nameFile, true);
+                        fileWriter = new FileWriter(nameFile, true);*/
 
+                    fileWriter = new FileWriter(nameFile, true);
                     printWriter = new PrintWriter(fileWriter);
                     System.out.println(fileWriter);
                     System.out.println(printWriter);
@@ -304,8 +305,10 @@ public class Microbenchmark {
 
                 if(_p)
                     System.out.println();
-                if (_s)
+                if (_s) {
+                    assert printWriter != null;
                     printWriter.close();
+                }
             }
 
         } catch (ClassNotFoundException | IOException e) {
