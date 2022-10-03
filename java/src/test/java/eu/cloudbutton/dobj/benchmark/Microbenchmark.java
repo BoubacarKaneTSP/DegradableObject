@@ -236,7 +236,7 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = type + "_ALL.txt";
+                    String nameFile = "H.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
