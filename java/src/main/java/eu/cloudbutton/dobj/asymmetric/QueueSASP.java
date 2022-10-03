@@ -9,7 +9,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -393,7 +392,7 @@ public class QueueSASP<E> implements Queue<E> {
             Field f = Unsafe.class.getDeclaredField("theUnsafe");
             f.setAccessible(true);
             UNSAFE = (Unsafe) f.get(null);
-            Class<?> k = ConcurrentLinkedQueue.class;
+            Class<?> k = QueueMASP.class;
             headOffset = UNSAFE.objectFieldOffset
                     (k.getDeclaredField("head"));
             tailOffset = UNSAFE.objectFieldOffset

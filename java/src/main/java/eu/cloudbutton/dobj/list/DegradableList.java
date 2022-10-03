@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentMap;
  * */
 public class DegradableList<T> implements List<T>{
 
-    private final ConcurrentMap<Thread, ConcurrentLinkedQueue<T>> list;
-    private final ThreadLocal<ConcurrentLinkedQueue<T>> local;
+    private final ConcurrentMap<Thread, Queue<T>> list;
+    private final ThreadLocal<Queue<T>> local;
 
     /**
      * Create an empty List.
@@ -25,7 +25,7 @@ public class DegradableList<T> implements List<T>{
     public DegradableList() {
         this.list = new ConcurrentHashMap<>();
         this.local = ThreadLocal.withInitial(() -> {
-            ConcurrentLinkedQueue<T> l = new ConcurrentLinkedQueue<>();
+            Queue<T> l = new ConcurrentLinkedQueue<>();
             list.put(Thread.currentThread(),l);
             return l;
         });    }
@@ -36,7 +36,7 @@ public class DegradableList<T> implements List<T>{
      */
     public List<T> read() {
         List<T> result = new ArrayList<>();
-        for (ConcurrentLinkedQueue<T> val : list.values()){
+        for (Queue<T> val : list.values()){
             result.addAll(val);
         }
         return result;
@@ -63,7 +63,7 @@ public class DegradableList<T> implements List<T>{
 
         boolean contained = false;
 
-        for (ConcurrentLinkedQueue<T> s : list.values()){
+        for (Queue<T> s : list.values()){
             contained = s.contains(o);
             if (contained)
                 break;
@@ -72,7 +72,7 @@ public class DegradableList<T> implements List<T>{
     }
 
     public void clear(){
-        for (ConcurrentLinkedQueue<T> list : list.values()){
+        for (Queue<T> list : list.values()){
             list.clear();
         }
     }
@@ -95,7 +95,7 @@ public class DegradableList<T> implements List<T>{
     public Iterator<T> iterator() {
 
         List<T> result = new ArrayList<>();
-        for (ConcurrentLinkedQueue<T> val : list.values()){
+        for (Queue<T> val : list.values()){
             result.addAll(val);
         }
         return result.iterator();

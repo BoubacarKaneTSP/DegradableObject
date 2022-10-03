@@ -5,9 +5,6 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.testng.annotations.Test;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PowerLawTest {
 

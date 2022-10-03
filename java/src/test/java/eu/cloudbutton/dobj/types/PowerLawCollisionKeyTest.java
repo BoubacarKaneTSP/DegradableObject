@@ -24,7 +24,7 @@ public class PowerLawCollisionKeyTest {
         Callable<Void> callable = () -> {
             factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
             String currentThreadName = Thread.currentThread().getName();
-            for (int i = 0; i < 100_000; i++) {
+            for (int i = 0; i < 100; i++) {
                 collisionMap.put(factory.getCollisionKey(), "value");
 //                map.put(currentThreadName +"_"+ i , "value");
             }
@@ -46,10 +46,10 @@ public class PowerLawCollisionKeyTest {
         end = System.nanoTime();
         double timeElapsed =  (end - start) / 1000000000.0;
 
-        System.out.println("Number of processes => " + Runtime.getRuntime().availableProcessors()/2);
-        System.out.println("Time elapsed filling the hashmap => " + timeElapsed + " seconds.");
-        System.out.println("Current map size => " + map.size());
-        System.out.println("Current collisionMap size => " + collisionMap.size());
+//        System.out.println("Number of processes => " + Runtime.getRuntime().availableProcessors()/2);
+//        System.out.println("Time elapsed filling the hashmap => " + timeElapsed + " seconds.");
+//        System.out.println("Current map size => " + map.size());
+//        System.out.println("Current collisionMap size => " + collisionMap.size());
     }
 
 }

@@ -12,7 +12,6 @@ import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
-import eu.cloudbutton.dobj.set.SetJUC;
 import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 
 import java.lang.reflect.Constructor;
@@ -138,7 +137,7 @@ public class Factory {
         switch (queue){
 
             case "Queue":
-                return new ConcurrentLinkedQueue<>();
+                return new ConcurrentLinkedQueue();
             case "QueueMASP":
                 return new QueueMASP<>();
             case "MapQueue":
