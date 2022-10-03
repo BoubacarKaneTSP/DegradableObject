@@ -23,7 +23,7 @@ public class FactoryFiller {
             return new MapFiller((Map) object, nbOps, useCollisionKey);
         else if (object instanceof Set)
             return new SetFiller((Set) object, nbOps, useCollisionKey);
-        else if (object instanceof AbstractQueue)
+        else if (object instanceof Queue)
             return new QueueFiller((Queue) object, nbOps);
         else if (object instanceof List)
             return new ListFiller((AbstractList) object, nbOps);
