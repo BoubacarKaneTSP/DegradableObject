@@ -104,7 +104,6 @@ public abstract class Tester<T> implements Callable<Void> {
                 }
             }
 
-            System.out.println("Map size : " + ((AbstractMap)object).size());
         } catch (Exception e) {
             e.printStackTrace();
         }
