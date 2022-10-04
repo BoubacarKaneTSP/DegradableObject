@@ -283,9 +283,9 @@ public class Microbenchmark {
                             printWriter.flush();
                     }
 
-                    if (_p){
+                    if (_p){/*
                         System.out.println();
-                        System.out.println("- Queue size : " + ((Queue)object).size());
+                        System.out.println("- Queue size : " + ((Queue)object).size());*/
 
                         for (opType type: opType.values())
                             System.out.println("- Nb "+ type + " :" + nbOperations.get(type));
