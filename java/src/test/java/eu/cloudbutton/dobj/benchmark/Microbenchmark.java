@@ -24,6 +24,11 @@ import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Microbenchmark {
 
+    public enum opType{
+        ADD,
+        REMOVE,
+        READ;
+    }
 
     public static AtomicLong timeAdd;
     public static AtomicLong timeRemove;
