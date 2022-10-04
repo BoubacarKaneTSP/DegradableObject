@@ -34,6 +34,6 @@ public class CounterTester extends Tester<Counter> {
                 break;
         }
 
-        return (endTime - startTime)/nbRepeat;
+        return (endTime - startTime);
     }
 }
