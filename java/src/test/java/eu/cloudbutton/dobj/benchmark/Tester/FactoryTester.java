@@ -23,7 +23,7 @@ public class FactoryTester {
 
     public Tester createTester() throws ClassNotFoundException{
 
-        if (object instanceof AbstractMap)
+        if (object instanceof Map)
             return new MapTester((Map) object, ratios, latch, useCollisionKey);
         else if (object instanceof Set)
             return new SetTester((Set) object, ratios, latch, useCollisionKey);
