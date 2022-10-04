@@ -36,7 +36,7 @@ public class SetTester extends Tester<Set> {
 
         for (int i = 0; i < nbRepeat; i++) {
             int rand = random.nextInt(ITEM_PER_THREAD);
-            String iid = Thread.currentThread().getId()  + Long.toString(rand);
+            long iid = Thread.currentThread().getId()  + rand;
 
             if (useCollisionKey)
                 list.add(factory.getCollisionKey());

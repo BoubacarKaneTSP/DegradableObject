@@ -8,8 +8,10 @@ import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.list.*;
 import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.list.ListJUC;
+import eu.cloudbutton.dobj.mcwmcr.MapAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
+import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
@@ -121,8 +123,10 @@ public class Factory {
         switch (set){
             case "Set":
                 return new ConcurrentSkipListSet<>();
-            case "SetMCWMCR":
+            case "SetReadIntensive":
                 return new SetReadIntensive<>();
+            case "SetAddIntensive":
+                return new SetAddIntensive<>();
             case "SetMWSR":
                 return new SetMWSR<>();
             default:
@@ -160,8 +164,10 @@ public class Factory {
 
             case "Map":
                 return new ConcurrentHashMap<>();
-            case "MapMCWMCR":
+            case "MapReadIntensive":
                 return new MapReadIntensive<>();
+            case "MapAddIntensive":
+                return new MapAddIntensive<>();
             default:
                 throw new ClassNotFoundException();
         }
