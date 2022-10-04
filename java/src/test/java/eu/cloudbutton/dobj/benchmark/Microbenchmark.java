@@ -25,17 +25,6 @@ import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 public class Microbenchmark {
 
 
-    public enum opType{
-        ADD,
-        REMOVE,
-        READ;
-
-    }
-    public static AtomicBoolean flag;
-    public static boolean ratioFail;
-    public static int nbCurrentThread;
-    public static Map<opType, AtomicLong> nbOperations;
-    public static Map<opType, AtomicLong> timeOperations;
     public static AtomicLong timeAdd;
     public static AtomicLong timeRemove;
     public static AtomicLong timeRead;
@@ -45,6 +34,8 @@ public class Microbenchmark {
     public static AtomicLong nbAddFail;
     public static AtomicLong nbRemoveFail;
     public static AtomicLong nbReadFail;
+    public static AtomicBoolean flag;
+    public static boolean ratioFail;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -125,13 +116,14 @@ public class Microbenchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            Object object = null;
+            Object object;
 
-            nbCurrentThread = _asymmetric ? 2 : 1;
+            int nbCurrentThread = 1;
+
+            if (_asymmetric)
+                nbCurrentThread = 2;
 
             for (;nbCurrentThread <= nbThreads; ) {
-                System.out.println();
-
                 nbAdd = new AtomicLong(0);
                 nbRemove = new AtomicLong(0);
                 nbRead = new AtomicLong(0);
@@ -143,47 +135,23 @@ public class Microbenchmark {
                 timeAdd = new AtomicLong(0);
                 timeRemove = new AtomicLong(0);
                 timeRead = new AtomicLong(0);
+                for (int a = 0; a < nbTest; a++) {
 
-                if (_p)
-                    System.out.println("Nb threads = " + nbCurrentThread);
-                nbOperations = new ConcurrentHashMap<>();
-                timeOperations = new ConcurrentHashMap<>();
+                    object = Factory.createObject(type);
 
-                for (opType op : opType.values()) {
-                    nbOperations.put(op, new AtomicLong(0));
-                    timeOperations.put(op, new AtomicLong(0));
-                }
+                    if (object instanceof FuzzyCounter)
+                        ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
-                    if (_p)
-                        System.out.println("Test numero : " + (_nbTest+1));
+                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
 
-                    if (_nbTest == 0) {
+//                    if (_p)
+//                        System.out.println("Start filling.");
 
-                        object = Factory.createObject(type);
+                    Filler filler = factoryFiller.createFiller();
+                    filler.fill();
 
-                        if (object instanceof FuzzyCounter)
-                            ((FuzzyCounter) object).setN(nbCurrentThread);
-
-                        FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
-
-                        if (_p)
-                            System.out.println("* Start filling *");
-
-                        Filler filler = factoryFiller.createFiller();
-
-                        if (! type.contains("Sequential"))
-                            filler.fill();
-                        else{
-                            for (int i = 0; i < nbOps; i++) {
-                                ((Queue)object).add(i);
-                            }
-                        }
-
-                        if (_p)
-                            System.out.println("* End filling *");
-                    }
-//                    }
+//                    if (_p)
+//                        System.out.println("End filling.");
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
@@ -197,12 +165,14 @@ public class Microbenchmark {
                             .useCollisionKey(_collisionKey)
                             .buildTester();
 
-                    int nbComputingThread = _asymmetric ? nbCurrentThread - 1 : nbCurrentThread; // -1 if a specific thread perform a different operation.
+                    int nbComputingThread = _asymmetric ? nbCurrentThread - 1 : nbCurrentThread;
 
-                    for (int j = 0; j < nbComputingThread; j++) {
+                    for (int j = 0; j < nbComputingThread; j++) { // -1 if a specific thread perform a different operation.
                         Tester tester = factoryTester.createTester();
                         callables.add(tester);
                     }
+
+
 
 //                   Code if a specific thread perform a different operation.
 
@@ -243,81 +213,52 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
+                long timeTotal, totalADD, totalREMOVE, totalREAD;
+                double throughputADD, throughputREMOVE, throughputREAD, throughputTotal;
 
+                timeTotal = timeAdd.get() + timeRemove.get() + timeRead.get();
+                totalADD =  nbAdd.get() + nbAddFail.get();
+                totalREMOVE =  nbRemove.get() + nbRemoveFail.get();
+                totalREAD = nbRead.get() + nbReadFail.get();
 
-                long timeTotal = 0L, nbOpTotal = 0L;
+                throughputADD = (totalADD / (double) timeTotal) * 1_000_000_000;
+                throughputREMOVE = (totalREMOVE / (double) timeTotal) * 1_000_000_000;
+                throughputREAD = (totalREAD / (double) timeTotal) * 1_000_000_000;
 
-                for (opType type: opType.values()){
-                    timeTotal += timeOperations.get(type).get();
-                    nbOpTotal += nbOperations.get(type).get();
+                throughputTotal = throughputADD + throughputREMOVE +throughputREAD;
+
+                if (_s){
+
+                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+                        fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", false);
+                    else
+                        fileWriter = new FileWriter("results_"+type+"_ratio_write_"+ratios[0]+".txt", true);
+
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(nbCurrentThread + " " + throughputTotal);
                 }
 
-                double throughputTotal;
 
-//                throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
-
-                throughputTotal = ((nbAdd.get() + nbRead.get() + nbRemove.get()) / (double) (timeAdd.get() + timeRemove.get() + timeRead.get()) ) *1_000_000_000;
-                if (_s){
-                    String nameFile = "D.txt";
-/*
-                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                        fileWriter = new FileWriter(nameFile, false);
-                    else
-                        fileWriter = new FileWriter(nameFile, true);*/
-
-                    fileWriter = new FileWriter(nameFile, false);
-                    printWriter = new PrintWriter(fileWriter);
-                    System.out.println(fileWriter);
-                    System.out.println(printWriter);
-                    printWriter.println("hhhhhhhhhhh");
-
-                    if (_p){
-                        for (int j = 0; j < 10; j++) System.out.print("-");
-                        System.out.print(" Throughput total (op/s) : ");
-                        System.out.println(String.format("%.3E", throughputTotal));
-                    }
-
-                    long nbOp, timeOp;
-
-                    for (opType op: opType.values()){
-
-                        nbOp = nbOperations.get(op).get();
-                        timeOp = timeOperations.get(op).get();
-
-                        nameFile = type + "_"+ op+".txt";
-
-                        if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                            fileWriter = new FileWriter(nameFile, false);
-                        else
-                            fileWriter = new FileWriter(nameFile, true);
-
-                        printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrentThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
-
-
-                        if (_p){
-                            for (int j = 0; j < 10; j++) System.out.print("-");
-                            System.out.print(" Throughput (op/s) for "+op+" : ");
-                            System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
-                        }
-
-                        if (_s)
-                            printWriter.flush();
-                    }
-
-                    if (_p){/*
-                        System.out.println();
-                        System.out.println("- Queue size : " + ((Queue)object).size());*/
-
-                        for (opType type: opType.values())
-                            System.out.println("- Nb "+ type + " :" + nbOperations.get(type));
-                    }
+                if (_p){
+                    //Computing the operations that failed need to be done
+//                    System.out.println(nbOps + " " + throughputTotal);
+                    System.out.println(nbCurrentThread + " " + String.format("%.3E",throughputTotal)); // printing the throughput per op for nbCurrentThread thread(s)
+                    System.out.println("    -throughput ADD : " + String.format("%.3E",throughputADD));
+                    System.out.println("    -throughput REMOVE : " + String.format("%.3E",throughputREMOVE));
+                    System.out.println("    -throughput READ: " + String.format("%.3E",throughputREAD));
+                    System.out.println("Number of op computed :");
+                    System.out.println("    - add: " + totalADD);
+                    System.out.println("    - remove: " + totalREMOVE);
+                    System.out.println("    - remove (fail): " + nbRemoveFail.get());
+                    System.out.println("    - ratio remove fail: " + (nbRemoveFail.get() / (double) totalREMOVE ) *100);
+                    System.out.println("    - read: " + totalREAD);
+//                    System.out.println("    -avg for in offer: "+ ((DegradableQueue) object).getNbFor()/(double)nbAdd.get() );
                 }
 
                 nbCurrentThread *= 2;
 
                 if (_quickTest){
-                    if(nbCurrentThread==2 || (_asymmetric && nbCurrentThread == 4))
+                    if(nbCurrentThread==2)
                         nbCurrentThread = nbThreads;
                 }
 
@@ -327,10 +268,8 @@ public class Microbenchmark {
 
                 if(_p)
                     System.out.println();
-                if (_s) {
-                    assert printWriter != null;
+                if (_s)
                     printWriter.close();
-                }
             }
 
         } catch (ClassNotFoundException | IOException e) {
@@ -350,12 +289,8 @@ public class Microbenchmark {
         @Override
         public Void call() throws Exception {
             try {
-                if (_p)
-                    System.out.println("Warming up.");
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
-                if (_p)
-                    System.out.println("Computing.");
                 TimeUnit.SECONDS.sleep(time);
                 flag.set(true);
             } catch (InterruptedException e) {
