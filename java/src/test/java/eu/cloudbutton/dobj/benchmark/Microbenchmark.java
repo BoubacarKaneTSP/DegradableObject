@@ -305,6 +305,7 @@ public class Microbenchmark {
                 }
             }
 
+            System.exit(0);
             } catch (IOException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ioException) {
             ioException.printStackTrace();
         }
