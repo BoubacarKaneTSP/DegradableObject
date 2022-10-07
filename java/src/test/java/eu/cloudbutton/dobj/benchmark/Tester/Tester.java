@@ -5,7 +5,6 @@ import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -13,12 +12,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Tester<T> implements Callable<Void> {
-
-    enum opType{
-        ADD,
-        REMOVE,
-        READ
-    }
 
     protected static final int ITEM_PER_THREAD = 1000;
     protected final ThreadLocalRandom random;
@@ -38,15 +31,19 @@ public abstract class Tester<T> implements Callable<Void> {
     @Override
     public Void call() {
 
-        long n, add = 0, remove = 0, read = 0, addFail = 0, removeFail = 0, readFail = 0;
-        long timeAdd = 0, timeRemove = 0, timeRead = 0, elapsedTime;
+        long n, elapsedTime;
+        Map<opType, BoxedLong> localOp = new HashMap<>();
+        Map<opType, BoxedLong> localTimeOp = new HashMap<>();
 
-        opType type;
-
+        for (opType type: opType.values()){
+            localOp.put(type, new BoxedLong());
+            localTimeOp.put(type, new BoxedLong());
+        }
         latch.countDown();
 
         try{
             // warm up
+            opType type;
             while (Microbenchmark.flag.get()) {
 
                 n = this.random.nextInt(100);
@@ -58,7 +55,6 @@ public abstract class Tester<T> implements Callable<Void> {
                 }else {
                     type = opType.READ;
                 }
-
                 test(type);
             }
 
@@ -76,53 +72,24 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-
                 elapsedTime = test(type);
 
-                switch (type) {
-                    case ADD:
                         if (elapsedTime != 0)
-                            add+= nbRepeat;
-                        else
-                            addFail++;
-                        timeAdd += elapsedTime;
-                        break;
-                    case REMOVE:
-                        if (elapsedTime != 0)
-                            remove+=nbRepeat;
-                        else
-                            removeFail++;
-                        timeRemove += elapsedTime;
-                        break;
-                    case READ:
-                        if (elapsedTime != 0)
-                            read+=nbRepeat;
-                        else
-                            readFail++;
-                        timeRead += elapsedTime;
-                        break;
-                }
+                    localOp.get(type).val += nbRepeat;
+                localTimeOp.get(type).val += elapsedTime;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Microbenchmark.nbAdd.addAndGet(add);
-        Microbenchmark.nbRemove.addAndGet(remove);
-        Microbenchmark.nbRead.addAndGet(read);
-
-        Microbenchmark.nbAddFail.addAndGet(addFail);
-        Microbenchmark.nbRemoveFail.addAndGet(removeFail);
-        Microbenchmark.nbReadFail.addAndGet(readFail);
-
-        Microbenchmark.timeAdd.addAndGet(timeAdd);
-        Microbenchmark.timeRemove.addAndGet(timeRemove);
-        Microbenchmark.timeRead.addAndGet(timeRead);
+        for (opType type: opType.values()){
+            Microbenchmark.nbOperations.get(type).addAndGet(localOp.get(type).getVal());
+            Microbenchmark.timeOperations.get(type).addAndGet(localTimeOp.get(type).getVal());
+        }
 
         return null;
     }
 
     protected abstract long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
 }
-

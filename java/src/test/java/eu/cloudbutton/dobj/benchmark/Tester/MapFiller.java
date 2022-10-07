@@ -22,12 +22,12 @@ public class MapFiller extends Filler<Map> {
 
     @Override
     public void fill() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-/*
+
         CollisionKeyFactory factory = new CollisionKeyFactory();
 
         factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-//        int nbTask = Microbenchmark.nbCurrentThread;
+        int nbTask = Microbenchmark.nbCurrentThread;
         ExecutorService executor = Executors.newFixedThreadPool(nbTask);
         List<Future<Void>> futures = new ArrayList<>();
 
@@ -50,7 +50,6 @@ public class MapFiller extends Filler<Map> {
         for (Future<Void> future : futures) {
             future.get();
         }
-*/
+
     }
 }
-
