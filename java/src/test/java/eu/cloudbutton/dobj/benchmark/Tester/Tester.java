@@ -38,7 +38,7 @@ public abstract class Tester<T> implements Callable<Void> {
     @Override
     public Void call() {
 
-        int n, add = 0, remove = 0, read = 0, addFail = 0, removeFail = 0, readFail = 0;
+        long n, add = 0, remove = 0, read = 0, addFail = 0, removeFail = 0, readFail = 0;
         long timeAdd = 0, timeRemove = 0, timeRead = 0, elapsedTime;
 
         opType type;
