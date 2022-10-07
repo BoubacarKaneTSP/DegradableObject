@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class BoxedLong {
 
-    @sun.misc.Contended
+    @jdk.internal.vm.annotation.Contended
     public long val;
 
     public BoxedLong(){
