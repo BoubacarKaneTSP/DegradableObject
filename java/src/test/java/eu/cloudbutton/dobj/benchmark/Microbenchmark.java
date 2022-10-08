@@ -264,8 +264,8 @@ public class Microbenchmark {
                         else
                             fileWriter = new FileWriter(nameFile, true);
 
-                        printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);
+                        /*printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);*/
                     }
 
 
