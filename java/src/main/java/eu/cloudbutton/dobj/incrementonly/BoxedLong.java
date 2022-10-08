@@ -3,9 +3,9 @@ package eu.cloudbutton.dobj.incrementonly;
 import lombok.Data;
 
 @Data
+@jdk.internal.vm.annotation.Contended
 public class BoxedLong {
 
-//    @jdk.internal.vm.annotation.Contended
     public long val;
 
     public BoxedLong(){
