@@ -219,6 +219,17 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
+                long timeTotal = 0L, nbOpTotal = 0L;
+
+                for (opType type: opType.values()){
+                    timeTotal += timeOperations.get(type).get();
+                    nbOpTotal += nbOperations.get(type).get();
+                }
+
+                double throughputTotal;
+
+                throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
+
                 if (_s){
                     String nameFile = type + "_ALL.txt";
 
@@ -228,7 +239,7 @@ public class Microbenchmark {
                         fileWriter = new FileWriter(nameFile, true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println("val");
+                    printWriter.println(nbCurrentThread + " " + throughputTotal);
                 }
 
 
