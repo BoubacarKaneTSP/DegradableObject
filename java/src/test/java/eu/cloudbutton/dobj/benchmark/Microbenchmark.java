@@ -240,6 +240,7 @@ public class Microbenchmark {
 
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(nbCurrentThread + " " + throughputTotal);
+                    printWriter.close();
                 }
 
                 if (_p){
@@ -256,18 +257,16 @@ public class Microbenchmark {
                     nbOp = nbOperations.get(op).get();
                     timeOp = timeOperations.get(op).get();
 
-
-
                     if (_s) {
                         if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                             fileWriter = new FileWriter(nameFile, false);
                         else
                             fileWriter = new FileWriter(nameFile, true);
 
-                        /*printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);*/
+                        printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);
+                        printWriter.close();
                     }
-
 
                     if (_p) {
                         for (int j = 0; j < 10; j++) System.out.print("-");
@@ -275,71 +274,6 @@ public class Microbenchmark {
                         System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
                     }
                 }
-
-                /*long timeTotal = 0L, nbOpTotal = 0L;
-
-                for (opType type: opType.values()){
-                    timeTotal += timeOperations.get(type).get();
-                    nbOpTotal += nbOperations.get(type).get();
-                }
-
-                double throughputTotal;
-
-                throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
-
-                String nameFile;
-
-                if (_s) {
-                    nameFile = type + "_ALL.txt";
-
-                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                        fileWriter = new FileWriter(nameFile, false);
-                    else
-                        fileWriter = new FileWriter(nameFile, true);
-
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread + " " + throughputTotal);
-                }
-
-                if (_p){
-                    for (int j = 0; j < 10; j++) System.out.print("-");
-                    System.out.print(" Throughput total (op/s) : ");
-                    System.out.println(String.format("%.3E", throughputTotal));
-                }
-
-                long nbOp, timeOp;
-
-                for (opType op: opType.values()){
-
-                    nbOp = nbOperations.get(op).get();
-                    timeOp = timeOperations.get(op).get();
-
-                    nameFile = type + "_"+ op+".txt";
-
-                    if(_s) {
-                        if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                            fileWriter = new FileWriter(nameFile, false);
-                        else
-                            fileWriter = new FileWriter(nameFile, true);
-
-                        printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrentThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
-                    }
-
-
-                    if (_p){
-                        for (int j = 0; j < 10; j++) System.out.print("-");
-                        System.out.print(" Throughput (op/s) for "+op+" : ");
-                        System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
-                    }
-                }
-                if (_s)
-                    printWriter.flush();
-
-                if (_p){
-                    for (opType type: opType.values())
-                        System.out.println("- Nb "+ type + " :" + nbOperations.get(type));
-                }*/
 
                 nbCurrentThread *= 2;
 
