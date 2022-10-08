@@ -219,15 +219,18 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
+                if (_s){
+                    String nameFile = type + "_ALL.txt";
 
-                String nameFile = "test.txt";
-                if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                    fileWriter = new FileWriter(nameFile, false);
-                else
-                    fileWriter = new FileWriter(nameFile, true);
+                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+                        fileWriter = new FileWriter(nameFile, false);
+                    else
+                        fileWriter = new FileWriter(nameFile, true);
 
-                printWriter = new PrintWriter(fileWriter);
-                printWriter.println("val");
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println("val");
+                }
+
 
                 /*long timeTotal = 0L, nbOpTotal = 0L;
 
