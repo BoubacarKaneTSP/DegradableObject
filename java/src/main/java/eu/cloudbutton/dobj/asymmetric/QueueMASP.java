@@ -281,7 +281,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Override
     public boolean offer(E e) {
         final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
-        queueSize.incrementAndGet();
 
         for (Node<E> t = tail, p = t;;) {
 
@@ -296,6 +295,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     {
                         TAIL.weakCompareAndSet(this, t, newNode);
                     }
+//                    queueSize.incrementAndGet();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -332,7 +332,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-            queueSize.decrementAndGet();
+//            queueSize.decrementAndGet();
 //            head.item = null;
             return item;
         }
