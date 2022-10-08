@@ -242,6 +242,39 @@ public class Microbenchmark {
                     printWriter.println(nbCurrentThread + " " + throughputTotal);
                 }
 
+                if (_p){
+                    for (int j = 0; j < 10; j++) System.out.print("-");
+                    System.out.print(" Throughput total (op/s) : ");
+                    System.out.println(String.format("%.3E", throughputTotal));
+                }
+
+                long nbOp, timeOp;
+
+                for (opType op: opType.values()) {
+
+                    String nameFile = type + "_" + op + ".txt";
+                    nbOp = nbOperations.get(op).get();
+                    timeOp = timeOperations.get(op).get();
+
+
+
+                    if (_s) {
+                        if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+                            fileWriter = new FileWriter(nameFile, false);
+                        else
+                            fileWriter = new FileWriter(nameFile, true);
+
+                        printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);
+                    }
+
+
+                    if (_p) {
+                        for (int j = 0; j < 10; j++) System.out.print("-");
+                        System.out.print(" Throughput (op/s) for " + op + " : ");
+                        System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
+                    }
+                }
 
                 /*long timeTotal = 0L, nbOpTotal = 0L;
 
