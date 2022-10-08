@@ -220,8 +220,16 @@ public class Microbenchmark {
                 }
 
 
+                String nameFile = "test.txt";
+                if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+                    fileWriter = new FileWriter(nameFile, false);
+                else
+                    fileWriter = new FileWriter(nameFile, true);
 
-                long timeTotal = 0L, nbOpTotal = 0L;
+                printWriter = new PrintWriter(fileWriter);
+                printWriter.println("val");
+
+                /*long timeTotal = 0L, nbOpTotal = 0L;
 
                 for (opType type: opType.values()){
                     timeTotal += timeOperations.get(type).get();
@@ -284,7 +292,7 @@ public class Microbenchmark {
                 if (_p){
                     for (opType type: opType.values())
                         System.out.println("- Nb "+ type + " :" + nbOperations.get(type));
-                }
+                }*/
 
                 nbCurrentThread *= 2;
 
