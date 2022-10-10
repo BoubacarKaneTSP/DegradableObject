@@ -46,6 +46,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * An unbounded thread-safe {@linkplain Queue queue} based on linked nodes.
@@ -154,14 +155,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     private transient Node<E> head;
     private transient volatile Node<E> tail;
-    private Counter queueSize;
+    private LongAdder queueSize;
 
     /**
      * Create an empty queue.
      */
     public QueueMASP() {
         tail = head = new Node<>(null);
-        queueSize = new CounterMISD();
+        queueSize = new LongAdder();
     }
 
     /**
@@ -258,7 +259,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Override
     public int size() {
 
-        return (int) queueSize.read();
+        return queueSize.intValue();
         /*int ret = 0;
         for (Node<E> p = head;;) {
             if (p.item != null) ret++;
@@ -295,7 +296,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     {
                         TAIL.weakCompareAndSet(this, t, newNode);
                     }
-                    queueSize.incrementAndGet();
+                    queueSize.increment();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -332,7 +333,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-            queueSize.decrementAndGet();
+            queueSize.decrement();
 //            head.item = null;
             return item;
         }
