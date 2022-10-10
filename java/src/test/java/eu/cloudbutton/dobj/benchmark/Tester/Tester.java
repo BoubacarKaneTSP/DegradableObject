@@ -73,10 +73,8 @@ public abstract class Tester<T> implements Callable<Void> {
                 }
 
                 elapsedTime = test(type);
-                if (elapsedTime != 0 && type != opType.REMOVE)
+                if (elapsedTime != 0)
                     localOp.get(type).val += nbRepeat;
-                else if(type == opType.REMOVE)
-                    localOp.get(type).val += 1;
 
                 localTimeOp.get(type).val += elapsedTime;
             }
