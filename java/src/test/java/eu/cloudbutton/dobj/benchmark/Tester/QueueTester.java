@@ -28,14 +28,14 @@ public class QueueTester extends Tester<Queue> {
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                /*for (int i = 0; i < nbRepeat; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.poll();
-                }*/
-                Object obj ;
+                }
+/*                Object obj ;
                 do {
                     val += 1;
                     obj = object.poll();
-                }while (obj != null);
+                }while (obj != null);*/
 
                 endTime = System.nanoTime();
                 break;
