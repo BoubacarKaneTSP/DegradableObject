@@ -35,6 +35,9 @@ public abstract class Tester<T> implements Callable<Void> {
         Map<opType, BoxedLong> localOp = new HashMap<>();
         Map<opType, BoxedLong> localTimeOp = new HashMap<>();
 
+        ThreadLocal<BoxedLong> threadLocal = ThreadLocal.withInitial(BoxedLong::new);
+
+
         for (opType type: opType.values()){
             localOp.put(type, new BoxedLong());
             localTimeOp.put(type, new BoxedLong());
@@ -55,7 +58,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 }else {
                     type = opType.READ;
                 }
-                test(type);
+                test(type, threadLocal);
             }
 
             latch.await();
@@ -72,7 +75,7 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type);
+                elapsedTime = test(type, threadLocal);
                 if (elapsedTime != 0)
                     localOp.get(type).val += nbRepeat;
 
@@ -92,5 +95,5 @@ public abstract class Tester<T> implements Callable<Void> {
     }
 
     protected abstract long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
-    protected abstract long test(opType type,BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
+    protected abstract long test(opType type, ThreadLocal<BoxedLong> boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
 }

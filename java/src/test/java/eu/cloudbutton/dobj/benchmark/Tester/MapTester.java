@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
-import eu.cloudbutton.dobj.benchmark.Microbenchmark;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
@@ -74,7 +73,7 @@ public class MapTester extends Tester<Map> {
     }
 
     @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    protected long test(opType type, ThreadLocal<BoxedLong> boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         return 0;
     }
 }

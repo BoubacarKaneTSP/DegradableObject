@@ -299,7 +299,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
                         TAIL.weakCompareAndSet(this, t, newNode);
                     }
 //                    queueSize.incrementAndGet();
-                    queueSize.get().val += 1;
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -337,7 +336,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
             E item = head.next.item;
             head = head.next;
 //            queueSize.decrementAndGet();
-            queueSize.get().val -= 1;
 //            head.item = null;
             return item;
         }

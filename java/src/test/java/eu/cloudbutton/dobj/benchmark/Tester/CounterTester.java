@@ -41,7 +41,7 @@ public class CounterTester extends Tester<Counter> {
     }
 
     @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    protected long test(opType type, ThreadLocal<BoxedLong> boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         return 0;
     }
 }
