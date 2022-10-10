@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * */
 public class CounterIncrementOnly implements Counter {
 
-    private final List<BoxedLong> count;
+//    private final List<BoxedLong> count;
     protected final ThreadLocal<BoxedLong> local;
 
     protected static final sun.misc.Unsafe UNSAFE;
@@ -32,10 +32,10 @@ public class CounterIncrementOnly implements Counter {
      * Creates a new Counter initialized with the initial value 0.
      */
     public CounterIncrementOnly() {
-        this.count = new CopyOnWriteArrayList<>();
+//        this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
             BoxedLong l = new BoxedLong();
-            count.add(l);
+//            count.add(l);
             return l;
         });
     }
@@ -76,9 +76,9 @@ public class CounterIncrementOnly implements Counter {
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (BoxedLong v : count) {
+       /* for (BoxedLong v : count) {
             total += v.val;
-        }
+        }*/
         return total;
     }
 
