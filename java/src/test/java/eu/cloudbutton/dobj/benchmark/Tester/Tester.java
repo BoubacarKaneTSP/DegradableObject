@@ -35,9 +35,6 @@ public abstract class Tester<T> implements Callable<Void> {
         Map<opType, BoxedLong> localOp = new HashMap<>();
         Map<opType, BoxedLong> localTimeOp = new HashMap<>();
 
-        ThreadLocal<BoxedLong> threadLocal = ThreadLocal.withInitial(BoxedLong::new);
-
-
         for (opType type: opType.values()){
             localOp.put(type, new BoxedLong());
             localTimeOp.put(type, new BoxedLong());
@@ -58,7 +55,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 }else {
                     type = opType.READ;
                 }
-                test(type, threadLocal.get());
+                test(type);
             }
 
             latch.await();
@@ -75,7 +72,7 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type, threadLocal.get());
+                elapsedTime = test(type);
                 if (elapsedTime != 0)
                     localOp.get(type).val += nbRepeat;
 
