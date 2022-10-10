@@ -4,7 +4,6 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.LongAdder;
 
 /**
  * This class build a Counter on top of a Snapshot object.
@@ -13,8 +12,8 @@ import java.util.concurrent.atomic.LongAdder;
  * */
 public class CounterIncrementOnly implements Counter {
 
-    private final CopyOnWriteArrayList<LongAdder> count;
-    protected final ThreadLocal<LongAdder> local;
+    private final CopyOnWriteArrayList<BoxedLong> count;
+    protected final ThreadLocal<BoxedLong> local;
 
     protected static final sun.misc.Unsafe UNSAFE;
 
@@ -34,7 +33,7 @@ public class CounterIncrementOnly implements Counter {
     public CounterIncrementOnly() {
         this.count = new CopyOnWriteArrayList<>();
         this.local = ThreadLocal.withInitial(() -> {
-            LongAdder l = new LongAdder();
+            BoxedLong l = new BoxedLong();
             count.add(l);
             return l;
         });
@@ -46,12 +45,14 @@ public class CounterIncrementOnly implements Counter {
      */
     @Override
     public long incrementAndGet() {
-        local.get().increment();
+        local.get().val += 1;
+        UNSAFE.storeFence();
         return 0;
     }
 
     public void increment(){
-        local.get().increment();
+        local.get().val +=1 ;
+        UNSAFE.storeFence();
     }
     /**
      * Adds the given value to the current value of the Counter.
@@ -74,8 +75,8 @@ public class CounterIncrementOnly implements Counter {
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (LongAdder v : count) {
-            total += v.longValue();
+        for (BoxedLong v : count) {
+            total += v.val;
         }
         return total;
     }

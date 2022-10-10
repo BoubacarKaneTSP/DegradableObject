@@ -20,7 +20,7 @@ public class QueueTest {
 
     @Test
     void append() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Factory factory = new Factory();
+/*        Factory factory = new Factory();
 
         Class cls;
 
@@ -30,22 +30,22 @@ public class QueueTest {
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
         factory.setFactoryQueue(cls);
-        doAppend(factory.getQueue());
+        doAppend(factory.getQueue());*/
     }
 
     private static void doAppend(Queue<Integer> queue){
 
-        for (int i = 0; i < 100; i++) {
+   /*     for (int i = 0; i < 100; i++) {
             queue.add(i);
             System.out.println(i);
             if (i%2 == 0)
                 queue.poll();
         }
 
-        System.out.println(queue);
+        System.out.println(queue);*/
     }
     private static void doConcurrentAppend(Queue<Integer> queue) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        /*ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             queue.add(1);
@@ -67,7 +67,7 @@ public class QueueTest {
         queue.add(2);
         queue.add(3);
 
-        /*Iterator<Integer> it = list.iterator();
+        *//*Iterator<Integer> it = list.iterator();
         int i = 0;
 
         while (it.hasNext()) {
