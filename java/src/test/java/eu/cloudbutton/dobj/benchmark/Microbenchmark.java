@@ -69,7 +69,7 @@ public class Microbenchmark {
     public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-//        new Microbenchmark().doMain(args);
+        new Microbenchmark().doMain(args);
 
         System.out.println(VM.current().details());
         System.out.println(ClassLayout.parseClass(BoxedLong.class).toPrintable());
