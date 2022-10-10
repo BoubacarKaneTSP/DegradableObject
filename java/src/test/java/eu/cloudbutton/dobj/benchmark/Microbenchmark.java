@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.benchmark.Tester.*;
+import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
@@ -19,6 +20,9 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.openjdk.jol.info.ClassLayout;
+import org.openjdk.jol.vm.VM;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
@@ -65,7 +69,10 @@ public class Microbenchmark {
     public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        new Microbenchmark().doMain(args);
+//        new Microbenchmark().doMain(args);
+
+        System.out.println(VM.current().details());
+        System.out.println(ClassLayout.parseClass(BoxedLong.class).toPrintable());
     }
 
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
