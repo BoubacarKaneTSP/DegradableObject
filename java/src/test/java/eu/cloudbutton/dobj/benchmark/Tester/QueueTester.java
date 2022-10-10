@@ -28,17 +28,22 @@ public class QueueTester extends Tester<Queue> {
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
+                /*for (int i = 0; i < nbRepeat; i++) {
                     object.poll();
-                }
+                }*/
+                Object val ;
+                do {
+                    val = object.poll();
+                }while (val != null);
+
                 endTime = System.nanoTime();
                 break;
             case READ:
-                startTime = System.nanoTime();
+                /*startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.contains(rand);
                 }
-                endTime = System.nanoTime();
+                endTime = System.nanoTime();*/
                 break;
         }
 
