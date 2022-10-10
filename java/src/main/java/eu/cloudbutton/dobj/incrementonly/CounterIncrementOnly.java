@@ -3,6 +3,8 @@ package eu.cloudbutton.dobj.incrementonly;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -12,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * */
 public class CounterIncrementOnly implements Counter {
 
-    private final CopyOnWriteArrayList<BoxedLong> count;
+    private final Queue<BoxedLong> count;
     protected final ThreadLocal<BoxedLong> local;
 
     protected static final sun.misc.Unsafe UNSAFE;
@@ -31,7 +33,7 @@ public class CounterIncrementOnly implements Counter {
      * Creates a new Counter initialized with the initial value 0.
      */
     public CounterIncrementOnly() {
-        this.count = new CopyOnWriteArrayList<>();
+        this.count = new ConcurrentLinkedQueue<>();
         this.local = ThreadLocal.withInitial(() -> {
             BoxedLong l = new BoxedLong();
             count.add(l);
