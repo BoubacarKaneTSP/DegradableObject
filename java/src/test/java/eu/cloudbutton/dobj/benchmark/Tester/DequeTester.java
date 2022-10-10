@@ -1,9 +1,11 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
+import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
 
 public class DequeTester extends Tester<Deque> {
@@ -42,5 +44,10 @@ public class DequeTester extends Tester<Deque> {
         }
 
         return endTime - startTime;
+    }
+
+    @Override
+    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return 0;
     }
 }

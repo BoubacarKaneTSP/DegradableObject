@@ -1,7 +1,10 @@
 package eu.cloudbutton.dobj.benchmark.Tester;
 
+import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CountDownLatch;
 
 public class CounterTester extends Tester<Counter> {
@@ -35,5 +38,10 @@ public class CounterTester extends Tester<Counter> {
         }
 
         return (endTime - startTime);
+    }
+
+    @Override
+    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return 0;
     }
 }
