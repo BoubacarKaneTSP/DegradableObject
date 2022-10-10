@@ -14,7 +14,7 @@ public class QueueTester extends Tester<Queue> {
     @Override
     protected long test(opType type) {
 
-        long startTime = 0L, endTime = 0L;
+        long startTime = 0L, endTime = 0L, val = 0;
 
         int rand = random.nextInt(Integer.MAX_VALUE);
 
@@ -31,10 +31,11 @@ public class QueueTester extends Tester<Queue> {
                 /*for (int i = 0; i < nbRepeat; i++) {
                     object.poll();
                 }*/
-                Object val ;
+                Object obj ;
                 do {
-                    val = object.poll();
-                }while (val != null);
+                    val += 1;
+                    obj = object.poll();
+                }while (obj != null);
 
                 endTime = System.nanoTime();
                 break;
@@ -47,6 +48,8 @@ public class QueueTester extends Tester<Queue> {
                 break;
         }
 
+        if (type == opType.REMOVE)
+            return (endTime - startTime)/val;
         return (endTime - startTime);
     }
 }
