@@ -35,7 +35,7 @@ public class QueueTester extends Tester<Queue> {
                 do {
                     val += 1;
                     obj = object.poll();
-                    object.size();
+                    System.out.println(object.size());
                 }while (obj != null);
 
                 endTime = System.nanoTime();
