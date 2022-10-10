@@ -12,7 +12,7 @@ public class CounterMISD extends CounterIncrementOnly implements Counter {
     @Override
     public long decrementAndGet(){
         local.get().val -=1 ;
-        UNSAFE.storeFence();
+//        UNSAFE.storeFence();
 
         return 0;
     }
