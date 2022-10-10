@@ -48,8 +48,6 @@ public class QueueTester extends Tester<Queue> {
                 break;
         }
 
-        if (type == opType.REMOVE)
-            return (endTime - startTime)/val;
         return (endTime - startTime);
     }
 }
