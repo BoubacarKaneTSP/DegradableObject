@@ -58,8 +58,8 @@ public class QueueTester extends Tester<Queue> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.offer(rand);
                     boxedLong.get().val += 1;
+                    object.offer(rand);
                 }
                 endTime = System.nanoTime();
                 break;
