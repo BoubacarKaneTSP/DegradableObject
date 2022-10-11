@@ -70,7 +70,6 @@ public class Microbenchmark {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        System.out.println(VM.current().details());
         System.out.println(ClassLayout.parseClass(BoxedLong.class).toPrintable());
         new Microbenchmark().doMain(args);
     }
@@ -238,7 +237,7 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = type + "_ALL_LongAdder.txt";
+                    String nameFile = type + "_ALL_BL_Contended.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
@@ -260,7 +259,7 @@ public class Microbenchmark {
 
                 for (opType op: opType.values()) {
 
-                    String nameFile = type + "_" + op + "_LongAdder.txt";
+                    String nameFile = type + "_" + op + "_BL_Contended.txt";
                     nbOp = nbOperations.get(op).get();
                     timeOp = timeOperations.get(op).get();
 
