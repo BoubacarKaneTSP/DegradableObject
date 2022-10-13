@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Tester<T> implements Callable<Void> {
 
@@ -62,6 +63,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 test(type);
             }
 
+            TimeUnit.SECONDS.sleep(5);
             if (ratios[1] != 0){
                 Object obj;
                 do {
