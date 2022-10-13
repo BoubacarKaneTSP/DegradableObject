@@ -67,6 +67,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 do {
                     obj = ((Queue)object).poll();
                 }while (obj != null);
+                System.out.println(((Queue)object).size());
             }
 
             latch.await();
