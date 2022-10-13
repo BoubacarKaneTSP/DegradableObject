@@ -47,6 +47,8 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * An unbounded thread-safe {@linkplain Queue queue} based on linked nodes.
@@ -155,7 +157,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     private transient Node<E> head;
     private transient volatile Node<E> tail;
-    private Counter queueSize;
+    private AtomicLong queueSize;
 //    private ThreadLocal<BoxedLong> queueSize;
 
     /**
@@ -163,7 +165,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public QueueMASP() {
         tail = head = new Node<>(null);
-        queueSize = new CounterMISD();
+        queueSize = new AtomicLong();
 //        queueSize = ThreadLocal.withInitial(() -> new BoxedLong());
     }
 
@@ -262,7 +264,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
     public int size() {
 
 //        return (int) queueSize.get().val;
-        return (int) queueSize.read();
+        return (int) queueSize.intValue();
         /*int ret = 0;
         for (Node<E> p = head;;) {
             if (p.item != null) ret++;
