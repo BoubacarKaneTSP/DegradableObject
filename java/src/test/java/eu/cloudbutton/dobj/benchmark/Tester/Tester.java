@@ -58,7 +58,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 }else {
                     type = opType.READ;
                 }
-                test(type, threadLocal.get());
+                test(type, threadLocal);
             }
 
             latch.await();
@@ -75,7 +75,7 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type, threadLocal.get());
+                elapsedTime = test(type, threadLocal);
 
                 if (elapsedTime != 0)
                     localOp.get(type).val += nbRepeat;
@@ -96,5 +96,5 @@ public abstract class Tester<T> implements Callable<Void> {
     }
 
     protected abstract long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
-    protected abstract long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
+    protected abstract long test(opType type, ThreadLocal<BoxedLong> boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
 }

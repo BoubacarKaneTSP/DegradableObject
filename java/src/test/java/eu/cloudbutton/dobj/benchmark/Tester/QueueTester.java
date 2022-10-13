@@ -48,7 +48,7 @@ public class QueueTester extends Tester<Queue> {
     }
 
     @Override
-    protected long test(opType type, BoxedLong boxedLong) {
+    protected long test(opType type, ThreadLocal<BoxedLong> boxedLong) {
 
         long startTime = 0L, endTime = 0L;
 
@@ -58,7 +58,7 @@ public class QueueTester extends Tester<Queue> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    boxedLong.val += 1;
+                    boxedLong.get().val += 1;
                     object.offer(rand);
                 }
                 endTime = System.nanoTime();
@@ -67,7 +67,7 @@ public class QueueTester extends Tester<Queue> {
 
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    boxedLong.val -= 1;
+                    boxedLong.get().val -= 1;
                     object.poll();
                 }
 
