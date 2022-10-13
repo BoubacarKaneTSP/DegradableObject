@@ -237,7 +237,7 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = type + "ALL_JUC.txt";
+                    String nameFile = "Limited_" + type + "ALL_JUC.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
@@ -259,7 +259,7 @@ public class Microbenchmark {
 
                 for (opType op: opType.values()) {
 
-                    String nameFile = type + "_" + op + "_JUC.txt";
+                    String nameFile = "Limited_" + type + "_" + op + "_JUC.txt";
                     nbOp = nbOperations.get(op).get();
                     timeOp = timeOperations.get(op).get();
 

@@ -7,6 +7,7 @@ import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -59,6 +60,13 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
                 test(type);
+            }
+
+            if (ratios[1] != 0){
+                Object obj;
+                do {
+                    obj = ((Queue)object).poll();
+                }while (obj != null);
             }
 
             latch.await();
