@@ -58,7 +58,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 }else {
                     type = opType.READ;
                 }
-                test(type, threadLocal.get());
+                test(type);
             }
 
             latch.await();
@@ -75,7 +75,7 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type, threadLocal.get());
+                elapsedTime = test(type);
 
                 if (elapsedTime != 0)
                     localOp.get(type).val += nbRepeat;
