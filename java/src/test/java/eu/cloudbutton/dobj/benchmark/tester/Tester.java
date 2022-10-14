@@ -68,7 +68,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 do {
                     obj = ((Queue)object).poll();
                 }while (obj != null);
-                System.out.println(((Queue)object).size());
+                System.out.println("Size after re-seting the queue : " + ((Queue)object).size());
             }
 
             latch.countDown();
@@ -93,6 +93,10 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 localTimeOp.get(type).val += elapsedTime;
             }
+
+            if (ratios[1] != 0)
+                System.out.println("Size after the workload : " + ((Queue)object).size());
+
 
         } catch (Exception e) {
             e.printStackTrace();
