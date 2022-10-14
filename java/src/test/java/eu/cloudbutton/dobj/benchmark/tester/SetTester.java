@@ -1,39 +1,43 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-public class MapTester extends Tester<Map> {
+public class SetTester extends Tester<Set> {
 
     private boolean useCollisionKey;
 
-    public MapTester(Map object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
-        super(object, ratios, latch);
+    public SetTester(Set set, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
+        super(set, ratios, latch);
         this.useCollisionKey = useCollisionKey;
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long startTime = 0L, endTime = 0L, nbFail = 0L;
+        long startTime = 0L, endTime = 0L;
+
+        int val = 0;
+
         AbstractList list = new ArrayList<>();
 
-        CollisionKeyFactory factory = new CollisionKeyFactory();
+        CollisionKeyFactory factory = null;
 
-        factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
+        if (useCollisionKey){
+            factory = new CollisionKeyFactory();
+            factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
+        }
 
         for (int i = 0; i < nbRepeat; i++) {
             int rand = random.nextInt(ITEM_PER_THREAD);
             String iid = Thread.currentThread().getId()  + Long.toString(rand);
-//        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
 
             if (useCollisionKey)
                 list.add(factory.getCollisionKey());
@@ -41,35 +45,38 @@ public class MapTester extends Tester<Map> {
                 list.add(iid);
         }
 
-
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 2; i++) {
-                    object.put(list.get(i), i);
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.add(list.get(i));
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(list.get(i));
+                if(Thread.currentThread().getName().contains("thread-1")){
+                    startTime = System.nanoTime();
+                    for (int i = 0; i < nbRepeat; i++) {
+                        object.remove(list.get(i));
+                    }
+                    endTime = System.nanoTime();
                 }
-                endTime = System.nanoTime();
                 break;
             case READ:
-                Object returnValue;
-                startTime = System.nanoTime();
-                for (int i = 0; i < 7; i++) {
-                    returnValue = object.get(list.get(i));
-                    if (returnValue == null)
-                        nbFail++;
+                if(Thread.currentThread().getName().contains("thread-1")) {
+                    startTime = System.nanoTime();
+                    for (int i = 0; i < nbRepeat; i++) {
+                        for (Object o : object) {
+                            val += 1;
+                        }
+//                    object.contains(list.get(i));
+                    }
+                    endTime = System.nanoTime();
                 }
-                endTime = System.nanoTime();
                 break;
         }
 
-        return (endTime - startTime) / nbRepeat;
+        return (endTime - startTime);
     }
 
     @Override

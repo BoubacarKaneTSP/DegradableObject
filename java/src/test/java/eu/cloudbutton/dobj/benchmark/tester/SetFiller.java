@@ -1,10 +1,9 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

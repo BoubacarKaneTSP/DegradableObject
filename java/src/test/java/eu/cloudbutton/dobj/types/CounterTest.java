@@ -41,32 +41,41 @@ public class CounterTest {
         factory.setFactoryCounter(cls);
 //        testDifferentRead((FuzzyCounter) factory.getCounter());
 
-        cls = Class.forName("eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly");
+        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.CounterMISD");
         factory.setFactoryCounter(cls);
         doIncrement(factory.getCounter());
     }
 
     private static void doIncrement(Counter count) throws ExecutionException, InterruptedException {
 
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 100000; i++) {
                 count.incrementAndGet();
             }
             return null;
         };
 
+
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             futures.add(executor.submit(callable));
         }
 
         for (Future<Void> future : futures) {
             future.get();
         }
-        assertEquals(count.read(),1000,"Failed incrementing the Counter");
+
+        assertEquals(count.read(),10000000,"Failed incrementing the Counter");
+
+        do {
+            count.decrementAndGet();
+//            System.out.println(count.read());
+        }while (count.read() != 0);
+
+        assertEquals(count.read(),0,"Failed decrementing the Counter");
     }
 
     private static void testDifferentRead(FuzzyCounter count) throws ExecutionException, InterruptedException {

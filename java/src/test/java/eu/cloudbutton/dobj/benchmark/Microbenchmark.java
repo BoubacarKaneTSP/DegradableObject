@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.benchmark.Tester.*;
+import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openjdk.jol.info.ClassLayout;
-import org.openjdk.jol.vm.VM;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 

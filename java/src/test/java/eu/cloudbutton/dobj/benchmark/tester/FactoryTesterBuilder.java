@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import java.util.concurrent.CountDownLatch;
 

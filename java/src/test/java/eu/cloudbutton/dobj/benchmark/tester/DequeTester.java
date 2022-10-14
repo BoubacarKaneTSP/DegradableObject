@@ -1,49 +1,49 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Deque;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
-public class ListTester extends Tester<AbstractList> {
 
-    public ListTester(AbstractList list, int[] ratios, CountDownLatch latch) {
+public class DequeTester extends Tester<Deque> {
+
+    public DequeTester(Deque list, int[] ratios, CountDownLatch latch) {
         super(list, ratios, latch);
     }
+
+    long startTime = 0L, endTime = 0L;
+
+    int rand = random.nextInt(ITEM_PER_THREAD);
+    long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
 
     @Override
     protected long test(opType type) {
 
-        long startTime = 0L, endTime = 0L;
-
-        int rand = random.nextInt(ITEM_PER_THREAD);
-
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.add(rand);
-                }
+                object.addFirst(iid);
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(rand);
+                try{
+                    startTime = System.nanoTime();
+                    object.removeLast();
+                    endTime = System.nanoTime();
+                } catch (NoSuchElementException e) {
                 }
-                endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.get(rand);
-                }
+                object.toArray();
                 endTime = System.nanoTime();
                 break;
         }
 
-        return (endTime - startTime)/nbRepeat;
+        return endTime - startTime;
     }
 
     @Override

@@ -14,9 +14,9 @@ public class CounterMISD extends CounterIncrementOnly implements Counter {
 
     @Override
     public long decrementAndGet(){
-        threadLocal.get().val -= 1;
-//        local.get().val -=1 ;
-//        UNSAFE.storeFence();
+//        threadLocal.get().val -= 1;
+        local.get().val -=1 ;
+        UNSAFE.storeFence();
 
         return 0;
     }

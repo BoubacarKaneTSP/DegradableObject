@@ -1,29 +1,32 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.*;
 
-public class QueueFiller extends Filler<Queue> {
+public class ListFiller extends Filler<AbstractList> {
 
-    public QueueFiller(Queue object, long nbOps) {
+    public ListFiller(AbstractList object, long nbOps) {
         super(object, nbOps);
     }
 
     @Override
     public void fill() throws ExecutionException, InterruptedException {
 
-        int nbThread = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbTask = 10;
 
         Callable<Void> callable = () -> {
-            for (int i = 0; i < nbOps/nbTask; i++) {
-                object.add(i);
+
+            List localList = new ArrayList();
+            for (long i = 0; i < nbOps/nbTask; i++) {
+                localList.add(i);
             }
+            object.addAll(localList);
+            System.out.println(object.size());
             return null;
         };
 

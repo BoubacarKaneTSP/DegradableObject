@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;

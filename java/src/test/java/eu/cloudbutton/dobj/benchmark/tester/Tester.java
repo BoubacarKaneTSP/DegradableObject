@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.benchmark.Tester;
+package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.benchmark.Microbenchmark;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
