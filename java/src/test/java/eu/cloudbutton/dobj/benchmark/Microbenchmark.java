@@ -172,7 +172,7 @@ public class Microbenchmark {
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
-                    CountDownLatch latch = new CountDownLatch(nbCurrentThread);
+                    CountDownLatch latch = new CountDownLatch(nbCurrentThread + 1);
 
                     FactoryTester factoryTester = new FactoryTesterBuilder()
                             .object(object)
@@ -205,7 +205,7 @@ public class Microbenchmark {
                     ExecutorService executorCoordinator = Executors.newFixedThreadPool(1);
                     flag = new AtomicBoolean();
                     flag.set(true);
-                    executorCoordinator.submit(new Coordinator());
+                    executorCoordinator.submit(new Coordinator(latch));
 
                     List<Future<Void>> futures;
 
@@ -309,7 +309,10 @@ public class Microbenchmark {
 
     public class Coordinator implements Callable<Void> {
 
-        public Coordinator(){}
+        CountDownLatch latch;
+        public Coordinator(CountDownLatch latch){
+            this.latch = latch;
+        }
 
         @Override
         public Void call() throws Exception {
@@ -318,6 +321,7 @@ public class Microbenchmark {
                     System.out.println("Warming up.");
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
+                latch.await();
                 if (_p)
                     System.out.println("Computing.");
                 TimeUnit.SECONDS.sleep(time);
