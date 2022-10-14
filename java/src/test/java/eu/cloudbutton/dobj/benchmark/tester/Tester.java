@@ -44,7 +44,6 @@ public abstract class Tester<T> implements Callable<Void> {
             localOp.put(type, new BoxedLong());
             localTimeOp.put(type, new BoxedLong());
         }
-        latch.countDown();
 
         try{
             // warm up
@@ -72,6 +71,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 System.out.println(((Queue)object).size());
             }
 
+            latch.countDown();
             latch.await();
 
             // compute

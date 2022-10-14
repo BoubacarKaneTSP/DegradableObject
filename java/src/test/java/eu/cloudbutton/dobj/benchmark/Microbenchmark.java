@@ -321,6 +321,7 @@ public class Microbenchmark {
                     System.out.println("Warming up.");
                 TimeUnit.SECONDS.sleep(wTime);
                 flag.set(false);
+                latch.countDown();
                 latch.await();
                 if (_p)
                     System.out.println("Computing.");
