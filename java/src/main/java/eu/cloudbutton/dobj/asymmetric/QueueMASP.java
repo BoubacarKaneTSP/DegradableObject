@@ -35,6 +35,8 @@ package eu.cloudbutton.dobj.asymmetric;/*
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import jdk.internal.vm.annotation.Contended;
+import lombok.Getter;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
@@ -155,9 +157,11 @@ public class QueueMASP<E> extends AbstractQueue<E>
         }
     }
 
+    @Contended
     private transient Node<E> head;
+    @Contended
     private transient volatile Node<E> tail;
-    private AtomicLong queueSize;
+    private Counter queueSize;
 //    private ThreadLocal<BoxedLong> queueSize;
 
     /**
@@ -165,7 +169,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public QueueMASP() {
         tail = head = new Node<>(null);
-        queueSize = new AtomicLong();
+        queueSize = new CounterMISD();
 //        queueSize = ThreadLocal.withInitial(() -> new BoxedLong());
     }
 
@@ -263,8 +267,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Override
     public int size() {
 
-//        return (int) queueSize.get().val;
-        return (int) queueSize.intValue();
+        return (int) queueSize.read();
         /*int ret = 0;
         for (Node<E> p = head;;) {
             if (p.item != null) ret++;

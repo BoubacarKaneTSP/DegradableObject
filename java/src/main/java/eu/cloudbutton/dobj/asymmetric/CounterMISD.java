@@ -9,7 +9,6 @@ public class CounterMISD extends CounterIncrementOnly implements Counter {
     ThreadLocal<BoxedLong> threadLocal;
     public CounterMISD(){
         super();
-        threadLocal = ThreadLocal.withInitial(() -> new BoxedLong());
     }
 
     @Override

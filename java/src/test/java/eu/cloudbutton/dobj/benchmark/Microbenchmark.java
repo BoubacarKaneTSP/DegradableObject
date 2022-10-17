@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
@@ -67,10 +68,10 @@ public class Microbenchmark {
     @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Testing only one and max nbThreads")
     public boolean _quickTest = false;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-
-        System.out.println(ClassLayout.parseClass(BoxedLong.class).toPrintable());
-        new Microbenchmark().doMain(args);
+    public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
+        Queue queue1 = new QueueMASP();
+        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
+//        new Microbenchmark().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
@@ -236,7 +237,7 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = "Limited_" + type + "_ALL.txt";
+                    String nameFile = type + "_HT_Contended_ALL.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
@@ -258,7 +259,7 @@ public class Microbenchmark {
 
                 for (opType op: opType.values()) {
 
-                    String nameFile = "Limited_" + type + "_" + op + ".txt";
+                    String nameFile = type + "_" + op + "_HT_Contended.txt";
                     nbOp = nbOperations.get(op).get();
                     timeOp = timeOperations.get(op).get();
 

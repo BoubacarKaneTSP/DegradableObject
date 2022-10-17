@@ -2,6 +2,8 @@ package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
+import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import org.openjdk.jol.info.ClassLayout;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -19,8 +21,8 @@ public class QueueTest {
     }
 
     @Test
-    void append() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-/*        Factory factory = new Factory();
+    void append() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+        Factory factory = new Factory();
 
         Class cls;
 
@@ -30,19 +32,11 @@ public class QueueTest {
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
         factory.setFactoryQueue(cls);
-        doAppend(factory.getQueue());*/
+        doAppend(factory.getQueue());
     }
 
     private static void doAppend(Queue<Integer> queue){
 
-   /*     for (int i = 0; i < 100; i++) {
-            queue.add(i);
-            System.out.println(i);
-            if (i%2 == 0)
-                queue.poll();
-        }
-
-        System.out.println(queue);*/
     }
     private static void doConcurrentAppend(Queue<Integer> queue) throws ExecutionException, InterruptedException {
         /*ExecutorService executor = Executors.newFixedThreadPool(3);

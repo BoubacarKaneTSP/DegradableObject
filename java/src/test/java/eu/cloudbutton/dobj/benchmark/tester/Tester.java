@@ -37,9 +37,6 @@ public abstract class Tester<T> implements Callable<Void> {
         Map<opType, BoxedLong> localOp = new HashMap<>();
         Map<opType, BoxedLong> localTimeOp = new HashMap<>();
 
-        ThreadLocal<BoxedLong> threadLocal = ThreadLocal.withInitial(BoxedLong::new);
-
-
         for (opType type: opType.values()){
             localOp.put(type, new BoxedLong());
             localTimeOp.put(type, new BoxedLong());
@@ -60,15 +57,6 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
                 test(type);
-            }
-
-            TimeUnit.SECONDS.sleep(5);
-            if (ratios[1] != 0){
-                Object obj;
-                do {
-                    obj = ((Queue)object).poll();
-                }while (obj != null);
-                System.out.println("Size after re-seting the queue : " + ((Queue)object).size());
             }
 
             latch.countDown();
@@ -93,10 +81,6 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 localTimeOp.get(type).val += elapsedTime;
             }
-
-            if (ratios[1] != 0)
-                System.out.println("Size after the workload : " + ((Queue)object).size());
-
 
         } catch (Exception e) {
             e.printStackTrace();
