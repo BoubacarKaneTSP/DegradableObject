@@ -24,13 +24,6 @@ public class Timeline<T> {
 
        for (int i = 0; i < queueSize; i++)
            topk.get().add(timeline.poll());
-/*
-       T val;
-       do {
-           val = timeline.poll();
-           topk.get().add(val);
-       }while (val != null);
-*/
 
        int topkSize = topk.get().size();
 

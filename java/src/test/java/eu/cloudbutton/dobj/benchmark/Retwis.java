@@ -339,14 +339,9 @@ public class Retwis {
                 if (_s)
                     printWriter.close();
 
-                System.out.println(nbOperations);
-                System.out.println();
-                System.out.println(timeOperations);
                 System.out.println();
 
             }
-
-
 
             nbCurrThread *= 2;
 
