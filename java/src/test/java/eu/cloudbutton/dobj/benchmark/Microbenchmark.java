@@ -71,7 +71,7 @@ public class Microbenchmark {
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
         Queue queue1 = new QueueMASP();
         System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
-//        new Microbenchmark().doMain(args);
+        new Microbenchmark().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
