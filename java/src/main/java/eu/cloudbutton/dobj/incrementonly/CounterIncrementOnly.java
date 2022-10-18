@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.incrementonly;
 
+import jdk.internal.vm.annotation.Contended;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -14,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CounterIncrementOnly implements Counter {
 
     private final List<BoxedLong> count;
+    @Contended
     protected final ThreadLocal<BoxedLong> local;
 
     protected static final sun.misc.Unsafe UNSAFE;
