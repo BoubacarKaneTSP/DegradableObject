@@ -109,7 +109,6 @@ import java.util.concurrent.atomic.LongAdder;
  * @author Doug Lea
  * @param <E> the type of elements held in this queue
  */
-@Contended
 public class QueueMASP<E> extends AbstractQueue<E>
         implements Queue<E>, java.io.Serializable {
     private static class Node<E> {
@@ -162,7 +161,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
     private transient Node<E> head;
     @Contended
     private transient volatile Node<E> tail;
-    @Contended
     private Counter queueSize;
 //    private ThreadLocal<BoxedLong> queueSize;
 
