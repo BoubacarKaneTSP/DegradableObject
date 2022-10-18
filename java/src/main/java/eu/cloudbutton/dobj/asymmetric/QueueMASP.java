@@ -161,16 +161,16 @@ public class QueueMASP<E> extends AbstractQueue<E>
     private transient Node<E> head;
     @Contended
     private transient volatile Node<E> tail;
-//    private Counter queueSize;
-    private LongAdder queueSize;
+    private Counter queueSize;
+//    private LongAdder queueSize;
 
     /**
      * Create an empty queue.
      */
     public QueueMASP() {
         tail = head = new Node<>(null);
-        queueSize = new LongAdder();
-//        queueSize = ThreadLocal.withInitial(() -> new BoxedLong());
+//        queueSize = new LongAdder();
+        queueSize = new CounterMISD();
     }
 
     /**
@@ -267,8 +267,8 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Override
     public int size() {
 
-//        return (int) queueSize.read();
-        return (int) queueSize.intValue();
+        return (int) queueSize.read();
+//        return (int) queueSize.intValue();
         /*int ret = 0;
         for (Node<E> p = head;;) {
             if (p.item != null) ret++;
@@ -305,7 +305,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     {
                         TAIL.weakCompareAndSet(this, t, newNode);
                     }
-                    queueSize.increment();
+                    queueSize.incrementAndGet();
 //                    queueSize.incrementAndGet();
                     return true;
                 }
@@ -343,7 +343,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
         if (head != tail){
             E item = head.next.item;
             head = head.next;
-            queueSize.decrement();
+            queueSize.decrementAndGet();
 //            queueSize.decrementAndGet();
 //            head.item = null;
             return item;
