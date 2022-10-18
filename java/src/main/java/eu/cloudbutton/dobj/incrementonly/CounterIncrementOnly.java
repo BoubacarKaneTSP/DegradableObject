@@ -47,7 +47,8 @@ public class CounterIncrementOnly implements Counter {
      */
     @Override
     public long incrementAndGet() {
-        local.get();
+//        local.get();
+        new BoxedLong().val += 1;
 
         UNSAFE.storeFence();
         return 0;
