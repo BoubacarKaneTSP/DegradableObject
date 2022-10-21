@@ -1,7 +1,5 @@
 package eu.cloudbutton.dobj;
 
-import jdk.internal.vm.annotation.Contended;
-
 import java.util.*;
 
 public class Timeline<T> {
