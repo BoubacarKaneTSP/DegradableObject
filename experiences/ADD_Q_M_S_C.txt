@@ -1,2 +1,2 @@
 1 NaN
-40 NaN
+8 NaN
