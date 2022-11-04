@@ -156,7 +156,7 @@ public class Retwis {
             listAlpha.add(i);
         }
 
-        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
+        for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
