@@ -102,7 +102,7 @@ public class Retwis {
 
     private Database database;
 
-    int NB_USERS = 1000000;
+    int NB_USERS = 500000;
 
     int nbSign = 5;
 
