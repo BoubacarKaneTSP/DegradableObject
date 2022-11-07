@@ -170,13 +170,13 @@ public class Database {
     }
 
     public void tweet(Long user, String msg) throws InterruptedException {
-        for (long follower : mapFollowers.get(user)) {
+      /*  for (long follower : mapFollowers.get(user)) {
             mapTimelines.get(follower).add(msg);
-        }
+        }*/
     }
 
     public void showTimeline(Long user) throws InterruptedException {
-        mapTimelines.get(user).read();
+//        mapTimelines.get(user).read();
     }
     
 }
