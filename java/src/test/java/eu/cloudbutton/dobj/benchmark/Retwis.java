@@ -453,7 +453,9 @@ public class Retwis {
         public opType chooseOperation(){
             opType type;
 
-            int val = random.nextInt(100);
+//            int val = random.nextInt(100);
+
+            int val = 0;
 
             if(val < ratiosArray[0]){ // add
                 type = opType.ADD;
