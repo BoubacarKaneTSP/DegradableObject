@@ -103,7 +103,7 @@ public class Database {
             i++;
         }
 
-        //adding users
+        //adding all users
 
 //        System.out.println("Adding users");
 
