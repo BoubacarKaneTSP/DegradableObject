@@ -496,8 +496,8 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax) {
                     typeComputed = chooseOperation();
                 }
-                int val = random.nextInt(nbLocalUsers);
-
+//                int val = random.nextInt(nbLocalUsers);
+                int val = 0;
                 userA = arrayLocalUsers.get().get(val);
 
                 Queue<Long> listFollow = usersFollow.get().get(userA);
