@@ -547,7 +547,8 @@ public class Retwis {
                         }
                         break;
                     case TWEET:
-                        String msg = "msg from user : " + userA;
+//                        String msg = "msg from user : " + userA;
+                        String msg = "";
                         if (_completionTime){
                             database.tweet(userA, msg);
                         }else{
