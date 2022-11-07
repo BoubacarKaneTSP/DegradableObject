@@ -418,7 +418,7 @@ public class Retwis {
 
                         type = chooseOperation();
 
-                        if (_multipleOperation){
+                        /*if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
                                 opTypeLongPair = compute(type);
                                 nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
@@ -430,7 +430,7 @@ public class Retwis {
                             nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
                             Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
                             timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());
-                        }
+                        }*/
 
                     }
                 }
@@ -480,8 +480,7 @@ public class Retwis {
             Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
-//            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
-            int nbAttemptMax = 10;
+            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
             opType typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
