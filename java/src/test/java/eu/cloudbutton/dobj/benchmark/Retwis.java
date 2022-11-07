@@ -547,24 +547,24 @@ public class Retwis {
                         }
                         break;
                     case TWEET:
-                        /*String msg = "msg from user : " + userA;
+                        String msg = "msg from user : " + userA;
                         if (_completionTime){
                             database.tweet(userA, msg);
                         }else{
                             startTime = System.nanoTime();
                             database.tweet(userA, msg);
                             endTime = System.nanoTime();
-                        }*/
+                        }
                         break;
                     case READ:
-                        /*if (_completionTime){
+                        if (_completionTime){
                             database.showTimeline(userA);
 
                         }else{
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
-                        }*/
+                        }
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
