@@ -573,7 +573,8 @@ public class Retwis {
                 if (_completionTime)
                     return null;
 
-                return new Pair<>(typeComputed,endTime - startTime);
+//                return new Pair<>(typeComputed,endTime - startTime);
+                return null;
             }
         }
     }
