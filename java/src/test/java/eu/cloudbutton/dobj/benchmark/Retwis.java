@@ -405,13 +405,13 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type);
+//                    compute(type);
                 }
 
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
-                        compute(type);
+//                        compute(type);
                     }
                 }else{
                     while (flagComputing.get()){
@@ -440,7 +440,7 @@ public class Retwis {
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
                 }
 
-            } catch (InterruptedException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+            } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
                 e.printStackTrace();
             }
             return null;
@@ -453,9 +453,7 @@ public class Retwis {
         public opType chooseOperation(){
             opType type;
 
-//            int val = random.nextInt(100);
-
-            int val = 0;
+            int val = random.nextInt(100);
 
             if(val < ratiosArray[0]){ // add
                 type = opType.ADD;
