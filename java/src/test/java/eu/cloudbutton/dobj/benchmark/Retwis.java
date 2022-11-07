@@ -453,8 +453,8 @@ public class Retwis {
         public opType chooseOperation(){
             opType type;
 
-            int val = random.nextInt(100);
-
+//            int val = random.nextInt(100);
+            int val = 1;
             if(val < ratiosArray[0]){ // add
                 type = opType.ADD;
             }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
@@ -480,7 +480,9 @@ public class Retwis {
             Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
-            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
+//            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
+
+            int nbAttemptMax = 10;
             opType typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
