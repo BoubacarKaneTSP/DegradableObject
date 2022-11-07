@@ -427,9 +427,9 @@ public class Retwis {
                             }
                         }else{
                             opTypeLongPair = compute(type);
-//                            nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
-//                            Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
-//                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());
+                            /*nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
+                            Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
+                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());*/
                         }
 
                     }
@@ -474,16 +474,14 @@ public class Retwis {
 
         public Pair<opType, Long> compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
-            return null;
-
-          /*  long startTime = 0L, endTime= 0L;
+            long startTime = 0L, endTime= 0L;
 
             int n, nbLocalUsers, nbAttempt = -1;
             Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
-            opType typeComputed = type;*/
+            opType typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
             * - When doing unfollow, all user handle by thread i do not follow anyone.
@@ -491,94 +489,94 @@ public class Retwis {
             * We use an int nbAttempt to change the operation after an amount of fail
             * When probability of not doing an operation on userA is less than 1%.
             * */
+            restartOperation : for (;;){
+                nbAttempt ++;
+                if (nbAttempt > nbAttemptMax) {
+                    typeComputed = chooseOperation();
+                }
+                int val = random.nextInt(nbLocalUsers);
 
-//            restartOperation : for (;;){
-//                nbAttempt ++;
-//                if (nbAttempt > nbAttemptMax) {
-//                    typeComputed = chooseOperation();
-//                }
-//                int val = random.nextInt(nbLocalUsers);
-//
-//                userA = arrayLocalUsers.get().get(val);
-//
-//                Queue<Long> listFollow = usersFollow.get().get(userA);
-//                switch (typeComputed){
-//                    case ADD:
-//                        if (_completionTime){
-//                            database.addUser();
-//                        }else{
-//                            startTime = System.nanoTime();
-//                            database.addUser();
-//                            endTime = System.nanoTime();
-//                        }
-//                        break;
-//                    case FOLLOW:
-//                        n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
-//                        userB = database.getUsersProbability().get(n);
-//
-//                        try{
-//                            if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
-//                                if (_completionTime){
-//                                    database.followUser(userA, userB);
-//                                }else {
-//                                    startTime = System.nanoTime();
-//                                    database.followUser(userA, userB);
-//                                    endTime = System.nanoTime();
-//                                }
-//                                listFollow.add(userB);
-//                            }else
-//                                continue restartOperation;
-//                        }catch (NullPointerException e){
-////                        System.out.println(userA + " may not have a list of follow (Follow method)");
-////                        Make a "debug mode" to specify when a process doesn't handle userA
-//                        }
-//                        break;
-//                    case UNFOLLOW:
-//                        try{
-//                            userB = listFollow.poll();
-//                            if (userB != null){ // Perform unfollow only if userA already follow someone
-//                                if (_completionTime){
-//                                    database.unfollowUser(userA, userB);
-//                                }else{
-//                                    startTime = System.nanoTime();
-//                                    database.unfollowUser(userA, userB);
-//                                    endTime = System.nanoTime();
-//                                }
-//                            }else
-//                                continue restartOperation;
-//                        }catch (NullPointerException e){
-////                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
-//                        }
-//                        break;
-//                    case TWEET:
-//                        String msg = "msg from user : " + userA;
-//                        if (_completionTime){
-//                            database.tweet(userA, msg);
-//                        }else{
-//                            startTime = System.nanoTime();
-//                            database.tweet(userA, msg);
-//                            endTime = System.nanoTime();
-//                        }
-//                        break;
-//                    case READ:
-//                        if (_completionTime){
-//                            database.showTimeline(userA);
-//
-//                        }else{
-//                            startTime = System.nanoTime();
-//                            database.showTimeline(userA);
-//                            endTime = System.nanoTime();
-//                        }
-//                        break;
-//                    default:
-//                        throw new IllegalStateException("Unexpected value: " + type);
-//                }
-//
-//                if (_completionTime)
-//                    return null;
-//
+                userA = arrayLocalUsers.get().get(val);
+
+                Queue<Long> listFollow = usersFollow.get().get(userA);
+                switch (typeComputed){
+                    case ADD:
+                        if (_completionTime){
+                            database.addUser();
+                        }else{
+                            startTime = System.nanoTime();
+                            database.addUser();
+                            endTime = System.nanoTime();
+                        }
+                        break;
+                    case FOLLOW:
+                        n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
+                        userB = database.getUsersProbability().get(n);
+
+                        try{
+                            if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
+                                if (_completionTime){
+                                    database.followUser(userA, userB);
+                                }else {
+                                    startTime = System.nanoTime();
+                                    database.followUser(userA, userB);
+                                    endTime = System.nanoTime();
+                                }
+                                listFollow.add(userB);
+                            }else
+                                continue restartOperation;
+                        }catch (NullPointerException e){
+//                        System.out.println(userA + " may not have a list of follow (Follow method)");
+//                        Make a "debug mode" to specify when a process doesn't handle userA
+                        }
+                        break;
+                    case UNFOLLOW:
+                        try{
+                            userB = listFollow.poll();
+                            if (userB != null){ // Perform unfollow only if userA already follow someone
+                                if (_completionTime){
+                                    database.unfollowUser(userA, userB);
+                                }else{
+                                    startTime = System.nanoTime();
+                                    database.unfollowUser(userA, userB);
+                                    endTime = System.nanoTime();
+                                }
+                            }else
+                                continue restartOperation;
+                        }catch (NullPointerException e){
+//                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
+                        }
+                        break;
+                    case TWEET:
+                        String msg = "msg from user : " + userA;
+                        if (_completionTime){
+                            database.tweet(userA, msg);
+                        }else{
+                            startTime = System.nanoTime();
+                            database.tweet(userA, msg);
+                            endTime = System.nanoTime();
+                        }
+                        break;
+                    case READ:
+                        if (_completionTime){
+                            database.showTimeline(userA);
+
+                        }else{
+                            startTime = System.nanoTime();
+                            database.showTimeline(userA);
+                            endTime = System.nanoTime();
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + type);
+                }
+
+                if (_completionTime)
+                    return null;
+
 //                return new Pair<>(typeComputed,endTime - startTime);
-//            }
+                return null;
+            }
         }
     }
 
