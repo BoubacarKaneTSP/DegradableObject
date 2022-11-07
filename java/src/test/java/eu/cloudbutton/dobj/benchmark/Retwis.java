@@ -480,8 +480,8 @@ public class Retwis {
             Long userA, userB;
 
             nbLocalUsers = arrayLocalUsers.get().size();
-            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
-
+//            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
+            int nbAttemptMax = 10;
             opType typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
