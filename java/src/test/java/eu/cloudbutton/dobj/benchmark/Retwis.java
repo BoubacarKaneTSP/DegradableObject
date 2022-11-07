@@ -551,9 +551,9 @@ public class Retwis {
                         if (_completionTime){
                             database.tweet(userA, msg);
                         }else{
-                            startTime = System.nanoTime();
+//                            startTime = System.nanoTime();
                             database.tweet(userA, msg);
-                            endTime = System.nanoTime();
+//                            endTime = System.nanoTime();
                         }
                         break;
                     case READ:
@@ -561,9 +561,9 @@ public class Retwis {
                             database.showTimeline(userA);
 
                         }else{
-                            startTime = System.nanoTime();
+//                            startTime = System.nanoTime();
                             database.showTimeline(userA);
-                            endTime = System.nanoTime();
+//                            endTime = System.nanoTime();
                         }
                         break;
                     default:
