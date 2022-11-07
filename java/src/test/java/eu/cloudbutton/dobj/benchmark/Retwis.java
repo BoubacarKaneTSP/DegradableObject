@@ -427,9 +427,9 @@ public class Retwis {
                             }
                         }else{
                             opTypeLongPair = compute(type);
-                            /*nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
+                            nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
                             Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
-                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());*/
+                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());
                         }
 
                     }
@@ -573,8 +573,7 @@ public class Retwis {
                 if (_completionTime)
                     return null;
 
-//                return new Pair<>(typeComputed,endTime - startTime);
-                return null;
+                return new Pair<>(typeComputed,endTime - startTime);
             }
         }
     }
