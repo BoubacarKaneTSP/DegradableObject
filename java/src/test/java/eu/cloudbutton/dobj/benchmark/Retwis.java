@@ -563,8 +563,9 @@ public class Retwis {
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
-
-                        nbRead.set(nbRead.get().intValue() );
+                        int v = nbRead.get().intValue();
+                        v += 1;
+//                        nbRead.set( );
 //                        timeRead.set(timeRead.get() + (endTime-startTime));
                         break;
                     default:
