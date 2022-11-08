@@ -569,8 +569,9 @@ public class Retwis {
                     int nbOp = nbOperations.get(typeComputed);
                     long timeOp = timeOperations.get(typeComputed);
 
-                    nbOperations.put(typeComputed, nbOp + 1);
-                    timeOperations.put(typeComputed, timeOp + (endTime-startTime));
+                    nbOperations.put(typeComputed, 0);
+//                    timeOperations.put(typeComputed, timeOp + (endTime-startTime));
+
 //                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
 //                    final Long timeComputed = endTime - startTime;
 //                    timeOperations.compute(typeComputed, (key, value) -> value + 1);
