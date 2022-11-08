@@ -590,7 +590,6 @@ public class Retwis {
 //                    timeOperations.compute(typeComputed, (key, value) -> value + 1);
 //                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
                 }else
-                    System.out.println(v);
 
                 break;
             }
