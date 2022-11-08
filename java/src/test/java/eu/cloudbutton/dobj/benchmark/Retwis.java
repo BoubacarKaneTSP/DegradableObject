@@ -371,10 +371,10 @@ public class Retwis {
         private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread, a user is puted n times following a powerlaw
         private int nbRepeat = 1000;
         private final String msg = "new msg";
-        private ThreadLocal<Integer> nbTweet = ThreadLocal.withInitial(() -> 0);
+        /*private ThreadLocal<Integer> nbTweet = ThreadLocal.withInitial(() -> 0);
         private ThreadLocal<Long> timeTweet = ThreadLocal.withInitial(() -> 0L);
         private ThreadLocal<Long> nbRead = ThreadLocal.withInitial(() -> 0L);
-        private ThreadLocal<Long> timeRead = ThreadLocal.withInitial(() -> 0L);
+        private ThreadLocal<Long> timeRead = ThreadLocal.withInitial(() -> 0L);*/
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -391,6 +391,7 @@ public class Retwis {
                 opType type;
                 Pair<opType, Long> opTypeLongPair;
 
+                long l = 0l;
                 Map<opType, Integer> nbLocalOperations = new HashMap<>();
                 Map<opType, Long> timeLocalOperations = new HashMap<>();
 
@@ -410,13 +411,13 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, nbLocalOperations, timeLocalOperations);
+                    compute(type, nbLocalOperations, timeLocalOperations,l);
                 }
 
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
-                        compute(type, nbLocalOperations, timeLocalOperations);
+                        compute(type, nbLocalOperations, timeLocalOperations,l);
                     }
                 }else{
                     while (flagComputing.get()){
@@ -425,14 +426,16 @@ public class Retwis {
 
                         if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, nbLocalOperations, timeLocalOperations);
+                                compute(type, nbLocalOperations, timeLocalOperations,l);
                             }
                         }else{
-                            compute(type, nbLocalOperations, timeLocalOperations);
+                            compute(type, nbLocalOperations, timeLocalOperations,l);
                         }
 
                     }
                 }
+
+                System.out.println("valeur de l :" + l);
 
                 for (opType op: opType.values()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
@@ -470,10 +473,9 @@ public class Retwis {
             return type;
         }
 
-        public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations, long v) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
-            long v = 0;
             int n, nbLocalUsers, nbAttempt = -1;
             Long userA, userB;
 
@@ -553,6 +555,7 @@ public class Retwis {
                             database.tweet(userA, msg);
                             endTime = System.nanoTime();
                         }
+
                         break;
                     case READ:
                         if (_completionTime){
@@ -563,14 +566,16 @@ public class Retwis {
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
-                        v = nbRead.get().intValue();
-                        v += 1;
-                        nbRead.set(100000000000L);
+//                        v = nbRead.get().intValue();
+//                        v += 1;
+//                        nbRead.set(1L);
 //                        timeRead.set(timeRead.get() + (endTime-startTime));
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
+
+                v++;
 
 
                 if (!_completionTime) {
