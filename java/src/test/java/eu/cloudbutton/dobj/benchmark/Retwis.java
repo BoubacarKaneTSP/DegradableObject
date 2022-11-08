@@ -565,11 +565,11 @@ public class Retwis {
                 }
 
 
-                if (!_completionTime) {
-                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
-                    final Long timeComputed = endTime - startTime;
-                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
-                }
+//                if (!_completionTime) {
+//                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
+//                    final Long timeComputed = endTime - startTime;
+//                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
+//                }
 
                 break;
             }
