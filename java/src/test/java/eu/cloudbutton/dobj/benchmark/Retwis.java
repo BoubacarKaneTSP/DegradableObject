@@ -565,7 +565,7 @@ public class Retwis {
                         }
                         long v = nbRead.get().intValue();
                         v += 1;
-                        nbRead.set(v);
+                        nbRead.set(1L);
 //                        timeRead.set(timeRead.get() + (endTime-startTime));
                         break;
                     default:
