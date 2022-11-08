@@ -370,6 +370,7 @@ public class Retwis {
         private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
         private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread, a user is puted n times following a powerlaw
         private int nbRepeat = 1000;
+        private final String msg = "new msg";
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -386,8 +387,8 @@ public class Retwis {
                 opType type;
                 Pair<opType, Long> opTypeLongPair;
 
-                AbstractMap<opType, Integer> nbLocalOperations = new HashMap<>();
-                AbstractMap<opType, Long> timeLocalOperations = new HashMap<>();
+                Map<opType, Integer> nbLocalOperations = new HashMap<>();
+                Map<opType, Long> timeLocalOperations = new HashMap<>();
 
                 for (opType op: opType.values()){
                     nbLocalOperations.put(op, 0);
@@ -405,13 +406,13 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type);
+                    compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
-                        compute(type);
+                        compute(type, nbLocalOperations, timeLocalOperations);
                     }
                 }else{
                     while (flagComputing.get()){
@@ -420,16 +421,10 @@ public class Retwis {
 
                         if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
-                                opTypeLongPair = compute(type);
-                                nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
-                                Pair<opType, Long> finalOpTypeLongPair = opTypeLongPair;
-                                timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair.getValue1());
+                                compute(type, nbLocalOperations, timeLocalOperations);
                             }
                         }else{
-                            opTypeLongPair = compute(type);
-                            /*nbLocalOperations.compute(opTypeLongPair.getValue0(), (key, value) -> value + 1);
-                            Pair<opType, Long> finalOpTypeLongPair1 = opTypeLongPair;
-                            timeLocalOperations.compute(type, (key, value) -> value + finalOpTypeLongPair1.getValue1());*/
+                            compute(type, nbLocalOperations, timeLocalOperations);
                         }
 
                     }
@@ -471,7 +466,7 @@ public class Retwis {
             return type;
         }
 
-        public Pair<opType, Long> compute(opType type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
 
@@ -548,7 +543,6 @@ public class Retwis {
                         break;
                     case TWEET:
 //                        String msg = "msg from user : " + userA;
-                        String msg = "";
                         if (_completionTime){
                             database.tweet(userA, msg);
                         }else{
@@ -571,11 +565,11 @@ public class Retwis {
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
-                if (_completionTime)
-                    return null;
-
-//                return new Pair<>(typeComputed,endTime - startTime);
-                return null;
+                if (!_completionTime) {
+                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
+                    final Long timeComputed = endTime - startTime;
+                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
+                }
             }
         }
     }
