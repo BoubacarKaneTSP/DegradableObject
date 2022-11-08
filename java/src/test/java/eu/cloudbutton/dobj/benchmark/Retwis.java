@@ -473,7 +473,7 @@ public class Retwis {
         public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
-
+            long v = 0;
             int n, nbLocalUsers, nbAttempt = -1;
             Long userA, userB;
 
@@ -563,7 +563,7 @@ public class Retwis {
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
-                        long v = nbRead.get().intValue();
+                        v = nbRead.get().intValue();
                         v += 1;
                         nbRead.set(1L);
 //                        timeRead.set(timeRead.get() + (endTime-startTime));
@@ -584,7 +584,8 @@ public class Retwis {
 //                    final Long timeComputed = endTime - startTime;
 //                    timeOperations.compute(typeComputed, (key, value) -> value + 1);
 //                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
-                }
+                }else
+                    System.out.println(v);
 
                 break;
             }
