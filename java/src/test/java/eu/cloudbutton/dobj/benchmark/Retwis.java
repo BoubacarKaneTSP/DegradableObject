@@ -575,7 +575,7 @@ public class Retwis {
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
-                v++;
+//                v++;
 
 
                 if (!_completionTime) {
