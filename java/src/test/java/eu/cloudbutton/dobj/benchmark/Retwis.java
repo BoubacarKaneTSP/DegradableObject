@@ -564,6 +564,7 @@ public class Retwis {
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
+                System.out.println("bloked");
                 if (!_completionTime) {
                     nbOperations.compute(typeComputed, (key, value) -> value + 1);
                     final Long timeComputed = endTime - startTime;
