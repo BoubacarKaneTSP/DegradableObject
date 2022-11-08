@@ -373,7 +373,7 @@ public class Retwis {
         private final String msg = "new msg";
         private ThreadLocal<Integer> nbTweet = ThreadLocal.withInitial(() -> 0);
         private ThreadLocal<Long> timeTweet = ThreadLocal.withInitial(() -> 0L);
-        private ThreadLocal<Integer> nbRead = ThreadLocal.withInitial(() -> 0);
+        private ThreadLocal<Long> nbRead = ThreadLocal.withInitial(() -> 0L);
         private ThreadLocal<Long> timeRead = ThreadLocal.withInitial(() -> 0L);
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
@@ -563,7 +563,7 @@ public class Retwis {
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
-                        int v = nbRead.get().intValue();
+                        long v = nbRead.get().intValue();
                         v += 1;
                         nbRead.set(v);
 //                        timeRead.set(timeRead.get() + (endTime-startTime));
