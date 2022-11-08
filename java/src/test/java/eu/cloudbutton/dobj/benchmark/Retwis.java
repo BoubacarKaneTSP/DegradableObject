@@ -371,6 +371,10 @@ public class Retwis {
         private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread, a user is puted n times following a powerlaw
         private int nbRepeat = 1000;
         private final String msg = "new msg";
+        private ThreadLocal<Integer> nbTweet = ThreadLocal.withInitial(() -> 0);
+        private ThreadLocal<Long> timeTweet = ThreadLocal.withInitial(() -> 0L);
+        private ThreadLocal<Integer> nbRead = ThreadLocal.withInitial(() -> 0);
+        private ThreadLocal<Long> timeRead = ThreadLocal.withInitial(() -> 0L);
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -559,6 +563,9 @@ public class Retwis {
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
+
+                        nbRead.set(nbRead.get().intValue() + 1);
+                        timeRead.set(timeRead.get() + (endTime-startTime));
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
@@ -569,7 +576,7 @@ public class Retwis {
                     int nbOp = nbOperations.get(typeComputed);
                     long timeOp = timeOperations.get(typeComputed);
 
-                    nbOperations.put(typeComputed,  1);
+//                    nbOperations.put(typeComputed,  1);
 //                    timeOperations.put(typeComputed, timeOp + (endTime-startTime));
 
 //                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
