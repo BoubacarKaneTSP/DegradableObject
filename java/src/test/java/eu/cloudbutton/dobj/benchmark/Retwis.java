@@ -566,9 +566,11 @@ public class Retwis {
 
 
                 if (!_completionTime) {
-                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
+                    int nbOp = nbOperations.get(typeComputed);
+                    long timeOp = timeOperations.get(typeComputed);
+//                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
 //                    final Long timeComputed = endTime - startTime;
-                    timeOperations.compute(typeComputed, (key, value) -> value + 1);
+//                    timeOperations.compute(typeComputed, (key, value) -> value + 1);
 //                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
                 }
 
