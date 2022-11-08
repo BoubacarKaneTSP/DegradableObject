@@ -564,8 +564,8 @@ public class Retwis {
                             endTime = System.nanoTime();
                         }
 
-                        nbRead.set(nbRead.get().intValue() + 1);
-                        timeRead.set(timeRead.get() + (endTime-startTime));
+                        nbRead.set(nbRead.get().intValue() );
+//                        timeRead.set(timeRead.get() + (endTime-startTime));
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
