@@ -107,8 +107,8 @@ public class Retwis {
     int nbSign = 5;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        Queue queue1 = new QueueMASP();
-        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
+//        Queue queue1 = new QueueMASP();
+//        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
         new Retwis().doMain(args);
     }
 
@@ -148,7 +148,7 @@ public class Retwis {
         }
 
         if (_p)
-            System.out.println("Launching test from App.java, a clone of Retwis...");
+            System.out.println(" ==> Launching test from App.java, a clone of Retwis...");
 
         List<Double> listAlpha = new ArrayList<>();
 
@@ -166,7 +166,7 @@ public class Retwis {
             if (_p){
                 System.out.println();
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                System.out.print( " Results for ["+nbCurrThread+"] threads ");
+                System.out.print( " ==> Results for ["+nbCurrThread+"] threads ");
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
                 System.out.println();
             }
@@ -175,7 +175,7 @@ public class Retwis {
                 if (_p){
                     System.out.println();
                     for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
-                    System.out.print( " Results for alpha = ["+alpha+"] ");
+                    System.out.print( " ==> Results for alpha = ["+alpha+"] ");
                     for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
                     System.out.println();
                 }
@@ -241,7 +241,7 @@ public class Retwis {
                         timeTotal -= _wTime * 1_000_000_000;
 
                     if(_p)
-                        System.out.println("End of test num : " + nbCurrTest);
+                        System.out.println(" ==> End of test num : " + nbCurrTest);
 
                     TimeUnit.SECONDS.sleep(1);
                     executor.shutdown();
@@ -255,7 +255,7 @@ public class Retwis {
                 }
 
                 if (_p)
-                    System.out.println("Results :");
+                    System.out.println(" ==> Results :");
 
                 long nbOp, timeOp;
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
@@ -279,13 +279,13 @@ public class Retwis {
                 if (_p){
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
                     if (_completionTime) {
-                        System.out.print(" Completion time for " + _nbOps + " operations : ");
+                        System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
                         System.out.println(timeTotal/1_000_000_000 +" seconds");
                     }
                     else {
-                        System.out.print(" Throughput (op/s) for all operations : ");
+                        System.out.print(" ==> Throughput (op/s) for all operations : ");
                         System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
-                        System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000_000 + " secondes");
+                        System.out.println(" ==> - temps d'execution : "+ timeTotalComputed/1_000_000_000 + " secondes");
                     }
 
                     System.out.println();
@@ -314,7 +314,7 @@ public class Retwis {
 
                         if (_p){
                             for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.print(" Throughput (op/s) for "+op+" : ");
+                            System.out.print(" ==> Throughput (op/s) for "+op+" : ");
                             System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
                         }
 
@@ -327,7 +327,7 @@ public class Retwis {
                     for (opType op: opType.values()){
                         int nbSpace = 10 - op.toString().length();
                         if (_breakdown){
-                            System.out.print("-" + op);
+                            System.out.print("==> -" + op);
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                             System.out.println(": Nb op : " + nbOperations.get(op).get()
                                     + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%"
