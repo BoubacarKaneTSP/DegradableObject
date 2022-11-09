@@ -563,7 +563,7 @@ public class Retwis {
                     nbOperations.compute(typeComputed, (key, value) -> value + 1);
                     final Long timeComputed = endTime - startTime;
                     timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
-                }else
+                }
 
                 break;
             }
