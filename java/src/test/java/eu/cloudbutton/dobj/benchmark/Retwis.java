@@ -401,6 +401,8 @@ public class Retwis {
                 usersProbabilitySize.set(database.getUsersProbability().size());
                 arrayLocalUsers.set(database.getLocalUsers().get());
 
+                long l = 0L;
+
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
                     compute(type, nbLocalOperations, timeLocalOperations);
@@ -413,6 +415,7 @@ public class Retwis {
                     }
                 }else{
                     while (flagComputing.get()){
+                        l++;
 
                         type = chooseOperation();
 
@@ -425,6 +428,7 @@ public class Retwis {
                         }
 
                     }
+                    System.out.println(" ================> l = " + l);
                 }
 
                 for (opType op: opType.values()){
