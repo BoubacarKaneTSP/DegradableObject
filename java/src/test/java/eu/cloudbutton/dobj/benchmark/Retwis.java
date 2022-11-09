@@ -166,7 +166,7 @@ public class Retwis {
             if (_p){
                 System.out.println();
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                System.out.print( " ==> Results for ["+nbCurrThread+"] threads ");
+                System.out.print( " Results for ["+nbCurrThread+"] threads ");
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
                 System.out.println();
             }
@@ -175,7 +175,7 @@ public class Retwis {
                 if (_p){
                     System.out.println();
                     for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
-                    System.out.print( " ==> Results for alpha = ["+alpha+"] ");
+                    System.out.print( " Results for alpha = ["+alpha+"] ");
                     for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
                     System.out.println();
                 }
