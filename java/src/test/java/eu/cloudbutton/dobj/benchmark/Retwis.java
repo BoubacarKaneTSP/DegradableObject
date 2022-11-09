@@ -583,7 +583,7 @@ public class Retwis {
             try {
 
                 if (_p)
-                    System.out.println("Filling the database with "+ NB_USERS +" users" );
+                    System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
                 if (flagWarmingUp.get()){
 
@@ -591,7 +591,7 @@ public class Retwis {
                     latch.await();
 
                     if (_p){
-                        System.out.println("Warming up for " + _wTime + " seconds");
+                        System.out.println(" ==> Warming up for " + _wTime + " seconds");
                     }
 
                     TimeUnit.SECONDS.sleep(_wTime);
@@ -605,12 +605,12 @@ public class Retwis {
 
                 if (! _completionTime) {
                     if (_p)
-                        System.out.println("Computing the throughput for "+ _time +" seconds");
+                        System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
                 }else{
                     if (_p)
-                        System.out.println("Computing the completion time for " + _nbOps + " operations");
+                        System.out.println(" ==> Computing the completion time for " + _nbOps + " operations");
                 }
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
