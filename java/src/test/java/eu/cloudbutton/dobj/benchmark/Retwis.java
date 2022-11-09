@@ -240,7 +240,9 @@ public class Retwis {
                     if (flagWarmingUp.get())
                         timeTotal -= _wTime * 1_000_000_000;
 
-                    System.out.println("End of test num : " + nbCurrTest);
+                    if(_p)
+                        System.out.println("End of test num : " + nbCurrTest);
+
                     TimeUnit.SECONDS.sleep(1);
                     executor.shutdown();
                 }
@@ -267,8 +269,6 @@ public class Retwis {
                     else
                         fileWriter = new FileWriter(nameFile, true);
 
-//                    fileWriter = new FileWriter("with_DegradableMap_nbThread_"+nbCurrThread+".txt", true);
-
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
                         printWriter.println(nbCurrThread +" "+ timeTotal);
@@ -288,9 +288,7 @@ public class Retwis {
                         System.out.println("- temps d'execution : "+ timeTotalComputed/1_000_000_000 + " secondes");
                     }
 
-
                     System.out.println();
-
                 }
 
                 if (_s)
@@ -371,10 +369,6 @@ public class Retwis {
         private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread, a user is puted n times following a powerlaw
         private int nbRepeat = 1000;
         private final String msg = "new msg";
-        /*private ThreadLocal<Integer> nbTweet = ThreadLocal.withInitial(() -> 0);
-        private ThreadLocal<Long> timeTweet = ThreadLocal.withInitial(() -> 0L);
-        private ThreadLocal<Long> nbRead = ThreadLocal.withInitial(() -> 0L);
-        private ThreadLocal<Long> timeRead = ThreadLocal.withInitial(() -> 0L);*/
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -389,9 +383,7 @@ public class Retwis {
 
             try{
                 opType type;
-                Pair<opType, Long> opTypeLongPair;
 
-                long l = 0l;
                 Map<opType, Integer> nbLocalOperations = new HashMap<>();
                 Map<opType, Long> timeLocalOperations = new HashMap<>();
 
@@ -411,13 +403,13 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, nbLocalOperations, timeLocalOperations,l);
+                    compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
-                        compute(type, nbLocalOperations, timeLocalOperations,l);
+                        compute(type, nbLocalOperations, timeLocalOperations);
                     }
                 }else{
                     while (flagComputing.get()){
@@ -426,16 +418,14 @@ public class Retwis {
 
                         if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, nbLocalOperations, timeLocalOperations,l);
+                                compute(type, nbLocalOperations, timeLocalOperations);
                             }
                         }else{
-                            compute(type, nbLocalOperations, timeLocalOperations,l);
+                            compute(type, nbLocalOperations, timeLocalOperations);
                         }
 
                     }
                 }
-
-                System.out.println("valeur de l :" + l);
 
                 for (opType op: opType.values()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
@@ -473,7 +463,7 @@ public class Retwis {
             return type;
         }
 
-        public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations, long v) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             long startTime = 0L, endTime= 0L;
             int n, nbLocalUsers, nbAttempt = -1;
@@ -555,40 +545,24 @@ public class Retwis {
                             database.tweet(userA, msg);
                             endTime = System.nanoTime();
                         }
-
                         break;
                     case READ:
                         if (_completionTime){
                             database.showTimeline(userA);
-
                         }else{
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
-//                        v = nbRead.get().intValue();
-//                        v += 1;
-//                        nbRead.set(1L);
-//                        timeRead.set(timeRead.get() + (endTime-startTime));
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
-//                v++;
-
-
                 if (!_completionTime) {
-                    int nbOp = nbOperations.get(typeComputed);
-                    long timeOp = timeOperations.get(typeComputed);
-
-//                    nbOperations.put(typeComputed,  1);
-//                    timeOperations.put(typeComputed, timeOp + (endTime-startTime));
-
-//                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
-//                    final Long timeComputed = endTime - startTime;
-//                    timeOperations.compute(typeComputed, (key, value) -> value + 1);
-//                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
+                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
+                    final Long timeComputed = endTime - startTime;
+                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
                 }else
 
                 break;
