@@ -263,7 +263,7 @@ public class Retwis {
                 if (_s){
 
                     String strAlpha = Double.toString(alpha).replace(".","");
-                    String nameFile = "ALL_LongAdder_"+_tag+".txt";
+                    String nameFile = "ALL_"+_tag+".txt";
                     if (nbCurrThread == 1)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -302,7 +302,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = op+"_LongAdder_"+_tag+".txt";
+                        String nameFile = op+_tag+".txt";
                         if (_s){
                             if (nbCurrThread == 1)
                                 fileWriter = new FileWriter( nameFile, false);
