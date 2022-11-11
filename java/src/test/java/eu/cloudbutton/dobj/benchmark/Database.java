@@ -110,16 +110,18 @@ public class Database {
 
         userPerThread = nbUsers / nbThread;
 
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA   = " + userPerThread);
         for (int id = 0; id < userPerThread; id++) {
+            System.out.println("INSIDE FOR");
             user = addUser();
 
             usersFollow.get().put(user, new LinkedList<>());
 
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
+                System.out.println("INSIDE 2 FOR");
                 localUsersProbability.get().add(user);
             }
         }
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA   = " + localUsersProbability.get());
         usersProbability.addAll(localUsersProbability.get());
         latchDatabase.countDown();
         latchDatabase.await();
