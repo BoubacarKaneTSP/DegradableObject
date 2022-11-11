@@ -95,6 +95,8 @@ public class Database {
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
         long max = (long) ((long) nbUsers * ratio);
 
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA   = " + max);
+
         for (int val: data){
             if (val >= max) {
                 data.set(i, (int) max);
@@ -111,17 +113,14 @@ public class Database {
         userPerThread = nbUsers / nbThread;
 
         for (int id = 0; id < userPerThread; id++) {
-            System.out.println("INSIDE FOR");
             user = addUser();
 
             usersFollow.get().put(user, new LinkedList<>());
 
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
-                System.out.println("INSIDE 2 FOR");
                 localUsersProbability.get().add(user);
             }
         }
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA   = " + localUsersProbability.get());
         usersProbability.addAll(localUsersProbability.get());
         latchDatabase.countDown();
         latchDatabase.await();
