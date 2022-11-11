@@ -110,6 +110,7 @@ public class Database {
 
         userPerThread = nbUsers / nbThread;
 
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA   = " + userPerThread);
         for (int id = 0; id < userPerThread; id++) {
             user = addUser();
 
