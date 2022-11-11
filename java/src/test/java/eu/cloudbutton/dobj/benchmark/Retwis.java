@@ -349,8 +349,9 @@ public class Retwis {
                             queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",true);
 
                         queueSizePrint = new PrintWriter(queueSizeFile);
-
                         queueSizePrint.println(nbCurrThread + " " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
+                        queueSizePrint.flush();
+                        queueSizeFile.close();
                     }
                 }
 
