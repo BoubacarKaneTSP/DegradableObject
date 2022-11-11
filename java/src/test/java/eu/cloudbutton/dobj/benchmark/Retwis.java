@@ -1,13 +1,10 @@
 package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.asymmetric.QueueMASP;
-import org.javatuples.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
-import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public class Retwis {
 
@@ -99,10 +97,11 @@ public class Retwis {
 
     private Map<opType, AtomicInteger> nbOperations;
     private Map<opType, AtomicLong> timeOperations;
+    private LongAdder queueSizes;
 
     private Database database;
 
-    int NB_USERS = 500000;
+    int NB_USERS;
 
     int nbSign = 5;
 
@@ -161,7 +160,7 @@ public class Retwis {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
             long startTime = 0, endTime, timeTotal = 0L;
-
+            NB_USERS = nbCurrThread;
 
             if (_p){
                 System.out.println();
@@ -196,6 +195,7 @@ public class Retwis {
                     if (nbCurrTest == 1) {
                         nbOperations = new ConcurrentHashMap<>();
                         timeOperations = new ConcurrentHashMap<>();
+                        queueSizes = new LongAdder();
 
                         for (opType op : opType.values()) {
                             nbOperations.put(op, new AtomicInteger(0));
@@ -274,6 +274,7 @@ public class Retwis {
                         printWriter.println(nbCurrThread +" "+ timeTotal);
                     else
                         printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+
                 }
 
                 if (_p){
@@ -327,12 +328,29 @@ public class Retwis {
                     for (opType op: opType.values()){
                         int nbSpace = 10 - op.toString().length();
                         if (_breakdown){
-                            System.out.print("==> -" + op);
-                            for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(": Nb op : " + nbOperations.get(op).get()
-                                    + ", proportion : " + (int)((nbOperations.get(op).get()/ (double) nbOpTotal)*100) + "%"
-                                    + ", temps d'exécution : " + timeOperations.get(op).get()/ 1_000_000_000 + " secondes");
+                            if(_p) {
+                                System.out.print("==> -" + op);
+                                for (int i = 0; i < nbSpace; i++) System.out.print(" ");
+                                System.out.println(": Nb op : " + nbOperations.get(op).get()
+                                        + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
+                                        + ", temps d'exécution : " + timeOperations.get(op).get() / 1_000_000_000 + " secondes");
+                                System.out.println(" ==> ");
+                                System.out.println(" ==> avg queue size : " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
+                            }
                         }
+                    }
+                    if (_s && _breakdown){
+                        FileWriter queueSizeFile;
+                        PrintWriter queueSizePrint;
+
+                        if (nbCurrThread == 1)
+                            queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",false);
+                        else
+                            queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",true);
+
+                        queueSizePrint = new PrintWriter(queueSizeFile);
+
+                        queueSizePrint.println(nbCurrThread + " " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
                     }
                 }
 
@@ -399,7 +417,7 @@ public class Retwis {
                 latch.await();
 
                 usersProbabilitySize.set(database.getUsersProbability().size());
-                arrayLocalUsers.set(database.getLocalUsers().get());
+                arrayLocalUsers.set(database.getLocalUsersProbability().get());
 
                 long l = 0L;
 
@@ -429,6 +447,10 @@ public class Retwis {
 
                     }
                     System.out.println(" ================> l = " + l);
+
+                    for (long user : usersFollow.get().keySet()){
+                        queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
+                    }
                 }
 
                 for (opType op: opType.values()){

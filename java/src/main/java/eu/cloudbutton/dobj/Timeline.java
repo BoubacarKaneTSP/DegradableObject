@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj;
 
+import lombok.Getter;
+
 import java.util.*;
 
 public class Timeline<T> {
@@ -7,6 +9,7 @@ public class Timeline<T> {
     private final static int LENGTH=50;
 
     private final ThreadLocal<Queue<T>> topk;
+    @Getter
     private final Queue<T> timeline;
 
     public Timeline(Queue timeline) {
