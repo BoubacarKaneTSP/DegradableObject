@@ -9,5 +9,5 @@ do
 	echo $nbThread
 	echo
 
-	perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 20 -u 5 -n 10 -b -h "Q_M_S_C" -z -i 100000000 -g $nbThread
+	perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m ConcurrentHashMap -t Retwis -p -e -w 20 -u 5 -n 1 -b -h "JUC" -i 100000000 -g $nbThread
 done
