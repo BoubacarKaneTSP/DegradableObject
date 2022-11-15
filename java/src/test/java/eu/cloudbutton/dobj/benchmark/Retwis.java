@@ -455,7 +455,7 @@ public class Retwis {
                                 compute(type, nbLocalOperations, timeLocalOperations);
                             }
                         }else{
-                            compute(type, nbLocalOperations, timeLocalOperations);
+//                            compute(type, nbLocalOperations, timeLocalOperations);
                         }
 
                     }
