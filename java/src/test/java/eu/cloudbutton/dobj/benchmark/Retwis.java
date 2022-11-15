@@ -400,7 +400,8 @@ public class Retwis {
         private int nbRepeat = 1000;
         private final String msg = "new msg";
         int n, nbLocalUsers, nbAttempt;
-        Long userA, userB, startTime, endTime;
+        Long userB;
+	long userA;
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
 
@@ -455,7 +456,7 @@ public class Retwis {
                                 compute(type, nbLocalOperations, timeLocalOperations);
                             }
                         }else{
-//                            compute(type, nbLocalOperations, timeLocalOperations);
+                            compute(type, nbLocalOperations, timeLocalOperations);
                         }
 
                     }
@@ -503,8 +504,8 @@ public class Retwis {
 
         public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
-            startTime = 0L;
-            endTime= 0L;
+            long startTime = 0L;
+            long endTime= 0L;
             nbAttempt = -1;
 
             nbLocalUsers = arrayLocalUsers.size();
@@ -598,8 +599,8 @@ public class Retwis {
                 }
 
                 if (!flagWarmingUp.get() && !_completionTime) {
-//                    nbOps.get(typeComputed).val += 1;
-//                    timeOps.get(typeComputed).val+= endTime - startTime;
+                    nbOps.get(typeComputed).val += 1;
+                    timeOps.get(typeComputed).val+= endTime - startTime;
                 }
 
                 break;
