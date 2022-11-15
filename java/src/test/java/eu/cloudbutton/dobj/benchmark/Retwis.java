@@ -340,7 +340,7 @@ public class Retwis {
                         int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
                         if (_breakdown){
                             if(_p) {
-                                System.out.print("==> -" + op);
+                                System.out.print("==> - " + mapIntOptoStringOp.get(op));
                                 for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                                 System.out.println(": Nb op : " + nbOperations.get(op).get()
                                         + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
@@ -401,7 +401,8 @@ public class Retwis {
         private final String msg = "new msg";
         int n, nbLocalUsers, nbAttempt;
         Long userA, userB, startTime, endTime;
-
+        Map<Integer, BoxedLong> nbLocalOperations;
+        Map<Integer, BoxedLong> timeLocalOperations;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
@@ -417,8 +418,8 @@ public class Retwis {
             try{
                 int type;
 
-                Map<Integer, BoxedLong> nbLocalOperations = new HashMap<>();
-                Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
+                nbLocalOperations = new HashMap<>();
+                timeLocalOperations = new HashMap<>();
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbLocalOperations.put(op, new BoxedLong());
@@ -500,7 +501,7 @@ public class Retwis {
             return type;
         }
 
-        public void compute(int type, Map<Integer, BoxedLong> nbOperations, Map<Integer, BoxedLong> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             startTime = 0L;
             endTime= 0L;
@@ -596,9 +597,9 @@ public class Retwis {
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
-                if (!_completionTime) {
-                    nbOperations.get(typeComputed).val += 1;
-                    timeOperations.get(typeComputed).val+= endTime - startTime;
+                if (!flagWarmingUp.get() && !_completionTime) {
+//                    nbOps.get(typeComputed).val += 1;
+//                    timeOps.get(typeComputed).val+= endTime - startTime;
                 }
 
                 break;
