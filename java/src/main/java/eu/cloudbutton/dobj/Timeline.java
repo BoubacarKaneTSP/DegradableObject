@@ -8,13 +8,13 @@ public class Timeline<T> {
 
     private final static int LENGTH=50;
 
-    private final ThreadLocal<Queue<T>> topk;
+    private final Queue<T> topk;
     @Getter
     private final Queue<T> timeline;
 
     public Timeline(Queue timeline) {
         this.timeline = timeline;
-        topk = ThreadLocal.withInitial((LinkedList::new));
+        topk = new LinkedList<>();
     }
 
     public void add(T elt) throws InterruptedException {
@@ -26,13 +26,13 @@ public class Timeline<T> {
        long queueSize = timeline.size();
 
        for (int i = 0; i < queueSize; i++)
-           topk.get().add(timeline.poll());
+           topk.add(timeline.poll());
 
-       int topkSize = topk.get().size();
+       int topkSize = topk.size();
 
         for (int i = 0; i < topkSize - LENGTH; i++)
-            topk.get().poll();
+            topk.poll();
 
-        return topk.get();
+        return topk;
    }
 }

@@ -83,7 +83,7 @@ public class Database {
 
     }
 
-    public void fill(int nbUsers, CountDownLatch latchDatabase, ThreadLocal<Map<Long, Queue<Long>>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Long, Queue<Long>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         int n, userPerThread;
         long user, userB;
 
@@ -115,7 +115,7 @@ public class Database {
         for (int id = 0; id < userPerThread; id++) {
             user = addUser();
 
-            usersFollow.get().put(user, new LinkedList<>());
+            usersFollow.put(user, new LinkedList<>());
 
             for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
                 localUsersProbability.get().add(user);
@@ -128,7 +128,7 @@ public class Database {
 //        System.out.println("Following phase");
         //Following phase
 
-        for (Long userA: usersFollow.get().keySet()){
+        for (Long userA: usersFollow.keySet()){
 
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j <= nbFollow; j++){
@@ -141,7 +141,7 @@ public class Database {
                 }
 
                 followUser(userA, userB);
-                usersFollow.get().get(userA).add(userB);
+                usersFollow.get(userA).add(userB);
             }
         }
     }
@@ -172,13 +172,13 @@ public class Database {
     }
 
     public void tweet(Long user, String msg) throws InterruptedException {
-        for (long follower : mapFollowers.get(user)) {
+/*        for (long follower : mapFollowers.get(user)) {
             mapTimelines.get(follower).add(msg);
-        }
+        }*/
     }
 
     public void showTimeline(Long user) throws InterruptedException {
-        mapTimelines.get(user).read();
+//        mapTimelines.get(user).read();
     }
     
 }

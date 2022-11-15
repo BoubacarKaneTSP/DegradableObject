@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -17,9 +18,7 @@ import java.util.concurrent.*;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -32,6 +31,18 @@ public class Retwis {
         TWEET,
         READ
     }
+
+    private static final int ADD = 0, FOLLOW = 1, UNFOLLOW = 2, TWEET = 3, READ = 4;
+    private static final int NBOPDIFF = 5;
+    private static final Map<Integer, String> mapIntOptoStringOp = new HashMap<>(){{
+        put(ADD, "ADD");
+        put(FOLLOW, "FOLLOW");
+        put(UNFOLLOW, "UNFOLLOW");
+        put(TWEET, "TWEET");
+        put(READ, "READ");
+    }};
+
+
 
     @Option(name="-set", required = true, usage = "type of Set")
     private String typeSet;
@@ -95,8 +106,8 @@ public class Retwis {
 
     private AtomicBoolean flagComputing,flagWarmingUp;
 
-    private Map<opType, AtomicInteger> nbOperations;
-    private Map<opType, AtomicLong> timeOperations;
+    private List<AtomicLong> nbOperations;
+    private List<AtomicLong> timeOperations;
     private LongAdder queueSizes;
 
     private Database database;
@@ -193,13 +204,13 @@ public class Retwis {
                     }
 
                     if (nbCurrTest == 1) {
-                        nbOperations = new ConcurrentHashMap<>();
-                        timeOperations = new ConcurrentHashMap<>();
+                        nbOperations = new CopyOnWriteArrayList<>();
+                        timeOperations = new CopyOnWriteArrayList<>();
                         queueSizes = new LongAdder();
 
-                        for (opType op : opType.values()) {
-                            nbOperations.put(op, new AtomicInteger(0));
-                            timeOperations.put(op, new AtomicLong(0));
+                        for (int op: mapIntOptoStringOp.keySet()) {
+                            nbOperations.add(op, new AtomicLong());
+                            timeOperations.add(op, new AtomicLong());
                         }
                     }
 
@@ -249,7 +260,7 @@ public class Retwis {
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
-                for (opType op : opType.values()){
+                for (int op: mapIntOptoStringOp.keySet()) {
                     nbOpTotal += nbOperations.get(op).get();
                     timeTotalComputed += timeOperations.get(op).get();
                 }
@@ -296,14 +307,14 @@ public class Retwis {
                     printWriter.flush();
 
                 if (! _completionTime){
-                    for (opType op: opType.values()){
+                    for (int op: mapIntOptoStringOp.keySet()){
 
                         nbOp = nbOperations.get(op).get();
                         timeOp = timeOperations.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = op+"_"+_tag+".txt";
+                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+".txt";
                         if (_s){
                             if (nbCurrThread == 1)
                                 fileWriter = new FileWriter( nameFile, false);
@@ -315,7 +326,7 @@ public class Retwis {
 
                         if (_p){
                             for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.print(" ==> Throughput (op/s) for "+op+" : ");
+                            System.out.print(" ==> Throughput (op/s) for "+mapIntOptoStringOp.get(op)+" : ");
                             System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
                         }
 
@@ -325,8 +336,8 @@ public class Retwis {
 
                     System.out.println();
 
-                    for (opType op: opType.values()){
-                        int nbSpace = 10 - op.toString().length();
+                    for (int op: mapIntOptoStringOp.keySet()){
+                        int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
                         if (_breakdown){
                             if(_p) {
                                 System.out.print("==> -" + op);
@@ -379,36 +390,39 @@ public class Retwis {
 
     public class RetwisApp implements Callable<Void>{
 
-        protected final ThreadLocalRandom random;
+        private final ThreadLocalRandom random;
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private ThreadLocal<Map<Long, Queue<Long>>> usersFollow; // Local map that associate to each user, the list of user that it follows
-        private ThreadLocal<Integer> usersProbabilitySize = new ThreadLocal<>();
-        private ThreadLocal<List<Long>> arrayLocalUsers = new ThreadLocal<>(); // Local array that store the users handled by a thread, a user is puted n times following a powerlaw
+        private Map<Long, Queue<Long>> usersFollow; // Local map that associate to each user, the list of user that it follows
+        private Integer usersProbabilitySize;
+        private List<Long> arrayLocalUsers; // Local array that store the users handled by a thread, a user is put n times following a powerlaw
         private int nbRepeat = 1000;
         private final String msg = "new msg";
+        int n, nbLocalUsers, nbAttempt;
+        Long userA, userB, startTime, endTime;
+
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
-            usersFollow = ThreadLocal.withInitial(() -> new HashMap<>());
+            this.usersFollow = new HashMap<>();
         }
 
         @Override
         public Void call(){
 
             try{
-                opType type;
+                int type;
 
-                Map<opType, Integer> nbLocalOperations = new HashMap<>();
-                Map<opType, Long> timeLocalOperations = new HashMap<>();
+                Map<Integer, BoxedLong> nbLocalOperations = new HashMap<>();
+                Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 
-                for (opType op: opType.values()){
-                    nbLocalOperations.put(op, 0);
-                    timeLocalOperations.put(op, 0L);
+                for (int op: mapIntOptoStringOp.keySet()){
+                    nbLocalOperations.put(op, new BoxedLong());
+                    timeLocalOperations.put(op, new BoxedLong());
                 }
 
                 database.fill(NB_USERS, latchFillDatabase, usersFollow);
@@ -417,10 +431,8 @@ public class Retwis {
 
                 latch.await();
 
-                usersProbabilitySize.set(database.getUsersProbability().size());
-                arrayLocalUsers.set(database.getLocalUsersProbability().get());
-
-                long l = 0L;
+                usersProbabilitySize = database.getUsersProbability().size();
+                arrayLocalUsers = database.getLocalUsersProbability().get();
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
@@ -434,7 +446,6 @@ public class Retwis {
                     }
                 }else{
                     while (flagComputing.get()){
-                        l++;
 
                         type = chooseOperation();
 
@@ -447,16 +458,15 @@ public class Retwis {
                         }
 
                     }
-                    System.out.println(" ================> l = " + l);
 
-                    for (long user : usersFollow.get().keySet()){
+                    for (long user : usersFollow.keySet()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
                 }
 
-                for (opType op: opType.values()){
-                    nbOperations.get(op).addAndGet(nbLocalOperations.get(op));
-                    timeOperations.get(op).addAndGet(timeLocalOperations.get(op));
+                for (int op: mapIntOptoStringOp.keySet()){
+                    nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
+                    timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
                 }
 
             } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException | NoSuchMethodException e) {
@@ -469,37 +479,37 @@ public class Retwis {
             TimeUnit.MICROSECONDS.sleep(1000);
         }
 
-        public opType chooseOperation(){
-            opType type;
+        public int chooseOperation(){
+            int type;
 
             int val = random.nextInt(100);
             if(val < ratiosArray[0]){ // add
-                type = opType.ADD;
+                type = ADD;
             }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
                 if (val%2 == 0){ //follow
-                    type = opType.FOLLOW;
+                    type = FOLLOW;
                 }else{ //unfollow
-                    type = opType.UNFOLLOW;
+                    type = UNFOLLOW;
                 }
             }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ //tweet
-                type = opType.TWEET;
+                type = TWEET;
             }else{ //read
-                type = opType.READ;
+                type = READ;
             }
 
             return type;
         }
 
-        public void compute(opType type, Map<opType, Integer> nbOperations, Map<opType,Long> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> nbOperations, Map<Integer, BoxedLong> timeOperations) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
-            long startTime = 0L, endTime= 0L;
-            int n, nbLocalUsers, nbAttempt = -1;
-            Long userA, userB;
+            startTime = 0L;
+            endTime= 0L;
+            nbAttempt = -1;
 
-            nbLocalUsers = arrayLocalUsers.get().size();
+            nbLocalUsers = arrayLocalUsers.size();
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
 
-            opType typeComputed = type;
+            int typeComputed = type;
             /*To avoid infinite loop if :
             * - When doing follow, all user handle by thread i already follow all users in usersProbability.
             * - When doing unfollow, all user handle by thread i do not follow anyone.
@@ -513,9 +523,9 @@ public class Retwis {
                     typeComputed = chooseOperation();
                 }
                 int val = random.nextInt(nbLocalUsers);
-                userA = arrayLocalUsers.get().get(val);
+                userA = arrayLocalUsers.get(val);
 
-                Queue<Long> listFollow = usersFollow.get().get(userA);
+                Queue<Long> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
                         if (_completionTime){
@@ -527,7 +537,7 @@ public class Retwis {
                         }
                         break;
                     case FOLLOW:
-                        n = random.nextInt(usersProbabilitySize.get()); // We choose a user to follow according to a probability
+                        n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().get(n);
 
                         try{
@@ -587,9 +597,8 @@ public class Retwis {
                 }
 
                 if (!_completionTime) {
-                    nbOperations.compute(typeComputed, (key, value) -> value + 1);
-                    final Long timeComputed = endTime - startTime;
-                    timeOperations.compute(typeComputed, (key, value) -> value + timeComputed);
+                    nbOperations.get(typeComputed).val += 1;
+                    timeOperations.get(typeComputed).val+= endTime - startTime;
                 }
 
                 break;
