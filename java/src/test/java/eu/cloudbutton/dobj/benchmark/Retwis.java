@@ -401,7 +401,7 @@ public class Retwis {
         private final String msg = "new msg";
         int n, nbLocalUsers, nbAttempt;
         Long userB;
-	long userA;
+	    long userA, startTime, endTime;
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
 
@@ -458,7 +458,6 @@ public class Retwis {
                         }else{
                             compute(type, nbLocalOperations, timeLocalOperations);
                         }
-
                     }
 
                     for (long user : usersFollow.keySet()){
@@ -504,8 +503,8 @@ public class Retwis {
 
         public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
-            long startTime = 0L;
-            long endTime= 0L;
+            startTime = 0L;
+            endTime= 0L;
             nbAttempt = -1;
 
             nbLocalUsers = arrayLocalUsers.size();
