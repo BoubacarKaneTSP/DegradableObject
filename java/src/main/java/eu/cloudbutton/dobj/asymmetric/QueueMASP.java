@@ -35,6 +35,8 @@
 
 package eu.cloudbutton.dobj.asymmetric;
 
+import jdk.internal.vm.annotation.Contended;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.AbstractQueue;
@@ -222,6 +224,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * - it is permitted for tail to lag behind head, that is, for tail
      *   to not be reachable from head!
      */
+    @Contended
     transient volatile Node<E> head;
 
     /**
@@ -236,6 +239,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      *   to not be reachable from head!
      * - tail.next may or may not be self-linked.
      */
+    @Contended
     private transient volatile Node<E> tail;
 
     /**
