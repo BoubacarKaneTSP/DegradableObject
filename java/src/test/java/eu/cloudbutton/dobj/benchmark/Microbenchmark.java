@@ -237,7 +237,7 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = type + "_HT_Contended_ALL.txt";
+                    String nameFile = type + "_ALL.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
@@ -259,7 +259,7 @@ public class Microbenchmark {
 
                 for (opType op: opType.values()) {
 
-                    String nameFile = type + "_" + op + "_HT_Contended.txt";
+                    String nameFile = type + "_" + op + ".txt";
                     nbOp = nbOperations.get(op).get();
                     timeOp = timeOperations.get(op).get();
 
