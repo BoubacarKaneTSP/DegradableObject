@@ -157,9 +157,9 @@ public class QueueMASP<E> extends AbstractQueue<E>
         }
     }
 
-//    @Contended
+    @Contended
     private transient Node<E> head;
-//    @Contended
+    @Contended
     private transient volatile Node<E> tail;
     private Counter queueSize;
 //    private LongAdder queueSize;
@@ -293,7 +293,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
         final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
         for (Node<E> t = tail, p = t;;) {
-
             Node<E> q = p.next;
             if (q == null) {
                 // p is last node
@@ -302,9 +301,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // for e to become an element of this queue,
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
-                    {
                         TAIL.weakCompareAndSet(this, t, newNode);
-                    }
 //                    queueSize.incrementAndGet();
 //                    queueSize.increment();
                     return true;
@@ -337,7 +334,27 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * Retrieves and removes the head of this queue, or returns null if this queue is empty.
      * @return the head of this queue, or null if this queue is empty.
      */
-    @Override
+    public E poll() {
+        restartFromHead: for (;;) {
+            for (Node<E> h = head, p = h, q;; p = q) {
+                final E item;
+                if ((item = p.item) != null && p.casItem(item, null)) {
+                    // Successful CAS is the linearization point
+                    // for item to be removed from this queue.
+                    if (p != h) // hop two nodes at a time
+                        updateHead(h, ((q = p.next) != null) ? q : p);
+                    return item;
+                }
+                else if ((q = p.next) == null) {
+                    updateHead(h, p);
+                    return null;
+                }
+                else if (p == q)
+                    continue restartFromHead;
+            }
+        }
+    }
+    /*    @Override
     public E poll() {
 
         if (head != tail){
@@ -351,7 +368,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
         return null;
 
-    }
+    }*/
 
     @Override
     public E peek() {
