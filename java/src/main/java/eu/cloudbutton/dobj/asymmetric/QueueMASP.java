@@ -157,9 +157,9 @@ public class QueueMASP<E> extends AbstractQueue<E>
         }
     }
 
-    @Contended
+//    @Contended
     private transient Node<E> head;
-    @Contended
+//    @Contended
     private transient volatile Node<E> tail;
     private Counter queueSize;
 //    private LongAdder queueSize;
