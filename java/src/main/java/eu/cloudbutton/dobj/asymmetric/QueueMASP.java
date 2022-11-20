@@ -267,15 +267,15 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Override
     public int size() {
 
-        return (int) queueSize.read();
+//        return (int) queueSize.read();
 //        return (int) queueSize.intValue();
-        /*int ret = 0;
+        int ret = 0;
         for (Node<E> p = head;;) {
             if (p.item != null) ret++;
             if (p.next==null) break;
             p = p.next;
         }
-        return ret;*/
+        return ret;
     }
 
     @Override
