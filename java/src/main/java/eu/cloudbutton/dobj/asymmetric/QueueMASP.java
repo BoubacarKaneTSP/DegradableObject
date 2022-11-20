@@ -305,7 +305,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     {
                         TAIL.weakCompareAndSet(this, t, newNode);
                     }
-                    queueSize.incrementAndGet();
+//                    queueSize.incrementAndGet();
 //                    queueSize.increment();
                     return true;
                 }
