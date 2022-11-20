@@ -5,9 +5,7 @@ import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,13 +31,14 @@ public abstract class Tester<T> implements Callable<Void> {
     @Override
     public Void call() {
 
+        int opNumber = 0;
         long n, elapsedTime;
-        Map<opType, BoxedLong> localOp = new HashMap<>();
-        Map<opType, BoxedLong> localTimeOp = new HashMap<>();
+        List<BoxedLong> localOp = new ArrayList<>();
+        List<BoxedLong> localTimeOp = new ArrayList<>();
 
-        for (opType type: opType.values()){
-            localOp.put(type, new BoxedLong());
-            localTimeOp.put(type, new BoxedLong());
+        for (opType ignored : opType.values()){
+            localOp.add(new BoxedLong());
+            localTimeOp.add(new BoxedLong());
         }
 
         try{
@@ -76,19 +75,34 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 elapsedTime = test(type);
 
-                if (elapsedTime != 0)
-                    localOp.get(type).val += nbRepeat;
+                switch (type){
+                    case ADD:
+                        opNumber = 0;
+                        break;
+                    case REMOVE:
+                        opNumber = 1;
+                        break;
+                    case READ:
+                        opNumber = 2;
+                        break;
+                }
 
-                localTimeOp.get(type).val += elapsedTime;
+                if (elapsedTime != 0)
+                    localOp.get(opNumber).val += nbRepeat;
+
+                localTimeOp.get(opNumber).val += elapsedTime;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        for (opType type: opType.values()){
-            Microbenchmark.nbOperations.get(type).addAndGet(localOp.get(type).getVal());
-            Microbenchmark.timeOperations.get(type).addAndGet(localTimeOp.get(type).getVal());
+        opNumber = 0;
+
+        for (opType ignored : opType.values()){
+            Microbenchmark.nbOperations.get(opNumber).addAndGet(localOp.get(opNumber).getVal());
+            Microbenchmark.timeOperations.get(opNumber).addAndGet(localTimeOp.get(opNumber).getVal());
+            opNumber++;
         }
 
         return null;

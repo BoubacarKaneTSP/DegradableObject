@@ -38,8 +38,8 @@ public class Microbenchmark {
     public static AtomicBoolean flag;
     public static boolean ratioFail;
     public static int nbCurrentThread;
-    public static Map<opType, AtomicLong> nbOperations;
-    public static Map<opType, AtomicLong> timeOperations;
+    public static List<AtomicLong> nbOperations;
+    public static List<AtomicLong> timeOperations;
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -132,12 +132,12 @@ public class Microbenchmark {
                 if (_p)
                     System.out.println("Nb threads = " + nbCurrentThread);
 
-                nbOperations = new ConcurrentHashMap<>();
-                timeOperations = new ConcurrentHashMap<>();
+                nbOperations = new CopyOnWriteArrayList<>();
+                timeOperations = new CopyOnWriteArrayList<>();
 
                 for (opType op : opType.values()) {
-                    nbOperations.put(op, new AtomicLong(0));
-                    timeOperations.put(op, new AtomicLong(0));
+                    nbOperations.add(new AtomicLong(0));
+                    timeOperations.add(new AtomicLong(0));
                 }
 
                 for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
@@ -227,9 +227,12 @@ public class Microbenchmark {
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 
+                int opNumber = 0;
+
                 for (opType type: opType.values()){
-                    timeTotal += timeOperations.get(type).get();
-                    nbOpTotal += nbOperations.get(type).get();
+                    timeTotal += timeOperations.get(opNumber).get();
+                    nbOpTotal += nbOperations.get(opNumber).get();
+                    opNumber++;
                 }
 
                 double throughputTotal;
@@ -257,12 +260,12 @@ public class Microbenchmark {
 
                 long nbOp, timeOp;
 
+                opNumber = 0;
                 for (opType op: opType.values()) {
-
                     String nameFile = type + "_" + op + ".txt";
-                    nbOp = nbOperations.get(op).get();
-                    timeOp = timeOperations.get(op).get();
-
+                    nbOp = nbOperations.get(opNumber).get();
+                    timeOp = timeOperations.get(opNumber).get();
+                    opNumber++;
                     if (_s) {
                         if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                             fileWriter = new FileWriter(nameFile, false);
