@@ -171,7 +171,8 @@ public class Retwis {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
             long startTime = 0, endTime, timeTotal = 0L;
-            NB_USERS = (int) _nbOps;
+//            NB_USERS = (int) _nbOps;
+            NB_USERS = nbCurrThread;
 
             if (_p){
                 System.out.println();
