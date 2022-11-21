@@ -21,7 +21,6 @@ public class Database {
     private final Factory factory;
     private final double alpha;
     private final int nbThread;
-    private final ThreadLocalRandom random;
     private final Map<Long, Set<Long>> mapFollowers;
     private final Map<Long, Set<Long>> mapFollowing;
     private final Map<Long, Timeline<String>> mapTimelines;
@@ -29,6 +28,7 @@ public class Database {
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
     private final ThreadLocal<List<Long>> localUsersProbability;
+    private ThreadLocalRandom random;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
@@ -72,7 +72,6 @@ public class Database {
         this.typeCounter = typeCounter;
         this.alpha = alpha;
         this.nbThread = nbThread;
-        this.random = ThreadLocalRandom.current();
         mapFollowers = new ConcurrentHashMap<>();
         mapFollowing = factory.getMap();
         mapTimelines = new ConcurrentHashMap<>();
@@ -80,10 +79,14 @@ public class Database {
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
         localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
+        random = null;
 
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Long, Queue<Long>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
+        random = ThreadLocalRandom.current();
+
         int n, userPerThread;
         long user, userB;
 
@@ -137,8 +140,8 @@ public class Database {
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j < nbFollow; j++){
                 n = random.nextInt(usersProbability.size());
-                System.out.println("n => " + n);
-                TimeUnit.SECONDS.sleep(1);
+//                System.out.println("n => " + n);
+//                TimeUnit.SECONDS.sleep(1);
                 userB = 0;
                 try{
                     userB = usersProbability.get(n);
