@@ -171,8 +171,8 @@ public class Retwis {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
             long startTime = 0, endTime, timeTotal = 0L;
-            NB_USERS = (int) _nbOps;
-//            NB_USERS = nbCurrThread;
+//            NB_USERS = (int) _nbOps;
+            NB_USERS = nbCurrThread;
 
             if (_p){
                 System.out.println();
@@ -437,6 +437,8 @@ public class Retwis {
                 usersProbabilitySize = database.getUsersProbability().size();
                 arrayLocalUsers = database.getLocalUsersProbability().get();
 
+                System.out.println("Local user from thread " + Thread.currentThread().getName() + " : " + arrayLocalUsers);
+                System.out.println("Print of mapFollower : " + database.getMapFollowers());
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
                     compute(type, nbLocalOperations, timeLocalOperations);
