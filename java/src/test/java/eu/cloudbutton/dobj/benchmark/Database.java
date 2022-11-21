@@ -108,7 +108,6 @@ public class Database {
 
         //adding all users
 
-        System.out.println(data);
 //        System.out.println("Adding users");
 
         userPerThread = nbUsers / nbThread;
@@ -122,18 +121,24 @@ public class Database {
                 localUsersProbability.get().add(user);
             }
         }
+
         usersProbability.addAll(localUsersProbability.get());
         latchDatabase.countDown();
         latchDatabase.await();
 
+/*        System.out.println();
+        System.out.println("usersFollow from thread "+ Thread.currentThread().getName() +": " + usersFollow);
+        System.out.println();*/
 //        System.out.println("Following phase");
         //Following phase
 
         for (Long userA: usersFollow.keySet()){
 
             int nbFollow = data.get(random.nextInt(bound));
-            for(int j = 0; j <= nbFollow; j++){
+            for(int j = 0; j < nbFollow; j++){
                 n = random.nextInt(usersProbability.size());
+                System.out.println("n => " + n);
+                TimeUnit.SECONDS.sleep(1);
                 userB = 0;
                 try{
                     userB = usersProbability.get(n);
@@ -145,6 +150,8 @@ public class Database {
                 usersFollow.get(userA).add(userB);
             }
         }
+
+
     }
 
     public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
