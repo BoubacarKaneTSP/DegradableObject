@@ -75,7 +75,7 @@ public class Database {
         mapFollowers = new ConcurrentHashMap<>();
         mapFollowing = factory.getMap();
         mapTimelines = new ConcurrentHashMap<>();
-        next_user_ID = new CounterJUC();
+        next_user_ID = factory.getCounter();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
         localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
