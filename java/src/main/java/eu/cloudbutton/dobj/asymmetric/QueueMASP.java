@@ -478,8 +478,9 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-        queueSize.read();
-                restartFromHead: for (;;) {
+        return (int) queueSize.read();
+
+        /*restartFromHead: for (;;) {
             int count = 0;
             for (Node<E> p = first(); p != null;) {
                 if (p.item != null)
@@ -489,7 +490,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     continue restartFromHead;
             }
             return count;
-        }
+        }*/
     }
 
     /**
