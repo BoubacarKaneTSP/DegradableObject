@@ -35,9 +35,6 @@
 
 package eu.cloudbutton.dobj.asymmetric;
 
-import eu.cloudbutton.dobj.incrementonly.Counter;
-import jdk.internal.vm.annotation.Contended;
-
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.AbstractQueue;
@@ -225,7 +222,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * - it is permitted for tail to lag behind head, that is, for tail
      *   to not be reachable from head!
      */
-    @Contended
     transient volatile Node<E> head;
 
     /**
@@ -240,17 +236,13 @@ public class QueueMASP<E> extends AbstractQueue<E>
      *   to not be reachable from head!
      * - tail.next may or may not be self-linked.
      */
-    @Contended
     private transient volatile Node<E> tail;
-
-    private Counter queueSize;
 
     /**
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
-        head = tail = new Node<>();
-        queueSize = new CounterMISD();
+        head = tail = new Node<E>();
     }
 
     /**
@@ -372,9 +364,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
-
-                    queueSize.incrementAndGet();
-
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -391,20 +380,25 @@ public class QueueMASP<E> extends AbstractQueue<E>
         }
     }
 
-    @Override
     public E poll() {
-
-        if (head != tail){
-            E item = head.next.item;
-            head = head.next;
-            queueSize.decrementAndGet();
-//            queueSize.decrement();
-//            head.item = null;
-            return item;
+        restartFromHead: for (;;) {
+            for (Node<E> h = head, p = h, q;; p = q) {
+                final E item;
+                if ((item = p.item) != null && p.casItem(item, null)) {
+                    // Successful CAS is the linearization point
+                    // for item to be removed from this queue.
+                    if (p != h) // hop two nodes at a time
+                        updateHead(h, ((q = p.next) != null) ? q : p);
+                    return item;
+                }
+                else if ((q = p.next) == null) {
+                    updateHead(h, p);
+                    return null;
+                }
+                else if (p == q)
+                    continue restartFromHead;
+            }
         }
-
-        return null;
-
     }
 
     public E peek() {
@@ -470,7 +464,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-/*        restartFromHead: for (;;) {
+        restartFromHead: for (;;) {
             int count = 0;
             for (Node<E> p = first(); p != null;) {
                 if (p.item != null)
@@ -480,8 +474,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     continue restartFromHead;
             }
             return count;
-        }*/
-        return (int) queueSize.read();
+        }
     }
 
     /**
