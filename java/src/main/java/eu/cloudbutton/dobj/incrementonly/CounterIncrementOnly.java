@@ -77,7 +77,7 @@ public class CounterIncrementOnly implements Counter {
     @Override
     public long read() {
         long total = 0;
-        UNSAFE.loadFence();
+//        UNSAFE.loadFence();
         for (BoxedLong v : count) {
             total += v.val;
         }
