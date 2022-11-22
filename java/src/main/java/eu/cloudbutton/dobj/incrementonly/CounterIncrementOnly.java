@@ -76,6 +76,7 @@ public class CounterIncrementOnly implements Counter {
      */
     @Override
     public long read() {
+        System.out.println(count);
         long total = 0;
         UNSAFE.loadFence();
         for (BoxedLong v : count) {
