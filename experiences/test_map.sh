@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 20 -u 10 -n 5 -i 100000 -b -h "JUC"
+#perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 20 -u 10 -n 5 -i 100000 -b -h "JUC"
 #./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m MapAddIntensive -t Retwis -p -e -w 15 -u 5 -n 1 -b -h "M"
 #./test.sh -c CounterJUC -s SetAddIntensive -q ConcurrentLinkedQueue -m MapAddIntensive -t Retwis -p -e -w 15 -u 5 -n 1 -b -h "M_S"
 #./test.sh -c CounterJUC -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 15 -u 5 -n 1 -b -h "Q_M_S"
