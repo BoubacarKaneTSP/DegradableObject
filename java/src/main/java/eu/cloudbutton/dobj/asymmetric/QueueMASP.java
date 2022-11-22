@@ -35,6 +35,7 @@
 
 package eu.cloudbutton.dobj.asymmetric;
 
+import eu.cloudbutton.dobj.incrementonly.Counter;
 import jdk.internal.vm.annotation.Contended;
 
 import java.lang.invoke.MethodHandles;
@@ -242,11 +243,15 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
+    private Counter queueSize;
+
+
     /**
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
+        queueSize = new CounterMISD();
     }
 
     /**
