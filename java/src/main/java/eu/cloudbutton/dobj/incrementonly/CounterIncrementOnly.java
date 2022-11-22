@@ -47,7 +47,7 @@ public class CounterIncrementOnly implements Counter {
      */
     @Override
     public long incrementAndGet() {
-        local.get();
+        local.get().val += 1;
 
         UNSAFE.storeFence();
         return 0;
@@ -76,7 +76,6 @@ public class CounterIncrementOnly implements Counter {
      */
     @Override
     public long read() {
-        System.out.println(count);
         long total = 0;
         UNSAFE.loadFence();
         for (BoxedLong v : count) {
@@ -87,11 +86,14 @@ public class CounterIncrementOnly implements Counter {
 
     @Override
     public long decrementAndGet(int delta) {
+        local.get().val -= delta;
+
         return 0;
     }
 
     @Override
     public long decrementAndGet() {
+        local.get().val -= 1;
         return 0;
     }
 
