@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
+import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import org.openjdk.jol.info.ClassLayout;
 import org.testng.annotations.BeforeTest;
@@ -28,7 +29,7 @@ public class QueueTest {
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueMASP");
         factory.setFactoryQueue(cls);
-        doConcurrentAppend(factory.getQueue());
+//        doConcurrentAppend(factory.getQueue());
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
         factory.setFactoryQueue(cls);
@@ -36,6 +37,7 @@ public class QueueTest {
     }
 
     private static void doAppend(Queue<Integer> queue){
+
 
     }
     private static void doConcurrentAppend(Queue<Integer> queue) throws ExecutionException, InterruptedException {

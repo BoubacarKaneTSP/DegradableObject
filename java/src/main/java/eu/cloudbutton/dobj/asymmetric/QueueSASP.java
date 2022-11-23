@@ -250,14 +250,17 @@ public class QueueSASP<E> implements Queue<E> {
         }
     }
 
-    public Set<Pair<E, Boolean>> flush(){
+    public List<Pair<E, Boolean>> flush(){
 
-        Set<Pair<E, Boolean>> eltsFlushed = new TreeSet<>();
+        List<Pair<E, Boolean>> eltsFlushed = new ArrayList<>();
 
-        for (Node<E> t = tail, h = head;  h != t ; h = h.next) {
+        Node<E> t, h;
+
+        for (t = tail, h = head;  h != t ; h = h.next) {
             eltsFlushed.add(new Pair<>(h.next.item,h.next.opType));
         }
 
+        head = t;
         return eltsFlushed;
     }
 
@@ -288,7 +291,6 @@ public class QueueSASP<E> implements Queue<E> {
      */
     @Override
     public E poll() {
-
         if (head != tail){
             E item = head.next.item;
             head = head.next;

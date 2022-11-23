@@ -58,12 +58,7 @@ public class SetMWSR<T> implements Set<T> {
     }
 
     @Override
-    public boolean remove(Object o) {
-        if(local.get().poll() != null)
-            return true;
-        else
-            return false;
-    }
+    public boolean remove(Object o) {return local.get().remove(o);}
 
     @Override
     public boolean addAll(@NotNull Collection c) {
@@ -108,7 +103,9 @@ public class SetMWSR<T> implements Set<T> {
 
     private void update(){
         for (QueueSASP<T> queue: queueList){
-            Set<Pair<T, Boolean>> eltsFlushed = queue.flush();
+//            System.out.println("Queue => " + queue);
+            List<Pair<T, Boolean>> eltsFlushed = queue.flush();
+//            System.out.println("eltsFlushed => " + eltsFlushed);
 
             for (Pair<T, Boolean> element: eltsFlushed){
 

@@ -36,8 +36,8 @@ public class SetTest {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
-            if(Thread.currentThread().getName().equals("pool-1-thread-1"))
-                set.remove("v3");
+//            System.out.println(Thread.currentThread().getName());
+            set.add(Thread.currentThread().getName());
             set.add("v1");
             set.add("v2");
             set.add("v3");
@@ -51,6 +51,12 @@ public class SetTest {
         for (Future<Void> future :futures){
             future.get();
         }
+        TimeUnit.SECONDS.sleep(1);
+
+
+        set.size();
+
+        TimeUnit.SECONDS.sleep(1);
 
         System.out.println(set);
 
