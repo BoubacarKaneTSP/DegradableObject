@@ -24,8 +24,6 @@ public class SetTester extends Tester<Set> {
 
         long startTime = 0L, endTime = 0L;
 
-        int val = 0;
-
         AbstractList list = new ArrayList<>();
 
         CollisionKeyFactory factory = null;
@@ -67,7 +65,6 @@ public class SetTester extends Tester<Set> {
                     startTime = System.nanoTime();
                     for (int i = 0; i < nbRepeat; i++) {
                         for (Object o : object) {
-                            val += 1;
                         }
 //                    object.contains(list.get(i));
                     }

@@ -162,7 +162,7 @@ public class Database {
         long userID = next_user_ID.incrementAndGet();
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
-        mapFollowing.put(userID, factory.getSet() );
+        mapFollowing.put(userID, new HashSet<>() );
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
 
         return userID;
