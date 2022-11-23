@@ -396,15 +396,9 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }
 
     public E poll() {
-        E item = null;
         if (head != tail){
-            try{
-                item = head.next.item;
-            }catch (NullPointerException e){
-                System.out.println("head : "+head);
-                System.out.println("head.next : "+head.next);
-                System.exit(0);
-            }
+
+            E item = head.next.item;
             head = head.next;
             queueSize.decrementAndGet();
 //            queueSize.decrement();
