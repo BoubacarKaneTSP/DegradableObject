@@ -122,7 +122,7 @@ public class Database {
 
             usersFollow.put(user, new LinkedList<>());
 
-            for (int j = 0 ; j < data.get(random.nextInt(bound)); j++) {
+            for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
                 localUsersProbability.get().add(user);
             }
         }
