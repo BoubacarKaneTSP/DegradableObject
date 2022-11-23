@@ -91,7 +91,7 @@ public class Database {
 
         random = ThreadLocalRandom.current();
 
-        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
+//        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
         long user, userB;
 
@@ -119,7 +119,6 @@ public class Database {
 //        System.out.println("Adding users");
 
         userPerThread = nbUsers / nbThread;
-        userPerThread = userPerThread == 0 ? 1 : userPerThread;
 
         for (int id = 0; id < userPerThread; id++) {
             user = addUser();
@@ -127,7 +126,7 @@ public class Database {
             usersFollow.put(user, new LinkedList<>());
 
             localUsers.get().add(user);
-            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
+//            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
             for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
                 localUsersProbability.get().add(user);
             }
