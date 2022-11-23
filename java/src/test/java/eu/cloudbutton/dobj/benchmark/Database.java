@@ -140,8 +140,6 @@ public class Database {
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j < nbFollow; j++){
                 n = random.nextInt(usersProbability.size());
-//                System.out.println("n => " + n);
-//                TimeUnit.SECONDS.sleep(1);
                 userB = 0;
                 try{
                     userB = usersProbability.get(n);
