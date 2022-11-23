@@ -127,6 +127,7 @@ public class Database {
             usersFollow.put(user, new LinkedList<>());
 
             localUsers.get().add(user);
+            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
             for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
                 localUsersProbability.get().add(user);
             }
