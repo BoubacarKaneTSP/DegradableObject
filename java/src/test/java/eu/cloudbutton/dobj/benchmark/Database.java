@@ -27,7 +27,7 @@ public class Database {
     private final Counter next_user_ID;
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
-    private final ThreadLocal<List<Long>> localUsersProbability;
+    private ThreadLocal<List<Long>> localUsersProbability;
     private ThreadLocalRandom random;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -78,7 +78,7 @@ public class Database {
         next_user_ID = factory.getCounter();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
-        localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
+        localUsersProbability = null;
         random = null;
 
     }
@@ -86,7 +86,7 @@ public class Database {
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Long, Queue<Long>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         random = ThreadLocalRandom.current();
-
+        localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
         int n, userPerThread;
         long user, userB;
 
