@@ -54,12 +54,15 @@ public class SetMWSR<T> implements Set<T> {
 
     @Override
     public boolean add(Object o) {
-        return local.get().add((T) o);
+        return local.get().offer((T) o);
     }
 
     @Override
     public boolean remove(Object o) {
-        return local.get().remove(o);
+        if(local.get().poll() != null)
+            return true;
+        else
+            return false;
     }
 
     @Override
