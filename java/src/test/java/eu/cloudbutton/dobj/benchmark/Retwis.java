@@ -435,7 +435,7 @@ public class Retwis {
                 latch.await();
 
                 usersProbabilitySize = database.getUsersProbability().size();
-                arrayLocalUsers = database.getLocalUsersProbability().get();
+                arrayLocalUsers = database.getLocalUsers().get();
 
                 System.out.println("Local user from thread " + Thread.currentThread().getName() + " : " + arrayLocalUsers);
 //                System.out.println("Print of mapFollower : " + database.getMapFollowers());

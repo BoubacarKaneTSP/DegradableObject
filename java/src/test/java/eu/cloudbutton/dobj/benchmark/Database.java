@@ -30,6 +30,7 @@ public class Database {
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
     private ThreadLocal<List<Long>> localUsersProbability;
+    private ThreadLocal<List<Long>> localUsers;
     private ThreadLocalRandom random;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -80,6 +81,7 @@ public class Database {
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
         localUsersProbability = null;
+        localUsers = null;
         random = null;
         next_user_ID = new AtomicLong();
 
@@ -89,6 +91,7 @@ public class Database {
 
         random = ThreadLocalRandom.current();
         localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
+        localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
         int n, userPerThread;
         long user, userB;
 
@@ -122,6 +125,7 @@ public class Database {
 
             usersFollow.put(user, new LinkedList<>());
 
+            localUsers.get().add(user);
             for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
                 localUsersProbability.get().add(user);
             }
