@@ -35,7 +35,7 @@ public class SetTester extends Tester<Set> {
 
         for (int i = 0; i < nbRepeat; i++) {
             int rand = random.nextInt(ITEM_PER_THREAD);
-            String iid = Thread.currentThread().getId()  + Long.toString(rand);
+            int iid = (int) (Thread.currentThread().getId()  + rand);
 
             if (useCollisionKey)
                 list.add(factory.getCollisionKey());
@@ -52,23 +52,24 @@ public class SetTester extends Tester<Set> {
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
-                if(Thread.currentThread().getName().contains("thread-1")){
-                    startTime = System.nanoTime();
-                    for (int i = 0; i < nbRepeat; i++) {
-                        object.remove(list.get(i));
-                    }
-                    endTime = System.nanoTime();
+                startTime = System.nanoTime();
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.remove(list.get(i));
                 }
+                endTime = System.nanoTime();
+
                 break;
             case READ:
                 if(Thread.currentThread().getName().contains("thread-1")) {
+                    int v = 0;
                     startTime = System.nanoTime();
                     for (int i = 0; i < nbRepeat; i++) {
                         for (Object o : object) {
+                            v++;
                         }
-//                    object.contains(list.get(i));
                     }
                     endTime = System.nanoTime();
+                    object.add(v);
                 }
                 break;
         }

@@ -40,7 +40,7 @@ public class SetFiller extends Filler<Set>{
                 if(useCollisionKey)
                     object.add(finalFactory.getCollisionKey());
                 else
-                    object.add(Long.toString(i));
+                    object.add((int) i);
             }
 
             return null;
