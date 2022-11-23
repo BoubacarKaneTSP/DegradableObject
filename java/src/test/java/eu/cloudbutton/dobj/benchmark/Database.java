@@ -80,8 +80,8 @@ public class Database {
         mapTimelines = new ConcurrentHashMap<>();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
-        localUsersProbability = null;
-        localUsers = null;
+        localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
+        localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
         random = null;
         next_user_ID = new AtomicLong();
 
@@ -90,8 +90,7 @@ public class Database {
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Long, Queue<Long>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         random = ThreadLocalRandom.current();
-        localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
-        localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
+
         System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
         long user, userB;
