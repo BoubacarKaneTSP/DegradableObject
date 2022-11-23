@@ -10,6 +10,8 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 @Getter
 public class Database {
@@ -24,7 +26,7 @@ public class Database {
     private final Map<Long, Set<Long>> mapFollowers;
     private final Map<Long, Set<Long>> mapFollowing;
     private final Map<Long, Timeline<String>> mapTimelines;
-    private final Counter next_user_ID;
+    private final AtomicLong next_user_ID;
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
     private ThreadLocal<List<Long>> localUsersProbability;
@@ -75,11 +77,11 @@ public class Database {
         mapFollowers = new ConcurrentHashMap<>();
         mapFollowing = factory.getMap();
         mapTimelines = new ConcurrentHashMap<>();
-        next_user_ID = factory.getCounter();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
         localUsersProbability = null;
         random = null;
+        next_user_ID = new AtomicLong();
 
     }
 
