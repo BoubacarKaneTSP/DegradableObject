@@ -406,10 +406,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 System.exit(0);
             }
             head = head.next;
-            if (head == null) {
-                System.out.println("Passage de head à null par le thread : " + Thread.currentThread().getName());
-                System.exit(0);
-            }
             queueSize.decrementAndGet();
 //            queueSize.decrement();
 //            head.item = null;
