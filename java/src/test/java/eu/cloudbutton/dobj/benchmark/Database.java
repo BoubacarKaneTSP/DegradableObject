@@ -92,6 +92,7 @@ public class Database {
         random = ThreadLocalRandom.current();
         localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
         localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
+        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
         long user, userB;
 
