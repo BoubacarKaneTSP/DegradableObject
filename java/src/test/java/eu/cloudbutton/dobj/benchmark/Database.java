@@ -96,19 +96,19 @@ public class Database {
 
         random = ThreadLocalRandom.current();
 
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) nbUsers * ratio);
-        max = max == 0 ? 1 : max;
-        int i = 0;
-
-        for (int val: data){
-            if (val >= max) {
-                data.set(i, (int) max);
-            }
-            if (val < 1)
-                data.set(i, 1);
-            i++;
-        }
+//        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+//        long max = (long) ((long) nbUsers * ratio);
+//        max = max == 0 ? 1 : max;
+//        int i = 0;
+//
+//        for (int val: data){
+//            if (val >= max) {
+//                data.set(i, (int) max);
+//            }
+//            if (val < 1)
+//                data.set(i, 1);
+//            i++;
+//        }
         System.out.println(data);
 //        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
