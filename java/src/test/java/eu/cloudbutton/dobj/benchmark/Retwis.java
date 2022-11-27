@@ -564,7 +564,7 @@ public class Retwis {
                 }
                 int val = random.nextInt(nbLocalUsers);
                 userA = arrayLocalUsers.get(val);
-
+                System.out.println(arrayLocalUsers);
                 Queue<Long> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
