@@ -380,9 +380,9 @@ public class Retwis {
                             System.out.println(" ==> nb user with max follower (or 10% less) : " + userWithMaxFollower);
                             System.out.println(" ==> nb user without follower : " + userWithoutFollower);
                             System.out.println();
-                            System.out.println("Map Follower : " + database.getMapFollowers());
+//                            System.out.println("Map Follower : " + database.getMapFollowers());
                             System.out.println();
-                            System.out.println("Map Following : " + database.getMapFollowing());
+//                            System.out.println("Map Following : " + database.getMapFollowing());
                         }
 
                         if (_s){
@@ -502,7 +502,7 @@ public class Retwis {
                     for (long user : usersFollow.keySet()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
-                    System.out.println(arrayLocalUsers);
+//                    System.out.println(arrayLocalUsers);
                 }
 
                 for (int op: mapIntOptoStringOp.keySet()){
