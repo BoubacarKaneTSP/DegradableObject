@@ -171,8 +171,8 @@ public class Retwis {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
             long startTime = 0, endTime, timeTotal = 0L;
-            NB_USERS = (int) _nbOps;
-//            NB_USERS = nbCurrThread;
+//            NB_USERS = (int) _nbOps;
+            NB_USERS = nbCurrThread;
 
             if (_p){
                 System.out.println();
@@ -337,33 +337,64 @@ public class Retwis {
 
                     System.out.println();
 
-                    for (int op: mapIntOptoStringOp.keySet()){
-                        int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
-                        if (_breakdown){
-                            if(_p) {
+                    if (_breakdown){
+                        if (_p){
+                            for (int op: mapIntOptoStringOp.keySet()) {
+                                int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
                                 System.out.print("==> - " + mapIntOptoStringOp.get(op));
                                 for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                                 System.out.println(": Nb op : " + nbOperations.get(op).get()
                                         + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
                                         + ", temps d'exécution : " + timeOperations.get(op).get() / 1_000_000_000 + " secondes");
-                                System.out.println(" ==> ");
-                                System.out.println(" ==> avg queue size : " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
                             }
+                            System.out.println(" ==> avg queue size : " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
+
+                            int nbUsers = (int) database.getNext_user_ID().get();
+                            System.out.println(" ==> Number of users at the end : " + nbUsers);
+
+                            int nbFollowerTotal = 0,
+                                    maxFollower = 0,
+                                    nbFollower,
+                                    userWithMaxFollower = 0,
+                                    userWithoutFollower = 0;
+
+
+                            for(Set followers: database.getMapFollowers().values()){
+                                nbFollower = followers.size();
+                                if (nbFollower > maxFollower) {
+                                    maxFollower = nbFollower;
+                                }
+                                nbFollowerTotal += nbFollower;
+                            }
+                            for(Set followers: database.getMapFollowers().values()){
+                                nbFollower = followers.size();
+
+                                if (nbFollower>= maxFollower*0.9)
+                                    userWithMaxFollower++;
+                                else if (nbFollower == 0)
+                                    userWithoutFollower++;
+                            }
+
+                            System.out.println(" ==> avg follower : " + nbFollowerTotal/nbUsers);
+                            System.out.println(" ==> nb max follower : " + maxFollower);
+                            System.out.println(" ==> nb user with max follower (or 10% less) : " + userWithMaxFollower);
+                            System.out.println(" ==> nb user without follower : " + userWithoutFollower);
                         }
-                    }
-                    if (_s && _breakdown){
-                        FileWriter queueSizeFile;
-                        PrintWriter queueSizePrint;
 
-                        if (nbCurrThread == 1)
-                            queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",false);
-                        else
-                            queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",true);
+                        if (_s){
+                            FileWriter queueSizeFile;
+                            PrintWriter queueSizePrint;
 
-                        queueSizePrint = new PrintWriter(queueSizeFile);
-                        queueSizePrint.println(nbCurrThread + " " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
-                        queueSizePrint.flush();
-                        queueSizeFile.close();
+                            if (nbCurrThread == 1)
+                                queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",false);
+                            else
+                                queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",true);
+
+                            queueSizePrint = new PrintWriter(queueSizeFile);
+                            queueSizePrint.println(nbCurrThread + " " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
+                            queueSizePrint.flush();
+                            queueSizeFile.close();
+                        }
                     }
                 }
 
