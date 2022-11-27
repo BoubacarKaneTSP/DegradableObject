@@ -109,14 +109,10 @@ public class Database {
                 data.set(i, 1);
             i++;
         }
+        System.out.println(data);
 //        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
         long userB;
-
-
-
-
-
 
         //adding all users
 
