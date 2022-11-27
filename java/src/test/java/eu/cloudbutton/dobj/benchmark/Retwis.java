@@ -379,6 +379,10 @@ public class Retwis {
                             System.out.println(" ==> nb max follower : " + maxFollower);
                             System.out.println(" ==> nb user with max follower (or 10% less) : " + userWithMaxFollower);
                             System.out.println(" ==> nb user without follower : " + userWithoutFollower);
+                            System.out.println();
+                            System.out.println("Map Follower : " + database.getMapFollowers());
+                            System.out.println();
+                            System.out.println("Map Following : " + database.getMapFollowing());
                         }
 
                         if (_s){
