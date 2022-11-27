@@ -577,10 +577,11 @@ public class Retwis {
                         }
                         break;
                     case FOLLOW:
-                        n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
-                        System.out.println(usersProbabilitySize);
-                        if (n%2 == 0)
+                        n = random.nextInt(usersProbabilitySize+database.getLocalUsersProbability().get().size()); // We choose a user to follow according to a probability
+                        if (n%2 == 0){
+                            n = n % usersProbabilitySize;
                             userB = database.getUsersProbability().get(n);
+                        }
                         else{
                             n = n % database.getLocalUsersProbability().get().size();
                             userB = database.getLocalUsersProbability().get().get(n);
