@@ -447,7 +447,6 @@ public class Retwis {
 
         @Override
         public Void call(){
-            random.setSeed(System.nanoTime());
 
             try{
                 int type;
