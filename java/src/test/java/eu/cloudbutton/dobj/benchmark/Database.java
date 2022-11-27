@@ -32,6 +32,8 @@ public class Database {
     private ThreadLocal<List<Long>> localUsersProbability;
     private ThreadLocal<List<Long>> localUsers;
     private ThreadLocalRandom random;
+    int bound = 1000;
+    List<Integer> data;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
@@ -85,25 +87,19 @@ public class Database {
         random = null;
         next_user_ID = new AtomicLong();
 
+        data = new DiscreteApproximate(1, alpha).generate(bound);
+
+
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Long, Queue<Long>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         random = ThreadLocalRandom.current();
 
-//        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
-        int n, userPerThread;
-        long user, userB;
-
-        int bound = 1000;
-
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
-        int i = 0;
-
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
         long max = (long) ((long) nbUsers * ratio);
         max = max == 0 ? 1 : max;
-
+        int i = 0;
 
         for (int val: data){
             if (val >= max) {
@@ -113,6 +109,14 @@ public class Database {
                 data.set(i, 1);
             i++;
         }
+//        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
+        int n, userPerThread;
+        long userB;
+
+
+
+
+
 
         //adding all users
 
@@ -121,15 +125,7 @@ public class Database {
         userPerThread = nbUsers / nbThread;
 
         for (int id = 0; id < userPerThread; id++) {
-            user = addUser();
-
-            usersFollow.put(user, new LinkedList<>());
-
-            localUsers.get().add(user);
-//            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
-            for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
-                localUsersProbability.get().add(user);
-            }
+            addUser(usersFollow);
         }
 
         usersProbability.addAll(localUsersProbability.get());
@@ -162,13 +158,22 @@ public class Database {
 
     }
 
-    public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public long addUser(Map usersFollow) throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
         long userID = next_user_ID.incrementAndGet();
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapFollowing.put(userID, new HashSet<>() );
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
+
+
+        usersFollow.put(userID, new LinkedList<>());
+
+        localUsers.get().add(userID);
+//            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
+        for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
+            localUsersProbability.get().add(userID);
+        }
 
         return userID;
     }

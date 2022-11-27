@@ -447,6 +447,7 @@ public class Retwis {
 
         @Override
         public Void call(){
+            random.setSeed(System.nanoTime());
 
             try{
                 int type;
@@ -565,17 +566,20 @@ public class Retwis {
                 switch (typeComputed){
                     case ADD:
                         if (_completionTime){
-                            database.addUser();
+                            database.addUser(usersFollow);
                         }else{
                             startTime = System.nanoTime();
-                            database.addUser();
+                            long user = database.addUser(usersFollow);
                             endTime = System.nanoTime();
+                            arrayLocalUsers.add(user);
                         }
                         break;
                     case FOLLOW:
                         n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
-                        userB = database.getUsersProbability().get(n);
-
+                        if (n%2 == 0)
+                            userB = database.getUsersProbability().get(n);
+                        else
+                            userB = database.getLocalUsersProbability().get().get(n);
                         try{
                             if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
                                 if (_completionTime){
