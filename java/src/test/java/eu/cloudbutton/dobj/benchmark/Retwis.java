@@ -502,6 +502,7 @@ public class Retwis {
                     for (long user : usersFollow.keySet()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
+                    System.out.println(arrayLocalUsers);
                 }
 
                 for (int op: mapIntOptoStringOp.keySet()){
@@ -564,7 +565,6 @@ public class Retwis {
                 }
                 int val = random.nextInt(nbLocalUsers);
                 userA = arrayLocalUsers.get(val);
-                System.out.println(arrayLocalUsers);
                 Queue<Long> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
@@ -572,9 +572,8 @@ public class Retwis {
                             database.addUser(usersFollow);
                         }else{
                             startTime = System.nanoTime();
-                            long user = database.addUser(usersFollow);
+                            database.addUser(usersFollow);
                             endTime = System.nanoTime();
-                            arrayLocalUsers.add(user);
                         }
                         break;
                     case FOLLOW:

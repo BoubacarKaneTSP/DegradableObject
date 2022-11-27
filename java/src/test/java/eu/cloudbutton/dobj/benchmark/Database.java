@@ -154,8 +154,6 @@ public class Database {
                 usersFollow.get(userA).add(userB);
             }
         }
-
-
     }
 
     public long addUser(Map usersFollow) throws InvocationTargetException, InstantiationException, IllegalAccessException {
