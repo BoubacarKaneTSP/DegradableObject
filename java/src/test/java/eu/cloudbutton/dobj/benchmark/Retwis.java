@@ -577,8 +577,10 @@ public class Retwis {
                         n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
                         if (n%2 == 0)
                             userB = database.getUsersProbability().get(n);
-                        else
+                        else{
+                            n = n % database.getLocalUsersProbability().get().size();
                             userB = database.getLocalUsersProbability().get().get(n);
+                        }
                         try{
                             if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
                                 if (_completionTime){
