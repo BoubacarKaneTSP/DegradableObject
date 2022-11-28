@@ -87,7 +87,7 @@ public class Database {
         random = null;
         next_user_ID = new AtomicLong();
 
-        data = new DiscreteApproximate(1, alpha).generate(bound);
+        data = new DiscreteApproximate(50, alpha).generate(bound);
 
 
     }

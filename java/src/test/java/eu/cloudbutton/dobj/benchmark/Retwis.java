@@ -75,10 +75,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.2;
+    private double _alphaInit = 1.39;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.2;
+    private double _alphaMin = 1.39;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.02;
@@ -345,7 +345,7 @@ public class Retwis {
                                 for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                                 System.out.println(": Nb op : " + nbOperations.get(op).get()
                                         + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
-                                        + ", temps d'exécution : " + timeOperations.get(op).get() / 1_000_000 + "milli secondes");
+                                        + ", temps d'exécution : " + timeOperations.get(op).get() / 1_000_000 + " milli secondes");
                             }
                             System.out.println(" ==> avg queue size : " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
 
