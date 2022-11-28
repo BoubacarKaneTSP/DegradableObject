@@ -505,7 +505,7 @@ public class Retwis {
                     }
                     System.out.println();
                     System.out.println();
-                    System.out.println(database.getLocalUsersProbability());
+                    System.out.println(database.getLocalUsersProbability().get());
 //                    System.out.println(arrayLocalUsers);
                 }
 
