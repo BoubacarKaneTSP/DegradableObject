@@ -578,7 +578,7 @@ public class Retwis {
                         break;
                     case FOLLOW:
                         n = random.nextInt(usersProbabilitySize+database.getLocalUsersProbability().get().size()); // We choose a user to follow according to a probability
-                        if (n%2 == 0){
+                        if (n%10 == 0){
                             n = n % usersProbabilitySize;
                             userB = database.getUsersProbability().get(n);
                         }

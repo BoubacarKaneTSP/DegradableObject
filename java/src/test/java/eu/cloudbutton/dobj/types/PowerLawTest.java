@@ -23,14 +23,16 @@ public class PowerLawTest {
 
             int nbUsers = 1000000;
             double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-            long max = (long) ((long) nbUsers * ratio);
+            long max = 0;
+//            long max = (long) ((long) nbUsers * ratio);
 
             int i = 0, nbMax = 0, avg = 0;;
 
             for (int val: data){
                 if (val >= max) {
-                    nbMax++;
-                    data.set(i, (int) max);
+                    max = val;
+//                    nbMax++;
+//                    data.set(i, (int) max);
                 }
                 if (val < 0)
                     data.set(i, 0);
