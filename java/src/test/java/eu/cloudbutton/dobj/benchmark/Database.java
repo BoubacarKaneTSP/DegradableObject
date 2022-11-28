@@ -32,7 +32,7 @@ public class Database {
     private ThreadLocal<List<Long>> localUsersProbability;
     private ThreadLocal<List<Long>> localUsers;
     private ThreadLocalRandom random;
-    int bound = 1000;
+    int bound = 100;
     List<Integer> data;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
