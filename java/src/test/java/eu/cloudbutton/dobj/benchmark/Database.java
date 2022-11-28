@@ -181,8 +181,8 @@ public class Database {
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Long userA, Long userB){
-//        mapFollowers.get(userB).remove(userA);
-//        mapFollowing.get(userA).remove(userB);
+        mapFollowers.get(userB).remove(userA);
+        mapFollowing.get(userA).remove(userB);
     }
 
     public void tweet(Long user, String msg) throws InterruptedException {
