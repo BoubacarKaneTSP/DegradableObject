@@ -480,7 +480,7 @@ public class Retwis {
                     compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
-                System.out.println("User probability : " + database.getUsersProbability());
+//                System.out.println("User probability : " + database.getUsersProbability());
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
@@ -505,7 +505,7 @@ public class Retwis {
                     }
                     System.out.println();
                     System.out.println();
-                    System.out.println(database.getLocalUsersProbability().get());
+//                    System.out.println(database.getLocalUsersProbability().get());
 //                    System.out.println(arrayLocalUsers);
                 }
 
