@@ -359,14 +359,17 @@ public class Retwis {
                                     userWithoutFollower = 0;
 
 
-                            for(Set followers: database.getMapFollowers().values()){
+                            for(Long user: database.getOriginalUsers()){
+                                Set followers = database.getMapFollowers().get(user);
                                 nbFollower = followers.size();
                                 if (nbFollower > maxFollower) {
                                     maxFollower = nbFollower;
                                 }
                                 nbFollowerTotal += nbFollower;
                             }
-                            for(Set followers: database.getMapFollowers().values()){
+                            for(Long user: database.getOriginalUsers()){
+
+                                Set followers = database.getMapFollowers().get(user);
                                 nbFollower = followers.size();
 
                                 if (nbFollower>= maxFollower*0.9)
@@ -500,7 +503,7 @@ public class Retwis {
                         }
                     }
 
-                    for (long user : usersFollow.keySet()){
+                    for (long user : database.getLocalUsers().get()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
                     System.out.println();
@@ -573,23 +576,17 @@ public class Retwis {
                 switch (typeComputed){
                     case ADD:
                         if (_completionTime){
-                            database.addUser(usersFollow);
+                            database.addUser();
                         }else{
                             startTime = System.nanoTime();
-                            database.addUser(usersFollow);
+                            database.addUser();
                             endTime = System.nanoTime();
                         }
                         break;
                     case FOLLOW:
-                        n = random.nextInt(usersProbabilitySize+database.getLocalUsersProbability().get().size()); // We choose a user to follow according to a probability
-                        n = n % database.getLocalUsersProbability().get().size();
-                        userB = database.getLocalUsersProbability().get().get(n);
-                        /*if (n%10 == 0){
-                            n = n % usersProbabilitySize;
+                        n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
                             userB = database.getUsersProbability().get(n);
-                        }
-                        else{
-                        }*/
+
                         try{
                             if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
                                 if (_completionTime){

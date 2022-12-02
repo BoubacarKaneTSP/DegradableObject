@@ -2,8 +2,6 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
-import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.incrementonly.CounterJUC;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -11,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.LongAdder;
 
 @Getter
 public class Database {
@@ -29,11 +26,10 @@ public class Database {
     private final AtomicLong next_user_ID;
     private final ThreadLocal<String> threadName;
     private final List<Long> usersProbability;
+    private final List<Long> originalUsers;
     private ThreadLocal<List<Long>> localUsersProbability;
     private ThreadLocal<List<Long>> localUsers;
     private ThreadLocalRandom random;
-    int bound = 100;
-    List<Integer> data;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
@@ -82,13 +78,11 @@ public class Database {
         mapTimelines = new ConcurrentHashMap<>();
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
+        originalUsers = new CopyOnWriteArrayList<>();
         localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
         localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
         random = null;
         next_user_ID = new AtomicLong();
-
-        data = new DiscreteApproximate(50, alpha).generate(bound);
-
 
     }
 
@@ -96,22 +90,28 @@ public class Database {
 
         random = ThreadLocalRandom.current();
 
-//        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-//        long max = (long) ((long) nbUsers * ratio);
-//        max = max == 0 ? 1 : max;
-//        int i = 0;
-//
-//        for (int val: data){
-//            if (val >= max) {
-//                data.set(i, (int) max);
-//            }
-//            if (val < 1)
-//                data.set(i, 1);
-//            i++;
-//        }
-//        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
+        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
-        long userB;
+        long user, userB;
+
+        int bound = 1000;
+
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
+        int i = 0;
+
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        long max = (long) ((long) nbUsers * ratio);
+        max = max == 0 ? 1 : max;
+
+
+        for (int val: data){
+            if (val >= max) {
+                data.set(i, (int) max);
+            }
+            if (val < 1)
+                data.set(i, 1);
+            i++;
+        }
 
         //adding all users
 
@@ -120,10 +120,19 @@ public class Database {
         userPerThread = nbUsers / nbThread;
 
         for (int id = 0; id < userPerThread; id++) {
-            addUser(usersFollow);
+            user = addUser();
+
+            usersFollow.put(user, new LinkedList<>());
+
+            localUsers.get().add(user);
+//            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
+            for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
+                localUsersProbability.get().add(user);
+            }
         }
 
         usersProbability.addAll(localUsersProbability.get());
+        originalUsers.addAll(localUsers.get());
         latchDatabase.countDown();
         latchDatabase.await();
 
@@ -151,22 +160,13 @@ public class Database {
         }
     }
 
-    public long addUser(Map usersFollow) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
         long userID = next_user_ID.incrementAndGet();
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
-        mapFollowing.put(userID, new HashSet<>() );
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
-
-
-        usersFollow.put(userID, new LinkedList<>());
-
-        localUsers.get().add(userID);
-//            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
-        for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
-            localUsersProbability.get().add(userID);
-        }
+        mapFollowing.put(userID, new HashSet<>() );
 
         return userID;
     }
