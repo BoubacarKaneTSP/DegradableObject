@@ -399,6 +399,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
         if (head != tail){
             E item = null;
             try{
+                System.out.println("Thread name : "+Thread.currentThread().getName());
                 item = head.next.item;
                 System.out.println("item : "+item);
                 System.out.println();
