@@ -400,12 +400,12 @@ public class QueueMASP<E> extends AbstractQueue<E>
             E item = null;
             try{
                 item = head.next.item;
+                System.out.println("item : "+item);
                 System.out.println();
             }catch (NullPointerException e){
                 System.out.println("head : " + head);
                 System.out.println("head.next : " + head.next);
             }
-            System.out.println("item : "+item);
             head = head.next;
             queueSize.decrementAndGet();
 //            queueSize.decrement();
