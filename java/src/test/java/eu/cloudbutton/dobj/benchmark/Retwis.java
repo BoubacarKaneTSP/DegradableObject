@@ -408,7 +408,7 @@ public class Retwis {
                                         + ", temps d'exécution : " + timeOperations.get(op).get() / 1_000_000 + " milli secondes");
                             }
 
-
+                            System.out.println(" ==> nb original users : " + NB_USERS);
                             System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
                             System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
                             System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
@@ -420,18 +420,47 @@ public class Retwis {
                         }
 
                         if (_s){
-                            FileWriter queueSizeFile;
-                            PrintWriter queueSizePrint;
+                            FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutMaxFollowerFile;
+                            PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutMaxFollowerPrint;
 
-                            if (nbCurrThread == 1)
-                                queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",false);
-                            else
-                                queueSizeFile = new FileWriter("avg_queue_size_"+ _tag +".txt",true);
+                            if (nbCurrThread == 1) {
+                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", false);
+                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", false);
+                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", false);
+                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", false);
+                                nbUserWithoutMaxFollowerFile = new FileWriter("nb_User_Without_Max_Follower_" + _tag + ".txt", false);
+                            }
+                            else {
+                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
+                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", true);
+                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", true);
+                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", true);
+                                nbUserWithoutMaxFollowerFile = new FileWriter("nb_User_Without_Max_Follower_" + _tag + ".txt", true);
+                            }
 
                             queueSizePrint = new PrintWriter(queueSizeFile);
-                            queueSizePrint.println(nbCurrThread + " " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
+                            avgFollowerPrint = new PrintWriter(avgFollowerFile);
+                            nbMaxFollowerPrint = new PrintWriter(nbMaxFollowerFile);
+                            nbUserWithMaxFollowerPrint = new PrintWriter(nbUserWithMaxFollowerFile);
+                            nbUserWithoutMaxFollowerPrint = new PrintWriter(nbUserWithoutMaxFollowerFile);
+
+                            queueSizePrint.println(nbCurrThread + " " + sumAvgQueueSizes/_nbTest);
+                            avgFollowerPrint.println(nbCurrThread + " " + sumAvgFollower/_nbTest);
+                            nbMaxFollowerPrint.println(nbCurrThread + " " + sumNbMaxFollower/_nbTest);
+                            nbUserWithMaxFollowerPrint.println(nbCurrThread + " " + sumNbUserWithMaxFollower/_nbTest);
+                            nbUserWithoutMaxFollowerPrint.println(nbCurrThread + " " + sumNbUserWithoutFollower/_nbTest);
+
                             queueSizePrint.flush();
+                            avgFollowerPrint.flush();
+                            nbMaxFollowerPrint.flush();
+                            nbUserWithMaxFollowerPrint.flush();
+                            nbUserWithoutMaxFollowerPrint.flush();
+
                             queueSizeFile.close();
+                            avgFollowerFile.close();
+                            nbMaxFollowerFile.close();
+                            nbUserWithMaxFollowerFile.close();
+                            nbUserWithoutMaxFollowerFile.close();
                         }
                     }
                 }
