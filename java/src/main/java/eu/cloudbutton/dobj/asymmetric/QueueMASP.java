@@ -49,6 +49,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -494,10 +495,9 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-        return (int) queueSize.read();
+//        return (int) queueSize.read();
 //        return queueSize.intValue();
-
-        /*restartFromHead: for (;;) {
+        restartFromHead: for (;;) {
             int count = 0;
             for (Node<E> p = first(); p != null;) {
                 if (p.item != null)
@@ -507,7 +507,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     continue restartFromHead;
             }
             return count;
-        }*/
+        }
     }
 
     /**
