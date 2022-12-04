@@ -90,7 +90,6 @@ public class Database {
 
         random = ThreadLocalRandom.current();
 
-        System.out.println(Thread.currentThread().getName() + " have this localUsers object : " +localUsers);
         int n, userPerThread;
         long user, userB;
 

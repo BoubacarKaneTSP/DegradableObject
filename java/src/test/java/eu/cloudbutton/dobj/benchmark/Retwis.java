@@ -506,8 +506,6 @@ public class Retwis {
                     for (long user : database.getLocalUsers().get()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
-                    System.out.println();
-                    System.out.println();
 //                    System.out.println(database.getLocalUsersProbability().get());
 //                    System.out.println(arrayLocalUsers);
                 }
