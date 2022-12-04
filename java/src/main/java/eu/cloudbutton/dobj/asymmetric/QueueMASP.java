@@ -251,7 +251,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
-        head = tail = new Node<E>();
+        head = tail = new Node<>();
         queueSize = new CounterMISD();
 //        queueSize = new LongAdder();
     }
@@ -363,10 +363,16 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @throws NullPointerException if the specified element is null
      */
     public boolean offer(E e) {
-        final Node<E> newNode = new Node<E>(Objects.requireNonNull(e));
+        final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
 
-        for (Node<E> t = tail, p = t;;) {
-            Node<E> q = p.next;
+        for (Node<E> t = tail;;) {
+            Node<E> p = t;
+            Node<E> q = null;
+            try{
+                q = p.next;
+            }catch (NullPointerException exception){
+                System.out.println("tail : " + p);
+            }
             if (q == null) {
                 // p is last node
                 if (NEXT.compareAndSet(p, null, newNode)) {
