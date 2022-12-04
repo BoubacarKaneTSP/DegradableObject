@@ -251,7 +251,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
-        head = tail = new Node<>();
+        head = tail = new Node<E>();
         queueSize = new CounterMISD();
 //        queueSize = new LongAdder();
     }
@@ -363,12 +363,10 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @throws NullPointerException if the specified element is null
      */
     public boolean offer(E e) {
-        final Node<E> newNode = new Node<>(Objects.requireNonNull(e));
+        final Node<E> newNode = new Node<E>(Objects.requireNonNull(e));
 
-        for (Node<E> t = tail;;) {
-            Node<E> p = t;
+        for (Node<E> t = tail, p = t;;) {
             Node<E> q = p.next;
-
             if (q == null) {
                 // p is last node
                 if (NEXT.compareAndSet(p, null, newNode)) {
@@ -398,18 +396,19 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }
 
     public E poll() {
-//        if (head != tail){
-//            E item = head.next.item;
-//            head = head.next;
-//            queueSize.decrementAndGet();
-////            queueSize.decrement();
-////            head.item = null;
-//            return item;
-//        }
-//
-//        return null;
+        if (head != tail){
 
-        restartFromHead: for (;;) {
+            E item = head.next.item;
+            head = head.next;
+            queueSize.decrementAndGet();
+//            queueSize.decrement();
+//            head.item = null;
+            return item;
+        }
+
+        return null;
+
+/*        restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
@@ -428,7 +427,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 else if (p == q)
                     continue restartFromHead;
             }
-        }
+        }*/
     }
 
     public E peek() {
@@ -495,10 +494,10 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-//        return (int) queueSize.read();
+        return (int) queueSize.read();
 //        return queueSize.intValue();
 
-        restartFromHead: for (;;) {
+        /*restartFromHead: for (;;) {
             int count = 0;
             for (Node<E> p = first(); p != null;) {
                 if (p.item != null)
@@ -508,7 +507,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     continue restartFromHead;
             }
             return count;
-        }
+        }*/
     }
 
     /**
