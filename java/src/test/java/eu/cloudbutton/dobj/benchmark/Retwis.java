@@ -109,6 +109,11 @@ public class Retwis {
     private List<AtomicLong> nbOperations;
     private List<AtomicLong> timeOperations;
     private LongAdder queueSizes;
+    private List<Integer> allAvgQueueSizes;
+    private List<Integer> allAvgFollower;
+    private List<Integer> allNbMaxFollower;
+    private List<Integer> allNbUserWithMaxFollower;
+    private List<Integer> allNbUserWithoutFollower;
 
     private Database database;
 
@@ -171,6 +176,11 @@ public class Retwis {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
             long startTime = 0, endTime, timeTotal = 0L;
+            allAvgQueueSizes = new ArrayList();
+            allAvgFollower = new ArrayList();
+            allNbMaxFollower = new ArrayList();
+            allNbUserWithMaxFollower = new ArrayList();
+            allNbUserWithoutFollower = new ArrayList();
 //            NB_USERS = (int) _nbOps;
             NB_USERS = nbCurrThread;
 
@@ -256,6 +266,41 @@ public class Retwis {
                         System.out.println(" ==> End of test num : " + nbCurrTest);
 
                     TimeUnit.SECONDS.sleep(1);
+
+
+                    if (_breakdown){
+
+                        int nbFollowerTotal = 0,
+                                maxFollower = 0,
+                                nbFollower,
+                                userWithMaxFollower = 0,
+                                userWithoutFollower = 0;
+
+
+                        for(Long user: database.getOriginalUsers()){
+                            Set followers = database.getMapFollowers().get(user);
+                            nbFollower = followers.size();
+                            if (nbFollower > maxFollower) {
+                                maxFollower = nbFollower;
+                            }
+                            nbFollowerTotal += nbFollower;
+                        }
+                        for(Long user: database.getOriginalUsers()){
+                            Set followers = database.getMapFollowers().get(user);
+                            nbFollower = followers.size();
+
+                            if (nbFollower>= maxFollower*0.9)
+                                userWithMaxFollower++;
+                            else if (nbFollower == 0)
+                                userWithoutFollower++;
+                        }
+
+                        allAvgQueueSizes.add((int) ((queueSizes.longValue()/ NB_USERS)/nbCurrThread));
+                        allAvgFollower.add(nbFollowerTotal/NB_USERS);
+                        allNbMaxFollower.add(maxFollower);
+                        allNbUserWithMaxFollower.add(userWithMaxFollower);
+                        allNbUserWithoutFollower.add(userWithoutFollower);
+                    }
                     executor.shutdown();
                 }
 
@@ -338,6 +383,21 @@ public class Retwis {
                     System.out.println();
 
                     if (_breakdown){
+
+                        int sumAvgQueueSizes = 0,
+                                sumAvgFollower = 0,
+                                sumNbMaxFollower = 0,
+                                sumNbUserWithMaxFollower = 0,
+                                sumNbUserWithoutFollower = 0;
+
+                        for (int i = 0; i < _nbTest; i++) {
+                            sumAvgQueueSizes += allAvgQueueSizes.get(i);
+                            sumAvgFollower += allAvgFollower.get(i);
+                            sumNbMaxFollower += allNbMaxFollower.get(i);
+                            sumNbUserWithMaxFollower += allNbUserWithMaxFollower.get(i);
+                            sumNbUserWithoutFollower += allNbUserWithoutFollower.get(i);
+
+                        }
                         if (_p){
                             for (int op: mapIntOptoStringOp.keySet()) {
                                 int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
@@ -347,44 +407,15 @@ public class Retwis {
                                         + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
                                         + ", temps d'exécution : " + timeOperations.get(op).get() / 1_000_000 + " milli secondes");
                             }
-                            System.out.println(" ==> avg queue size : " + (queueSizes.longValue()/ NB_USERS)/nbCurrThread);
-
-                            int nbUsers = (int) database.getNext_user_ID().get();
-                            System.out.println(" ==> Number of users at the end : " + nbUsers);
-
-                            int nbFollowerTotal = 0,
-                                    maxFollower = 0,
-                                    nbFollower,
-                                    userWithMaxFollower = 0,
-                                    userWithoutFollower = 0;
 
 
-                            for(Long user: database.getOriginalUsers()){
-                                Set followers = database.getMapFollowers().get(user);
-                                nbFollower = followers.size();
-                                if (nbFollower > maxFollower) {
-                                    maxFollower = nbFollower;
-                                }
-                                nbFollowerTotal += nbFollower;
-                            }
-                            for(Long user: database.getOriginalUsers()){
-
-                                Set followers = database.getMapFollowers().get(user);
-                                nbFollower = followers.size();
-
-                                if (nbFollower>= maxFollower*0.9)
-                                    userWithMaxFollower++;
-                                else if (nbFollower == 0)
-                                    userWithoutFollower++;
-                            }
-
-                            System.out.println(" ==> avg follower : " + nbFollowerTotal/nbUsers);
-                            System.out.println(" ==> nb max follower : " + maxFollower);
-                            System.out.println(" ==> nb user with max follower (or 10% less) : " + userWithMaxFollower);
-                            System.out.println(" ==> nb user without follower : " + userWithoutFollower);
+                            System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
+                            System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
+                            System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
+                            System.out.println(" ==> nb user with max follower (or 10% less) : " + sumNbUserWithMaxFollower/_nbTest);
+                            System.out.println(" ==> nb user without follower : " + sumNbUserWithoutFollower/_nbTest);
                             System.out.println();
 //                            System.out.println("Map Follower : " + database.getMapFollowers());
-                            System.out.println();
 //                            System.out.println("Map Following : " + database.getMapFollowing());
                         }
 
