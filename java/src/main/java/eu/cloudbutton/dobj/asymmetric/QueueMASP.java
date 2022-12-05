@@ -398,38 +398,38 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }
 
     public E poll() {
-//        if (head != tail){
-//
-//            E item = head.next.item;
-//            head = head.next;
-////            queueSize.decrementAndGet();
-////            queueSize.decrement();
-////            head.item = null;
-//            return item;
-//        }
-//
-//        return null;
+        if (head != tail){
 
-        restartFromHead: for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
-                final E item;
-                if ((item = p.item) != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-                    if (p != h) // hop two nodes at a time
-                        updateHead(h, ((q = p.next) != null) ? q : p);
-//                    queueSize.decrementAndGet();
-//                    queueSize.decrement();
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-            }
+            E item = head.next.item;
+            head = head.next;
+//            queueSize.decrementAndGet();
+//            queueSize.decrement();
+//            head.item = null;
+            return item;
         }
+
+        return null;
+
+//        restartFromHead: for (;;) {
+//            for (Node<E> h = head, p = h, q;; p = q) {
+//                final E item;
+//                if ((item = p.item) != null && p.casItem(item, null)) {
+//                    // Successful CAS is the linearization point
+//                    // for item to be removed from this queue.
+//                    if (p != h) // hop two nodes at a time
+//                        updateHead(h, ((q = p.next) != null) ? q : p);
+////                    queueSize.decrementAndGet();
+////                    queueSize.decrement();
+//                    return item;
+//                }
+//                else if ((q = p.next) == null) {
+//                    updateHead(h, p);
+//                    return null;
+//                }
+//                else if (p == q)
+//                    continue restartFromHead;
+//            }
+//        }
     }
 
     public E peek() {
@@ -498,24 +498,24 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
 //        return (int) queueSize.read();
 //        return queueSize.intValue();
-
-        restartFromHead: for (;;) {
-            int count = 0;
-            for (Node<E> p = first(); p != null;) {
-                if (p.item != null)
-                    if (++count == Integer.MAX_VALUE)
-                        break;  // @see Collection.size()
-                if (p == (p = p.next))
-                    continue restartFromHead;
-            }
-            return count;
-        }
-
-//        int size = 0;
-//        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
-//            size++;
+//
+//        restartFromHead: for (;;) {
+//            int count = 0;
+//            for (Node<E> p = first(); p != null;) {
+//                if (p.item != null)
+//                    if (++count == Integer.MAX_VALUE)
+//                        break;  // @see Collection.size()
+//                if (p == (p = p.next))
+//                    continue restartFromHead;
+//            }
+//            return count;
 //        }
-//        return size;
+
+        int size = 0;
+        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
+            size++;
+        }
+        return size;
     }
 
     /**
