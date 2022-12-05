@@ -93,7 +93,7 @@ public class Database {
         int n, userPerThread;
         long user, userB;
 
-        int bound = 1000;
+        int bound = 10000;
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
         int i = 0;
