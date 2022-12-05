@@ -377,7 +377,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
 
-                    queueSize.incrementAndGet();
+//                    queueSize.incrementAndGet();
 //                    queueSize.increment();
 
                     return true;
@@ -417,7 +417,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // for item to be removed from this queue.
                     if (p != h) // hop two nodes at a time
                         updateHead(h, ((q = p.next) != null) ? q : p);
-                    queueSize.decrementAndGet();
+//                    queueSize.decrementAndGet();
 //                    queueSize.decrement();
                     return item;
                 }
