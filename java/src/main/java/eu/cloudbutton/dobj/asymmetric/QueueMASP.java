@@ -228,7 +228,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * - it is permitted for tail to lag behind head, that is, for tail
      *   to not be reachable from head!
      */
-//    @Contended
+    @Contended
     transient volatile Node<E> head;
 
     /**
@@ -243,10 +243,10 @@ public class QueueMASP<E> extends AbstractQueue<E>
      *   to not be reachable from head!
      * - tail.next may or may not be self-linked.
      */
-//    @Contended
+    @Contended
     private transient volatile Node<E> tail;
 
-//    private Counter queueSize;
+    private Counter queueSize;
 //    private LongAdder queueSize;
 
     /**
@@ -254,7 +254,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public QueueMASP() {
         head = tail = new Node<>();
-//        queueSize = new CounterMISD();
+        queueSize = new CounterMISD();
 //        queueSize = new LongAdder();
     }
 
@@ -378,7 +378,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
 
-//                    queueSize.incrementAndGet();
+                    queueSize.incrementAndGet();
 //                    queueSize.increment();
 
                     return true;
@@ -402,7 +402,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
             E item = head.next.item;
             head = head.next;
-//            queueSize.decrementAndGet();
+            queueSize.decrementAndGet();
 //            queueSize.decrement();
 //            head.item = null;
             return item;
@@ -496,7 +496,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-//        return (int) queueSize.read();
+        return (int) queueSize.read();
 //        return queueSize.intValue();
 //
 //        restartFromHead: for (;;) {
@@ -511,11 +511,11 @@ public class QueueMASP<E> extends AbstractQueue<E>
 //            return count;
 //        }
 
-        int size = 0;
-        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
-            size++;
-        }
-        return size;
+//        int size = 0;
+//        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
+//            size++;
+//        }
+//        return size;
     }
 
     /**
