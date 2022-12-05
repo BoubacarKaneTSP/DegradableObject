@@ -181,8 +181,8 @@ public class Retwis {
             allNbMaxFollower = new ArrayList();
             allNbUserWithMaxFollower = new ArrayList();
             allNbUserWithoutFollower = new ArrayList();
-//            NB_USERS = (int) _nbOps;
-            NB_USERS = nbCurrThread;
+            NB_USERS = (int) _nbOps;
+//            NB_USERS = nbCurrThread;
 
             if (_p){
                 System.out.println();
