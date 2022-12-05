@@ -37,6 +37,7 @@ package eu.cloudbutton.dobj.asymmetric;
 
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import jdk.internal.vm.annotation.Contended;
+import org.javatuples.Pair;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -246,15 +247,15 @@ public class QueueMASP<E> extends AbstractQueue<E>
     private transient volatile Node<E> tail;
 
 //    private Counter queueSize;
-    private LongAdder queueSize;
+//    private LongAdder queueSize;
 
     /**
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
-        head = tail = new Node<E>();
+        head = tail = new Node<>();
 //        queueSize = new CounterMISD();
-        queueSize = new LongAdder();
+//        queueSize = new LongAdder();
     }
 
     /**
@@ -378,7 +379,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                         TAIL.weakCompareAndSet(this, t, newNode);
 
 //                    queueSize.incrementAndGet();
-                    queueSize.increment();
+//                    queueSize.increment();
 
                     return true;
                 }
@@ -402,7 +403,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
             E item = head.next.item;
             head = head.next;
 //            queueSize.decrementAndGet();
-            queueSize.decrement();
+//            queueSize.decrement();
 //            head.item = null;
             return item;
         }
@@ -496,7 +497,8 @@ public class QueueMASP<E> extends AbstractQueue<E>
     public int size() {
 
 //        return (int) queueSize.read();
-        return queueSize.intValue();
+//        return queueSize.intValue();
+
 //        restartFromHead: for (;;) {
 //            int count = 0;
 //            for (Node<E> p = first(); p != null;) {
@@ -508,6 +510,12 @@ public class QueueMASP<E> extends AbstractQueue<E>
 //            }
 //            return count;
 //        }
+
+        int size = 0;
+        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
+            size++;
+        }
+        return size;
     }
 
     /**
