@@ -23,8 +23,8 @@ public class Timeline<T> {
 
    public Queue<T> read() throws InterruptedException {
 
-       long queueSize = 10;
-//       long queueSize = timeline.size();
+//       long queueSize = 10;
+       long queueSize = timeline.size();
 
        for (int i = 0; i < queueSize; i++)
            topk.add(timeline.poll());
