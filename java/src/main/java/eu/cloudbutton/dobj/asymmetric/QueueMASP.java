@@ -228,7 +228,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * - it is permitted for tail to lag behind head, that is, for tail
      *   to not be reachable from head!
      */
-    @Contended
+//    @Contended
     transient volatile Node<E> head;
 
     /**
