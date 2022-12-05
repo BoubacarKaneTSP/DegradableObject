@@ -243,7 +243,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      *   to not be reachable from head!
      * - tail.next may or may not be self-linked.
      */
-    @Contended
+//    @Contended
     private transient volatile Node<E> tail;
 
 //    private Counter queueSize;
