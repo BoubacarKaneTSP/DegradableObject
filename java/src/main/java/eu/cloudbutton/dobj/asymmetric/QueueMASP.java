@@ -495,19 +495,19 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-//        return (int) queueSize.read();
+        return (int) queueSize.read();
 //        return queueSize.intValue();
-        restartFromHead: for (;;) {
-            int count = 0;
-            for (Node<E> p = first(); p != null;) {
-                if (p.item != null)
-                    if (++count == Integer.MAX_VALUE)
-                        break;  // @see Collection.size()
-                if (p == (p = p.next))
-                    continue restartFromHead;
-            }
-            return count;
-        }
+//        restartFromHead: for (;;) {
+//            int count = 0;
+//            for (Node<E> p = first(); p != null;) {
+//                if (p.item != null)
+//                    if (++count == Integer.MAX_VALUE)
+//                        break;  // @see Collection.size()
+//                if (p == (p = p.next))
+//                    continue restartFromHead;
+//            }
+//            return count;
+//        }
     }
 
     /**
