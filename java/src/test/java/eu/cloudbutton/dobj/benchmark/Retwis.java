@@ -526,8 +526,8 @@ public class Retwis {
                     timeLocalOperations.put(op, new BoxedLong());
                 }
 
-//                database.fill(NB_USERS, latchFillDatabase, usersFollow);
-                database.fill(1, latchFillDatabase, usersFollow);
+                database.fill(NB_USERS, latchFillDatabase, usersFollow);
+//                database.fill(1, latchFillDatabase, usersFollow);
 
                 latch.countDown();
 
