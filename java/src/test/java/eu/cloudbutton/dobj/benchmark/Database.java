@@ -191,7 +191,7 @@ public class Database {
     }
 
     public void showTimeline(Long user) throws InterruptedException {
-        mapTimelines.get(user).read();
+//        mapTimelines.get(user).read();
     }
     
 }
