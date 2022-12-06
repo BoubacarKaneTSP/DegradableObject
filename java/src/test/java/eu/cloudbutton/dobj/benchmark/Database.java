@@ -93,7 +93,7 @@ public class Database {
         int n, userPerThread;
         long user, userB;
 
-        int bound = 10000;
+        int bound = nbUsers;
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
         int i = 0;
@@ -126,7 +126,7 @@ public class Database {
 
             localUsers.get().add(user);
 //            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
-            for (int j = 0 ; j <= data.get(random.nextInt(bound)); j++) {
+            for (int j = 0; j <= data.get((int) user); j++) { // each user have an ID inferior to bound
                 localUsersProbability.get().add(user);
             }
         }
@@ -162,7 +162,7 @@ public class Database {
 
     public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long userID = next_user_ID.incrementAndGet();
+        long userID = next_user_ID.getAndIncrement();
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
