@@ -75,13 +75,13 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.5;
+    private double _alphaInit = 2;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.5;
+    private double _alphaMin = 1;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
-    private double _alphaStep = 0.02;
+    private double _alphaStep = 0.1;
 
     @Option(name="-tag", required = false, usage = "tag of result's file")
     private String _tag;
@@ -315,12 +315,13 @@ public class Retwis {
                     System.out.println(" ==> Results :");
 
                 long nbOp, timeOp;
+                String strAlpha = Double.toString(alpha).replace(".","");
+
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
                 if (_s){
 
-                    String strAlpha = Double.toString(alpha).replace(".","");
-                    String nameFile = "ALL_"+_tag+".txt";
+                    String nameFile = "ALL_"+_tag+"_"+strAlpha+".txt";
                     if (nbCurrThread == 1)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -360,7 +361,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+".txt";
+                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+".txt";
                         if (_s){
                             if (nbCurrThread == 1)
                                 fileWriter = new FileWriter( nameFile, false);
