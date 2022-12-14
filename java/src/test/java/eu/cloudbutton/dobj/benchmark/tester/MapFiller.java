@@ -26,7 +26,7 @@ public class MapFiller extends Filler<Map> {
 
         factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
 
-        int nbTask = Microbenchmark.nbCurrentThread;
+        int nbTask = 1; //= Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(nbTask);
         List<Future<Void>> futures = new ArrayList<>();
 
@@ -34,7 +34,7 @@ public class MapFiller extends Filler<Map> {
 
 //            System.out.println("Je suis le thread : " + Thread.currentThread().getName() + " et je commence à ajouter mes " + nbOps/nbTask +" objets");
             for (int i = 0; i < nbOps/nbTask; i++) {
-                if (i%50000 == 0)
+//                if (i%1000 == 0)
 //                    System.out.println(i);
                 object.put(factory.getCollisionKey(), i);
             }
@@ -49,6 +49,8 @@ public class MapFiller extends Filler<Map> {
         for (Future<Void> future : futures) {
             future.get();
         }
+
+        // System.out.println(object.size());
 
     }
 }

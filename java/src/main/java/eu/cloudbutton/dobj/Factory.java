@@ -1,20 +1,23 @@
 package eu.cloudbutton.dobj;
 
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
+import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.asymmetric.SetMWSR;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import eu.cloudbutton.dobj.incrementonly.CounterJUC;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
-import eu.cloudbutton.dobj.list.*;
+import eu.cloudbutton.dobj.list.DegradableLinkedList;
+import eu.cloudbutton.dobj.list.DegradableList;
 import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.list.ListJUC;
 import eu.cloudbutton.dobj.mcwmcr.MapAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
-import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
-import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
-import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
+import eu.cloudbutton.dobj.queue.MapQueue;
+import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
+import eu.cloudbutton.dobj.sharded.ShardedHashMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -63,7 +66,7 @@ public class Factory {
         return constructorList.newInstance();
     }
 
-    public static Object createObject(String object) throws ClassNotFoundException{
+    public static Object createObject(String object, int parallelism) throws ClassNotFoundException{
 
         if (object.contains("Counter"))
             return createCounter(object);
@@ -74,7 +77,7 @@ public class Factory {
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Map"))
-            return createMap(object);
+            return createMap(object,parallelism);
         else if (object.contains("Noop"))
             return new Noop();
         else
@@ -158,10 +161,16 @@ public class Factory {
 
     /* Map */
 
-    public static Map createMap(String map) throws ClassNotFoundException {
+    public static Map createMap(String map, int parallelism) throws ClassNotFoundException {
 
         switch (map){
 
+            case "SegmentedHashMap":
+                System.out.println("new SegmentedHashMap("+parallelism+")");
+                return new SegmentedHashMap(parallelism);
+            case "ShardedHashMap":
+                System.out.println("new ShardedHashMap("+parallelism+")");
+                return new ShardedHashMap(parallelism);
             case "Map":
                 return new ConcurrentHashMap<>();
             case "MapReadIntensive":

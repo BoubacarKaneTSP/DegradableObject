@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.map;
 
-public class AbstractCollisionKey implements CollisionKey {
+public abstract class AbstractCollisionKey implements CollisionKey{
 
     private int hash;
 
@@ -13,4 +13,5 @@ public class AbstractCollisionKey implements CollisionKey {
     public int getHash(){
         return hash;
     }
+
 }

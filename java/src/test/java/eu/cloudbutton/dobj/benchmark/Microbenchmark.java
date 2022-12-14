@@ -1,28 +1,24 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.benchmark.tester.*;
-import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
-import eu.cloudbutton.dobj.Factory;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.openjdk.jol.info.ClassLayout;
 
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
@@ -44,14 +40,14 @@ public class Microbenchmark {
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
     @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios;
+    private String[] ratios = {"33","33","34"};
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors();
     @Option(name = "-time", usage = "How long will the test last (seconds)")
     private int time = 300;
     @Option(name = "-wTime", usage = "How long we wait till the test start (seconds)")
     private int wTime = 0;
-    @Option(name = "-nbOps", usage = "Number of object initially added")
+    @Option(name = "-nbOps", usage = "Number of object initially added") // FIXME
     private long nbOps = 1_000;
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
@@ -65,7 +61,7 @@ public class Microbenchmark {
     private boolean _asymmetric = false;
     @Option(name = "-collisionKey", handler = ExplicitBooleanOptionHandler.class, usage = "Testing map with collision on key")
     public boolean _collisionKey = false;
-    @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Testing only one and max nbThreads")
+    @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Only test max nbThreads")
     public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
@@ -90,7 +86,7 @@ public class Microbenchmark {
             if (args.length < 1)
                 throw new CmdLineException(parser, "No argument is given");
 
-            if (ratios.length != 3)
+            if (ratios==null || ratios.length != 3)
                 throw new java.lang.Error("Number of ratios must be 3 (% ADD, % REMOVE, % READ)");
 
             int total = 0;
@@ -126,6 +122,9 @@ public class Microbenchmark {
 
             nbCurrentThread = _asymmetric ? 2 : 1;
 
+            if(_quickTest)
+                nbCurrentThread = nbThreads;
+
             for (;nbCurrentThread <= nbThreads; ) {
                 System.out.println();
 
@@ -141,37 +140,35 @@ public class Microbenchmark {
                 }
 
                 for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
+
                     if (_p)
-                        System.out.println("Test numero : " + (_nbTest+1));
-
-                    if (_nbTest == 0) {
-
-                        object = Factory.createObject(type);
-
-                        if (object instanceof FuzzyCounter)
-                            ((FuzzyCounter) object).setN(nbCurrentThread);
-
-                        FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
-
-                        Filler filler = factoryFiller.createFiller();
-
-                        if (_p)
-                            System.out.println("* Start filling *");
-
-                        if (!type.contains("Sequential"))
-                            filler.fill();
-                        else{
-                            for (int i = 0; i < nbOps; i++) {
-                                ((Queue)object).add(i);
-                            }
-                        }
-
-                        if (_p)
-                            System.out.println("* End filling *");
-                    }
+                        System.out.println("Test #" + (_nbTest+1));
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
+
+                    object = Factory.createObject(type, nbCurrentThread);
+
+                    if (object instanceof FuzzyCounter)
+                        ((FuzzyCounter) object).setN(nbCurrentThread);
+
+                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
+
+                    Filler filler = factoryFiller.createFiller();
+
+                    if (_p)
+                        System.out.println("* Start filling *");
+
+                    if (!type.contains("Sequential"))
+                        filler.fill();
+                    else{
+                        for (int i = 0; i < nbOps; i++) {
+                            ((Queue)object).add(i);
+                        }
+                    }
+
+                    if (_p)
+                        System.out.println("* End filling *");
 
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread + 1);
 
@@ -224,6 +221,8 @@ public class Microbenchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
                 }
+
+                // System.out.println(((Map)object).size());
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 
@@ -286,10 +285,10 @@ public class Microbenchmark {
 
                 nbCurrentThread *= 2;
 
-                if (_quickTest){
-                    if(nbCurrentThread==2 || (_asymmetric && nbCurrentThread == 4))
-                        nbCurrentThread = nbThreads;
-                }
+//                if (_quickTest){
+//                    if(nbCurrentThread==2 || (_asymmetric && nbCurrentThread == 4))
+//                        nbCurrentThread = nbThreads;
+//                }
 
                 if (nbCurrentThread > nbThreads && nbCurrentThread != 2 * nbThreads) {
                     nbCurrentThread = nbThreads;

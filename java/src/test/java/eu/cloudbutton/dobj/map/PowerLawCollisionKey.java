@@ -9,4 +9,9 @@ public class PowerLawCollisionKey extends AbstractCollisionKey implements Collis
     public int hashCode() {
         return getHash();
     }
+
+    @Override
+    public String toString() {
+        return "key#"+getHash();
+    }
 }

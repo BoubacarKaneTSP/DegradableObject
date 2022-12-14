@@ -45,7 +45,7 @@ public class MapTester extends Tester<Map> {
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.put(list.get(i), i);
                 }
                 endTime = System.nanoTime();
@@ -60,7 +60,7 @@ public class MapTester extends Tester<Map> {
             case READ:
                 Object returnValue;
                 startTime = System.nanoTime();
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     returnValue = object.get(list.get(i));
                     if (returnValue == null)
                         nbFail++;
