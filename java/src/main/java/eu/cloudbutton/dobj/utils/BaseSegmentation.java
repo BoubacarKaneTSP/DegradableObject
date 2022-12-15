@@ -6,18 +6,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ThreadBasedSegmentation<T> implements Segmentation<T>{
+public class BaseSegmentation<T> implements Segmentation<T> {
 
     private final ThreadLocal<T> local;
     private final AtomicInteger next;
 
     private final List<T> segments;
     private final Class<T> clazz;
-    private final int parallelism;
 
-    public ThreadBasedSegmentation(Class<T> clazz, int parallelism) {
+    public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.clazz = clazz;
-        this.parallelism = parallelism;
         this.segments = new ArrayList<>(parallelism);
         for(int i = 0; i<parallelism; i++ ){
             try {

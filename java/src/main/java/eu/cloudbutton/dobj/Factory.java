@@ -17,6 +17,7 @@ import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
+import eu.cloudbutton.dobj.segmented.SegmentedTreeSet;
 import eu.cloudbutton.dobj.sharded.ShardedHashMap;
 
 import java.lang.reflect.Constructor;
@@ -73,11 +74,11 @@ public class Factory {
         else if (object.contains("List"))
             return createList(object);
         else if (object.contains("Set"))
-            return createSet(object);
+            return createSet(object, parallelism);
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Map"))
-            return createMap(object,parallelism);
+            return createMap(object, parallelism);
         else if (object.contains("Noop"))
             return new Noop();
         else
@@ -121,9 +122,12 @@ public class Factory {
 
     /* Set */
 
-    public static Set createSet(String set) throws ClassNotFoundException {
+    public static Set createSet(String set, int parallelism) throws ClassNotFoundException {
 
         switch (set){
+            case "SegmentedTreeSet":
+                System.out.println("new SegmentedHashMap("+parallelism+")");
+                return new SegmentedTreeSet(parallelism);
             case "Set":
                 return new ConcurrentSkipListSet<>();
             case "SetReadIntensive":

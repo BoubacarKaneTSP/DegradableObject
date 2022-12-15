@@ -69,7 +69,6 @@ public class SetTester extends Tester<Set> {
                         }
                     }
                     endTime = System.nanoTime();
-                    object.add(v);
                 }
                 break;
         }

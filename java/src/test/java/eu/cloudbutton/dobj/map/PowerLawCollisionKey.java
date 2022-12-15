@@ -1,9 +1,10 @@
 package eu.cloudbutton.dobj.map;
 
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 @Data
-public class PowerLawCollisionKey extends AbstractCollisionKey implements CollisionKey /*implements Comparable<CollisionKey>*/{
+public class PowerLawCollisionKey extends AbstractCollisionKey {
 
     @Override
     public int hashCode() {
@@ -14,4 +15,5 @@ public class PowerLawCollisionKey extends AbstractCollisionKey implements Collis
     public String toString() {
         return "key#"+getHash();
     }
+
 }

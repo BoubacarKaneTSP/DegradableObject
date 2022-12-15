@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap;
-import eu.cloudbutton.dobj.utils.ThreadBasedSegmentation;
+import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class SegmentedHashMap<K,V> extends ThreadBasedSegmentation<SWMRHashMap> implements Map<K,V> {
+public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
     public SegmentedHashMap(int parallelism) {
         super(SWMRHashMap.class, parallelism);
@@ -71,29 +71,29 @@ public class SegmentedHashMap<K,V> extends ThreadBasedSegmentation<SWMRHashMap> 
 
     @Override
     public void putAll(@NotNull Map<? extends K, ? extends V> map) {
-        throw new IllegalStateException("not supported");
+         throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-        throw new IllegalStateException("not supported");
+         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
     public Set<K> keySet() {
-        throw new IllegalStateException("not supported");
+         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
     public Collection<V> values() {
-        throw new IllegalStateException("not supported");
+         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
     public Set<Entry<K, V>> entrySet() {
-        throw new IllegalStateException("not supported");
+         throw new UnsupportedOperationException();
     }
 }

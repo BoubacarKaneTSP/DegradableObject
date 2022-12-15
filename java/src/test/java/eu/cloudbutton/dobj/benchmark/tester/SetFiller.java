@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
+import eu.cloudbutton.dobj.map.CollisionKey;
 import eu.cloudbutton.dobj.map.CollisionKeyFactory;
 import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
 
@@ -28,7 +29,7 @@ public class SetFiller extends Filler<Set>{
             factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
         }
 
-	ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbTask = 10;
@@ -37,12 +38,13 @@ public class SetFiller extends Filler<Set>{
         Callable<Void> callable = () -> {
 
             for (long i = 0; i < nbOps/nbTask; i++) {
-                if(useCollisionKey)
-                    object.add(finalFactory.getCollisionKey());
-                else
-                    object.add((int) i);
+                if(useCollisionKey) {
+                    CollisionKey key = finalFactory.getCollisionKey();
+                    object.add(key);
+                } else {
+                    object.add((int) i); // FIXME this should be a single type
+                }
             }
-
             return null;
         };
 
@@ -53,6 +55,8 @@ public class SetFiller extends Filler<Set>{
         for (Future<Void> future : futures) {
             future.get();
         }
+
+        // System.out.println(object.size()+": "+nbOps);
 
     }
 }

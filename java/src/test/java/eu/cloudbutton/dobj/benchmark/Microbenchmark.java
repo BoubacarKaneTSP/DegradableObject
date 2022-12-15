@@ -222,7 +222,7 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
-                // System.out.println(((Map)object).size());
+                // System.out.println(((Set)object).size());
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 
