@@ -75,10 +75,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 2;
+    private double _alphaInit = 1.39;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1;
+    private double _alphaMin = 1.39;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.1;
@@ -171,7 +171,7 @@ public class Retwis {
             listAlpha.add(i);
         }
 
-        for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
+        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -533,7 +533,8 @@ public class Retwis {
 
                 latch.await();
 
-                usersProbabilitySize = database.getUsersProbability().size();
+                usersProbabilitySize = database.getLocalUsersProbability().get().size();
+//                usersProbabilitySize = database.getUsersProbability().size();
                 arrayLocalUsers = database.getLocalUsers().get();
 
 //                System.out.println("Local user from thread " + Thread.currentThread().getName() + " : " + arrayLocalUsers);
@@ -626,9 +627,9 @@ public class Retwis {
             * */
             restartOperation : for (;;){
                 nbAttempt ++;
-                if (nbAttempt > nbAttemptMax) {
+                if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
-                }
+
                 int val = random.nextInt(nbLocalUsers);
                 userA = arrayLocalUsers.get(val);
                 Queue<Long> listFollow = usersFollow.get(userA);
@@ -644,7 +645,8 @@ public class Retwis {
                         break;
                     case FOLLOW:
                         n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
-                            userB = database.getUsersProbability().get(n);
+                        userB = database.getLocalUsersProbability().get().get(n);
+//                        userB = database.getUsersProbability().get(n);
 
                         try{
                             if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed

@@ -38,7 +38,10 @@ public class Database {
         try{
             cls = Class.forName("eu.cloudbutton.dobj.incrementonly."+typeCounter);
         }catch (ClassNotFoundException e){
-            cls = Class.forName("java.util.concurrent."+typeCounter);
+            if (typeCounter.contains("Sharded"))
+                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeCounter);
+            else
+                cls = Class.forName("java.util.concurrent."+typeCounter);
         }
 
         factory.setFactoryCounter(cls);
@@ -46,7 +49,10 @@ public class Database {
         try{
             cls = Class.forName("eu.cloudbutton.dobj.mcwmcr."+typeSet);
         }catch (ClassNotFoundException e){
-            cls = Class.forName("java.util.concurrent."+typeSet);
+            if (typeSet.contains("Sharded"))
+                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeSet);
+            else
+                cls = Class.forName("java.util.concurrent."+typeSet);
         }
 
         factory.setFactorySet(cls);
@@ -54,7 +60,10 @@ public class Database {
         try{
             cls = Class.forName("eu.cloudbutton.dobj.asymmetric."+typeQueue);
         }catch (ClassNotFoundException e){
-            cls = Class.forName("java.util.concurrent."+typeQueue);
+            if (typeQueue.contains("Sharded"))
+                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeQueue);
+            else
+                cls = Class.forName("java.util.concurrent."+typeQueue);
         }
 
         factory.setFactoryQueue(cls);
@@ -62,7 +71,10 @@ public class Database {
         try{
             cls = Class.forName("eu.cloudbutton.dobj.mcwmcr."+typeMap);
         }catch (ClassNotFoundException e){
-            cls = Class.forName("java.util.concurrent."+typeMap);
+            if (typeMap.contains("Sharded"))
+                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeMap);
+            else
+                cls = Class.forName("java.util.concurrent."+typeMap);
         }
 
         factory.setFactoryMap(cls);
@@ -146,10 +158,12 @@ public class Database {
 
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j < nbFollow; j++){
-                n = random.nextInt(usersProbability.size());
+                n = random.nextInt(localUsersProbability.get().size());
+//                n = random.nextInt(usersProbability.size());
                 userB = 0;
                 try{
-                    userB = usersProbability.get(n);
+                    userB = localUsersProbability.get().get(n);
+//                    userB = usersProbability.get(n);
                 }catch (NullPointerException e){
                     System.exit(0);
                 }
