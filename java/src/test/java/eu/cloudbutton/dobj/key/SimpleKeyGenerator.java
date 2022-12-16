@@ -5,15 +5,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SimpleKeyGenerator implements KeyGenerator {
 
-    private final ThreadLocal<Random> random; // to avoid collisions
+    private ThreadLocal<Random> random;
 
     public SimpleKeyGenerator() {
-        this.random = ThreadLocal.withInitial(() -> {return new Random(System.nanoTime()+Thread.currentThread().getId());});
+        random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
     }
 
     @Override
-    public long nextKey() {
-        return random.get().nextLong();
+    public Key nextKey() {
+        return new ThreadLocalKey(Thread.currentThread().getId(),random.get().nextLong());
     }
 
 }

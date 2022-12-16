@@ -5,26 +5,29 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RetwisKeyGenerator implements KeyGenerator {
 
     private final int MAX_KEYS = 1000;
 
     private final List<Long> list;
-    private final ThreadLocal<Random> random; // to avoid collisions
+    private ThreadLocal<Random> random;
     private final int bound;
 
     public RetwisKeyGenerator() {
-        this.random = ThreadLocal.withInitial(() -> {return new Random(System.nanoTime()+Thread.currentThread().getId());});
+        this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
         this.bound = MAX_KEYS;
         this.list =  new ArrayList<>();
         fill();
     }
 
     @Override
-    public long nextKey() {
-        return list.get(random.get().nextInt(bound));
+    public Key nextKey() {
+        return  new CollidingKey(
+                Thread.currentThread().getId(),
+                random.get().nextLong(),
+                list.get(random.get().nextInt(bound))
+        );
     }
 
     private void fill(){
@@ -50,6 +53,21 @@ public class RetwisKeyGenerator implements KeyGenerator {
                 long toAdd = j;
                 list.add(toAdd);
             }
+        }
+    }
+
+    private static class CollidingKey extends ThreadLocalKey {
+
+        private long hash;
+
+        CollidingKey(long tid, long id, long hash) {
+            super(tid,id);
+            this.hash = hash;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) hash;
         }
     }
 }

@@ -14,7 +14,7 @@ public class PowerLawKeyTest {
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
-        Map<Long, String> collisionMap = new MapReadIntensive<>();
+        Map<Key, String> collisionMap = new MapReadIntensive<>();
         Map<String, String> map = new ConcurrentHashMap<>();
         RetwisKeyGenerator factory = new RetwisKeyGenerator();
 
