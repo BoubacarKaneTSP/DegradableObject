@@ -331,7 +331,7 @@ public class Retwis {
 
                     String nameFile = "ALL_"+_tag+"_"+strAlpha+".txt";
                     if (flag_append == 0)
-                        fileWriter = new FileWriter(nameFile, false);
+                        fileWriter = new FileWriter(nameFile, true);
                     else
                         fileWriter = new FileWriter(nameFile, true);
 
@@ -372,7 +372,7 @@ public class Retwis {
                         String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+".txt";
                         if (_s){
                             if (flag_append == 0)
-                                fileWriter = new FileWriter( nameFile, false);
+                                fileWriter = new FileWriter( nameFile, true);
                             else
                                 fileWriter = new FileWriter(nameFile, true);
                             printWriter = new PrintWriter(fileWriter);
@@ -432,11 +432,11 @@ public class Retwis {
                             PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint;
 
                             if (flag_append == 0) {
-                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", false);
-                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", false);
-                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", false);
-                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", false);
-                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", false);
+                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
+                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", true);
+                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", true);
+                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", true);
+                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", true);
                             }
                             else {
                                 queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
