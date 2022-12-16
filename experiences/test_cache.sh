@@ -12,6 +12,6 @@ do
 #	echo "Results for : $nbThread"
 	echo
 
-  perf stat -B -M L1MPKI,L2MPKI,L3MPKI -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 3 -i $nbUser -b -h "JUC" -g 1
-	perf stat -B -M L1MPKI,L2MPKI,L3MPKI -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 3 -i $nbUser -b -h "Q_M_S_C" -g 1
+  perf stat -B -M L1MPKI,L2MPKI,L3MPKI -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 3 -i $nbUser -b -h "JUC"
+	perf stat -B -M L1MPKI,L2MPKI,L3MPKI -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 3 -i $nbUser -b -h "Q_M_S_C"
 done
