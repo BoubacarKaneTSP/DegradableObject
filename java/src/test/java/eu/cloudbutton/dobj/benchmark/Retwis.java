@@ -117,7 +117,7 @@ public class Retwis {
 
     private Database database;
 
-    int NB_USERS = (int) _nbOps;
+    int NB_USERS;
 
     int nbSign = 5;
 
@@ -183,6 +183,7 @@ public class Retwis {
             allNbMaxFollower = new ArrayList();
             allNbUserWithMaxFollower = new ArrayList();
             allNbUserWithoutFollower = new ArrayList();
+            NB_USERS = (int) _nbOps;
 //            NB_USERS = nbCurrThread;
 
             if (_p){
@@ -329,7 +330,7 @@ public class Retwis {
 
                     String nameFile = "ALL_"+_tag+"_"+strAlpha+".txt";
                     if (flag_append == 0)
-                        fileWriter = new FileWriter(nameFile, true);
+                        fileWriter = new FileWriter(nameFile, false);
                     else
                         fileWriter = new FileWriter(nameFile, true);
 
@@ -370,7 +371,7 @@ public class Retwis {
                         String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+".txt";
                         if (_s){
                             if (flag_append == 0)
-                                fileWriter = new FileWriter( nameFile, true);
+                                fileWriter = new FileWriter( nameFile, false);
                             else
                                 fileWriter = new FileWriter(nameFile, true);
                             printWriter = new PrintWriter(fileWriter);
@@ -430,11 +431,11 @@ public class Retwis {
                             PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint;
 
                             if (flag_append == 0) {
-                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
-                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", true);
-                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", true);
-                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", true);
-                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", true);
+                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", false);
+                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", false);
+                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", false);
+                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", false);
+                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", false);
                             }
                             else {
                                 queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
@@ -725,7 +726,7 @@ public class Retwis {
             try {
 
                 if (_p)
-                    System.out.println(" ==> Filling the database with "+ _nbOps +" users" );
+                    System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
                 if (flagWarmingUp.get()){
 
