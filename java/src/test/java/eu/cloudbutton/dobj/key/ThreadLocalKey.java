@@ -32,6 +32,8 @@ public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
     public int compareTo(@NotNull ThreadLocalKey key) {
         if (id>key.id) return 1;
         if (key.id>id) return -1;
+        if (tid>key.tid) return 1;
+        if (tid<key.tid) return 1;
         return 0;
     }
 }
