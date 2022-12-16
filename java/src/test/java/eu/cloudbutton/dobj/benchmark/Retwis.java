@@ -322,7 +322,8 @@ public class Retwis {
                     System.out.println(" ==> Results :");
 
                 long nbOp, timeOp;
-                String strAlpha = Double.toString(alpha).replace(".","");
+//                String strAlpha = Double.toString(alpha).replace(".","");
+                String strAlpha = Integer.toString(nbCurrThread);
 
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
