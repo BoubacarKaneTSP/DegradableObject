@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.segmented;
 import eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
+import eu.cloudbutton.dobj.utils.NonLinearizable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -36,13 +37,19 @@ public class SegmentedTreeSet<E extends Comparable<E>> extends BaseSegmentation<
     //
 
     @Override
+    @NonLinearizable
     public int size() {
-        throw new UnsupportedOperationException();
+        int ret = 0;
+        for(SWSRSkipListSet<E> set: segments()) {
+            ret+=set.size();
+        }
+        return ret;
     }
 
     @Override
+    @NonLinearizable
     public boolean isEmpty() {
-        throw new UnsupportedOperationException();
+        return size()==0;
     }
 
     @Override

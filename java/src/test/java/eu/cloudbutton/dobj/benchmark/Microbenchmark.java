@@ -170,6 +170,8 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("* End filling *");
 
+                    System.out.println(((Set)object).size());
+
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread + 1);
 
                     FactoryTester factoryTester = new FactoryTesterBuilder()
@@ -222,7 +224,7 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
-                // System.out.println(((Set)object).size());
+                System.out.println(((Set)object).size());
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 
@@ -303,8 +305,8 @@ public class Microbenchmark {
             }
 
             System.exit(0);
-            } catch (IOException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ioException) {
-            ioException.printStackTrace();
+            } catch (IOException | ClassNotFoundException exception) {
+            exception.printStackTrace();
         }
 
     }

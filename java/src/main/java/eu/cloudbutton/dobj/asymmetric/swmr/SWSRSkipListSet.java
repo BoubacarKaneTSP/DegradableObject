@@ -83,7 +83,7 @@ public class SWSRSkipListSet<E extends Comparable<E>> extends AbstractSet<E> imp
      * @throws NullPointerException if the specified element is null
      */
     public boolean add(E e) {
-        return m.putIfAbsent(e, Boolean.TRUE) == null;
+        return m.put(e, Boolean.TRUE) == null;
     }
 
     /**
@@ -325,21 +325,4 @@ public class SWSRSkipListSet<E extends Comparable<E>> extends AbstractSet<E> imp
         return new SWSRSkipListSet(m.descendingMap());
     }
 
-    // Support for resetting map in clone
-    private void setMap(ConcurrentNavigableMap<E,Object> map) {
-        UNSAFE.putObjectVolatile(this, mapOffset, map);
-    }
-
-    private static final sun.misc.Unsafe UNSAFE;
-    private static final long mapOffset;
-    static {
-        try {
-            UNSAFE = sun.misc.Unsafe.getUnsafe();
-            Class k = SWSRSkipListSet.class;
-            mapOffset = UNSAFE.objectFieldOffset
-                    (k.getDeclaredField("m"));
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-}
+ }

@@ -2,6 +2,9 @@ package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
+import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 
 import java.util.*;
 
@@ -9,28 +12,44 @@ public class FactoryFiller {
 
     private final Object object;
     private final long nbOps;
-    private boolean useCollisionKey;
+    private KeyGenerator keyGenerator;
 
     public FactoryFiller(Object object, long nbOps, boolean useCollisionKey) {
         this.object = object;
         this.nbOps = nbOps;
-        this.useCollisionKey = useCollisionKey;
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator() : new SimpleKeyGenerator();
     }
 
     public Filler createFiller() throws ClassNotFoundException {
 
         if (object instanceof Map)
-            return new MapFiller((Map) object, nbOps, useCollisionKey);
-        else if (object instanceof Set)
-            return new SetFiller((Set) object, nbOps, useCollisionKey);
-        else if (object instanceof Queue)
-            return new QueueFiller((Queue) object, nbOps);
-        else if (object instanceof List)
-            return new ListFiller((AbstractList) object, nbOps);
+            return new Filler<>((Map) object, keyGenerator, nbOps) {
+                @Override
+                public void doFill(long key) {
+                    object.put(key,key);
+                }
+            };
+        else if (object instanceof Collection)
+            return new Filler<>((Set) object, keyGenerator, nbOps) {
+                @Override
+                public void doFill(long key) {
+                    object.add(key);
+                }
+            };
         else if (object instanceof Counter)
-            return new CounterFiller((Counter) object, nbOps);
+            return new Filler<>((Counter) object, keyGenerator, nbOps) {
+                @Override
+                public void doFill(long key) {
+                    object.incrementAndGet();
+                }
+            };
         else if (object instanceof Noop)
-            return new NoopFiller((Noop) object, nbOps);
+            return new Filler<>(object, keyGenerator, nbOps) {
+                @Override
+                public void doFill(long key) {
+                    // no-op
+                }
+            };
         else
             throw new ClassNotFoundException("The Filler for "+ object.getClass() +" may not exists");
     }
