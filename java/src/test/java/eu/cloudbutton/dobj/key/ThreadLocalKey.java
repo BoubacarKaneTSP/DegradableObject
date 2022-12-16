@@ -1,9 +1,11 @@
 package eu.cloudbutton.dobj.key;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 import java.util.Random;
 
-public class ThreadLocalKey implements Key{
+public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
 
     public long tid;
     public long id;
@@ -24,5 +26,12 @@ public class ThreadLocalKey implements Key{
     @Override
     public int hashCode() {
         return Objects.hash(tid, id);
+    }
+
+    @Override
+    public int compareTo(@NotNull ThreadLocalKey key) {
+        if (id>key.id) return 1;
+        if (key.id>id) return -1;
+        return 0;
     }
 }
