@@ -66,7 +66,7 @@ public class Retwis {
     private int _nbTest = 1;
 
     @Option(name = "-nbOps", usage = "Number of operation done")
-    private long _nbOps = 1_000_000;
+    private long _nbOps = 1_000_00;
 
     @Option(name = "-time", usage = "test time (seconds)")
     private long _time = 20;
@@ -117,9 +117,11 @@ public class Retwis {
 
     private Database database;
 
-    int NB_USERS;
+    int NB_USERS = (int) _nbOps;
 
     int nbSign = 5;
+
+    int flag_append = 0;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
 //        Queue queue1 = new QueueMASP();
@@ -181,7 +183,6 @@ public class Retwis {
             allNbMaxFollower = new ArrayList();
             allNbUserWithMaxFollower = new ArrayList();
             allNbUserWithoutFollower = new ArrayList();
-            NB_USERS = (int) _nbOps;
 //            NB_USERS = nbCurrThread;
 
             if (_p){
@@ -210,7 +211,7 @@ public class Retwis {
                     flagWarmingUp = new AtomicBoolean(false);
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread);
 
-                    if (nbCurrThread == 1 && nbCurrTest == 1){
+                    if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
                     }
 
@@ -306,6 +307,11 @@ public class Retwis {
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
+//                int unit = nbCurrThread;
+                int unit = NB_USERS;
+
+
+
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOpTotal += nbOperations.get(op).get();
                     timeTotalComputed += timeOperations.get(op).get();
@@ -322,16 +328,16 @@ public class Retwis {
                 if (_s){
 
                     String nameFile = "ALL_"+_tag+"_"+strAlpha+".txt";
-                    if (nbCurrThread == 1)
+                    if (flag_append == 0)
                         fileWriter = new FileWriter(nameFile, false);
                     else
                         fileWriter = new FileWriter(nameFile, true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(nbCurrThread +" "+ timeTotal);
+                        printWriter.println(unit +" "+ timeTotal);
                     else
-                        printWriter.println(nbCurrThread +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
 
                 }
 
@@ -363,25 +369,24 @@ public class Retwis {
 
                         String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+".txt";
                         if (_s){
-                            if (nbCurrThread == 1)
+                            if (flag_append == 0)
                                 fileWriter = new FileWriter( nameFile, false);
                             else
                                 fileWriter = new FileWriter(nameFile, true);
                             printWriter = new PrintWriter(fileWriter);
-                            printWriter.println(nbCurrThread +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
+                            printWriter.println(unit +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
 
                         if (_p){
                             for (int j = 0; j < nbSign; j++) System.out.print("-");
                             System.out.print(" ==> Throughput (op/s) for "+mapIntOptoStringOp.get(op)+" : ");
                             System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
+                            System.out.println();
                         }
 
                         if (_s)
                             printWriter.flush();
                     }
-
-                    System.out.println();
 
                     if (_breakdown){
 
@@ -424,7 +429,7 @@ public class Retwis {
                             FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile;
                             PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint;
 
-                            if (nbCurrThread == 1) {
+                            if (flag_append == 0) {
                                 queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", false);
                                 avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", false);
                                 nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", false);
@@ -445,11 +450,11 @@ public class Retwis {
                             nbUserWithMaxFollowerPrint = new PrintWriter(nbUserWithMaxFollowerFile);
                             nbUserWithoutFollowerPrint = new PrintWriter(nbUserWithoutFollowerFile);
 
-                            queueSizePrint.println(nbCurrThread + " " + sumAvgQueueSizes/_nbTest);
-                            avgFollowerPrint.println(nbCurrThread + " " + sumAvgFollower/_nbTest);
-                            nbMaxFollowerPrint.println(nbCurrThread + " " + sumNbMaxFollower/_nbTest);
-                            nbUserWithMaxFollowerPrint.println(nbCurrThread + " " + sumNbUserWithMaxFollower/_nbTest);
-                            nbUserWithoutFollowerPrint.println(nbCurrThread + " " + sumNbUserWithoutFollower/_nbTest);
+                            queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
+                            avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
+                            nbMaxFollowerPrint.println(unit + " " + sumNbMaxFollower/_nbTest);
+                            nbUserWithMaxFollowerPrint.println(unit + " " + sumNbUserWithMaxFollower/_nbTest);
+                            nbUserWithoutFollowerPrint.println(unit + " " + sumNbUserWithoutFollower/_nbTest);
 
                             queueSizePrint.flush();
                             avgFollowerPrint.flush();
@@ -470,11 +475,9 @@ public class Retwis {
                     System.out.println();
                 if (_s)
                     printWriter.close();
-
-                System.out.println();
-
             }
 
+            flag_append++;
             nbCurrThread *= 2;
 
             if (_quickTest){
@@ -533,19 +536,16 @@ public class Retwis {
 
                 latch.await();
 
-                usersProbabilitySize = database.getLocalUsersProbability().get().size();
-//                usersProbabilitySize = database.getUsersProbability().size();
+//                usersProbabilitySize = database.getLocalUsersProbability().get().size();
+                usersProbabilitySize = database.getUsersProbability().size();
                 arrayLocalUsers = database.getLocalUsers().get();
 
-//                System.out.println("Local user from thread " + Thread.currentThread().getName() + " : " + arrayLocalUsers);
-//                System.out.println("Print of mapFollower : " + database.getMapFollowers());
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
                     compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
-//                System.out.println("User probability : " + database.getUsersProbability());
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
@@ -568,8 +568,6 @@ public class Retwis {
                     for (long user : database.getLocalUsers().get()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
-//                    System.out.println(database.getLocalUsersProbability().get());
-//                    System.out.println(arrayLocalUsers);
                 }
 
                 for (int op: mapIntOptoStringOp.keySet()){
@@ -645,8 +643,8 @@ public class Retwis {
                         break;
                     case FOLLOW:
                         n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
-                        userB = database.getLocalUsersProbability().get().get(n);
-//                        userB = database.getUsersProbability().get(n);
+//                        userB = database.getLocalUsersProbability().get().get(n);
+                        userB = database.getUsersProbability().get(n);
 
                         try{
                             if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
@@ -727,7 +725,7 @@ public class Retwis {
             try {
 
                 if (_p)
-                    System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
+                    System.out.println(" ==> Filling the database with "+ _nbOps +" users" );
 
                 if (flagWarmingUp.get()){
 

@@ -137,7 +137,6 @@ public class Database {
             usersFollow.put(user, new LinkedList<>());
 
             localUsers.get().add(user);
-//            System.out.println(Thread.currentThread().getName() + " adding the user : " + user);
             for (int j = 0; j <= data.get((int) user); j++) { // each user have an ID inferior to bound
                 localUsersProbability.get().add(user);
             }
@@ -148,22 +147,18 @@ public class Database {
         latchDatabase.countDown();
         latchDatabase.await();
 
-/*        System.out.println();
-        System.out.println("usersFollow from thread "+ Thread.currentThread().getName() +": " + usersFollow);
-        System.out.println();*/
-//        System.out.println("Following phase");
         //Following phase
 
         for (Long userA: usersFollow.keySet()){
 
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j < nbFollow; j++){
-                n = random.nextInt(localUsersProbability.get().size());
-//                n = random.nextInt(usersProbability.size());
+//                n = random.nextInt(localUsersProbability.get().size());
+                n = random.nextInt(usersProbability.size());
                 userB = 0;
                 try{
-                    userB = localUsersProbability.get().get(n);
-//                    userB = usersProbability.get(n);
+//                    userB = localUsersProbability.get().get(n);
+                    userB = usersProbability.get(n);
                 }catch (NullPointerException e){
                     System.exit(0);
                 }
