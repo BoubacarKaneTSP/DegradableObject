@@ -14,7 +14,7 @@ public class PowerLawKeyTest {
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
-        Map<Key, String> collisionMap = new MapReadIntensive<>();
+        Map<Long, String> collisionMap = new MapReadIntensive<>();
         Map<String, String> map = new ConcurrentHashMap<>();
         RetwisKeyGenerator factory = new RetwisKeyGenerator();
 
@@ -22,7 +22,6 @@ public class PowerLawKeyTest {
         List<Future<Void>> futures = new ArrayList<>();
 
         Callable<Void> callable = () -> {
-            factory.setFactoryCollisionKey(PowerLawKey.class);
             String currentThreadName = Thread.currentThread().getName();
             for (int i = 0; i < 100; i++) {
                 collisionMap.put(factory.nextKey(), "value");

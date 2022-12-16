@@ -33,6 +33,7 @@ public class FactoryFiller {
             return new Filler<>((Set) object, keyGenerator, nbOps) {
                 @Override
                 public void doFill(long key) {
+                    System.out.println(Thread.currentThread().getName()+" adding "+key);
                     object.add(key);
                 }
             };

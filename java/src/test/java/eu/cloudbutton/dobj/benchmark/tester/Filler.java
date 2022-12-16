@@ -38,8 +38,6 @@ public abstract class Filler<T> {
             }
         }
 
-        // System.out.println(object.size()+": "+nbOps);
-
     }
 
     public abstract void doFill(long key);

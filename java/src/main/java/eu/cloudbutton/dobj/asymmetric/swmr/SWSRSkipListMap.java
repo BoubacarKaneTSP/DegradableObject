@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.asymmetric.swmr;
 
 import eu.cloudbutton.dobj.utils.NonLinearizable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import sun.misc.Unsafe;
 
@@ -26,7 +27,7 @@ public class SWSRSkipListMap <K extends Comparable<K>, V> implements ConcurrentN
     // The default probability to use when selecting a random level.
     private static final double DEFAULT_ITERATION_PROBABILITY = 0.2;
     // An instance of the random number generator.
-    private final Random random;
+    private final ThreadLocal<Random> random;
     // The probability with which to continue iterating while selecting a level.
     private final double iterationProbability;
     // The head of the list.
@@ -47,7 +48,7 @@ public class SWSRSkipListMap <K extends Comparable<K>, V> implements ConcurrentN
      * @param iterationProbability The probability with which to continue iterating during level selection.
      */
     public SWSRSkipListMap(double iterationProbability) {
-        random = new Random();
+        random = ThreadLocal.withInitial(() -> {return new Random(System.nanoTime());});
         this.iterationProbability = iterationProbability;
         clear();
     }
@@ -322,14 +323,25 @@ public class SWSRSkipListMap <K extends Comparable<K>, V> implements ConcurrentN
 
     @Override
     public NavigableSet<K> keySet() {
-        NavigableSet<K> result = new TreeSet<>();
-        Node<K, V> cur = getLowestHead().next;
-        while (cur != null) {
-            result.add(cur.key);
-            cur = cur.next;
-        }
+        return new KeySet(this);
+    }
 
-        return result;
+
+    private Iterator<K> keyIterator() {
+        return new Iterator<K>() {
+            Node<K, V> cur = getLowestHead().next;
+            @Override
+            public boolean hasNext() {
+                return cur!=null;
+            }
+
+            @Override
+            public K next() {
+                K k = cur.key;
+                cur = cur.next;
+                return k;
+            }
+        };
     }
 
     @Override
@@ -364,7 +376,7 @@ public class SWSRSkipListMap <K extends Comparable<K>, V> implements ConcurrentN
     // Selects a random level by incrementing a counter a random number of times.
     private long getRandomLevel() {
         long level = 0;
-        while (level <= size && random.nextDouble() < iterationProbability) {
+        while (level <= size && random.get().nextDouble() < iterationProbability) {
             level++;
         }
 
@@ -437,6 +449,91 @@ public class SWSRSkipListMap <K extends Comparable<K>, V> implements ConcurrentN
         public boolean isNextKeyEqualTo(K key) {
             return (next != null && next.key.equals(key));
         }
+    }
+
+    static final class KeySet<K extends Comparable<K>>
+            extends AbstractSet<K> implements NavigableSet<K> {
+        private final SWSRSkipListMap<K,Object> m;
+        KeySet(SWSRSkipListMap<K,Object> map) { m = map; }
+        public int size() { return m.size(); }
+        public boolean isEmpty() { return m.isEmpty(); }
+        public boolean contains(Object o) { return m.containsKey(o); }
+        public boolean remove(Object o) { return m.remove(o) != null; }
+        public void clear() { m.clear(); }
+        public K lower(K e) { return m.lowerKey(e); }
+        public K floor(K e) { return m.floorKey(e); }
+        public K ceiling(K e) { return m.ceilingKey(e); }
+        public K higher(K e) { return m.higherKey(e); }
+
+        @Nullable
+        @Override
+        public K pollFirst() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public K pollLast() {
+            return null;
+        }
+
+        public Comparator<? super K> comparator() { return m.comparator(); }
+        public K first() { return m.firstKey(); }
+        public K last() { return m.lastKey(); }
+        public Iterator<K> iterator() {
+            if (m instanceof SWSRSkipListMap)
+                return ((SWSRSkipListMap<K,Object>)m).keyIterator();
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public NavigableSet<K> descendingSet() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public Iterator<K> descendingIterator() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public NavigableSet<K> subSet(K k, boolean b, K e1, boolean b1) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public NavigableSet<K> headSet(K k, boolean b) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public NavigableSet<K> tailSet(K k, boolean b) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public SortedSet<K> subSet(K k, K e1) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public SortedSet<K> headSet(K k) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public SortedSet<K> tailSet(K k) {
+            return null;
+        }
+
     }
 
 }

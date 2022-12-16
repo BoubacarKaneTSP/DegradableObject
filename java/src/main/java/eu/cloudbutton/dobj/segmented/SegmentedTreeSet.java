@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class SegmentedTreeSet<E extends Comparable<E>> extends BaseSegmentation<SWSRSkipListSet> implements Set<E> {
-
+    
     public SegmentedTreeSet(int parallelism) {
         super(SWSRSkipListSet.class, parallelism);
     }
@@ -26,6 +26,7 @@ public class SegmentedTreeSet<E extends Comparable<E>> extends BaseSegmentation<
 
     @NotNull
     @Override
+    @NonLinearizable
     public Iterator<E> iterator() {
         Collection<Iterator<E>> iterators = new ArrayList<>();
         for(SWSRSkipListSet<E> set: segments()) {

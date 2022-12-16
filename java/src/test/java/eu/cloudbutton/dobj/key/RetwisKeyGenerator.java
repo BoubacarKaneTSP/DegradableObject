@@ -4,6 +4,7 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RetwisKeyGenerator implements KeyGenerator {
@@ -11,11 +12,11 @@ public class RetwisKeyGenerator implements KeyGenerator {
     private final int MAX_KEYS = 1000;
 
     private final List<Long> list;
-    private final ThreadLocalRandom random;
+    private final ThreadLocal<Random> random; // to avoid collisions
     private final int bound;
 
     public RetwisKeyGenerator() {
-        this.random = ThreadLocalRandom.current();
+        this.random = ThreadLocal.withInitial(() -> {return new Random(System.nanoTime()+Thread.currentThread().getId());});
         this.bound = MAX_KEYS;
         this.list =  new ArrayList<>();
         fill();
@@ -23,7 +24,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     @Override
     public long nextKey() {
-        return list.get(random.nextInt(bound));
+        return list.get(random.get().nextInt(bound));
     }
 
     private void fill(){
