@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
+import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public abstract class Filler<T> {
 
     }
 
-    public abstract void doFill(long key);
+    public abstract void doFill(Key key);
 
     private class FillerCallable<T> implements Callable<Void> {
 
@@ -54,7 +55,7 @@ public abstract class Filler<T> {
         @Override
         public Void call() throws Exception {
             for (long i = min; i < max; i++) {
-                long key = generator.nextKey();
+                Key key = generator.nextKey();
                 doFill(key);
             }
             return null;

@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
@@ -25,14 +26,14 @@ public class FactoryFiller {
         if (object instanceof Map)
             return new Filler<>((Map) object, keyGenerator, nbOps) {
                 @Override
-                public void doFill(long key) {
+                public void doFill(Key key) {
                     object.put(key,key);
                 }
             };
         else if (object instanceof Collection)
             return new Filler<>((Set) object, keyGenerator, nbOps) {
                 @Override
-                public void doFill(long key) {
+                public void doFill(Key key) {
                     System.out.println(Thread.currentThread().getName()+" adding "+key);
                     object.add(key);
                 }
@@ -40,14 +41,14 @@ public class FactoryFiller {
         else if (object instanceof Counter)
             return new Filler<>((Counter) object, keyGenerator, nbOps) {
                 @Override
-                public void doFill(long key) {
+                public void doFill(Key key) {
                     object.incrementAndGet();
                 }
             };
         else if (object instanceof Noop)
             return new Filler<>(object, keyGenerator, nbOps) {
                 @Override
-                public void doFill(long key) {
+                public void doFill(Key key) {
                     // no-op
                 }
             };
