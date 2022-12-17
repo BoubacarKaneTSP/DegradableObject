@@ -75,13 +75,13 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.39;
+    private double _alphaInit = 2.6;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.39;
+    private double _alphaMin = 0.4;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
-    private double _alphaStep = 0.1;
+    private double _alphaStep = 0.2;
 
     @Option(name="-tag", required = false, usage = "tag of result's file")
     private String _tag;
@@ -322,8 +322,9 @@ public class Retwis {
                     System.out.println(" ==> Results :");
 
                 long nbOp, timeOp;
-//                String strAlpha = Double.toString(alpha).replace(".","");
-                String strAlpha = Integer.toString(nbCurrThread);
+                String strAlpha = Double.toString(alpha).replace(".","");
+                strAlpha = strAlpha.substring(0,3);
+//                String strAlpha = Integer.toString(nbCurrThread);
 
 //              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
 
@@ -331,7 +332,7 @@ public class Retwis {
 
                     String nameFile = "ALL_"+_tag+"_"+strAlpha+".txt";
                     if (flag_append == 0)
-                        fileWriter = new FileWriter(nameFile, true);
+                        fileWriter = new FileWriter(nameFile, false);
                     else
                         fileWriter = new FileWriter(nameFile, true);
 
@@ -372,7 +373,7 @@ public class Retwis {
                         String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+".txt";
                         if (_s){
                             if (flag_append == 0)
-                                fileWriter = new FileWriter( nameFile, true);
+                                fileWriter = new FileWriter( nameFile, false);
                             else
                                 fileWriter = new FileWriter(nameFile, true);
                             printWriter = new PrintWriter(fileWriter);
@@ -432,11 +433,11 @@ public class Retwis {
                             PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint;
 
                             if (flag_append == 0) {
-                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
-                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", true);
-                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", true);
-                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", true);
-                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", true);
+                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", false);
+                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", false);
+                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", false);
+                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", false);
+                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", false);
                             }
                             else {
                                 queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
