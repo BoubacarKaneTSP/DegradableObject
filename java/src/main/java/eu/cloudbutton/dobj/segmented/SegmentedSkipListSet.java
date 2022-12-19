@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class SegmentedTreeSet<E extends Comparable<E>> extends BaseSegmentation<SWSRSkipListSet> implements Set<E> {
+public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentation<SWSRSkipListSet> implements Set<E> {
 
-    public SegmentedTreeSet(int parallelism) {
+    public SegmentedSkipListSet(int parallelism) {
         super(SWSRSkipListSet.class, parallelism);
     }
 

@@ -62,7 +62,12 @@ public class ShardedHashMap<K,V> extends BaseSegmentation<HashMap> implements Ma
 
     @Override
     public int size() {
-        throw new IllegalStateException("not supported");
+        int ret = 0;
+        for(HashMap<K,V> set: segments()) {
+            ret+=set.size();
+        }
+        return ret;
+
     }
 
     @Override

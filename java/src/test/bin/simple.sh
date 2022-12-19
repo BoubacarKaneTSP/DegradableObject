@@ -14,5 +14,4 @@ eu.cloudbutton.dobj.benchmark.Microbenchmark \
 -time $time \
 -nbOps $nbOps \
 -quickTest \
--collisionKey \
 -p

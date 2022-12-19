@@ -40,7 +40,7 @@ public class Microbenchmark {
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
     @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios = {"33","33","34"};
+    private String[] ratios = {"50","50","0"};
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors();
     @Option(name = "-time", usage = "How long will the test last (seconds)")
@@ -170,7 +170,7 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("* End filling *");
 
-                    System.out.println(((Set)object).size());
+                    System.out.println(((Map)object).size());
 
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread + 1);
 
@@ -226,7 +226,7 @@ public class Microbenchmark {
 
                 System.out.println("End.");
 
-                System.out.println(((Set)object).size());
+                System.out.println(((Map)object).size());
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 

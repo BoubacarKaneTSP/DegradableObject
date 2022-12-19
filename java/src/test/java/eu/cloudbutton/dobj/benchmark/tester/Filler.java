@@ -20,7 +20,8 @@ public abstract class Filler<T> {
     }
 
     public final void fill() {
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        int nworkers = 1; // Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(nworkers);
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbTask = Runtime.getRuntime().availableProcessors();

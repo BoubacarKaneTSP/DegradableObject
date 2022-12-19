@@ -17,8 +17,9 @@ import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.SegmentedTreeSet;
+import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
 import eu.cloudbutton.dobj.sharded.ShardedHashMap;
+import eu.cloudbutton.dobj.sharded.ShardedTreeSet;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -71,10 +72,10 @@ public class Factory {
 
         if (object.contains("Counter"))
             return createCounter(object);
-        else if (object.contains("List"))
-            return createList(object);
         else if (object.contains("Set"))
             return createSet(object, parallelism);
+        else if (object.contains("List"))
+            return createList(object);
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Map"))
@@ -125,9 +126,12 @@ public class Factory {
     public static Set createSet(String set, int parallelism) throws ClassNotFoundException {
 
         switch (set){
-            case "SegmentedTreeSet":
-                System.out.println("new SegmentedHashMap("+parallelism+")");
-                return new SegmentedTreeSet(parallelism);
+            case "SegmentedSkipListSet":
+                System.out.println("new SegmentedSkipListSet("+parallelism+")");
+                return new SegmentedSkipListSet(parallelism);
+            case "ShardedTreeSet":
+                System.out.println("new ShardedTreeSet("+parallelism+")");
+                return new ShardedTreeSet(parallelism);
             case "Set":
                 return new ConcurrentSkipListSet<>();
             case "SetReadIntensive":
