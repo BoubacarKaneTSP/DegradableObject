@@ -40,7 +40,7 @@ public class Microbenchmark {
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
     @Option(name = "-ratios", handler = StringArrayOptionHandler.class, usage = "ratios")
-    private String[] ratios = {"50","50","0"};
+    private String[] ratios = {"33","33","34"};
     @Option(name = "-nbThreads", usage = "Number of threads")
     private int nbThreads = Runtime.getRuntime().availableProcessors();
     @Option(name = "-time", usage = "How long will the test last (seconds)")

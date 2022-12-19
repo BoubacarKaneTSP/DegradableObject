@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class RetwisKeyGenerator implements KeyGenerator {
 
-    private final int MAX_KEYS = 1000;
+    private final int MAX_HASHES = 1000;
 
     private final List<Long> list;
     private ThreadLocal<Random> random;
@@ -16,7 +16,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     public RetwisKeyGenerator() {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
-        this.bound = MAX_KEYS;
+        this.bound = MAX_HASHES;
         this.list =  new ArrayList<>();
         fill();
     }
@@ -68,6 +68,10 @@ public class RetwisKeyGenerator implements KeyGenerator {
         @Override
         public int hashCode() {
             return (int) hash;
+        }
+
+        public String toString() {
+            return "("+tid+","+id+","+hash+")";
         }
     }
 }

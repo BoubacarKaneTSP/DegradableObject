@@ -536,4 +536,14 @@ public class SWSRSkipListMap <K extends Comparable<K>, V> implements ConcurrentN
 
     }
 
+    @Override
+    public String toString() {
+        String ret ="[";
+        for (K k : this.keySet()) {
+            ret+="("+k+","+this.get(k)+")";
+        }
+        ret+="]";
+        return ret;
+    }
+
 }

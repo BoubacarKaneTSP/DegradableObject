@@ -101,7 +101,7 @@ public class SWSRSkipListSet<E extends Comparable<E>> extends AbstractSet<E> imp
      * @throws NullPointerException if the specified element is null
      */
     public boolean remove(Object o) {
-        return m.remove(o, Boolean.TRUE);
+        return m.remove(o)!=null;
     }
 
     /**
@@ -323,6 +323,11 @@ public class SWSRSkipListSet<E extends Comparable<E>> extends AbstractSet<E> imp
      */
     public NavigableSet<E> descendingSet() {
         return new SWSRSkipListSet(m.descendingMap());
+    }
+
+    @Override
+    public String toString() {
+        return this.m.toString();
     }
 
  }
