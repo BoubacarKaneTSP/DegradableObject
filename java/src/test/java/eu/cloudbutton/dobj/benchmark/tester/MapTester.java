@@ -1,51 +1,41 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
-import eu.cloudbutton.dobj.map.CollisionKeyFactory;
-import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
+import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class MapTester extends Tester<Map> {
 
-    private boolean useCollisionKey;
+    private KeyGenerator keyGenerator;
 
     public MapTester(Map object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
         super(object, ratios, latch);
-        this.useCollisionKey = useCollisionKey;
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator() : new SimpleKeyGenerator();
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         long startTime = 0L, endTime = 0L, nbFail = 0L;
-        AbstractList list = new ArrayList<>();
-
-        CollisionKeyFactory factory = new CollisionKeyFactory();
-
-        factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
+        List list = new ArrayList<>();
 
         for (int i = 0; i < nbRepeat; i++) {
-            int rand = random.nextInt(ITEM_PER_THREAD);
-            String iid = Thread.currentThread().getId()  + Long.toString(rand);
-//        long iid = Thread.currentThread().getId() * 1_000_000_000L + rand;
-
-            if (useCollisionKey)
-                list.add(factory.getCollisionKey());
-            else
-                list.add(iid);
+            list.add(keyGenerator.nextKey());
         }
-
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     object.put(list.get(i), i);
                 }
                 endTime = System.nanoTime();
@@ -60,7 +50,7 @@ public class MapTester extends Tester<Map> {
             case READ:
                 Object returnValue;
                 startTime = System.nanoTime();
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < nbRepeat; i++) {
                     returnValue = object.get(list.get(i));
                     if (returnValue == null)
                         nbFail++;

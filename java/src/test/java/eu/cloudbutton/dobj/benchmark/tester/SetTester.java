@@ -1,22 +1,25 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
-import eu.cloudbutton.dobj.map.CollisionKeyFactory;
-import eu.cloudbutton.dobj.map.PowerLawCollisionKey;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
+import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 public class SetTester extends Tester<Set> {
 
-    private boolean useCollisionKey;
+    private KeyGenerator keyGenerator;
 
     public SetTester(Set set, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
         super(set, ratios, latch);
-        this.useCollisionKey = useCollisionKey;
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator() : new SimpleKeyGenerator();
     }
 
     @Override
@@ -24,23 +27,9 @@ public class SetTester extends Tester<Set> {
 
         long startTime = 0L, endTime = 0L;
 
-        AbstractList list = new ArrayList<>();
-
-        CollisionKeyFactory factory = null;
-
-        if (useCollisionKey){
-            factory = new CollisionKeyFactory();
-            factory.setFactoryCollisionKey(PowerLawCollisionKey.class);
-        }
-
+        List list = new ArrayList<>();
         for (int i = 0; i < nbRepeat; i++) {
-            int rand = random.nextInt(ITEM_PER_THREAD);
-            int iid = (int) (Thread.currentThread().getId()  + rand);
-
-            if (useCollisionKey)
-                list.add(factory.getCollisionKey());
-            else
-                list.add(iid);
+            list.add(keyGenerator.nextKey());
         }
 
         switch (type) {
@@ -69,7 +58,6 @@ public class SetTester extends Tester<Set> {
                         }
                     }
                     endTime = System.nanoTime();
-                    object.add(v);
                 }
                 break;
         }

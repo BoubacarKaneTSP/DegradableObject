@@ -1,6 +1,9 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
@@ -12,17 +15,26 @@ import java.util.concurrent.*;
 public class SetTest {
 
     private Factory factory;
+    private KeyGenerator generator;
 
     @BeforeTest
     void setUp() {
         factory = new Factory();
+        generator = new SimpleKeyGenerator();
     }
 
     @Test
     void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
-       Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.SetMWSR");
+       Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
+    }
+
+    @Test
+    void remove() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
+        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet");
+        factory.setFactorySet(cls);
+        doRemove(factory.getSet());
     }
 
     @Test
@@ -32,45 +44,24 @@ public class SetTest {
         doTestIterator(factory.getSet());
     }
 
-    private static void doAdd(Set set) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-        List<Future<Void>> futures = new ArrayList<>();
-        Callable<Void> callable = () -> {
-//            System.out.println(Thread.currentThread().getName());
-            set.add(Thread.currentThread().getName());
-            set.add("v1");
-            set.add("v2");
-            set.add("v3");
-            return null;
-        };
-
-        for (int i = 0; i < 10; i++) {
-            futures.add(executor.submit(callable));
-        }
-
-        for (Future<Void> future :futures){
-            future.get();
-        }
-        TimeUnit.SECONDS.sleep(1);
-
-
-        set.size();
-
-        TimeUnit.SECONDS.sleep(1);
-
-        System.out.println(set);
-
-        java.util.Set<String> result = new HashSet<>();
-        result.add("v1");
-        result.add("v2");
-        result.add("v3");
-
-        assertEquals(set.contains("v1"), true,"error in contains methods");
-        assertEquals(set.contains("v2"), true,"error in contains methods");
-        assertEquals(set.contains("v3"), true,"error in contains methods");
+    private void doRemove(Set set) {
+        Key k = generator.nextKey();
+        set.add(k);
+        set.remove(k);
+        assertEquals(set.contains(k),false);
+        assertEquals(set.isEmpty(),true);
     }
 
-    private static void doTestIterator(Set<String> set) throws ExecutionException, InterruptedException {
+    private void doAdd(Set set) {
+        List<Key> list = new ArrayList<>();
+        for(int i=0; i<3; i++) { list.add(generator.nextKey()); }
+        set.addAll(list);
+        assertEquals(set.containsAll(list),true);
+        set.removeAll(list);
+        assertEquals(set.isEmpty(),true, set.toString());
+    }
+
+    private void doTestIterator(Set<String> set) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
