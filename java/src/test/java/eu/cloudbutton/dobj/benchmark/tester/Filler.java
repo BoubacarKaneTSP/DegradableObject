@@ -39,7 +39,6 @@ public abstract class Filler<T> {
                 e.printStackTrace();
             }
         }
-
     }
 
     public abstract void doFill(Key key);
@@ -54,7 +53,7 @@ public abstract class Filler<T> {
         }
 
         @Override
-        public Void call() throws Exception {
+        public Void call() {
             for (long i = min; i < max; i++) {
                 Key key = generator.nextKey();
                 doFill(key);

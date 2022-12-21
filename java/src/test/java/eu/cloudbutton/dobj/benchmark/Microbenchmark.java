@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import org.kohsuke.args4j.CmdLineException;
@@ -9,12 +8,10 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
-import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,12 +21,10 @@ import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 public class Microbenchmark {
 
-
     public enum opType{
         ADD,
         REMOVE,
-        READ;
-
+        READ
     }
     public static AtomicBoolean flag;
     public static boolean ratioFail;
@@ -65,8 +60,8 @@ public class Microbenchmark {
     public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
-        Queue queue1 = new QueueMASP();
-        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
+//        Queue queue1 = new QueueMASP<>();
+//        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
         new Microbenchmark().doMain(args);
     }
 
@@ -125,16 +120,17 @@ public class Microbenchmark {
             if(_quickTest)
                 nbCurrentThread = nbThreads;
 
-            for (;nbCurrentThread <= nbThreads; ) {
-                System.out.println();
+            while (nbCurrentThread <= nbThreads) {
 
-                if (_p)
+                if (_p) {
+                    System.out.println();
                     System.out.println("Nb threads = " + nbCurrentThread);
+                }
 
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
 
-                for (opType op : opType.values()) {
+                for (opType ignored : opType.values()) {
                     nbOperations.add(new AtomicLong(0));
                     timeOperations.add(new AtomicLong(0));
                 }
@@ -169,8 +165,6 @@ public class Microbenchmark {
 
                     if (_p)
                         System.out.println("* End filling *");
-
-                    System.out.println(((Map)object).size());
 
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread + 1);
 
@@ -226,13 +220,12 @@ public class Microbenchmark {
 
                 System.out.println("End.");
 
-                System.out.println(((Map)object).size());
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 
                 int opNumber = 0;
 
-                for (opType type: opType.values()){
+                for (opType ignored : opType.values()){
                     timeTotal += timeOperations.get(opNumber).get();
                     nbOpTotal += nbOperations.get(opNumber).get();
                     opNumber++;
@@ -258,7 +251,7 @@ public class Microbenchmark {
                 if (_p){
                     for (int j = 0; j < 10; j++) System.out.print("-");
                     System.out.print(" Throughput total (op/s) : ");
-                    System.out.println(String.format("%.3E", throughputTotal));
+                    System.out.printf("%.3E%n", throughputTotal);
                 }
 
                 long nbOp, timeOp;
@@ -283,7 +276,7 @@ public class Microbenchmark {
                     if (_p) {
                         for (int j = 0; j < 10; j++) System.out.print("-");
                         System.out.print(" Throughput (op/s) for " + op + " : ");
-                        System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
+                        System.out.printf("%.3E%n", (nbOp / (double) timeOp) * 1_000_000_000);
                     }
                 }
 
