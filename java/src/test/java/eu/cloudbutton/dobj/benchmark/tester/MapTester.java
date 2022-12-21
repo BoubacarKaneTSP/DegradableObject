@@ -59,7 +59,7 @@ public class MapTester extends Tester<Map> {
                 break;
         }
 
-        return (endTime - startTime) / nbRepeat;
+        return (endTime - startTime);
     }
 
     @Override
