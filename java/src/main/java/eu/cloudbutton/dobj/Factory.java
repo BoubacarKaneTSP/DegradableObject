@@ -19,6 +19,7 @@ import eu.cloudbutton.dobj.queue.MapQueue;
 import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
 import eu.cloudbutton.dobj.sharded.ShardedHashMap;
+import eu.cloudbutton.dobj.sharded.ShardedMap;
 import eu.cloudbutton.dobj.sharded.ShardedTreeSet;
 
 import java.lang.reflect.Constructor;
@@ -179,6 +180,8 @@ public class Factory {
             case "ShardedHashMap":
                 System.out.println("new ShardedHashMap("+parallelism+")");
                 return new ShardedHashMap(parallelism);
+            case "ShardedMap":
+                return new ShardedMap();
             case "Map":
                 return new ConcurrentHashMap<>();
             case "MapReadIntensive":
