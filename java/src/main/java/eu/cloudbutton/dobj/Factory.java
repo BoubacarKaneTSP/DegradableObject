@@ -20,6 +20,7 @@ import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
 import eu.cloudbutton.dobj.sharded.ShardedHashMap;
 import eu.cloudbutton.dobj.sharded.ShardedMap;
+import eu.cloudbutton.dobj.sharded.ShardedSet;
 import eu.cloudbutton.dobj.sharded.ShardedTreeSet;
 
 import java.lang.reflect.Constructor;
@@ -133,6 +134,8 @@ public class Factory {
             case "ShardedTreeSet":
                 System.out.println("new ShardedTreeSet("+parallelism+")");
                 return new ShardedTreeSet(parallelism);
+            case "ShardedSet":
+                return new ShardedSet();
             case "Set":
                 return new ConcurrentSkipListSet<>();
             case "SetReadIntensive":

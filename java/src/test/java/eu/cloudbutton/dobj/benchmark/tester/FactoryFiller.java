@@ -30,11 +30,18 @@ public class FactoryFiller {
                     object.put(key,key);
                 }
             };
-        else if (object instanceof Collection)
+        else if (object instanceof Set)
             return new Filler<>((Set) object, keyGenerator, nbOps) {
                 @Override
                 public void doFill(Key key) {
                     object.add(key);
+                }
+            };
+        else if (object instanceof Queue)
+            return new Filler<>((Queue) object, keyGenerator, nbOps) {
+                @Override
+                public void doFill(Key key) {
+                    object.offer(key);
                 }
             };
         else if (object instanceof Counter)
