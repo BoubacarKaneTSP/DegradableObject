@@ -37,7 +37,8 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
         int nbUsers = 1000000;
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) nbUsers * ratio);
+        long max = 10;
+//        long max = (long) ((long) nbUsers * ratio);
 
         for (int val: data){
             if (val >= max) {
