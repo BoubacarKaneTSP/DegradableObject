@@ -36,16 +36,16 @@ public class SetTester extends Tester<Set> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.add(list.get(i));
-//                    object.add(i);
+//                    object.add(list.get(i));
+                    object.add(i);
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(list.get(i));
-//                    object.remove(i);
+//                    object.remove(list.get(i));
+                    object.remove(i);
                 }
                 endTime = System.nanoTime();
 

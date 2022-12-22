@@ -59,7 +59,7 @@ plt.yticks(fontsize=SIZE)
 
 # plt.ticklabel_format(style='sci', axis='y', scilimits=(9,9))
 
-# plt.gca().set_ylim([10000,1000000])
+plt.gca().set_ylim([100000, 100000000])
 # plt.gca().set_ylim([0.00000001,0.001])
 # plt.gca().set_ylim([0,100])
 # plt.gca().invert_yaxis()

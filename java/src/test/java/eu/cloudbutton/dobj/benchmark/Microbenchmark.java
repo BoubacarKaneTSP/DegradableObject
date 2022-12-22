@@ -156,7 +156,8 @@ public class Microbenchmark {
                         System.out.println("* Start filling *");
 
                     if (!type.contains("Sequential"))
-                        filler.fill();
+//                        filler.fill();
+                        ;
                     else{
                         for (int i = 0; i < nbOps; i++) {
                             ((Queue)object).add(i);
