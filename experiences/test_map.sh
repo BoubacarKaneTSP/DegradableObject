@@ -5,10 +5,10 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 
-perf stat -B -e cache-references,cache-misses ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 2 -i 1000000
-perf stat -B -e cache-references,cache-misses ./test.sh -s SegmentedSkipListSet -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 2 -i 1000000
-perf stat -B -e cache-references,cache-misses ./test.sh -s ShardedTreeSet -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 2 -i 1000000
-perf stat -B -e cache-references,cache-misses ./test.sh -s ShardedSet -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 2 -i 1000000
+perf stat -B -e cache-references,cache-misses ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 1 -i 1000000
+perf stat -B -e cache-references,cache-misses ./test.sh -s SegmentedSkipListSet -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 1 -i 1000000
+perf stat -B -e cache-references,cache-misses ./test.sh -s ShardedTreeSet -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 1 -i 1000000
+perf stat -B -e cache-references,cache-misses ./test.sh -s ShardedSet -t Microbenchmark -p -e -r "50 50 0" -w 10 -u 5 -n 1 -i 1000000
 #
 #perf stat -B -e cache-references,cache-misses ./test.sh -s Queue -t Microbenchmark -p -e -r "100 0 0" -w 10 -u 5 -n 2 -i 1000000 -a
 #perf stat -B -e cache-references,cache-misses ./test.sh -s QueueMASP -t Microbenchmark -p -e -r "100 0 0" -w 10 -u 5 -n 2 -i 1000000 -a
