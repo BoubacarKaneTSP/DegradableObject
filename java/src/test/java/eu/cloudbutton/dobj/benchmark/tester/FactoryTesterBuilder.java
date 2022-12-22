@@ -8,11 +8,12 @@ public class FactoryTesterBuilder {
     private int[] ratios;
     private CountDownLatch latch;
     private boolean useCollisionKey = false;
+    private int max_item_per_thread = Integer.MAX_VALUE;
 
     public FactoryTesterBuilder() {}
 
     public FactoryTester buildTester(){
-        return new FactoryTester(object,ratios,latch,useCollisionKey);
+        return new FactoryTester(object,ratios,latch,useCollisionKey,max_item_per_thread);
     }
 
     public FactoryTesterBuilder object(Object object){
@@ -32,6 +33,11 @@ public class FactoryTesterBuilder {
 
     public FactoryTesterBuilder useCollisionKey(boolean useCollisionKey){
         this.useCollisionKey = useCollisionKey;
+        return this;
+    }
+
+    public FactoryTesterBuilder maxItemPerThread(int val){
+        this.max_item_per_thread = val;
         return this;
     }
 }

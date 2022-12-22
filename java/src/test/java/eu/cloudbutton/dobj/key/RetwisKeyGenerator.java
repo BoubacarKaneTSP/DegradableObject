@@ -8,15 +8,14 @@ import java.util.Random;
 
 public class RetwisKeyGenerator implements KeyGenerator {
 
-    private final int MAX_HASHES = 1000;
 
     private final List<Long> list;
     private ThreadLocal<Random> random;
-    private final int bound;
+    protected final int bound;
 
-    public RetwisKeyGenerator() {
+    public RetwisKeyGenerator(int max_hashes_per_thread) {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
-        this.bound = MAX_HASHES;
+        this.bound = max_hashes_per_thread;
         this.list =  new ArrayList<>();
         fill();
     }
@@ -26,7 +25,8 @@ public class RetwisKeyGenerator implements KeyGenerator {
         return  new CollidingKey(
                 Thread.currentThread().getId(),
                 random.get().nextLong(),
-                list.get(random.get().nextInt(bound))
+                list.get(random.get().nextInt(bound)),
+                bound
         );
     }
 
@@ -60,8 +60,8 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
         private long hash;
 
-        CollidingKey(long tid, long id, long hash) {
-            super(tid,id);
+        CollidingKey(long tid, long id, long hash, int max_hashes_per_thread) {
+            super(tid,id, max_hashes_per_thread);
             this.hash = hash;
         }
 

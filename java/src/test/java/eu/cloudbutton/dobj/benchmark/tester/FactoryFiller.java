@@ -15,10 +15,10 @@ public class FactoryFiller {
     private final long nbOps;
     private KeyGenerator keyGenerator;
 
-    public FactoryFiller(Object object, long nbOps, boolean useCollisionKey) {
+    public FactoryFiller(Object object, long nbOps, boolean useCollisionKey, int max_item_per_thread) {
         this.object = object;
         this.nbOps = nbOps;
-        keyGenerator = useCollisionKey ? new RetwisKeyGenerator() : new SimpleKeyGenerator();
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
     }
 
     public Filler createFiller() throws ClassNotFoundException {

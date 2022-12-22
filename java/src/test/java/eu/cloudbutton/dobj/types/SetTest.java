@@ -20,18 +20,18 @@ public class SetTest {
     @BeforeTest
     void setUp() {
         factory = new Factory();
-        generator = new SimpleKeyGenerator();
+        generator = new SimpleKeyGenerator(1000);
     }
 
     @Test
-    void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
+    void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
     }
 
     @Test
-    void remove() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
+    void remove() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet");
         factory.setFactorySet(cls);
         doRemove(factory.getSet());

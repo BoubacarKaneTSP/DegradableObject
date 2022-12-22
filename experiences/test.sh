@@ -28,8 +28,9 @@ nbInitialAdd=""
 breakdown=""
 tag=""
 nbThreads=""
+nbItemsPerThread=""
 
-while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:g:' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zybh:g:d:' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
@@ -112,9 +113,6 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:g:' OPTION; do
     r)
       ratio="$OPTARG"
       ;;
-    d)
-      distribution="$OPTARG"
-      ;;
     p)
       print="-p"
       ;;
@@ -148,7 +146,7 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:g:' OPTION; do
     z)
       completionTime="-completionTime"
       ;;
-    z)
+    y)
       multipleOperation="-multipleOperation"
       ;;
     b)
@@ -160,6 +158,9 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:g:' OPTION; do
     g)
       nbThreads="-nbThreads $OPTARG"
       ;;
+    d)
+      nbItemsPerThread="-nbItems $OPTARG"
+      ;;
     o)
       echo "script usage: $(basename \$0)
       [-c] counter type,
@@ -168,8 +169,7 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:g:' OPTION; do
       [-l] list type,
       [-m] map type,
       [-t] test type,
-      [-r] ratio of write in %,
-      [-d] distribution of operations in Retwis
+      [-r] ratio of each operations in %,
       [-p] print,
       [-e] save,
       [-w] workload Time in sec,
@@ -195,7 +195,7 @@ while getopts 'xc:s:q:l:m:t:r:d:pew:u:n:fakvoi:zybh:g:' OPTION; do
       [-l] list type,
       [-m] map type,
       [-t] test type,
-      [-r] ratio of write in %,
+      [-r] ratio of each operations in %,
       [-p] print,
       [-e] save,
       [-w] Workload Time in sec,
@@ -229,8 +229,10 @@ if [[ $typeTest == "Microbenchmark" ]]
 then
 
   #CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -verbose:gc eu.cloudbutton.dobj.cenchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save $printFail $asymmetric $collisionKey $quickTest
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest
+  # shellcheck disable=SC2125
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type "$type" -ratios "$ratio" -nbTest "$nbTest" "$workloadTime" "$warmingUpTime" "$nbInitialAdd" $print $save $printFail $asymmetric $collisionKey $quickTest "$nbItemsPerThread"
 elif [[ $typeTest == "Retwis" ]]
 then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $distribution -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $multipleOperation $print $save $breakdown $quickTest $tag
+  # shellcheck disable=SC2125
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Retwis -set "$typeSet" -queue "$typeQueue" -counter "$typeCounter" -map "$typeMap" -distribution "$ratio" -nbTest "$nbTest" "$nbThreads" "$workloadTime" "$warmingUpTime" "$nbInitialAdd" $completionTime $multipleOperation $print $save $breakdown $quickTest "$tag"
 fi

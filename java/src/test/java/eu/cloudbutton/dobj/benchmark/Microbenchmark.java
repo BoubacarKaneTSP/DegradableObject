@@ -3,11 +3,14 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
+import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,6 +47,8 @@ public class Microbenchmark {
     private int wTime = 0;
     @Option(name = "-nbOps", usage = "Number of object initially added") // FIXME
     private long nbOps = 1_000;
+    @Option(name = "-nbItems", usage = "Number of items max per thread")
+    private int _nbItems = Integer.MAX_VALUE;
     @Option(name = "-nbTest", usage = "Number of test")
     private int nbTest = 1;
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
@@ -60,8 +65,9 @@ public class Microbenchmark {
     public boolean _quickTest = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
-//        Queue queue1 = new QueueMASP<>();
-//        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
+//        Key key1 = new ThreadLocalKey(10L, 10L);
+//        Long long1 = 0L;
+//        System.out.println(ClassLayout.parseClass(long1.getClass()).toPrintable());
         new Microbenchmark().doMain(args);
     }
 
@@ -113,7 +119,7 @@ public class Microbenchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            Object object = null;
+            Object object;
 
             nbCurrentThread = _asymmetric ? 2 : 1;
 
@@ -148,7 +154,7 @@ public class Microbenchmark {
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey);
+                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey, _nbItems);
 
                     Filler filler = factoryFiller.createFiller();
 
@@ -174,6 +180,7 @@ public class Microbenchmark {
                             .ratios(Arrays.stream(ratios).mapToInt(Integer::parseInt).toArray())
                             .latch(latch)
                             .useCollisionKey(_collisionKey)
+                            .maxItemPerThread(_nbItems)
                             .buildTester();
 
                     int nbComputingThread = _asymmetric ? nbCurrentThread - 1 : nbCurrentThread; // -1 if a specific thread perform a different operation.

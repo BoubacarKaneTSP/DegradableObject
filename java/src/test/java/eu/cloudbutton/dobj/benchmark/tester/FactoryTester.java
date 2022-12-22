@@ -12,21 +12,23 @@ public class FactoryTester {
     private final int[] ratios;
     private final CountDownLatch latch;
     private boolean useCollisionKey;
+    private final int max_item_per_thread;
 
-    public FactoryTester(Object object, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
+    public FactoryTester(Object object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
         this.useCollisionKey = useCollisionKey;
+        this.max_item_per_thread = max_item_per_thread;
     }
 
 
     public Tester createTester() throws ClassNotFoundException{
 
         if (object instanceof Map)
-            return new MapTester((Map) object, ratios, latch, useCollisionKey);
+            return new MapTester((Map) object, ratios, latch, useCollisionKey, max_item_per_thread);
         else if (object instanceof Set)
-            return new SetTester((Set) object, ratios, latch, useCollisionKey);
+            return new SetTester((Set) object, ratios, latch, useCollisionKey, max_item_per_thread);
         else if (object instanceof Queue)
             return new QueueTester((Queue) object, ratios, latch);
         else if (object instanceof AbstractList)

@@ -6,14 +6,13 @@ import java.util.Objects;
 
 public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
 
-    private static final int MAX_KEYS_PER_THREAD = Integer.MAX_VALUE;
 
     public long tid;
     public long id;
 
-    public ThreadLocalKey(long tid, long id) {
+    public ThreadLocalKey(long tid, long id, int max_key_per_thread) {
         this.tid = tid;
-        this.id = id% MAX_KEYS_PER_THREAD;
+        this.id = id% max_key_per_thread;
     }
 
     @Override

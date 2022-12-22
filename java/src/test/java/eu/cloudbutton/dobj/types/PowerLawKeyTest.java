@@ -16,7 +16,7 @@ public class PowerLawKeyTest {
 
         Map<Key, String> collisionMap = new MapReadIntensive<>();
         Map<String, String> map = new ConcurrentHashMap<>();
-        RetwisKeyGenerator factory = new RetwisKeyGenerator();
+        RetwisKeyGenerator factory = new RetwisKeyGenerator(100);
 
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();

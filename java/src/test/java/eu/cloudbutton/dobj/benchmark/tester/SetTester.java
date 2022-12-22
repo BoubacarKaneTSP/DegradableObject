@@ -17,9 +17,9 @@ public class SetTester extends Tester<Set> {
 
     private KeyGenerator keyGenerator;
 
-    public SetTester(Set set, int[] ratios, CountDownLatch latch, boolean useCollisionKey) {
+    public SetTester(Set set, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(set, ratios, latch);
-        keyGenerator = useCollisionKey ? new RetwisKeyGenerator() : new SimpleKeyGenerator();
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
     }
 
     @Override
