@@ -6,7 +6,6 @@ import java.util.Objects;
 
 public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
 
-
     public long tid;
     public long id;
 
@@ -31,7 +30,7 @@ public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
     @Override
     public int compareTo(@NotNull ThreadLocalKey key) {
         if (id>key.id) return 1;
-        else if (key.id>id) return -1;
+        else if (id<key.id) return -1;
         else if (tid>key.tid) return 1;
         else if (tid<key.tid) return -1;
         return 0;
