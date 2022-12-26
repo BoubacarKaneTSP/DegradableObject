@@ -138,7 +138,7 @@ public class Microbenchmark {
 
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
-
+                long size = 0;
                 for (opType ignored : opType.values()) {
                     nbOperations.add(new AtomicLong(0));
                     timeOperations.add(new AtomicLong(0));
@@ -230,6 +230,18 @@ public class Microbenchmark {
 
                     benchmarkAvgTime += endTime - startTime;
 
+                    if (object instanceof Map) {
+                        size+=((Map<?, ?>) object).size();
+                    }
+                    else if (object instanceof Set) {
+                        size+=((Set<?>) object).size();
+                    }
+                    else if (object instanceof Queue) {
+                        size+=((Queue<?>) object).size();
+                    }
+                    else if (object instanceof Counter) {
+                        size+=((Counter) object).read();
+                    }
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
                 }
@@ -298,24 +310,9 @@ public class Microbenchmark {
                     }
                 }
 
-                long size = 0;
-
-                if (object instanceof Map) {
-                    size=((Map<?, ?>) object).size();
-                }
-                else if (object instanceof Set) {
-                    size=((Set<?>) object).size();
-                }
-                else if (object instanceof Queue) {
-                    size=((Queue<?>) object).size();
-                }
-                else if (object instanceof Counter) {
-                    size=((Counter) object).read();
-                }
-
+                size /= nbTest;
                 if (_p)
                     System.out.print("Object's size at the end of benchmark : " + size);
-
                 if (_s){
                     String nameFile = type + "_size.txt";
 
