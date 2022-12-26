@@ -2,15 +2,14 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.benchmark.tester.*;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.key.Key;
-import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
-import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -63,6 +62,8 @@ public class Microbenchmark {
     public boolean _collisionKey = false;
     @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Only test max nbThreads")
     public boolean _quickTest = false;
+    @Option(name = "-gcinfo", handler = ExplicitBooleanOptionHandler.class, usage = "Compute gc info")
+    public boolean _gcinfo = false;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
 //        Key key1 = new ThreadLocalKey(10L, 10L);
@@ -73,7 +74,6 @@ public class Microbenchmark {
 
     public void doMain(String[] args) throws InterruptedException, ExecutionException {
         CmdLineParser parser = new CmdLineParser(this);
-
 
         try{
             // parse the arguments.
@@ -119,7 +119,8 @@ public class Microbenchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            Object object;
+            Object object = null;
+            long startTime, endTime, benchmarkAvgTime = 0;
 
             nbCurrentThread = _asymmetric ? 2 : 1;
 
@@ -127,6 +128,8 @@ public class Microbenchmark {
                 nbCurrentThread = nbThreads;
 
             while (nbCurrentThread <= nbThreads) {
+                if (_gcinfo)
+                    System.out.println("nbThread : "+nbCurrentThread);
 
                 if (_p) {
                     System.out.println();
@@ -146,6 +149,7 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
+                    benchmarkAvgTime = 0L;
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
@@ -159,11 +163,11 @@ public class Microbenchmark {
                     Filler filler = factoryFiller.createFiller();
 
                     if (_p)
-                        System.out.println("* Start filling *");
+                        System.out.println("=> Start filling <=");
 
                     if (!type.contains("Sequential"))
-//                        filler.fill();
-                        ;
+                        filler.fill();
+
                     else{
                         for (int i = 0; i < nbOps; i++) {
                             ((Queue)object).add(i);
@@ -171,7 +175,7 @@ public class Microbenchmark {
                     }
 
                     if (_p)
-                        System.out.println("* End filling *");
+                        System.out.println("=> End filling <=");
 
                     CountDownLatch latch = new CountDownLatch(nbCurrentThread + 1);
 
@@ -212,6 +216,7 @@ public class Microbenchmark {
                     List<Future<Void>> futures;
 
                     // launch computation
+                    startTime = System.nanoTime();
                     futures = executor.invokeAll(callables);
                     try{
                         for (Future<Void> future : futures) {
@@ -221,13 +226,16 @@ public class Microbenchmark {
                         //ignore
                         System.out.println(e);
                     }
+                    endTime = System.nanoTime();
+
+                    benchmarkAvgTime += endTime - startTime;
 
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
                 }
 
+                System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/nbTest);
                 System.out.println("End.");
-
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 
@@ -286,6 +294,18 @@ public class Microbenchmark {
                         System.out.print(" Throughput (op/s) for " + op + " : ");
                         System.out.printf("%.3E%n", (nbOp / (double) timeOp) * 1_000_000_000);
                     }
+                }
+
+                if(_p){
+                    System.out.print("Object's size at the end of benchmark : ");
+                    if (object instanceof Map)
+                        System.out.println(((Map<?, ?>) object).size());
+                    else if (object instanceof Set)
+                        System.out.println(((Set<?>) object).size());
+                    else if (object instanceof Queue)
+                        System.out.println(((Queue<?>) object).size());
+                    else if (object instanceof Counter)
+                        System.out.println(((Counter) object).read());
                 }
 
                 nbCurrentThread *= 2;

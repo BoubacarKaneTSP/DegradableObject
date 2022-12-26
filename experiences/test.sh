@@ -29,8 +29,9 @@ breakdown=""
 tag=""
 nbThreads=""
 nbItemsPerThread=""
+computeGCInfo=false
 
-while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zybh:g:d:' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zybh:g:d:j' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
@@ -161,56 +162,67 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zybh:g:d:' OPTION; do
     d)
       nbItemsPerThread="-nbItems $OPTARG"
       ;;
+    j)
+      computeGCInfo=true
+      ;;
     o)
       echo "script usage: $(basename \$0)
+      [-a] Test an asymmetrical workload,
+      [-b] Print the details results for all operations,
       [-c] counter type,
-      [-s] set type,
-      [-q] queue type,
+      [-d] Number of items max added per thread,
+      [-e] save,
+      [-f] Print the ratio of operations that failed,
+      [-g] nbThreads computed,
+      [-h] Tag associated with the name of the result file,
+      [-i] Number of object initially added,
+      [-j] Compute time spent doing GC,
+      [-k] Test the map with collision on key,
       [-l] list type,
       [-m] map type,
-      [-t] test type,
-      [-r] ratio of each operations in %,
+      [-n] Number of test,
+      [-o] show options,
       [-p] print,
-      [-e] save,
-      [-w] workload Time in sec,
-      [-u] warming up Time in sec,
-      [-n] number of test,
-      [-f] print the ratio of operations that failed,
-      [-a] test an asymmetrical workload,
-      [-k] test the map with collision on key,
-      [-i] Number of object initially added,
-      [-v] testing only one and max nbThreads,
-      [-z] Computing the completionTime for Retwis,
+      [-q] queue type,
+      [-r] ratio of each operations in %,
+      [-s] set type,
+      [-t] test type,
+      [-u] Warming up Time in sec,
+      [-v] Testing only one and max nbThreads,
+      [-w] Workload Time in sec,
+      [-x] compile the project,
       [-y] Computing multiple time the same operation for Retwis,
-      [-b] Print the details results for all operations
-      [-h] Tag associated with the name of the result file,
-      [-g] nbThreads computed">&2
+      [-z] Computing the completionTime for Retwis">&2
       exit 1
       ;;
     ?)
       echo "script usage: $(basename \$0)
+      [-a] Test an asymmetrical workload,
+      [-b] Print the details results for all operations,
       [-c] counter type,
-      [-s] set type,
-      [-q] queue type,
+      [-d] Number of items max added per thread,
+      [-e] save,
+      [-f] Print the ratio of operations that failed,
+      [-g] nbThreads computed,
+      [-h] Tag associated with the name of the result file,
+      [-i] Number of object initially added,
+      [-j] Compute time spent doing GC,
+      [-k] Test the map with collision on key,
       [-l] list type,
       [-m] map type,
-      [-t] test type,
-      [-r] ratio of each operations in %,
-      [-p] print,
-      [-e] save,
-      [-w] Workload Time in sec,
-      [-u] Warming up Time in sec,
       [-n] Number of test,
-      [-f] Print the ratio of operations that failed,
-      [-a] Test an asymmetrical workload,
-      [-k] Test the map with collision on key,
-      [-i] Number of object initially added,
+      [-o] show options,
+      [-p] print,
+      [-q] queue type,
+      [-r] ratio of each operations in %,
+      [-s] set type,
+      [-t] test type,
+      [-u] Warming up Time in sec,
       [-v] Testing only one and max nbThreads,
-      [-z] Computing the completionTime for Retwis,
+      [-w] Workload Time in sec,
+      [-x] compile the project,
       [-y] Computing multiple time the same operation for Retwis,
-      [-b] Print the details results for all operations
-      [-h] Tag associated with the name of the result file,
-      [-g] nbThreads computed">&2
+      [-z] Computing the completionTime for Retwis">&2
       exit 1
       ;;
   esac
@@ -227,12 +239,19 @@ echo "Status of multipleOperation : $multipleOperation"
 
 if [[ $typeTest == "Microbenchmark" ]]
 then
-
-  #CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -verbose:gc eu.cloudbutton.dobj.cenchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest -time $workloadTime -wTime $warmingUpTime $print $save $printFail $asymmetric $collisionKey $quickTest
-  # shellcheck disable=SC2125
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type "$type" -ratios "$ratio" -nbTest "$nbTest" "$workloadTime" "$warmingUpTime" "$nbInitialAdd" $print $save $printFail $asymmetric $collisionKey $quickTest "$nbItemsPerThread"
+  if [[ $computeGCInfo == true ]]
+  then
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|G1 Evacuation Pause" > gcinfo.log
+  python3 analyse_gc.py $type $nbTest
+  else
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
+  fi
 elif [[ $typeTest == "Retwis" ]]
 then
-  # shellcheck disable=SC2125
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Retwis -set "$typeSet" -queue "$typeQueue" -counter "$typeCounter" -map "$typeMap" -distribution "$ratio" -nbTest "$nbTest" "$nbThreads" "$workloadTime" "$warmingUpTime" "$nbInitialAdd" $completionTime $multipleOperation $print $save $breakdown $quickTest "$tag"
+  if [[ $computeGCInfo == true ]]
+  then
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $multipleOperation $print $save $breakdown $quickTest $tag
+  else
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $multipleOperation $print $save $breakdown $quickTest $tag
+  fi
 fi
