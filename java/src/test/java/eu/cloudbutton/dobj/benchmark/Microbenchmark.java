@@ -118,7 +118,7 @@ public class Microbenchmark {
             ratioFail = _ratioFail;
 
             PrintWriter printWriter = null;
-            FileWriter fileWriter;
+            FileWriter fileWriter = null;
             Object object = null;
             long startTime, endTime, benchmarkAvgTime = 0;
 
@@ -262,6 +262,7 @@ public class Microbenchmark {
                     printWriter = new PrintWriter(fileWriter);
                     printWriter.println(nbCurrentThread + " " + throughputTotal);
                     printWriter.close();
+                    fileWriter.close();
                 }
 
                 if (_p){
@@ -287,6 +288,7 @@ public class Microbenchmark {
                         printWriter = new PrintWriter(fileWriter);
                         printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);
                         printWriter.close();
+                        fileWriter.close();
                     }
 
                     if (_p) {
@@ -296,16 +298,36 @@ public class Microbenchmark {
                     }
                 }
 
-                if(_p){
-                    System.out.print("Object's size at the end of benchmark : ");
-                    if (object instanceof Map)
-                        System.out.println(((Map<?, ?>) object).size());
-                    else if (object instanceof Set)
-                        System.out.println(((Set<?>) object).size());
-                    else if (object instanceof Queue)
-                        System.out.println(((Queue<?>) object).size());
-                    else if (object instanceof Counter)
-                        System.out.println(((Counter) object).read());
+                long size = 0;
+
+                if (object instanceof Map) {
+                    size=((Map<?, ?>) object).size();
+                }
+                else if (object instanceof Set) {
+                    size=((Set<?>) object).size();
+                }
+                else if (object instanceof Queue) {
+                    size=((Queue<?>) object).size();
+                }
+                else if (object instanceof Counter) {
+                    size=((Counter) object).read();
+                }
+
+                if (_p)
+                    System.out.print("Object's size at the end of benchmark : " + size);
+
+                if (_s){
+                    String nameFile = type + "_size.txt";
+
+                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+                        fileWriter = new FileWriter(nameFile, false);
+                    else
+                        fileWriter = new FileWriter(nameFile, true);
+
+                    printWriter = new PrintWriter(fileWriter);
+                    printWriter.println(nbCurrentThread + " " + size);
+                    printWriter.close();
+                    fileWriter.close();
                 }
 
                 nbCurrentThread *= 2;
@@ -323,7 +345,9 @@ public class Microbenchmark {
                     System.out.println();
                 if (_s) {
                     assert printWriter != null;
+                    assert fileWriter != null;
                     printWriter.close();
+                    fileWriter.close();
                 }
             }
 
