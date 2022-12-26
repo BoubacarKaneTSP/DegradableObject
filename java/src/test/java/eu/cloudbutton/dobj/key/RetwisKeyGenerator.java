@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.key;
 
 import nl.peterbloem.powerlaws.DiscreteApproximate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
     public Key nextKey() {
         return  new CollidingKey(
                 Thread.currentThread().getId(),
-                random.get().nextLong(),
+                random.get().nextInt(Integer.MAX_VALUE),
                 list.get(random.get().nextInt(bound)),
                 bound
         );
@@ -56,7 +57,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
         }
     }
 
-    private static class CollidingKey extends ThreadLocalKey {
+    private static class CollidingKey extends ThreadLocalKey implements Comparable<ThreadLocalKey> {
 
         private long hash;
 
@@ -68,6 +69,26 @@ public class RetwisKeyGenerator implements KeyGenerator {
         @Override
         public int hashCode() {
             return (int) hash;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CollidingKey that = (CollidingKey) o;
+            return tid == that.tid && id == that.id && hash == that.hash;
+        }
+
+        @Override
+        public int compareTo(@NotNull ThreadLocalKey key) {
+            CollidingKey key1 = (CollidingKey) key;
+            if (id>key1.id) return 1;
+            else if (id<key1.id) return -1;
+            else if (tid>key1.tid) return 1;
+            else if (tid<key1.tid) return -1;
+            else if (hash>key1.hash) return 1;
+            else if (hash<key1.hash) return -1;
+            return 0;
         }
 
         public String toString() {

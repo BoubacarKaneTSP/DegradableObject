@@ -4,13 +4,31 @@ import eu.cloudbutton.dobj.key.*;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
-public class PowerLawKeyTest {
+import static org.testng.Assert.assertEquals;
 
+public class KeyTest {
+
+
+    @Test
+    public void SequentialKeyTest(){
+
+        int max_item_per_thread = 2048;
+        int nbAdd = 100000;
+        Set<Key> set = new HashSet<>();
+
+        KeyGenerator keyGenerator = new SimpleKeyGenerator(max_item_per_thread);
+
+        for (int i = 0; i < nbAdd; i++) {
+            Key key = keyGenerator.nextKey();
+            set.add(key);
+        }
+
+        assertEquals(set.size()<=max_item_per_thread,true);
+
+    }
     @Test
     public void PerformanceCollisionTest() throws ExecutionException, InterruptedException {
 
