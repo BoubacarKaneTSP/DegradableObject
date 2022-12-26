@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet;
+import eu.cloudbutton.dobj.swsr.SWSRSkipListSet;
+import eu.cloudbutton.dobj.swsr.SWSRSkipListSet;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import eu.cloudbutton.dobj.utils.NonLinearizable;

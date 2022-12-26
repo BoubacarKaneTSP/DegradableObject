@@ -25,14 +25,14 @@ public class SetTest {
 
     @Test
     void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-       Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet");
+       Class cls = Class.forName("eu.cloudbutton.dobj.swsr.SWSRSkipListSet");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
     }
 
     @Test
     void remove() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWSRSkipListSet");
+        Class cls = Class.forName("eu.cloudbutton.dobj.swsr.SWSRSkipListSet");
         factory.setFactorySet(cls);
         doRemove(factory.getSet());
     }

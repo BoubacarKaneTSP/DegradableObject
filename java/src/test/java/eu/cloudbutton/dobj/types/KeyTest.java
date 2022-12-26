@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.key.*;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
+import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -17,7 +18,8 @@ public class KeyTest {
 
         int max_item_per_thread = 2048;
         int nbAdd = 100000;
-        Set<Key> set = new HashSet<>();
+        int size = 0;
+        Set<Key> set = new SegmentedSkipListSet(1);
 
         KeyGenerator keyGenerator = new SimpleKeyGenerator(max_item_per_thread);
 
@@ -26,7 +28,12 @@ public class KeyTest {
             set.add(key);
         }
 
-        assertEquals(set.size()<=max_item_per_thread,true);
+        for (Key key: set){
+            size +=1;
+        }
+        System.out.println("size function : " + set.size());
+        System.out.println("size computed : " + size);
+//        assertEquals(set.size()<=max_item_per_thread,true);
 
     }
     @Test
