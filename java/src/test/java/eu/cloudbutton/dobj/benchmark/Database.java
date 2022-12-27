@@ -2,6 +2,10 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
+import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
+import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -20,18 +24,20 @@ public class Database {
     private final Factory factory;
     private final double alpha;
     private final int nbThread;
-    private final Map<Long, Set<Long>> mapFollowers;
-    private final Map<Long, Set<Long>> mapFollowing;
-    private final Map<Long, Timeline<String>> mapTimelines;
+    private final Map<Key, Set<Key>> mapFollowers;
+    private final Map<Key, Set<Key>> mapFollowing;
+    private final Map<Key, Timeline<String>> mapTimelines;
     private final AtomicLong next_user_ID;
     private final ThreadLocal<String> threadName;
-    private final List<Long> usersProbability;
-    private final List<Long> originalUsers;
-    private ThreadLocal<List<Long>> localUsersProbability;
-    private ThreadLocal<List<Long>> localUsers;
+    private final List<Key> usersProbability;
+    private final List<Key> originalUsers;
+    private ThreadLocal<List<Key>> localUsersProbability;
+    private ThreadLocal<List<Key>> localUsers;
     private ThreadLocalRandom random;
+    private final int max_item_per_thread;
+    private KeyGenerator keyGenerator;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int max_item_per_thread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
         Class cls;
 
@@ -95,15 +101,17 @@ public class Database {
         localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
         random = null;
         next_user_ID = new AtomicLong();
+        this.max_item_per_thread = max_item_per_thread;
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
 
     }
 
-    public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Long, Queue<Long>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         random = ThreadLocalRandom.current();
 
         int n, userPerThread;
-        long user, userB;
+        Key user, userB = null;
 
         int bound = nbUsers;
 
@@ -137,7 +145,7 @@ public class Database {
             usersFollow.put(user, new LinkedList<>());
 
             localUsers.get().add(user);
-            for (int j = 0; j <= data.get((int) user); j++) { // each user have an ID inferior to bound
+            for (int j = 0; j <= data.get(user.hashCode()%bound); j++) { // each user have an ID inferior to bound
                 localUsersProbability.get().add(user);
             }
         }
@@ -149,13 +157,13 @@ public class Database {
 
         //Following phase
 
-        for (Long userA: usersFollow.keySet()){
+        for (Key userA: usersFollow.keySet()){
 
             int nbFollow = data.get(random.nextInt(bound));
             for(int j = 0; j < nbFollow; j++){
 //                n = random.nextInt(localUsersProbability.get().size());
                 n = random.nextInt(usersProbability.size());
-                userB = 0;
+
                 try{
 //                    userB = localUsersProbability.get().get(n);
                     userB = usersProbability.get(n);
@@ -169,9 +177,9 @@ public class Database {
         }
     }
 
-    public long addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Key addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long userID = next_user_ID.getAndIncrement();
+        Key userID = keyGenerator.nextKey();
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
@@ -182,25 +190,25 @@ public class Database {
 
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
-    public void followUser(Long userA, Long userB){
+    public void followUser(Key userA, Key userB){
         mapFollowers.get(userB).add(userA);
         mapFollowing.get(userA).add(userB);
     }
 
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
-    public void unfollowUser(Long userA, Long userB){
+    public void unfollowUser(Key userA, Key userB){
         mapFollowers.get(userB).remove(userA);
         mapFollowing.get(userA).remove(userB);
     }
 
-    public void tweet(Long user, String msg) throws InterruptedException {
-        for (long follower : mapFollowers.get(user)) {
+    public void tweet(Key user, String msg) throws InterruptedException {
+        for (Key follower : mapFollowers.get(user)) {
             mapTimelines.get(follower).add(msg);
         }
     }
 
-    public void showTimeline(Long user) throws InterruptedException {
+    public void showTimeline(Key user) throws InterruptedException {
         mapTimelines.get(user).read();
     }
     

@@ -109,7 +109,7 @@ public class Microbenchmark {
             System.err.println();
 
             // print option sample. This is useful some time
-            System.err.println("  Example: java Benchmark" + parser.printExample(ALL));
+            System.err.println("  Example: java eu.cloudbutton.dobj.benchmark.Microbenchmark" + parser.printExample(ALL));
 
             return;
         }
@@ -119,7 +119,7 @@ public class Microbenchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter = null;
-            Object object = null;
+            Object object;
             long startTime, endTime, benchmarkAvgTime = 0;
 
             nbCurrentThread = _asymmetric ? 2 : 1;
@@ -246,8 +246,10 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
-                System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/nbTest);
-                System.out.println("End.");
+                if (_gcinfo)
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) / nbTest);
+                if (_p)
+                    System.out.println("End.");
 
                 long timeTotal = 0L, nbOpTotal = 0L;
 

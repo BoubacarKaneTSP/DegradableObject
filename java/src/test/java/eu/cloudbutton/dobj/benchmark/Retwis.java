@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import eu.cloudbutton.dobj.key.Key;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -75,10 +76,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 2.6;
+    private double _alphaInit = 1.39;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 0.4;
+    private double _alphaMin = 1.39;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.2;
@@ -103,6 +104,15 @@ public class Retwis {
 
     @Option(name = "-breakdown", handler = ExplicitBooleanOptionHandler.class, usage = "Print the details results for all operations")
     public boolean _breakdown = false;
+
+    @Option(name = "-gcinfo", handler = ExplicitBooleanOptionHandler.class, usage = "Compute gc info")
+    public boolean _gcinfo = false;
+
+    @Option(name = "-collisionKey", handler = ExplicitBooleanOptionHandler.class, usage = "Testing map with collision on key")
+    public boolean _collisionKey = false;
+
+    @Option(name = "-nbItems", usage = "Number of items max per thread")
+    private int _nbItems = Integer.MAX_VALUE;
 
     private AtomicBoolean flagComputing,flagWarmingUp;
 
@@ -159,7 +169,7 @@ public class Retwis {
             System.err.println();
 
             // print option sample. This is useful some time
-            System.err.println("  Example: java eu.cloudbutton.dobj.Benchmark.App" + parser.printExample(ALL));
+            System.err.println("  Example: java eu.cloudbutton.dobj.benchmark.Retwis" + parser.printExample(ALL));
 
             return;
         }
@@ -173,11 +183,14 @@ public class Retwis {
             listAlpha.add(i);
         }
 
-        for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
+        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
+
+            if (_gcinfo)
+                System.out.println("nbThread : "+nbCurrThread);
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            long startTime = 0, endTime, timeTotal = 0L;
+            long startTime = 0, endTime, timeTotal = 0L, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
             allAvgFollower = new ArrayList();
             allNbMaxFollower = new ArrayList();
@@ -210,7 +223,7 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, _collisionKey, _nbItems);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
@@ -241,7 +254,6 @@ public class Retwis {
                     executorServiceCoordinator.submit(new Coordinator(latch));
                     List<Future<Void>> futures;
 
-
                     if (_completionTime)
                         startTime = System.nanoTime();
 
@@ -258,6 +270,7 @@ public class Retwis {
 
                     if (_completionTime) {
                         endTime = System.nanoTime();
+                        benchmarkAvgTime += endTime - startTime;
                         timeTotal = endTime - startTime;
                     }
 
@@ -269,7 +282,6 @@ public class Retwis {
 
                     TimeUnit.SECONDS.sleep(1);
 
-
                     if (_breakdown){
 
                         int nbFollowerTotal = 0,
@@ -279,7 +291,7 @@ public class Retwis {
                                 userWithoutFollower = 0;
 
 
-                        for(Long user: database.getOriginalUsers()){
+                        for(Key user: database.getOriginalUsers()){
                             Set followers = database.getMapFollowers().get(user);
                             nbFollower = followers.size();
                             if (nbFollower > maxFollower) {
@@ -287,7 +299,7 @@ public class Retwis {
                             }
                             nbFollowerTotal += nbFollower;
                         }
-                        for(Long user: database.getOriginalUsers()){
+                        for(Key user: database.getOriginalUsers()){
                             Set followers = database.getMapFollowers().get(user);
                             nbFollower = followers.size();
 
@@ -306,12 +318,12 @@ public class Retwis {
                     executor.shutdown();
                 }
 
+                System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest);
+
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
 //                int unit = nbCurrThread;
                 int unit = NB_USERS;
-
-
 
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOpTotal += nbOperations.get(op).get();
@@ -501,14 +513,14 @@ public class Retwis {
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
-        private Map<Long, Queue<Long>> usersFollow; // Local map that associate to each user, the list of user that it follows
+        private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private Integer usersProbabilitySize;
-        private List<Long> arrayLocalUsers; // Local array that store the users handled by a thread, a user is put n times following a powerlaw
+        private List<Key> arrayLocalUsers; // Local array that store the users handled by a thread, a user is put n times following a powerlaw
         private int nbRepeat = 1000;
         private final String msg = "new msg";
         int n, nbLocalUsers, nbAttempt;
-        Long userB;
-	    long userA, startTime, endTime;
+        Key userB, userA;
+	    long startTime, endTime;
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
 
@@ -569,7 +581,7 @@ public class Retwis {
                         }
                     }
 
-                    for (long user : database.getLocalUsers().get()){
+                    for (Key user : database.getLocalUsers().get()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
                 }
@@ -634,7 +646,7 @@ public class Retwis {
 
                 int val = random.nextInt(nbLocalUsers);
                 userA = arrayLocalUsers.get(val);
-                Queue<Long> listFollow = usersFollow.get(userA);
+                Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
                         if (_completionTime){
