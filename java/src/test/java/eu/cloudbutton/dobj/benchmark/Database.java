@@ -145,6 +145,9 @@ public class Database {
             usersFollow.put(user, new LinkedList<>());
 
             localUsers.get().add(user);
+            System.out.println("data size : "+data.size());
+            System.out.println("user hash code : " + user.hashCode());
+            System.out.println("user hash code % "+ bound +" : " + user.hashCode()%bound);
             for (int j = 0; j <= data.get(user.hashCode()%bound); j++) { // each user have an ID inferior to bound
                 localUsersProbability.get().add(user);
             }
