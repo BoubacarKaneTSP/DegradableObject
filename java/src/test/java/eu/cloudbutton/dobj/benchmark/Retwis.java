@@ -322,8 +322,8 @@ public class Retwis {
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
-//                int unit = nbCurrThread;
-                int unit = NB_USERS;
+                int unit = nbCurrThread;
+//                int unit = NB_USERS;
 
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOpTotal += nbOperations.get(op).get();
