@@ -51,14 +51,14 @@ public class SWMRHashMap<K, V> implements Map<K,V> {
 
     public V put(K key, V value) {
         V r = this.m.put(key, value);
-        UNSAFE.fullFence();
+        UNSAFE.storeFence();
         return r;
     }
 
     @Override
     public V remove(Object o) {
         V r = this.m.remove(o);
-        UNSAFE.fullFence();
+        UNSAFE.storeFence();
         return r;
     }
 

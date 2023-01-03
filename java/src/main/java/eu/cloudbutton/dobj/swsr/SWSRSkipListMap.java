@@ -23,7 +23,9 @@
 package eu.cloudbutton.dobj.swsr;
 
 import eu.cloudbutton.dobj.utils.NonLinearizable;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -47,7 +49,17 @@ import java.util.SortedMap;
 public class SWSRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMap<K, V>, java.io.Serializable {
 
     private static final long serialVersionUID = -7294702195698320197L;
+    private static final sun.misc.Unsafe UNSAFE;
 
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            UNSAFE = (Unsafe) f.get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
     /**
      * The maximum level of the skip list.
      */
@@ -214,6 +226,7 @@ public class SWSRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         if (node != null) {
             V oldValue = node.value;
             node.value = value;
+            UNSAFE.storeFence();
             return oldValue;
         }
 
@@ -236,6 +249,8 @@ public class SWSRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
             // link new node and nodes with less keys
             linkNode(update[i], newNode, i);
         }
+        UNSAFE.storeFence();
+
         size++;
         return null;
     }
