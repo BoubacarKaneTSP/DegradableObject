@@ -77,12 +77,12 @@ public class Factory {
             return createCounter(object);
         else if (object.contains("Set"))
             return createSet(object, parallelism);
+        else if (object.contains("Map"))
+            return createMap(object, parallelism);
         else if (object.contains("List"))
             return createList(object, parallelism);
         else if (object.contains("Queue"))
             return createQueue(object);
-        else if (object.contains("Map"))
-            return createMap(object, parallelism);
         else if (object.contains("Noop"))
             return new Noop();
         else
@@ -188,7 +188,7 @@ public class Factory {
                 return new SegmentedHashMap(parallelism);
             case "SegmentedSkipListMap":
                 return new SegmentedSkipListMap(parallelism);
-            case "SegmentedTreetMap":
+            case "SegmentedTreeMap":
                 return new SegmentedTreeMap(parallelism);
             case "ShardedHashMap":
                 return new ShardedHashMap(parallelism);
