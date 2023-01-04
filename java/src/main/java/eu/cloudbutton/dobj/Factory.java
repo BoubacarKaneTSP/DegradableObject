@@ -16,11 +16,11 @@ import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.queue.MapQueue;
-import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
+import eu.cloudbutton.dobj.segmented.*;
+import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.sharded.ShardedHashMap;
-import eu.cloudbutton.dobj.sharded.ShardedMap;
 import eu.cloudbutton.dobj.sharded.ShardedHashSet;
+import eu.cloudbutton.dobj.sharded.ShardedLinkedList;
 import eu.cloudbutton.dobj.sharded.ShardedTreeSet;
 
 import java.lang.reflect.Constructor;
@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Factory {
@@ -77,7 +78,7 @@ public class Factory {
         else if (object.contains("Set"))
             return createSet(object, parallelism);
         else if (object.contains("List"))
-            return createList(object);
+            return createList(object, parallelism);
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Map"))
@@ -106,7 +107,7 @@ public class Factory {
 
     /* List */
 
-    public static List createList(String list) throws ClassNotFoundException {
+    public static List createList(String list, int parallelism) throws ClassNotFoundException {
 
         switch (list){
 
@@ -116,6 +117,8 @@ public class Factory {
                 return new DegradableList();
             case "LinkedList":
                 return new LinkedList<>();
+            case "ShardedLinkedList":
+                return new ShardedLinkedList(parallelism);
             case "DegradableLinkedList":
                 return new DegradableLinkedList<>();
             default:
@@ -129,15 +132,19 @@ public class Factory {
 
         switch (set){
             case "SegmentedSkipListSet":
-                System.out.println("new SegmentedSkipListSet("+parallelism+")");
                 return new SegmentedSkipListSet(parallelism);
+            case "SegmentedTreeSet":
+                return new SegmentedTreeSet(parallelism);
+            case "SegmentedHashSet":
+                return new SegmentedHashSet(parallelism);
             case "ShardedTreeSet":
-                System.out.println("new ShardedTreeSet("+parallelism+")");
                 return new ShardedTreeSet(parallelism);
             case "ShardedHashSet":
                 return new ShardedHashSet(parallelism);
             case "Set":
                 return new ConcurrentSkipListSet<>();
+            case "ConcurrentHashSet":
+                return new ConcurrentHashSet();
             case "SetReadIntensive":
                 return new SetReadIntensive<>();
             case "SetAddIntensive":
@@ -178,15 +185,17 @@ public class Factory {
         switch (map){
 
             case "SegmentedHashMap":
-                System.out.println("new SegmentedHashMap("+parallelism+")");
                 return new SegmentedHashMap(parallelism);
+            case "SegmentedSkipListMap":
+                return new SegmentedSkipListMap(parallelism);
+            case "SegmentedTreetMap":
+                return new SegmentedTreeMap(parallelism);
             case "ShardedHashMap":
-                System.out.println("new ShardedHashMap("+parallelism+")");
                 return new ShardedHashMap(parallelism);
-            case "ShardedMap":
-                return new ShardedMap();
             case "Map":
                 return new ConcurrentHashMap<>();
+            case "ConcurrentSkipListMap":
+                return new ConcurrentSkipListMap();
             case "MapReadIntensive":
                 return new MapReadIntensive<>();
             case "MapAddIntensive":

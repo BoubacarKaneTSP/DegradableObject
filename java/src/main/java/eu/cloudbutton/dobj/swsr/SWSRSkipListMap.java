@@ -277,6 +277,7 @@ public class SWSRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         Node<K, V> node = findClosestNode((K) key, Relation.EQ);
         if (node != null) {
             deleteNode(node);
+            UNSAFE.storeFence();
             return node.value;
         }
         return null;
@@ -297,6 +298,7 @@ public class SWSRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
                 node = next;
             }
         }
+        UNSAFE.storeFence();
         size = 0;
     }
 

@@ -1,20 +1,34 @@
 package eu.cloudbutton.dobj.swsr;
 
 import org.jetbrains.annotations.NotNull;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class SWSRTreeSet<E>  extends AbstractSet<E> implements Set<E> {
 
-    Map<E, E> m;
+    private static final sun.misc.Unsafe UNSAFE;
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            UNSAFE = (Unsafe) f.get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
+
+    Set<E> m;
 
     public SWSRTreeSet(){
-        m = new TreeMap();
+        m = new TreeSet<>();
     }
 
     @Override
     public Iterator<E> iterator() {
-        return m.keySet().iterator();
+        return m.iterator();
     }
 
     @Override
@@ -25,57 +39,52 @@ public class SWSRTreeSet<E>  extends AbstractSet<E> implements Set<E> {
     @NotNull
     @Override
     public Object[] toArray() {
-        return m.keySet().toArray();
+        return m.toArray();
     }
 
     @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] a) {
-        return m.keySet().toArray(a);
+        return m.toArray(a);
     }
 
     @Override
     public boolean add(E e) {
-        return m.put(e, null) == null;
+        final boolean add = m.add(e);
+        UNSAFE.storeFence();
+        return add;
     }
 
     @Override
     public boolean remove(Object o) {
-        return m.remove(o) != null;
+        final boolean remove = m.remove(o);
+        UNSAFE.storeFence();
+        return remove;
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return m.keySet().containsAll(c);
+        return m.containsAll(c);
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends E> c) {
-        for (E o : c)
-            m.put(o, null);
-        return true;
+        final boolean b = m.addAll(c);
+        UNSAFE.storeFence();
+        return b;
     }
 
     @Override
     public boolean removeAll(@NotNull Collection c) {
-        boolean b = false;
-        for (Object o : c){
-            if(m.remove(o) != null){
-                b = true;
-            }
-        }
+        final boolean b = m.removeAll(c);
+        UNSAFE.storeFence();
         return b;
     }
 
     @Override
     public boolean retainAll(@NotNull Collection c) {
-        boolean b = false;
-        for (Object o : m.keySet()){
-            if (!c.contains(o)) {
-                m.remove(o);
-                b= true;
-            }
-        }
+        final boolean b = m.retainAll(c);
+        UNSAFE.storeFence();
         return b;
     }
 
@@ -86,7 +95,7 @@ public class SWSRTreeSet<E>  extends AbstractSet<E> implements Set<E> {
 
     @Override
     public Spliterator<E> spliterator() {
-        return Set.super.spliterator();
+        return m.spliterator();
     }
 
     @Override
@@ -96,6 +105,6 @@ public class SWSRTreeSet<E>  extends AbstractSet<E> implements Set<E> {
 
     @Override
     public boolean contains(Object o) {
-        return m.containsKey(o);
+        return m.contains(o);
     }
 }
