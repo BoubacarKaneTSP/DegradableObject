@@ -28,6 +28,10 @@ public class SetTest {
        Class cls = Class.forName("eu.cloudbutton.dobj.swsr.SWSRSkipListSet");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
+
+       cls = Class.forName("eu.cloudbutton.dobj.set.ConcurrentHashSet");
+       factory.setFactorySet(cls);
+       doAdd(factory.getSet());
     }
 
     @Test
@@ -54,10 +58,13 @@ public class SetTest {
 
     private void doAdd(Set set) {
         List<Key> list = new ArrayList<>();
-        for(int i=0; i<3; i++) { list.add(generator.nextKey()); }
-        set.addAll(list);
+        int nbItem = 10;
+        for(int i=0; i<10; i++) { list.add(generator.nextKey()); }
+
+        for (int i = 0; i < nbItem; i++) set.add(list.get(i));
         assertEquals(set.containsAll(list),true);
-        set.removeAll(list);
+
+        for (int i = 0; i < nbItem; i++) set.remove(list.get(i));
         assertEquals(set.isEmpty(),true, set.toString());
     }
 

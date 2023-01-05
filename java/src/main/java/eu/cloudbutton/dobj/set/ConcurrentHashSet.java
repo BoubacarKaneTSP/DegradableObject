@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
 
-    Map<E, E> m;
+    Map m;
 
     public ConcurrentHashSet(){
         m = new ConcurrentHashMap<>();
@@ -43,12 +43,12 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
     @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] a) {
-        return m.keySet().toArray(a);
+        return (T[]) m.keySet().toArray(a);
     }
 
     @Override
     public boolean add(E e) {
-        return m.put(e, null) == null;
+        return m.put(e, 0) == null;
     }
 
     @Override
