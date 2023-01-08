@@ -15,6 +15,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
     protected final int bound;
 
     public RetwisKeyGenerator(int max_hashes_per_thread) {
+        System.out.println("HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
         this.bound = max_hashes_per_thread;
         this.list =  new ArrayList<>();
