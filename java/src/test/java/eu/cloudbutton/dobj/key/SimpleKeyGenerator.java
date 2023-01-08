@@ -9,6 +9,7 @@ public class SimpleKeyGenerator implements KeyGenerator {
     private int max_key_per_thread;
 
     public SimpleKeyGenerator(int max_key_per_thread) {
+        System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
         random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
         this.max_key_per_thread = max_key_per_thread;
     }
