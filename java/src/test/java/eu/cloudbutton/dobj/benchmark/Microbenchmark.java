@@ -139,6 +139,8 @@ public class Microbenchmark {
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
                 long size = 0;
+                benchmarkAvgTime = 0L;
+
                 for (opType ignored : opType.values()) {
                     nbOperations.add(new AtomicLong(0));
                     timeOperations.add(new AtomicLong(0));
@@ -149,7 +151,7 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
-                    benchmarkAvgTime = 0L;
+
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
@@ -216,6 +218,9 @@ public class Microbenchmark {
                     List<Future<Void>> futures;
 
                     // launch computation
+                    if (_gcinfo){
+                        System.out.println("Start benchmark");
+                    }
                     startTime = System.nanoTime();
                     futures = executor.invokeAll(callables);
                     try{
@@ -227,6 +232,9 @@ public class Microbenchmark {
                         System.out.println(e);
                     }
                     endTime = System.nanoTime();
+                    if (_gcinfo) {
+                        System.out.println("End benchmark");
+                    }
 
                     benchmarkAvgTime += endTime - startTime;
 
@@ -246,8 +254,9 @@ public class Microbenchmark {
                     TimeUnit.SECONDS.sleep(1);
                 }
 
-                if (_gcinfo)
+                if (_gcinfo) {
                     System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) / nbTest);
+                }
                 if (_p)
                     System.out.println("End.");
 

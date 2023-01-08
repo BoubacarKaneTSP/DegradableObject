@@ -190,7 +190,7 @@ public class Retwis {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            long startTime = 0, endTime, timeTotal = 0L, benchmarkAvgTime = 0;;
+            long startTime, endTime, timeTotal = 0L, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
             allAvgFollower = new ArrayList();
             allNbMaxFollower = new ArrayList();
@@ -254,8 +254,15 @@ public class Retwis {
                     executorServiceCoordinator.submit(new Coordinator(latch));
                     List<Future<Void>> futures;
 
-                    if (_completionTime)
-                        startTime = System.nanoTime();
+                    if (_gcinfo){
+                        System.out.println("Start benchmark");
+                    }
+
+                    if (flagWarmingUp.get()) {
+                        benchmarkAvgTime -= _wTime * 1_000_000_000;
+                    }
+
+                    startTime = System.nanoTime();
 
                     futures = executor.invokeAll(callables);
 
@@ -267,16 +274,20 @@ public class Retwis {
                         e.printStackTrace();
                         System.exit(0);
                     }
-
-                    if (_completionTime) {
-                        endTime = System.nanoTime();
-                        benchmarkAvgTime += endTime - startTime;
-                        timeTotal = endTime - startTime;
+                    if (_gcinfo) {
+                        System.out.println("End benchmark");
                     }
 
-                    if (flagWarmingUp.get())
-                        timeTotal -= _wTime * 1_000_000_000;
+                    endTime = System.nanoTime();
+                    benchmarkAvgTime += endTime - startTime;
+                    timeTotal = endTime - startTime;
 
+                    if (nbCurrThread == 1 && nbCurrTest == 1)
+
+
+                    if (flagWarmingUp.get()) {
+                        timeTotal -= _wTime * 1_000_000_000;
+                    }
                     if(_p)
                         System.out.println(" ==> End of test num : " + nbCurrTest);
 
@@ -318,7 +329,8 @@ public class Retwis {
                     executor.shutdown();
                 }
 
-                System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest);
+                if (_gcinfo)
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest);
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
