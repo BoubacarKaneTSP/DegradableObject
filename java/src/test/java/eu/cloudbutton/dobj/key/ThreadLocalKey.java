@@ -24,7 +24,9 @@ public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
 
     @Override
     public int hashCode() {
-        return Objects.hash(tid, id);
+        int hash = Objects.hash(tid, id);
+        hash = hash < 0 ? hash * -1 : hash;
+        return hash;
     }
 
     @Override

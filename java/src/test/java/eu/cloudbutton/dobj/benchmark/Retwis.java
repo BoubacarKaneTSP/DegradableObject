@@ -223,6 +223,7 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
+                    System.out.println("collisionkey : "+ _collisionKey);
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, _collisionKey, _nbItems);
 
                     if (flag_append == 0 && nbCurrTest == 1){
