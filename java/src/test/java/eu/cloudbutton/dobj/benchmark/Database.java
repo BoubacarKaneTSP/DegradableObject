@@ -157,6 +157,7 @@ public class Database {
                 System.out.println("bound : " + bound);
                 System.out.println("modulo = " + user.hashCode()%bound);
                 System.out.println("Data's size : " + data.size());
+                System.exit(0);
             }
 
         }
