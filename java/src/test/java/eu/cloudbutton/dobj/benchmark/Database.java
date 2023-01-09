@@ -36,6 +36,7 @@ public class Database {
     private ThreadLocalRandom random;
     private final int max_item_per_thread;
     private KeyGenerator keyGenerator;
+    private boolean useCollisionKey;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int max_item_per_thread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
@@ -102,35 +103,17 @@ public class Database {
         random = null;
         next_user_ID = new AtomicLong();
         this.max_item_per_thread = max_item_per_thread;
-        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
+        this.useCollisionKey = useCollisionKey;
 
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         random = ThreadLocalRandom.current();
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread, nbUsers, alpha) : new SimpleKeyGenerator(max_item_per_thread);
 
         int n, userPerThread;
         Key user, userB = null;
-
-        int bound = 1000;
-
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
-        int i = 0;
-
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) nbUsers * ratio);
-        max = max == 0 ? 1 : max;
-
-
-        for (int val: data){
-            if (val >= max) {
-                data.set(i, (int) max);
-            }
-            if (val < 1)
-                data.set(i, 1);
-            i++;
-        }
 
         //adding all users
 
@@ -145,19 +128,9 @@ public class Database {
             usersFollow.put(user, new LinkedList<>());
 
             localUsers.get().add(user);
-//            System.out.println("data size : "+data.size());
-//            System.out.println("user hash code : " + user.hashCode());
-//            System.out.println("user hash code % "+ bound +" : " + user.hashCode()%bound);
-            try{
-                for (int j = 0; j <= data.get(user.hashCode()%bound); j++) { // each user have an ID inferior to bound
-                    localUsersProbability.get().add(user);
-                }
-            }catch (IndexOutOfBoundsException e){
-                System.out.println("user hash code : " + user.hashCode());
-                System.out.println("bound : " + bound);
-                System.out.println("modulo = " + user.hashCode()%bound);
-                System.out.println("Data's size : " + data.size());
-                System.exit(0);
+
+            for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
+                localUsersProbability.get().add(user);
             }
 
         }
@@ -173,8 +146,7 @@ public class Database {
 
         for (Key userA: usersFollow.keySet()){
 
-            int nbFollow = data.get(random.nextInt(bound));
-            for(int j = 0; j < nbFollow; j++){
+            for(int j = 0; j < userA.hashCode(); j++){
 //                n = random.nextInt(localUsersProbability.get().size());
                 n = random.nextInt(usersProbability.size());
 

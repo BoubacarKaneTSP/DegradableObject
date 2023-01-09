@@ -14,6 +14,12 @@ public class RetwisKeyGenerator implements KeyGenerator {
     private ThreadLocal<Random> random;
     protected final int bound;
 
+    public RetwisKeyGenerator(int max_hashes_per_thread, int nbUsers, double alpha) {
+        this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
+        this.bound = max_hashes_per_thread;
+        this.list =  new ArrayList<>();
+        fill(nbUsers, alpha);
+    }
     public RetwisKeyGenerator(int max_hashes_per_thread) {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
         this.bound = max_hashes_per_thread;
@@ -29,6 +35,31 @@ public class RetwisKeyGenerator implements KeyGenerator {
                 list.get(random.get().nextInt(bound)),
                 bound
         );
+    }
+
+    private void fill(int nbUsers, double alpha){
+
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
+        int i = 0;
+
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        long max = (long) ((long) nbUsers * ratio);
+
+        for (int val: data){
+            if (val >= max) {
+                data.set(i, (int) max);
+            }
+            if (val < 0)
+                data.set(i, 0);
+            i++;
+        }
+
+        for (int j = 0; j < bound; j++) {
+            for (int k = 0; k < data.get(j); k++) {
+                long toAdd = j;
+                list.add(toAdd);
+            }
+        }
     }
 
     private void fill(){
