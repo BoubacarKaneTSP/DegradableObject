@@ -254,10 +254,6 @@ public class Retwis {
                     executorServiceCoordinator.submit(new Coordinator(latch));
                     List<Future<Void>> futures;
 
-                    if (_gcinfo){
-                        System.out.println("Start benchmark");
-                    }
-
                     if (flagWarmingUp.get()) {
                         benchmarkAvgTime -= _wTime * 1_000_000_000;
                     }
@@ -273,9 +269,6 @@ public class Retwis {
                     } catch (OutOfMemoryError | CancellationException | ExecutionException e) {
                         e.printStackTrace();
                         System.exit(0);
-                    }
-                    if (_gcinfo) {
-                        System.out.println("End benchmark");
                     }
 
                     endTime = System.nanoTime();
@@ -574,6 +567,12 @@ public class Retwis {
                     compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
+                long startTimeBenchmark, endTimeBenchmark;
+
+                if (_gcinfo){
+                    System.out.println("Start benchmark");
+                }
+                startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
                         type = chooseOperation();
@@ -596,6 +595,11 @@ public class Retwis {
                     for (Key user : database.getLocalUsers().get()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
+                }
+                endTimeBenchmark = System.nanoTime();
+                if (_gcinfo) {
+                    System.out.println("End benchmark");
+                    System.out.println("benchmark time without warmup (milli secondes) : " + (endTimeBenchmark-startTimeBenchmark)/1_000_000);
                 }
 
                 for (int op: mapIntOptoStringOp.keySet()){
