@@ -7,7 +7,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 nbTest=1
 benchmarkTime=20
 warmingUpTime=10
-initNbUsers=1000000
+initNbUsers=100000
 nbHashCode=1000
 
 perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -r "5 15 30 50" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -b -h "JUC" -i $initNbUsers -d $nbHashCode -k

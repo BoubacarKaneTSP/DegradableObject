@@ -599,7 +599,7 @@ public class Retwis {
                 endTimeBenchmark = System.nanoTime();
                 if (_gcinfo) {
                     System.out.println("End benchmark");
-                    System.out.println("benchmark time without warmup (milli secondes) : " + (endTimeBenchmark-startTimeBenchmark)/1_000_000);
+                    System.out.println("Toto benchmark time without warmup (milli secondes) : " + (endTimeBenchmark-startTimeBenchmark)/1_000_000);
                 }
 
                 for (int op: mapIntOptoStringOp.keySet()){
