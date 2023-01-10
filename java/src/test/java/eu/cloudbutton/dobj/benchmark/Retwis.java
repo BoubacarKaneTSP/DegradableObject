@@ -443,7 +443,7 @@ public class Retwis {
                         }
 
                         if (_gcinfo){
-                            long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / _nbThreads) / _nbTest;
+                            long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
                             System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
                         }
 
