@@ -43,8 +43,6 @@ public class Retwis {
         put(READ, "READ");
     }};
 
-
-
     @Option(name="-set", required = true, usage = "type of Set")
     private String typeSet;
 
@@ -118,6 +116,7 @@ public class Retwis {
 
     private List<AtomicLong> nbOperations;
     private List<AtomicLong> timeOperations;
+    private LongAdder timeBenchmark;
     private LongAdder queueSizes;
     private List<Integer> allAvgQueueSizes;
     private List<Integer> allAvgFollower;
@@ -216,6 +215,16 @@ public class Retwis {
                     System.out.println();
                 }
 
+                nbOperations = new CopyOnWriteArrayList<>();
+                timeOperations = new CopyOnWriteArrayList<>();
+                queueSizes = new LongAdder();
+                timeBenchmark = new LongAdder();
+
+                for (int op: mapIntOptoStringOp.keySet()) {
+                    nbOperations.add(op, new AtomicLong());
+                    timeOperations.add(op, new AtomicLong());
+                }
+
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread); // Additional count for the UserAdder
@@ -227,17 +236,6 @@ public class Retwis {
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
-                    }
-
-                    if (nbCurrTest == 1) {
-                        nbOperations = new CopyOnWriteArrayList<>();
-                        timeOperations = new CopyOnWriteArrayList<>();
-                        queueSizes = new LongAdder();
-
-                        for (int op: mapIntOptoStringOp.keySet()) {
-                            nbOperations.add(op, new AtomicLong());
-                            timeOperations.add(op, new AtomicLong());
-                        }
                     }
 
                     CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
@@ -277,7 +275,6 @@ public class Retwis {
 
                     if (nbCurrThread == 1 && nbCurrTest == 1)
 
-
                     if (flagWarmingUp.get()) {
                         timeTotal -= _wTime * 1_000_000_000;
                     }
@@ -293,7 +290,6 @@ public class Retwis {
                                 nbFollower,
                                 userWithMaxFollower = 0,
                                 userWithoutFollower = 0;
-
 
                         for(Key user: database.getOriginalUsers()){
                             Set followers = database.getMapFollowers().get(user);
@@ -446,6 +442,11 @@ public class Retwis {
 //                            System.out.println("Map Following : " + database.getMapFollowing());
                         }
 
+                        if (_gcinfo){
+                            long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / _nbThreads) / _nbTest;
+                            System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
+                        }
+
                         if (_s){
                             FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile;
                             PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint;
@@ -554,13 +555,11 @@ public class Retwis {
                 database.fill(NB_USERS, latchFillDatabase, usersFollow);
 
                 latch.countDown();
-
                 latch.await();
 
 //                usersProbabilitySize = database.getLocalUsersProbability().get().size();
                 usersProbabilitySize = database.getUsersProbability().size();
                 arrayLocalUsers = database.getLocalUsers().get();
-
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
@@ -569,9 +568,6 @@ public class Retwis {
 
                 long startTimeBenchmark, endTimeBenchmark;
 
-                if (_gcinfo){
-                    System.out.println("Start benchmark");
-                }
                 startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
                     for (int i = 0; i < _nbOps/_nbThreads; i++) {
@@ -596,11 +592,10 @@ public class Retwis {
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                     }
                 }
+
                 endTimeBenchmark = System.nanoTime();
-                if (_gcinfo) {
-                    System.out.println("End benchmark");
-                    System.out.println("Toto benchmark time without warmup (milli secondes) : " + (endTimeBenchmark-startTimeBenchmark)/1_000_000);
-                }
+
+                timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
@@ -780,8 +775,14 @@ public class Retwis {
                 if (! _completionTime) {
                     if (_p)
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
+                    if (_gcinfo) {
+                        System.out.println("Start benchmark");
+                    }
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
+                    if (_gcinfo) {
+                        System.out.println("End benchmark");
+                    }
                 }else{
                     if (_p)
                         System.out.println(" ==> Computing the completion time for " + _nbOps + " operations");
