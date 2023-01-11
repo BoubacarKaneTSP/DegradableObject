@@ -143,6 +143,7 @@ public class Database {
 //        System.out.println("Users added, now " + Thread.currentThread().getName() + " is starting to do the following phase");
 
         //Following phase
+        String msg = "msg";
 
         for (Key userA: usersFollow.keySet()){
 
@@ -157,8 +158,9 @@ public class Database {
                     System.exit(0);
                 }
 
-                followUser(userA, userB);
-                usersFollow.get(userA).add(userB);
+                tweet(userA, msg);
+//                followUser(userA, userB);
+//                usersFollow.get(userA).add(userB);
             }
         }
     }
