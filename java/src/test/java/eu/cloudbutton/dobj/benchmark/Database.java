@@ -161,8 +161,8 @@ public class Database {
 //                addUser();
 //                showTimeline(userA);
 //                tweet(userA, msg);
-//                followUser(userA, userB);
-                unfollowUser(userA, userB);
+                followUser(userA, userB);
+//                unfollowUser(userA, userB);
 //                usersFollow.get(userA).add(userB);
             }
         }
