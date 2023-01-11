@@ -135,7 +135,7 @@ public class Database {
 
         }
 
-//        usersProbability.addAll(localUsersProbability.get());
+        usersProbability.addAll(localUsersProbability.get());
         originalUsers.addAll(localUsers.get());
         latchDatabase.countDown();
         latchDatabase.await();
