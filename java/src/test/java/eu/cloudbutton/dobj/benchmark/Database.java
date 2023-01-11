@@ -130,7 +130,7 @@ public class Database {
             localUsers.get().add(user);
 
             for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
-//                localUsersProbability.get().add(user);
+                localUsersProbability.get().add(user);
             }
 
         }
