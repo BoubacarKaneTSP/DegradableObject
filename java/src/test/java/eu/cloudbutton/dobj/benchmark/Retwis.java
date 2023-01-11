@@ -405,6 +405,11 @@ public class Retwis {
                             printWriter.flush();
                     }
 
+                    if (_gcinfo){
+                        long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
+                        System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
+                    }
+
                     if (_breakdown){
 
                         int sumAvgQueueSizes = 0,
@@ -440,11 +445,6 @@ public class Retwis {
                             System.out.println();
 //                            System.out.println("Map Follower : " + database.getMapFollowers());
 //                            System.out.println("Map Following : " + database.getMapFollowing());
-                        }
-
-                        if (_gcinfo){
-                            long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
-                            System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
                         }
 
                         if (_s){
