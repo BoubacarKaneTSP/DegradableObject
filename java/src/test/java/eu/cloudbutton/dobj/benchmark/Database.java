@@ -167,9 +167,9 @@ public class Database {
 
         Key userID = keyGenerator.nextKey();
 
-        mapFollowers.put(userID, new ConcurrentSkipListSet<>());
+/*        mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
-        mapFollowing.put(userID, new HashSet<>() );
+        mapFollowing.put(userID, new HashSet<>() );*/
 
         return userID;
     }
