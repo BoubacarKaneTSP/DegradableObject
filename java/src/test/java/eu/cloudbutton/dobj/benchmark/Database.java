@@ -157,7 +157,7 @@ public class Database {
                     System.exit(0);
                 }
 
-//                followUser(userA, userB);
+                followUser(userA, userB);
                 usersFollow.get(userA).add(userB);
             }
         }
