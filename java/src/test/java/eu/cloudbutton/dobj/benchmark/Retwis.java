@@ -563,7 +563,7 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, nbLocalOperations, timeLocalOperations);
+//                    compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
                 long startTimeBenchmark, endTimeBenchmark;
