@@ -319,7 +319,7 @@ public class Retwis {
                 }
 
                 if (_gcinfo)
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest);
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest + "ms");
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
@@ -664,7 +664,7 @@ public class Retwis {
                             database.addUser();
                         }else{
                             startTime = System.nanoTime();
-                            database.addUser();
+//                            database.addUser();
                             endTime = System.nanoTime();
                         }
                         break;
@@ -679,7 +679,7 @@ public class Retwis {
                                     database.followUser(userA, userB);
                                 }else {
                                     startTime = System.nanoTime();
-                                    database.followUser(userA, userB);
+//                                    database.followUser(userA, userB);
                                     endTime = System.nanoTime();
                                 }
                                 listFollow.add(userB);
@@ -698,7 +698,7 @@ public class Retwis {
                                     database.unfollowUser(userA, userB);
                                 }else{
                                     startTime = System.nanoTime();
-                                    database.unfollowUser(userA, userB);
+//                                    database.unfollowUser(userA, userB);
                                     endTime = System.nanoTime();
                                 }
                             }else
@@ -712,7 +712,7 @@ public class Retwis {
                             database.tweet(userA, msg);
                         }else{
                             startTime = System.nanoTime();
-                            database.tweet(userA, msg);
+//                            database.tweet(userA, msg);
                             endTime = System.nanoTime();
                         }
                         break;
@@ -721,7 +721,7 @@ public class Retwis {
                             database.showTimeline(userA);
                         }else{
                             startTime = System.nanoTime();
-                            database.showTimeline(userA);
+//                            database.showTimeline(userA);
                             endTime = System.nanoTime();
                         }
                         break;
