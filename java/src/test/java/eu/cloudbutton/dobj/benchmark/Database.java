@@ -117,7 +117,7 @@ public class Database {
 
         //adding all users
 
-        System.out.println("Adding users");
+//        System.out.println("Adding users");
 
 //        userPerThread = 1;
         userPerThread = nbUsers / nbThread;
@@ -140,7 +140,7 @@ public class Database {
         latchDatabase.countDown();
         latchDatabase.await();
 
-        System.out.println("Users added, now " + Thread.currentThread().getName() + " is starting to do the following phase");
+//        System.out.println("Users added, now " + Thread.currentThread().getName() + " is starting to do the following phase");
 
         //Following phase
 
