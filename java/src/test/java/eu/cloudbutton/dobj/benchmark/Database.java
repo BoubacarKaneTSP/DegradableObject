@@ -130,12 +130,12 @@ public class Database {
             localUsers.get().add(user);
 
             for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
-                localUsersProbability.get().add(user);
+//                localUsersProbability.get().add(user);
             }
 
         }
 
-        usersProbability.addAll(localUsersProbability.get());
+//        usersProbability.addAll(localUsersProbability.get());
         originalUsers.addAll(localUsers.get());
         latchDatabase.countDown();
         latchDatabase.await();
