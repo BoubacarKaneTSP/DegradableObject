@@ -159,9 +159,10 @@ public class Database {
                 }
 
 //                addUser();
-                showTimeline(userA);
+//                showTimeline(userA);
 //                tweet(userA, msg);
 //                followUser(userA, userB);
+                unfollowUser(userA, userB);
 //                usersFollow.get(userA).add(userB);
             }
         }
