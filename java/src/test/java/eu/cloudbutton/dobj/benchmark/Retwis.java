@@ -594,9 +594,9 @@ public class Retwis {
 
                 timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
-                for (Key user : database.getLocalUsers().get()){
+                /*for (Key user : database.getLocalUsers().get()){
                     queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
-                }
+                }*/
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
