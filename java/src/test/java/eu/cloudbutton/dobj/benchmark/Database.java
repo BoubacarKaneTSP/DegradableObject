@@ -144,7 +144,7 @@ public class Database {
 
         //Following phase
 
-        for (Key userA: usersFollow.keySet()){
+ /*       for (Key userA: usersFollow.keySet()){
 
             for(int j = 0; j < userA.hashCode(); j++){
 //                n = random.nextInt(localUsersProbability.get().size());
@@ -160,16 +160,16 @@ public class Database {
                 followUser(userA, userB);
                 usersFollow.get(userA).add(userB);
             }
-        }
+        }*/
     }
 
     public Key addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Key userID = keyGenerator.nextKey();
 
-/*        mapFollowers.put(userID, new ConcurrentSkipListSet<>());
+        mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapTimelines.put(userID, new Timeline(factory.getQueue()));
-        mapFollowing.put(userID, new HashSet<>() );*/
+        mapFollowing.put(userID, new HashSet<>() );
 
         return userID;
     }
