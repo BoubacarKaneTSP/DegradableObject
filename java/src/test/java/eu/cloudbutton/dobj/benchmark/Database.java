@@ -158,7 +158,8 @@ public class Database {
                     System.exit(0);
                 }
 
-                addUser();
+//                addUser();
+                showTimeline(userA);
 //                tweet(userA, msg);
 //                followUser(userA, userB);
 //                usersFollow.get(userA).add(userB);
