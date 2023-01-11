@@ -574,7 +574,7 @@ public class Retwis {
                         type = chooseOperation();
                         compute(type, nbLocalOperations, timeLocalOperations);
                     }
-                }else{
+                }else{/*
                     while (flagComputing.get()){
 
                         type = chooseOperation();
@@ -590,7 +590,7 @@ public class Retwis {
 
                     for (Key user : database.getLocalUsers().get()){
                         queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
-                    }
+                    }*/
                 }
 
                 endTimeBenchmark = System.nanoTime();
