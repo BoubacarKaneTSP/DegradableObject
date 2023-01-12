@@ -399,15 +399,16 @@ public class Retwis {
                             System.out.print(" ==> Throughput (op/s) for "+mapIntOptoStringOp.get(op)+" : ");
                             System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
                             System.out.println();
-                            System.out.println("MapFollower size : " + database.getMapFollowers().size());
-                            System.out.println("MapFollowing size : " + database.getMapFollowing().size());
-                            System.out.println("MapTimeline size : " + database.getMapTimelines().size());
-                            System.out.println();
                         }
 
                         if (_s)
                             printWriter.flush();
                     }
+
+                    System.out.println("MapFollower size : " + database.getMapFollowers().size());
+                    System.out.println("MapFollowing size : " + database.getMapFollowing().size());
+                    System.out.println("MapTimeline size : " + database.getMapTimelines().size());
+                    System.out.println();
 
                     if (_gcinfo){
                         long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
