@@ -129,17 +129,17 @@ public class Database {
 
             localUsers.get().add(user);
 
-            try{
+//            try{
 
                 for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
                     localUsersProbability.get().add(user);
                 }
-            }catch (OutOfMemoryError e){
+           /* }catch (OutOfMemoryError e){
                 System.out.println("user hash code : " + user.hashCode());
                 System.out.println();
                 System.out.println(e.getMessage());
                 System.exit(0);
-            }
+            }*/
 
         }
 
