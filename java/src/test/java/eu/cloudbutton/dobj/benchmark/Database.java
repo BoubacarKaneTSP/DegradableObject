@@ -137,7 +137,7 @@ public class Database {
             }catch (OutOfMemoryError e){
                 System.out.println("user hash code : " + user.hashCode());
                 System.out.println();
-                System.out.println(e);
+                System.out.println(e.getStackTrace());
                 System.exit(0);
             }
 
