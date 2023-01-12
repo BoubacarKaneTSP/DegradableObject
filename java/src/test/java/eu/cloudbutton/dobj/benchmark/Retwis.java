@@ -412,6 +412,9 @@ public class Retwis {
 
                     if (_breakdown){
 
+                        System.out.println("MapFollower size : " + database.getMapFollowers().size());
+                        System.out.println("MapFollowing size : " + database.getMapFollowing().size());
+                        System.out.println("MapTimeline size : " + database.getMapTimelines().size());
                         int sumAvgQueueSizes = 0,
                                 sumAvgFollower = 0,
                                 sumNbMaxFollower = 0,
