@@ -129,8 +129,14 @@ public class Database {
 
             localUsers.get().add(user);
 
-            for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
-//                localUsersProbability.get().add(user);
+            try{
+
+                for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
+                    localUsersProbability.get().add(user);
+                }
+            }catch (OutOfMemoryError e){
+                System.out.println("user hash code : " + user.hashCode());
+                System.exit(0);
             }
 
         }
