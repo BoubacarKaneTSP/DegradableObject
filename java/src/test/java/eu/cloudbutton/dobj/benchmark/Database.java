@@ -31,7 +31,7 @@ public class Database {
     private final ThreadLocal<String> threadName;
     private final List<Key> usersProbability;
     private final List<Key> originalUsers;
-    private ThreadLocal<List<Key>> localUsersProbability;
+    private ThreadLocal<Queue<Key>> localUsersProbability;
     private ThreadLocal<List<Key>> localUsers;
     private ThreadLocalRandom random;
     private final int max_item_per_thread;
@@ -98,8 +98,8 @@ public class Database {
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
         originalUsers = new CopyOnWriteArrayList<>();
-        localUsersProbability = ThreadLocal.withInitial(() -> new ArrayList<>());
-        localUsers = ThreadLocal.withInitial(() -> new ArrayList<>());
+        localUsersProbability = ThreadLocal.withInitial(LinkedList::new);
+        localUsers = ThreadLocal.withInitial(ArrayList::new);
         random = null;
         next_user_ID = new AtomicLong();
         this.max_item_per_thread = max_item_per_thread;
@@ -137,7 +137,7 @@ public class Database {
             }catch (OutOfMemoryError e){
                 System.out.println("user hash code : " + user.hashCode());
                 System.out.println();
-                System.out.println(e.getStackTrace());
+                System.out.println(e.getMessage());
                 System.exit(0);
             }
 
