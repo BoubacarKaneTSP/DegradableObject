@@ -135,6 +135,7 @@ public class Retwis {
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
 //        Queue queue1 = new QueueMASP();
 //        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
+        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());
         new Retwis().doMain(args);
     }
 
