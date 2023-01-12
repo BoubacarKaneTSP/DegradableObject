@@ -130,12 +130,12 @@ public class Database {
             localUsers.get().add(user);
 
             for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
-                localUsersProbability.get().add(user);
+//                localUsersProbability.get().add(user);
             }
 
         }
 
-        usersProbability.addAll(localUsersProbability.get());
+//        usersProbability.addAll(localUsersProbability.get());
         originalUsers.addAll(localUsers.get());
         latchDatabase.countDown();
         latchDatabase.await();
@@ -145,7 +145,7 @@ public class Database {
         //Following phase
         String msg = "msg";
 
-        for (Key userA: usersFollow.keySet()){
+/*        for (Key userA: usersFollow.keySet()){
 
             for(int j = 0; j < userA.hashCode(); j++){
 //                n = random.nextInt(localUsersProbability.get().size());
@@ -165,7 +165,7 @@ public class Database {
 //                unfollowUser(userA, userB);
 //                usersFollow.get(userA).add(userB);
             }
-        }
+        }*/
     }
 
     public Key addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
