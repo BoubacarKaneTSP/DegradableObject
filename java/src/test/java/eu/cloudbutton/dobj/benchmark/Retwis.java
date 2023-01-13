@@ -2,11 +2,15 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
+import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -133,13 +137,21 @@ public class Retwis {
     int flag_append = 0;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-//        Queue queue1 = new QueueMASP();
-//        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("head").getDeclaringClass()).toPrintable());
+        Queue queue1 = new LinkedList();
+        KeyGenerator keyGenerator = new RetwisKeyGenerator(1000000, 1000000, 1.39);
+        Key retwisKey = keyGenerator.nextKey();
+        Key key = new ThreadLocalKey(1, 1000, 10000000);
+        System.out.println("node size :");
+        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("last").getDeclaringClass()).toPrintable());
+        System.out.println("ThreadLocalKey size :");
+        System.out.println(ClassLayout.parseClass(key.getClass()).toPrintable());
+        System.out.println("RetwisKey size :");
+        System.out.println(ClassLayout.parseClass(retwisKey.getClass()).toPrintable());
         System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());
         new Retwis().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, OutOfMemoryError {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{
@@ -609,7 +621,7 @@ public class Retwis {
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
                 }
 
-            } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException | NoSuchMethodException e) {
+            } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException | NoSuchMethodException | OutOfMemoryError e) {
                 e.printStackTrace();
             }
             return null;

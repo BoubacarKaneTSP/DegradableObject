@@ -31,7 +31,7 @@ public class Database {
     private final ThreadLocal<String> threadName;
     private final List<Key> usersProbability;
     private final List<Key> originalUsers;
-    private ThreadLocal<Queue<Key>> localUsersProbability;
+    private ThreadLocal<List<Key>> localUsersProbability;
     private ThreadLocal<List<Key>> localUsers;
     private ThreadLocalRandom random;
     private final int max_item_per_thread;
@@ -98,7 +98,7 @@ public class Database {
         threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
         usersProbability = new CopyOnWriteArrayList<>();
         originalUsers = new CopyOnWriteArrayList<>();
-        localUsersProbability = ThreadLocal.withInitial(LinkedList::new);
+        localUsersProbability = ThreadLocal.withInitial(ArrayList::new);
         localUsers = ThreadLocal.withInitial(ArrayList::new);
         random = null;
         next_user_ID = new AtomicLong();
@@ -107,7 +107,7 @@ public class Database {
 
     }
 
-    public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocalRandom.current();
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread, nbUsers, alpha) : new SimpleKeyGenerator(max_item_per_thread);
