@@ -16,6 +16,7 @@ import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.queue.MapQueue;
+import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import eu.cloudbutton.dobj.segmented.*;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.sharded.ShardedHashMap;
@@ -30,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Factory {
 
@@ -85,8 +87,21 @@ public class Factory {
             return createQueue(object);
         else if (object.contains("Noop"))
             return new Noop();
+        else if (object.contains("Reference")) {
+            if (object.equals("AtomicWriteOnceReference"))
+                return new AtomicWriteOnceReference<>();
+            else {
+                try{
+                    return Class.forName("java.util.concurrent.atomic." + object).getConstructor().newInstance();
+                } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                    System.err.println("The class \"" + object + "\" may not exists");
+                    e.printStackTrace();
+                }
+            }
+        }
         else
             throw new ClassNotFoundException("The object : "+ object +" may not exists");
+        return null;
     }
     /* Counter */
 

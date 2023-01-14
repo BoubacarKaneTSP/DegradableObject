@@ -6,8 +6,10 @@ import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FactoryFiller {
 
@@ -58,6 +60,22 @@ public class FactoryFiller {
                     // no-op
                 }
             };
+        else if (object instanceof AtomicWriteOnceReference){
+            return new Filler<>((AtomicWriteOnceReference) object, keyGenerator, 1) {
+                @Override
+                public void doFill(Key key) {
+                    object.set(1);
+                }
+            };
+        }
+        else if (object instanceof AtomicReference){
+            return new Filler<>((AtomicReference) object, keyGenerator, 1) {
+                @Override
+                public void doFill(Key key) {
+                    object.set(1);
+                }
+            };
+        }
         else
             throw new ClassNotFoundException("The Filler for "+ object.getClass() +" may not exists");
     }

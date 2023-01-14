@@ -4,15 +4,11 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-mvn clean package -f ../java -DskipTests;
+initSize=1
+range=2048
+nbTest=5
+benchmarkTime=20
+warmingUpTime=10
 
-for ratio in "100 0 0"; #95 80 50 20 5;
-do
-for type in 'DegradableQueue'
-#for type in 'Counter' 'DegradableCounter' 'ConcurrentLinkedQueue' 'MapQueue' 'ConcurrentSkipListSet' 'DegradableSet' 'ConcurrentHashMap' 'DegradableMap'
-  do
-    echo " "
-    echo $type $ratio
-    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC eu.cloudbutton.dobj.Benchmark.Benchmark -type $type -ratios $ratio -nbTest 1 -time 5 -wTime 2 -p
-  done
-done
+perf stat -B -e cache-references,cache-misses ./test.sh -s AtomicReference -t Microbenchmark -p -r "0 0 100" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j
+perf stat -B -e cache-references,cache-misses ./test.sh -s AtomicWriteOnceReference -t Microbenchmark -p -r "0 0 100" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j

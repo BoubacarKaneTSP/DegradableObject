@@ -2,9 +2,11 @@ package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FactoryTester {
 
@@ -37,6 +39,10 @@ public class FactoryTester {
             return new CounterTester((Counter) object, ratios, latch);
         else if (object instanceof Noop)
             return new NoopTester((Noop) object, ratios, latch);
+        else if (object instanceof AtomicWriteOnceReference)
+            return new AtomicWriteOnceReferenceTester((AtomicWriteOnceReference) object, ratios, latch);
+        else if (object instanceof AtomicReference)
+            return new AtomicReferenceTester((AtomicReference) object, ratios, latch);
         else
             throw new ClassNotFoundException("The Tester for"+ object.getClass() +" may not exists");
     }
