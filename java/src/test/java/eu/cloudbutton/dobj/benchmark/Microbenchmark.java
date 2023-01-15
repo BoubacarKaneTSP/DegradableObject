@@ -65,6 +65,8 @@ public class Microbenchmark {
     @Option(name = "-gcinfo", handler = ExplicitBooleanOptionHandler.class, usage = "Compute gc info")
     public boolean _gcinfo = false;
 
+    public static Map<String, Integer> map = new ConcurrentHashMap<>();
+
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
 //        Key key1 = new ThreadLocalKey(10L, 10L);
 //        Long long1 = 0L;
@@ -121,6 +123,8 @@ public class Microbenchmark {
             FileWriter fileWriter = null;
             Object object;
             long startTime, endTime, benchmarkAvgTime = 0;
+
+
 
             nbCurrentThread = _asymmetric ? 2 : 1;
 

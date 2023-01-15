@@ -16,6 +16,9 @@ public class AtomicReferenceTester extends Tester<AtomicReference> {
     protected long test(Microbenchmark.opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         long startTime = 0L, endTime = 0L;
 
+        for (int i = 0; i < 10000; i++) {
+            Microbenchmark.map.put(Thread.currentThread().getName() + i, i);
+        }
         switch (type) {
             case ADD:
                 object.set(1);
@@ -34,6 +37,9 @@ public class AtomicReferenceTester extends Tester<AtomicReference> {
                 endTime = System.nanoTime();
 
                 break;
+        }
+        for (int i = 0; i < 10000; i++) {
+            Microbenchmark.map.remove(Thread.currentThread().getName() + i);
         }
 
         return (endTime - startTime);
