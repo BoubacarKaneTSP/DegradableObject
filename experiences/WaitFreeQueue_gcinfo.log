@@ -9,7 +9,7 @@ Start benchmark
 End benchmark
 Start benchmark
 End benchmark
-benchmarkAvgTime : 30001
+benchmarkAvgTime : 30000
 nbThread : 2
 Start benchmark
 End benchmark
@@ -21,16 +21,16 @@ Start benchmark
 End benchmark
 Start benchmark
 End benchmark
-benchmarkAvgTime : 30000
+benchmarkAvgTime : 30001
 nbThread : 4
 Start benchmark
 End benchmark
 Start benchmark
 End benchmark
 Start benchmark
-[372.281s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 100M->1M(2056M) 11.915ms
 End benchmark
 Start benchmark
+[403.281s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 100M->1M(2056M) 11.692ms
 End benchmark
 Start benchmark
 End benchmark
