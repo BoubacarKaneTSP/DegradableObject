@@ -26,6 +26,7 @@ public class WaitFreeQueueTester extends Tester<WaitFreeQueue> {
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.enqueue(rand, h);
+                    object.dequeue(h);
                 }
                 endTime = System.nanoTime();
                 break;
