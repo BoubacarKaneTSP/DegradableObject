@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.Noop;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.queue.WaitFreeQueue;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 
 import java.util.*;
@@ -31,6 +32,8 @@ public class FactoryTester {
             return new MapTester((Map) object, ratios, latch, useCollisionKey, max_item_per_thread);
         else if (object instanceof Set)
             return new SetTester((Set) object, ratios, latch, useCollisionKey, max_item_per_thread);
+        else if (object instanceof WaitFreeQueue)
+            return new QueueTester((WaitFreeQueue) object, ratios, latch);
         else if (object instanceof Queue)
             return new QueueTester((Queue) object, ratios, latch);
         else if (object instanceof AbstractList)

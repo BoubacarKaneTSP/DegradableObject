@@ -16,6 +16,7 @@ import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.SetReadIntensive;
 import eu.cloudbutton.dobj.queue.MapQueue;
+import eu.cloudbutton.dobj.queue.WaitFreeQueue;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import eu.cloudbutton.dobj.segmented.*;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
@@ -31,7 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Factory {
 
@@ -187,6 +187,8 @@ public class Factory {
                 return new QueueSASP<>();
             case "SequentialQueue":
                 return new java.util.LinkedList<>();
+            case "WaitFreeQueue":
+                return new WaitFreeQueue<>();
             default:
                 throw new ClassNotFoundException();
 

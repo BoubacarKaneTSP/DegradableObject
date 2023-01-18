@@ -6,6 +6,7 @@ import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.queue.WaitFreeQueue;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 
 import java.util.*;
@@ -37,6 +38,14 @@ public class FactoryFiller {
                 @Override
                 public void doFill(Key key) {
                     object.add(key);
+                }
+            };
+        else if (object instanceof WaitFreeQueue)
+            return new Filler<>((WaitFreeQueue) object, keyGenerator, nbOps) {
+                WaitFreeQueue.Handle<Integer> h = object.register();
+                @Override
+                public void doFill(Key key) {
+                    object.enqueue(key, h);
                 }
             };
         else if (object instanceof Queue)

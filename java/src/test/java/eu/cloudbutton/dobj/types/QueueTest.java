@@ -4,6 +4,7 @@ import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import eu.cloudbutton.dobj.queue.WaitFreeQueue;
 import org.openjdk.jol.info.ClassLayout;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -11,6 +12,8 @@ import org.testng.annotations.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
+
+import static org.testng.Assert.assertEquals;
 
 public class QueueTest {
 
@@ -34,12 +37,44 @@ public class QueueTest {
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
         factory.setFactoryQueue(cls);
         doAppend(factory.getQueue());
+
+        cls = Class.forName("eu.cloudbutton.dobj.queue.WaitFreeQueue");
+        factory.setFactoryQueue(cls);
+        doEnqueue((WaitFreeQueue<Integer>) factory.getQueue());
+        doSize((WaitFreeQueue<Integer>) factory.getQueue());
+
     }
 
     private static void doAppend(Queue<Integer> queue){
 
-
     }
+
+    private static void doEnqueue(WaitFreeQueue<Integer> queue){
+        queue.initRingTail();
+        WaitFreeQueue.Handle<Integer> h =  queue.register();
+
+        queue.enqueue(1, h);
+        queue.enqueue(2, h);
+        queue.enqueue(3, h);
+
+        assertEquals(Integer.compare(queue.dequeue(h), 1),0);
+        assertEquals(Integer.compare(queue.dequeue(h), 2),0);
+        assertEquals(Integer.compare(queue.dequeue(h), 3),0);
+    }
+
+    private static void doSize(WaitFreeQueue<Integer> queue){
+        queue.initRingTail();
+        WaitFreeQueue.Handle<Integer> h =  queue.register();
+
+        int size = 100;
+
+        for (int i = 0; i < size; i++) {
+            queue.enqueue(i, h);
+        }
+
+        assertEquals(Integer.compare(queue.size(), size),0);
+    }
+
     private static void doConcurrentAppend(Queue<Integer> queue) throws ExecutionException, InterruptedException {
         /*ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Void>> futures = new ArrayList<>();
