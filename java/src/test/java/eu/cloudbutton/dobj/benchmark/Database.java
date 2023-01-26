@@ -55,6 +55,8 @@ public class Database {
         }catch (ClassNotFoundException e){
             if (typeSet.contains("Sharded"))
                 cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeSet);
+            else if (typeSet.contains("Segmented"))
+                cls = Class.forName("eu.cloudbutton.dobj.segmented."+typeSet);
             else
                 cls = Class.forName("java.util.concurrent."+typeSet);
         }
@@ -77,6 +79,8 @@ public class Database {
         }catch (ClassNotFoundException e){
             if (typeMap.contains("Sharded"))
                 cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeMap);
+            else if (typeMap.contains("Segmented"))
+                cls = Class.forName("eu.cloudbutton.dobj.segmented."+typeMap);
             else
                 cls = Class.forName("java.util.concurrent."+typeMap);
         }
