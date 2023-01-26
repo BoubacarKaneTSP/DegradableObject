@@ -137,7 +137,7 @@ public class Retwis {
     int flag_append = 0;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        Queue queue1 = new LinkedList();
+/*        Queue queue1 = new LinkedList();
         KeyGenerator keyGenerator = new RetwisKeyGenerator(1000000, 1000000, 1.39);
         Key retwisKey = keyGenerator.nextKey();
         Key key = new ThreadLocalKey(1, 1000, 10000000);
@@ -147,7 +147,7 @@ public class Retwis {
         System.out.println(ClassLayout.parseClass(key.getClass()).toPrintable());
         System.out.println("RetwisKey size :");
         System.out.println(ClassLayout.parseClass(retwisKey.getClass()).toPrintable());
-        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());
+        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());*/
         new Retwis().doMain(args);
     }
 
@@ -304,7 +304,7 @@ public class Retwis {
                                 userWithMaxFollower = 0,
                                 userWithoutFollower = 0;
 
-                        for(Key user: database.getOriginalUsers()){
+                        for(Key user: database.getUsersProbability().values()){
                             Set followers = database.getMapFollowers().get(user);
                             nbFollower = followers.size();
                             if (nbFollower > maxFollower) {
@@ -312,7 +312,7 @@ public class Retwis {
                             }
                             nbFollowerTotal += nbFollower;
                         }
-                        for(Key user: database.getOriginalUsers()){
+                        for(Key user: database.getUsersProbability().values()){
                             Set followers = database.getMapFollowers().get(user);
                             nbFollower = followers.size();
 
@@ -538,8 +538,8 @@ public class Retwis {
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
-        private Integer usersProbabilitySize;
-        private List<Key> arrayLocalUsers; // Local array that store the users handled by a thread, a user is put n times following a powerlaw
+        private Integer usersProbabilityRange;
+        private Integer localUsersProbabilityRange;
         private int nbRepeat = 1000;
         private final String msg = "new msg";
         int n, nbLocalUsers, nbAttempt;
@@ -575,13 +575,13 @@ public class Retwis {
                 latch.countDown();
                 latch.await();
 
-//                usersProbabilitySize = database.getLocalUsersProbability().get().size();
-                usersProbabilitySize = database.getUsersProbability().size();
-                arrayLocalUsers = database.getLocalUsers().get();
+                usersProbabilityRange = database.getUsersProbabilityRange();
+                localUsersProbabilityRange = database.getLocalUsersProbabilityRange().get();
+                nbLocalUsers = database.getLocalUsersProbability().get().size();
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-//                    compute(type, nbLocalOperations, timeLocalOperations);
+                    compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
                 long startTimeBenchmark, endTimeBenchmark;
@@ -602,7 +602,7 @@ public class Retwis {
                                 compute(type, nbLocalOperations, timeLocalOperations);
                             }
                         }else{
-//                            compute(type, nbLocalOperations, timeLocalOperations);
+                            compute(type, nbLocalOperations, timeLocalOperations);
                         }
                     }
 
@@ -612,9 +612,9 @@ public class Retwis {
 
                 timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
-                /*for (Key user : database.getLocalUsers().get()){
+                for (Key user : usersFollow.keySet()){
                     queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
-                }*/
+                }
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
@@ -658,7 +658,6 @@ public class Retwis {
             endTime= 0L;
             nbAttempt = -1;
 
-            nbLocalUsers = arrayLocalUsers.size();
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
 
             int typeComputed = type;
@@ -674,8 +673,8 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
 
-                int val = random.nextInt(nbLocalUsers);
-                userA = arrayLocalUsers.get(val);
+                int val = random.nextInt(localUsersProbabilityRange);
+                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
@@ -688,9 +687,9 @@ public class Retwis {
                         }
                         break;
                     case FOLLOW:
-                        n = random.nextInt(usersProbabilitySize); // We choose a user to follow according to a probability
-//                        userB = database.getLocalUsersProbability().get().get(n);
-                        userB = database.getUsersProbability().get(n);
+
+                        val = random.nextInt(usersProbabilityRange); // We choose a user to follow according to a probability
+                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
                         try{
                             if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed

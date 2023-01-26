@@ -19,7 +19,7 @@ public class PowerLawTest {
         listAlpha.add(1.39);
 
         for (double alpha : listAlpha){
-            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000000);
+            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
 
             int nbUsers = 1000000;
             double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
@@ -43,7 +43,7 @@ public class PowerLawTest {
             Collections.sort(data);
 
             for (int j = 1; j < 10; j++) {
-                System.out.println(data.get(data.size() - j));
+                System.out.println(data);
             }
             System.out.println();
             System.out.println("======= " + alpha + " =======");

@@ -12,7 +12,6 @@ import nl.peterbloem.powerlaws.DiscreteApproximate;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 public class Database {
@@ -27,18 +26,16 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
-    private final AtomicLong next_user_ID;
-    private final ThreadLocal<String> threadName;
-    private final List<Key> usersProbability;
-    private final List<Key> originalUsers;
-    private ThreadLocal<List<Key>> localUsersProbability;
-    private ThreadLocal<List<Key>> localUsers;
     private ThreadLocalRandom random;
-    private final int max_item_per_thread;
     private KeyGenerator keyGenerator;
     private boolean useCollisionKey;
+    private ConcurrentSkipListMap<Integer, Key> usersProbability;
+    private ThreadLocal<ConcurrentSkipListMap<Integer,Key>> localUsersProbability;
+    private Queue<Key> queueUsers;
+    private int usersProbabilityRange;
+    private ThreadLocal<Integer> localUsersProbabilityRange;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int max_item_per_thread) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsers) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.factory = new Factory();
         Class cls;
 
@@ -95,86 +92,91 @@ public class Database {
         mapFollowers = new ConcurrentHashMap<>();
         mapFollowing = factory.getMap();
         mapTimelines = new ConcurrentHashMap<>();
-        threadName = ThreadLocal.withInitial(() -> Thread.currentThread().getName());
-        usersProbability = new CopyOnWriteArrayList<>();
-        originalUsers = new CopyOnWriteArrayList<>();
-        localUsersProbability = ThreadLocal.withInitial(ArrayList::new);
-        localUsers = ThreadLocal.withInitial(ArrayList::new);
+        usersProbability = new ConcurrentSkipListMap<>();
+        localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
+        localUsersProbabilityRange = new ThreadLocal<>();
         random = null;
-        next_user_ID = new AtomicLong();
-        this.max_item_per_thread = max_item_per_thread;
         this.useCollisionKey = useCollisionKey;
+        this.queueUsers = new ConcurrentLinkedQueue<>();
 
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(nbUsers);
+        keyGenerator = new SimpleKeyGenerator(nbUsers);
+
+        int somme = 0;
+
+//        System.out.println("Adding users");
+
+        for (int i = 0; i < data.size(); i++) {
+            somme += data.get(i);
+            Key user = addUser();
+            queueUsers.offer(user);
+            usersProbability.put(somme, user);
+        }
+        usersProbabilityRange = somme;
     }
 
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocalRandom.current();
-        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread, nbUsers, alpha) : new SimpleKeyGenerator(max_item_per_thread);
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(nbUsers, nbUsers, alpha) : new SimpleKeyGenerator(nbUsers);
 
-        int n, userPerThread;
-        Key user, userB = null;
+        int userPerThread, somme = 0;
+        Key user, userB;
 
         //adding all users
 
 //        System.out.println("Adding users");
 
-//        userPerThread = 1;
         userPerThread = nbUsers / nbThread;
 
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(userPerThread);
+
         for (int id = 0; id < userPerThread; id++) {
-            user = addUser();
+            somme += data.get(id);
+            user = queueUsers.poll();
 
             usersFollow.put(user, new LinkedList<>());
 
-            localUsers.get().add(user);
-
-            try{
-
-                for (int j = 0; j <= user.hashCode(); j++) { // each user have an ID inferior to bound
-                    localUsersProbability.get().add(user);
-                }
-            }catch (OutOfMemoryError e){
-                System.out.println("user hash code : " + user.hashCode());
-                System.out.println();
-                System.out.println("array size : " + localUsersProbability.get().size());
-                System.out.println(e.getMessage());
-                System.exit(0);
-            }
-
+            localUsersProbability.get().put(somme, user);
         }
 
-//        usersProbability.addAll(localUsersProbability.get());
-        originalUsers.addAll(localUsers.get());
+        localUsersProbabilityRange.set(somme);
+
         latchDatabase.countDown();
         latchDatabase.await();
 
-//        System.out.println("Users added, now " + Thread.currentThread().getName() + " is starting to do the following phase");
-
         //Following phase
-        String msg = "msg";
 
-/*        for (Key userA: usersFollow.keySet()){
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        long max = (long) ((long) nbUsers * ratio);
 
-            for(int j = 0; j < userA.hashCode(); j++){
-//                n = random.nextInt(localUsersProbability.get().size());
-                n = random.nextInt(usersProbability.size());
-
-                try{
-//                    userB = localUsersProbability.get().get(n);
-                    userB = usersProbability.get(n);
-                }catch (NullPointerException e){
-                    System.exit(0);
-                }
-
-//                addUser();
-//                showTimeline(userA);
-//                tweet(userA, msg);
-                followUser(userA, userB);
-//                unfollowUser(userA, userB);
-//                usersFollow.get(userA).add(userB);
+        int i = 0;
+        for (int val: data){
+            if (val >= max) {
+                data.set(i, (int) max);
             }
-        }*/
+            if (val < 0)
+                data.set(i, 0);
+            i++;
+        }
+
+        i = 0;
+
+        int randVal;
+        Map.Entry<Integer, Key> k;
+
+        for (Key userA: usersFollow.keySet()){
+            int nbFollow = data.get(i);
+            for(int j = 0; j < nbFollow; j++){
+
+                randVal = random.nextInt(somme);
+                k = usersProbability.ceilingEntry(randVal);
+                userB = k.getValue();
+
+                followUser(userA, userB);
+            }
+            i++;
+        }
     }
 
     public Key addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
