@@ -738,9 +738,15 @@ public class Retwis {
                         if (_completionTime){
                             database.showTimeline(userA);
                         }else{
-                            startTime = System.nanoTime();
-                            database.showTimeline(userA);
-                            endTime = System.nanoTime();
+                            try{
+                                startTime = System.nanoTime();
+                                database.showTimeline(userA);
+                                endTime = System.nanoTime();
+                            }catch (NullPointerException e){
+                                System.out.println("userA : " + userA);
+                                System.exit(0);
+                            }
+
                         }
                         break;
                     default:
