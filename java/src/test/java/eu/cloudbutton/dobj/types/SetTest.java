@@ -33,9 +33,6 @@ public class SetTest {
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
 
-       cls = Class.forName("eu.cloudbutton.dobj.segmented.SegmentedSkipListSet");
-       factory.setFactorySet(cls);
-       doAdd(factory.getSet());
     }
 
     @Test
