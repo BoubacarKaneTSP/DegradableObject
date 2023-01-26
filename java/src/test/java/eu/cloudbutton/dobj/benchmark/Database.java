@@ -106,11 +106,15 @@ public class Database {
 
 //        System.out.println("Adding users");
 
-        for (int i = 0; i < data.size(); i++) {
-            somme += data.get(i);
+        for (int i = 0; i < data.size();) {
+
             Key user = addUser();
-            queueUsers.offer(user);
-            usersProbability.put(somme, user);
+            if (!queueUsers.contains(user)) {
+                queueUsers.offer(user);
+                somme += data.get(i);
+                usersProbability.put(somme, user);
+                i++;
+            }
         }
         usersProbabilityRange = somme;
     }
