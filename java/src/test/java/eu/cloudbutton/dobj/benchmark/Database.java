@@ -135,6 +135,13 @@ public class Database {
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(userPerThread);
 
+        int i = 0;
+        for (int val: data){
+            if (val < 0)
+                data.set(i, 1);
+            i++;
+        }
+
         for (int id = 0; id < userPerThread; id++) {
             somme += data.get(id);
             user = queueUsers.poll();
@@ -154,13 +161,11 @@ public class Database {
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
         long max = (long) ((long) nbUsers * ratio);
 
-        int i = 0;
+        i = 0;
         for (int val: data){
             if (val >= max) {
                 data.set(i, (int) max);
             }
-            if (val < 0)
-                data.set(i, 0);
             i++;
         }
 
