@@ -12,10 +12,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     private final AtomicInteger next;
 
     private final List<T> segments;
-    private final Class<T> clazz;
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
-        this.clazz = clazz;
         this.segments = new ArrayList<>(parallelism);
         for(int i = 0; i<parallelism; i++ ){
             try {
@@ -25,7 +23,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
             }
         }
         this.next = new AtomicInteger(0);
-        this.local = ThreadLocal.withInitial(() -> {return segments.get(next.getAndIncrement()%parallelism);});
+        this.local = ThreadLocal.withInitial(() -> segments.get(next.getAndIncrement()%parallelism));
     }
 
     @Override

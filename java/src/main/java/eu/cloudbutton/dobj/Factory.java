@@ -44,11 +44,14 @@ public class Factory {
     public void setFactoryMap(Class<? extends AbstractMap> mapClass) throws NoSuchMethodException {
         constructorMap = mapClass.getConstructor();
     }
+    public void setFactoryMap(Class<? extends AbstractMap> mapClass, int parallelism) throws NoSuchMethodException {
+        constructorMap = mapClass.getDeclaredConstructor();
+    }
     public void setFactoryCounter(Class<? extends Counter> counterClass) throws NoSuchMethodException {
         constructorCounter = counterClass.getConstructor();
     }
     public void setFactorySet(Class<? extends AbstractSet> setClass) throws NoSuchMethodException{
-        constructorSet = setClass.getConstructor();
+        constructorSet = setClass.getDeclaredConstructor();
     }
     public void setFactoryList(Class<? extends AbstractList> listClass) throws NoSuchMethodException{
         constructorList = listClass.getConstructor();

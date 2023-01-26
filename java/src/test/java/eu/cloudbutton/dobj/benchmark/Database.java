@@ -20,7 +20,6 @@ public class Database {
     private final String typeSet;
     private final String typeQueue;
     private final String typeCounter;
-    private final Factory factory;
     private final double alpha;
     private final int nbThread;
     private final Map<Key, Set<Key>> mapFollowers;
@@ -35,57 +34,7 @@ public class Database {
     private int usersProbabilityRange;
     private ThreadLocal<Integer> localUsersProbabilityRange;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsers) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        this.factory = new Factory();
-        Class cls;
-
-        try{
-            cls = Class.forName("eu.cloudbutton.dobj.incrementonly."+typeCounter);
-        }catch (ClassNotFoundException e){
-            if (typeCounter.contains("Sharded"))
-                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeCounter);
-            else
-                cls = Class.forName("java.util.concurrent."+typeCounter);
-        }
-
-        factory.setFactoryCounter(cls);
-
-        try{
-            cls = Class.forName("eu.cloudbutton.dobj.mcwmcr."+typeSet);
-        }catch (ClassNotFoundException e){
-            if (typeSet.contains("Sharded"))
-                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeSet);
-            else if (typeSet.contains("Segmented"))
-                cls = Class.forName("eu.cloudbutton.dobj.segmented."+typeSet);
-            else
-                cls = Class.forName("java.util.concurrent."+typeSet);
-        }
-
-        factory.setFactorySet(cls);
-
-        try{
-            cls = Class.forName("eu.cloudbutton.dobj.asymmetric."+typeQueue);
-        }catch (ClassNotFoundException e){
-            if (typeQueue.contains("Sharded"))
-                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeQueue);
-            else
-                cls = Class.forName("java.util.concurrent."+typeQueue);
-        }
-
-        factory.setFactoryQueue(cls);
-
-        try{
-            cls = Class.forName("eu.cloudbutton.dobj.mcwmcr."+typeMap);
-        }catch (ClassNotFoundException e){
-            if (typeMap.contains("Sharded"))
-                cls = Class.forName("eu.cloudbutton.dobj.sharded."+typeMap);
-            else if (typeMap.contains("Segmented"))
-                cls = Class.forName("eu.cloudbutton.dobj.segmented."+typeMap);
-            else
-                cls = Class.forName("java.util.concurrent."+typeMap);
-        }
-
-        factory.setFactoryMap(cls);
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsers) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -94,7 +43,7 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         mapFollowers = new ConcurrentHashMap<>();
-        mapFollowing = factory.getMap();
+        mapFollowing = Factory.createMap(typeMap, nbThread);
         mapTimelines = new ConcurrentHashMap<>();
         usersProbability = new ConcurrentSkipListMap<>();
         localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
@@ -192,12 +141,12 @@ public class Database {
         }
     }
 
-    public Key addUser() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Key addUser() throws ClassNotFoundException {
 
         Key userID = keyGenerator.nextKey();
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
-        mapTimelines.put(userID, new Timeline(factory.getQueue()));
+        mapTimelines.put(userID, new Timeline(Factory.createQueue(typeQueue)));
         mapFollowing.put(userID, new HashSet<>());
 
         return userID;
