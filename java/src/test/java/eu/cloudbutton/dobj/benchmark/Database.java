@@ -33,6 +33,7 @@ public class Database {
     private Queue<Key> queueUsers;
     private int usersProbabilityRange;
     private ThreadLocal<Integer> localUsersProbabilityRange;
+    private List<Integer> powerlawArray;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsersInit, int nbUserMax) throws ClassNotFoundException{
 
@@ -52,19 +53,19 @@ public class Database {
         this.useCollisionKey = useCollisionKey;
         this.queueUsers = new ConcurrentLinkedQueue<>();
 
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(nbUsersInit);
+        powerlawArray = new DiscreteApproximate(1, alpha).generate(nbUsersInit);
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
         int somme = 0;
 
 //        System.out.println("Adding users");
 
-        for (int i = 0; i < data.size();) {
+        for (int i = 0; i < powerlawArray.size();) {
 
             Key user = addUser();
             if (!queueUsers.contains(user)) {
                 queueUsers.offer(user);
-                somme += data.get(i);
+                somme += powerlawArray.get(i);
                 usersProbability.put(somme, user);
                 i++;
             }
@@ -127,7 +128,7 @@ public class Database {
 
         System.out.println("data : " + data);
         for (Key userA: usersFollow.keySet()){
-            int nbFollow = data.get(i);
+            int nbFollow = powerlawArray.get(random.nextInt(nbUsers));
             for(int j = 0; j < nbFollow; j++){
 
                 randVal = random.nextInt(usersProbabilityRange);
