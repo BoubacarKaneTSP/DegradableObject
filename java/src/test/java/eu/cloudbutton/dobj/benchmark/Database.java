@@ -103,8 +103,8 @@ public class Database {
             localUsersProbability.get().put(somme, user);
         }
 
-        if (somme<0){
-            System.out.println("data : " + data);
+        System.out.println("data : " + data);
+        if (somme<=0){
             System.exit(0);
         }
         localUsersProbabilityRange.set(somme);
