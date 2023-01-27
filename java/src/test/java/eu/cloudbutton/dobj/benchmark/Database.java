@@ -59,12 +59,15 @@ public class Database {
 
 //        System.out.println("Adding users");
 
-        for (int i = 0; i < data.size(); i++) {
+        for (int i = 0; i < data.size();) {
 
             Key user = addUser();
-            queueUsers.offer(user);
-            somme += data.get(i);
-            usersProbability.put(somme, user);
+            if (!queueUsers.contains(user)) {
+                queueUsers.offer(user);
+                somme += data.get(i);
+                usersProbability.put(somme, user);
+                i++;
+            }
         }
         usersProbabilityRange = somme;
     }
@@ -141,14 +144,12 @@ public class Database {
 
         Key userID;
 
-        do {
-            userID = keyGenerator.nextKey();
-        } while (mapFollowers.containsKey(userID));
-
-        mapFollowers.put(userID, new ConcurrentSkipListSet<>());
-        mapTimelines.put(userID, new Timeline(Factory.createQueue(typeQueue)));
-        mapFollowing.put(userID, new HashSet<>());
-
+        userID = keyGenerator.nextKey();
+        if (!mapFollowers.containsKey(userID)) {
+            mapFollowers.put(userID, new ConcurrentSkipListSet<>());
+            mapTimelines.put(userID, new Timeline(Factory.createQueue(typeQueue)));
+            mapFollowing.put(userID, new HashSet<>());
+        }
         return userID;
     }
 
