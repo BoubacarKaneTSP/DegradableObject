@@ -87,8 +87,6 @@ public class Database {
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(userPerThread);
 
-        System.out.println("data : " + data);
-
         int i = 0;
         for (int val: data){
             if (val < 0)
@@ -112,8 +110,7 @@ public class Database {
 
         //Following phase
 
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) nbUsers * ratio);
+        long max = nbUsers;
 
         i = 0;
         for (int val: data){
