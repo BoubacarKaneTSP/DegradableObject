@@ -77,7 +77,7 @@ public class Database {
         random = ThreadLocalRandom.current();
 
         int userPerThread, somme = 0;
-        Key user, userB;
+        Key user, userB = null;
 
         //adding all users
 
@@ -132,8 +132,13 @@ public class Database {
 
                 randVal = random.nextInt(somme);
                 k = usersProbability.ceilingEntry(randVal);
-                userB = k.getValue();
-
+                try{
+                    userB = k.getValue();
+                }catch (NullPointerException e){
+                    System.out.println("somme : " + somme);
+                    System.out.println("usersProbability : " + usersProbability);
+                    System.exit(0);
+                }
                 followUser(userA, userB);
             }
             i++;
