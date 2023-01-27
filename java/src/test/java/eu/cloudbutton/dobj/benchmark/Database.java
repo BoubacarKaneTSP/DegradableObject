@@ -103,10 +103,6 @@ public class Database {
             localUsersProbability.get().put(somme, user);
         }
 
-        System.out.println("data : " + data);
-        if (somme<=0){
-            System.exit(0);
-        }
         localUsersProbabilityRange.set(somme);
 
         latchDatabase.countDown();
