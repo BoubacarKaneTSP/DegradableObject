@@ -130,7 +130,7 @@ public class Database {
             int nbFollow = data.get(i);
             for(int j = 0; j < nbFollow; j++){
 
-                randVal = random.nextInt(somme);
+                randVal = random.nextInt(usersProbabilityRange);
                 k = usersProbability.ceilingEntry(randVal);
                 try{
                     userB = k.getValue();
