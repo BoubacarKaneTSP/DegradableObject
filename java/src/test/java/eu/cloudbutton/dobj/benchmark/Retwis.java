@@ -308,7 +308,7 @@ public class Retwis {
 
                         for(Key user: database.getUsersProbability().values()){
                             Set followers = database.getMapFollowers().get(user);
-                            System.out.println(database.getMapFollowers().get(user));
+                            System.out.println(database.getMapFollowing().get(user));
                             nbFollower = followers.size();
                             if (nbFollower > maxFollower) {
                                 maxFollower = nbFollower;
