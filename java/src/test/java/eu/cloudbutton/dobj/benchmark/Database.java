@@ -59,15 +59,12 @@ public class Database {
 
 //        System.out.println("Adding users");
 
-        for (int i = 0; i < data.size();) {
+        for (int i = 0; i < data.size(); i++) {
 
             Key user = addUser();
-            if (!queueUsers.contains(user)) {
-                queueUsers.offer(user);
-                somme += data.get(i);
-                usersProbability.put(somme, user);
-                i++;
-            }
+            queueUsers.offer(user);
+            somme += data.get(i);
+            usersProbability.put(somme, user);
         }
         usersProbabilityRange = somme;
     }
@@ -142,7 +139,11 @@ public class Database {
 
     public Key addUser() throws ClassNotFoundException {
 
-        Key userID = keyGenerator.nextKey();
+        Key userID;
+
+        do {
+            userID = keyGenerator.nextKey();
+        } while (mapFollowers.containsKey(userID));
 
         mapFollowers.put(userID, new ConcurrentSkipListSet<>());
         mapTimelines.put(userID, new Timeline(Factory.createQueue(typeQueue)));
