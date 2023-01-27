@@ -126,6 +126,7 @@ public class Database {
         int randVal;
         Map.Entry<Integer, Key> k;
 
+        System.out.println("data : " + data);
         for (Key userA: usersFollow.keySet()){
             int nbFollow = data.get(i);
             for(int j = 0; j < nbFollow; j++){
