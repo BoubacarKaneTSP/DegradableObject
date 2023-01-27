@@ -87,6 +87,8 @@ public class Database {
 
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(userPerThread);
 
+        System.out.println("data : " + data);
+
         int i = 0;
         for (int val: data){
             if (val < 0)
@@ -126,7 +128,6 @@ public class Database {
         int randVal;
         Map.Entry<Integer, Key> k;
 
-        System.out.println("data : " + data);
         for (Key userA: usersFollow.keySet()){
             int nbFollow = data.get(i);
             for(int j = 0; j < nbFollow; j++){
