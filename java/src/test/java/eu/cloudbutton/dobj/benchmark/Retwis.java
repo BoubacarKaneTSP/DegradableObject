@@ -2,15 +2,11 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
-import eu.cloudbutton.dobj.key.KeyGenerator;
-import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
-import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
-import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -307,7 +303,7 @@ public class Retwis {
                                 userWithoutFollower = 0;
 
                         for(Key user: database.getUsersProbability().values()){
-                            Set followers = database.getMapFollowers().get(user);
+                            Set<Key> followers = database.getMapFollowers().get(user);
 
 
 
@@ -324,7 +320,7 @@ public class Retwis {
                             nbFollowerTotal += nbFollower;
                         }
                         for(Key user: database.getUsersProbability().values()){
-                            Set followers = database.getMapFollowers().get(user);
+                            Set<Key> followers = database.getMapFollowers().get(user);
                             nbFollower = followers.size();
 
                             if (nbFollower>= maxFollower*0.9)
