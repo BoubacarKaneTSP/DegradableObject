@@ -125,20 +125,14 @@ public class Database {
         int randVal;
         Map.Entry<Integer, Key> k;
 
-        System.out.println("data : " + data);
         for (Key userA: usersFollow.keySet()){
             int nbFollow = data.get(i);
             for(int j = 0; j < nbFollow; j++){
 
                 randVal = random.nextInt(usersProbabilityRange);
                 k = usersProbability.ceilingEntry(randVal);
-                try{
-                    userB = k.getValue();
-                }catch (NullPointerException e){
-                    System.out.println("somme : " + somme);
-                    System.out.println("usersProbability : " + usersProbability);
-                    System.exit(0);
-                }
+                userB = k.getValue();
+
                 followUser(userA, userB);
             }
             i++;
