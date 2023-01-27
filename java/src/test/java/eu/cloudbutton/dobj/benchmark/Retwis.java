@@ -283,6 +283,9 @@ public class Retwis {
                     }
 
                     endTime = System.nanoTime();
+
+                    TimeUnit.SECONDS.sleep(1);
+
                     benchmarkAvgTime += endTime - startTime;
                     timeTotal = endTime - startTime;
 
@@ -294,7 +297,6 @@ public class Retwis {
                     if(_p)
                         System.out.println(" ==> End of test num : " + nbCurrTest);
 
-                    TimeUnit.SECONDS.sleep(1);
 
                     if (_breakdown){
 
@@ -542,7 +544,8 @@ public class Retwis {
         private Integer localUsersProbabilityRange;
         private int nbRepeat = 1000;
         private final String msg = "new msg";
-        int n, nbLocalUsers, nbAttempt;
+        int nbLocalUsers;
+        int nbAttempt;
         Key userB, userA;
 	    long startTime, endTime;
         Map<Integer, BoxedLong> nbLocalOperations;
