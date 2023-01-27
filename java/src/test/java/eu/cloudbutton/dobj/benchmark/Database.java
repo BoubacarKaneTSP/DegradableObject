@@ -34,7 +34,7 @@ public class Database {
     private int usersProbabilityRange;
     private ThreadLocal<Integer> localUsersProbabilityRange;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsers) throws ClassNotFoundException{
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsersInit, int nbUserMax) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -52,8 +52,8 @@ public class Database {
         this.useCollisionKey = useCollisionKey;
         this.queueUsers = new ConcurrentLinkedQueue<>();
 
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(nbUsers);
-        keyGenerator = new SimpleKeyGenerator(nbUsers);
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(nbUsersInit);
+        keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
         int somme = 0;
 
@@ -75,7 +75,6 @@ public class Database {
     public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocalRandom.current();
-        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(nbUsers, nbUsers, alpha) : new SimpleKeyGenerator(nbUsers);
 
         int userPerThread, somme = 0;
         Key user, userB;
