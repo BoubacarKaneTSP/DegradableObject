@@ -624,7 +624,6 @@ public class Retwis {
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
                 }
 
-                System.out.println("Done computing the nbOp and timeOp");
             } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException | NoSuchMethodException | OutOfMemoryError e) {
                 e.printStackTrace();
             }
