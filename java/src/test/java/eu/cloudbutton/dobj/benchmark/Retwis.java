@@ -762,7 +762,7 @@ public class Retwis {
 
                 if ((endTime - startTime) < 0) {
                     System.out.println(typeComputed);
-                    System.out.println("time = " + (endTime - startTime));
+                    System.out.println("time = " + (endTime - startTime) + " => ( "+endTime+" - "+startTime+" )\n");
                 }
                 if (!flagWarmingUp.get() && !_completionTime) {
                     nbOps.get(typeComputed).val += 1;
