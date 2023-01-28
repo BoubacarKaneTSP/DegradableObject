@@ -60,6 +60,7 @@ public class Database {
 
 //        System.out.println("Adding users");
 
+        System.out.println("poweerlaw array : " + powerlawArray +"\n");
         for (int i = 0; i < powerlawArray.size();) {
 
             Key user = addUser();
@@ -126,8 +127,7 @@ public class Database {
         int randVal;
         Map.Entry<Integer, Key> k;
 
-        System.out.println("data ("+Thread.currentThread().getName()+") : " + data);
-        System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet());
+        System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet()+"\n");
         for (Key userA: usersFollow.keySet()){
             int nbFollow = powerlawArray.get(random.nextInt(nbUsers));
             for(int j = 0; j < nbFollow; j++){
@@ -140,7 +140,7 @@ public class Database {
             }
             i++;
         }
-        System.out.println("done("+Thread.currentThread().getName()+")");
+        System.out.println("done("+Thread.currentThread().getName()+")"+"\n");
     }
 
     public Key addUser() throws ClassNotFoundException {
