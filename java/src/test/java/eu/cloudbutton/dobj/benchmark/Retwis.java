@@ -709,7 +709,13 @@ public class Retwis {
                                 database.followUser(userA, userB);
                             }else {
                                 startTime = System.nanoTime();
-                                database.followUser(userA, userB);
+                                try{
+                                    database.followUser(userA, userB);
+                                }catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                    System.out.println(userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
+                                    System.out.println(userA + " (userA) map following : " + database.getMapFollowing().get(userA));
+                                }
                                 endTime = System.nanoTime();
                             }
                             listFollow.add(userB);
@@ -724,10 +730,16 @@ public class Retwis {
                                 database.unfollowUser(userA, userB);
                             }else{
                                 startTime = System.nanoTime();
-                                database.unfollowUser(userA, userB);
+                                try{
+                                    database.unfollowUser(userA, userB);
+                                }catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                    System.out.println(userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
+                                    System.out.println(userA + " (userA) map following : " + database.getMapFollowing().get(userA));
+                                }
                                 endTime = System.nanoTime();
                             }
-                        }else
+                            }else
                             continue restartOperation;
                         break;
                     case TWEET:
