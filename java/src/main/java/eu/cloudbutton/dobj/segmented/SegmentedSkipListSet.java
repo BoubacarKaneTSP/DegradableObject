@@ -17,12 +17,28 @@ public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentat
 
     @Override
     public boolean add(E e) {
-        return segmentFor(e).add(e);
+        boolean b = false;
+        try{
+            b = segmentFor(e).add(e);
+        }catch (NullPointerException ex){
+            ex.printStackTrace();
+            System.out.println("Failed to add : " + e);
+            System.exit(0);
+        }
+        return b;
     }
 
     @Override
     public boolean remove(Object o) {
-        return segmentFor(o).remove(o);
+        boolean b = false;
+        try{
+            b = segmentFor(o).remove(o);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.println("Failed to remove : " + o);
+            System.exit(0);
+        }
+        return b;
     }
 
     @NotNull
