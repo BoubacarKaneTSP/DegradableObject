@@ -28,7 +28,19 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public final T segmentFor(Object x) {
-        return local.get();
+        T segment = null;
+        
+        try{
+            segment = local.get();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.println("Failed to get a segment for " + e);
+            System.exit(0);
+        }
+        
+        
+        
+        return segment;
     }
 
     @Override
