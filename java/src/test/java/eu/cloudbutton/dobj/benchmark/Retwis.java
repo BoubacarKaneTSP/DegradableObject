@@ -717,7 +717,7 @@ public class Retwis {
                             }else
                                 continue restartOperation;
                         }catch (NullPointerException e){
-//                        System.out.println(userA + " may not have a list of follow (Follow method)");
+                        System.out.println(userA + " may not have a list of follow (Follow method)");
 //                        Make a "debug mode" to specify when a process doesn't handle userA
                         }
                         break;
@@ -735,7 +735,7 @@ public class Retwis {
                             }else
                                 continue restartOperation;
                         }catch (NullPointerException e){
-//                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
+                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
                         }
                         break;
                     case TWEET:
