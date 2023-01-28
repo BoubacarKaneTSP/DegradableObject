@@ -6,6 +6,7 @@ import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
+import nl.peterbloem.powerlaws.Discrete;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 import nl.peterbloem.powerlaws.PowerLaws;
 
@@ -54,7 +55,7 @@ public class Database {
         this.queueUsers = new ConcurrentLinkedQueue<>();
 
         System.out.println("nb User init : "+nbUsersInit);
-        powerlawArray = new DiscreteApproximate(1, alpha).generate(nbUsersInit);
+        powerlawArray = new Discrete(1, alpha).generate(nbUsersInit);
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
         int somme = 0;
