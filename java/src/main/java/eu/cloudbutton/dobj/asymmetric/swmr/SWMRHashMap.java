@@ -90,4 +90,9 @@ public class SWMRHashMap<K, V> implements Map<K,V> {
         return null;
     }
 
+    @Override
+    public String toString(){
+        return m.toString();
+    }
+
 }
