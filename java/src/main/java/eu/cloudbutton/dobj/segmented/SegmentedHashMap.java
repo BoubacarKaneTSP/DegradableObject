@@ -63,11 +63,9 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
         }
 
         if (v == null) {
-            System.out.println("V est nul");
-            System.out.println("segments : ");
-            for(SWMRHashMap m: segments()){
-                System.out.println(m);
-            }
+            System.out.println("trying to get : " + o );
+            System.out.println("segments : " + segments());
+
             System.exit(0);
         }
         return v;
