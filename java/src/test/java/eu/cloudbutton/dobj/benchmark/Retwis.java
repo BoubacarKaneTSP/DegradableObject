@@ -713,8 +713,8 @@ public class Retwis {
                                     database.followUser(userA, userB);
                                 }catch (NullPointerException e) {
                                     e.printStackTrace();
-                                    System.out.println(userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
-                                    System.out.println(userA + " (userA) map following : " + database.getMapFollowing().get(userA));
+                                    System.out.println("Trying to add " + userA + " (userA) to "+ userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
+                                    System.out.println("Trying to add " + userB + " (userB) to "+ userA + " (userA) map following : " + database.getMapFollowing().get(userA));
                                     System.exit(0);
                                 }
                                 endTime = System.nanoTime();
@@ -735,8 +735,8 @@ public class Retwis {
                                     database.unfollowUser(userA, userB);
                                 }catch (NullPointerException e) {
                                     e.printStackTrace();
-                                    System.out.println(userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
-                                    System.out.println(userA + " (userA) map following : " + database.getMapFollowing().get(userA));
+                                    System.out.println("Trying to remove " + userA + " (userA) from "+ userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
+                                    System.out.println("Trying to remove " + userB + " (userB) from "+ userA + " (userA) map following : " + database.getMapFollowing().get(userA));
                                     System.exit(0);
                                 }
                                 endTime = System.nanoTime();
