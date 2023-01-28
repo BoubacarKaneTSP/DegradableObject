@@ -51,10 +51,21 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
     @Override
     public V get(Object o) {
         V v = null;
-        for(SWMRHashMap m: segments()){
-            v = (V) m.get(o);
-            if (v!=null) break;;
+        try{
+            for(SWMRHashMap m: segments()){
+                v = (V) m.get(o);
+                if (v!=null) break;;
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.println("NullPointerException in map.get()");
+            System.exit(0);
         }
+
+        if (v == null)
+            System.out.println(
+                    "V est nul"
+            );
         return v;
     }
 
