@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
-import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
@@ -129,7 +128,7 @@ public class Database {
 
         System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet()+"\n");
         for (Key userA: usersFollow.keySet()){
-            int nbFollow = powerlawArray.get(random.nextInt(nbUsers));
+            int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
             for(int j = 0; j < nbFollow; j++){
 
                 randVal = random.nextInt(usersProbabilityRange);
