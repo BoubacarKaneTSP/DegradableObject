@@ -760,6 +760,10 @@ public class Retwis {
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
+                if ((endTime - startTime) < 0) {
+                    System.out.println(typeComputed);
+                    System.out.println("time = " + (endTime - startTime));
+                }
                 if (!flagWarmingUp.get() && !_completionTime) {
                     nbOps.get(typeComputed).val += 1;
                     timeOps.get(typeComputed).val+= endTime - startTime;
