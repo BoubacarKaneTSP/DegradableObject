@@ -29,7 +29,6 @@ public class Database {
     private final Map<Key, Timeline<String>> mapTimelines;
     private ThreadLocalRandom random;
     private KeyGenerator keyGenerator;
-    private boolean useCollisionKey;
     private ConcurrentSkipListMap<Integer, Key> usersProbability;
     private ThreadLocal<ConcurrentSkipListMap<Integer,Key>> localUsersProbability;
     private Queue<Key> queueUsers;
@@ -37,7 +36,7 @@ public class Database {
     private ThreadLocal<Integer> localUsersProbabilityRange;
     private List<Integer> powerlawArray;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, boolean useCollisionKey, int nbUsersInit, int nbUserMax) throws ClassNotFoundException{
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUsersInit, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -52,25 +51,23 @@ public class Database {
         localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersProbabilityRange = new ThreadLocal<>();
         random = null;
-        this.useCollisionKey = useCollisionKey;
         this.queueUsers = new ConcurrentLinkedQueue<>();
 
         System.out.println("nb User init : "+nbUsersInit);
-        System.out.println("powerlaw array : " + new Continuous(1, alpha).generate(nbUsersInit) +"\n");
-        powerlawArray = new Discrete(1, alpha).generate(nbUsersInit);
+        this.powerlawArray = powerlawArray;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
         int somme = 0;
 
 //        System.out.println("Adding users");
 
-//        System.out.println("powerlaw array : " + powerlawArray +"\n");
-        for (int i = 0; i < powerlawArray.size();) {
+        System.out.println("powerlaw array : " + powerlawArray +"\n");
+        for (int i = 0; i < this.powerlawArray.size();) {
 
             Key user = addUser();
             if (!queueUsers.contains(user)) {
                 queueUsers.offer(user);
-                somme += powerlawArray.get(i);
+                somme += this.powerlawArray.get(i);
                 usersProbability.put(somme, user);
                 i++;
             }

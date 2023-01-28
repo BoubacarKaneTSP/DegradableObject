@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
+import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -191,6 +192,10 @@ public class Retwis {
             listAlpha.add(i);
         }
 
+        NB_USERS = (int) _nbOps;
+
+        List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(NB_USERS);
+
         for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
 
             if (_gcinfo)
@@ -204,7 +209,7 @@ public class Retwis {
             allNbMaxFollower = new ArrayList();
             allNbUserWithMaxFollower = new ArrayList();
             allNbUserWithoutFollower = new ArrayList();
-            NB_USERS = (int) _nbOps;
+
 //            NB_USERS = nbCurrThread;
 
             if (_p){
@@ -241,7 +246,7 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, _collisionKey, NB_USERS,_nbItems);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, NB_USERS,_nbItems, powerLawArray);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
