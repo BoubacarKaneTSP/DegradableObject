@@ -313,7 +313,7 @@ public class Retwis {
 
 
 
-                            System.out.println(database.getMapFollowing().get(user));
+                            System.out.println(user + " : " + database.getMapFollowing().get(user));
 
 
 
