@@ -715,6 +715,7 @@ public class Retwis {
                                     e.printStackTrace();
                                     System.out.println(userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
                                     System.out.println(userA + " (userA) map following : " + database.getMapFollowing().get(userA));
+                                    System.exit(0);
                                 }
                                 endTime = System.nanoTime();
                             }
@@ -736,6 +737,7 @@ public class Retwis {
                                     e.printStackTrace();
                                     System.out.println(userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
                                     System.out.println(userA + " (userA) map following : " + database.getMapFollowing().get(userA));
+                                    System.exit(0);
                                 }
                                 endTime = System.nanoTime();
                             }
