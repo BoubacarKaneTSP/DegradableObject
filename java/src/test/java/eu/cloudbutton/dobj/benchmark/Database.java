@@ -139,6 +139,7 @@ public class Database {
             }
             i++;
         }
+        System.out.println("done");
     }
 
     public Key addUser() throws ClassNotFoundException {
