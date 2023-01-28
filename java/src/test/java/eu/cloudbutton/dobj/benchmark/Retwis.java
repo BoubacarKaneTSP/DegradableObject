@@ -704,39 +704,31 @@ public class Retwis {
                         val = random.nextInt(usersProbabilityRange); // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
-                        try{
-                            if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
-                                if (_completionTime){
-                                    database.followUser(userA, userB);
-                                }else {
-                                    startTime = System.nanoTime();
-//                                    database.followUser(userA, userB);
-                                    endTime = System.nanoTime();
-                                }
-                                listFollow.add(userB);
-                            }else
-                                continue restartOperation;
-                        }catch (NullPointerException e){
-                        System.out.println(userA + " may not have a list of follow (Follow method)");
-//                        Make a "debug mode" to specify when a process doesn't handle userA
-                        }
+                        if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
+                            if (_completionTime){
+                                database.followUser(userA, userB);
+                            }else {
+                                startTime = System.nanoTime();
+                                database.followUser(userA, userB);
+                                endTime = System.nanoTime();
+                            }
+                            listFollow.add(userB);
+                        }else
+                            continue restartOperation;
+
                         break;
                     case UNFOLLOW:
-                        try{
-                            userB = listFollow.poll();
-                            if (userB != null){ // Perform unfollow only if userA already follow someone
-                                if (_completionTime){
-                                    database.unfollowUser(userA, userB);
-                                }else{
-                                    startTime = System.nanoTime();
-//                                    database.unfollowUser(userA, userB);
-                                    endTime = System.nanoTime();
-                                }
-                            }else
-                                continue restartOperation;
-                        }catch (NullPointerException e){
-                        System.out.println(userA + " may not have a list of follow (Unfollow method)");
-                        }
+                        userB = listFollow.poll();
+                        if (userB != null){ // Perform unfollow only if userA already follow someone
+                            if (_completionTime){
+                                database.unfollowUser(userA, userB);
+                            }else{
+                                startTime = System.nanoTime();
+                                database.unfollowUser(userA, userB);
+                                endTime = System.nanoTime();
+                            }
+                        }else
+                            continue restartOperation;
                         break;
                     case TWEET:
                         if (_completionTime){
