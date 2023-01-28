@@ -710,7 +710,7 @@ public class Retwis {
                                     database.followUser(userA, userB);
                                 }else {
                                     startTime = System.nanoTime();
-                                    database.followUser(userA, userB);
+//                                    database.followUser(userA, userB);
                                     endTime = System.nanoTime();
                                 }
                                 listFollow.add(userB);
@@ -729,7 +729,7 @@ public class Retwis {
                                     database.unfollowUser(userA, userB);
                                 }else{
                                     startTime = System.nanoTime();
-                                    database.unfollowUser(userA, userB);
+//                                    database.unfollowUser(userA, userB);
                                     endTime = System.nanoTime();
                                 }
                             }else
