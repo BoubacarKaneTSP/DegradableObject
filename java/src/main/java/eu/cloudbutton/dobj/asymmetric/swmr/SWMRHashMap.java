@@ -69,13 +69,13 @@ public class SWMRHashMap<K, V> implements Map<K,V> {
 
     @Override
     public void clear() {
-
+        m.clear();
     }
 
     @NotNull
     @Override
     public Set<K> keySet() {
-        return null;
+        return m.keySet();
     }
 
     @NotNull

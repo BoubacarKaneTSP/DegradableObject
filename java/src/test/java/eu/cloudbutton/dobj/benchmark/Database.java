@@ -106,6 +106,7 @@ public class Database {
             localUsersProbability.get().put(somme, user);
         }
 
+        System.out.println("Local users from thread " + Thread.currentThread().getName() + " : " + localUsersProbability.get().values() + "\n");
         localUsersProbabilityRange.set(somme);
 
         latchDatabase.countDown();

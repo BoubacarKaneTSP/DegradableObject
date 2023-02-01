@@ -2,12 +2,14 @@ package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
@@ -48,27 +50,37 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
         return false;
     }
 
+    @SneakyThrows
     @Override
     public V get(Object o) {
         V v = null;
-        try{
-            for(SWMRHashMap m: segments()){
+
+        for(SWMRHashMap m: segments()){
+            if (m.containsKey(o)){
                 v = (V) m.get(o);
-                if (v!=null) break;;
+                return v;
             }
-        }catch (NullPointerException e){
-            e.printStackTrace();
-            System.out.println("NullPointerException in map.get()");
-            System.exit(0);
         }
 
         if (v == null) {
-            System.out.println("trying to get : " + o );
-            System.out.println("segments : " + segments());
-
+            TimeUnit.SECONDS.sleep(10);
+            for(SWMRHashMap<K,V> m: segments()){
+                System.out.println("v = " + m.get(o));
+                v = m.get(o);
+                if (v!=null) break;
+            }
+            System.out.println();
+            System.out.println("Thread " + Thread.currentThread().getName() + " is trying to get : " + o );
+            System.out.println("value associated with " + o + " : " + v);
+            for(SWMRHashMap<K,V> m: segments()){
+                System.out.println(m.keySet());
+                System.out.println(m.containsKey(o));
+                System.out.println(m.get(o));
+                System.out.println();
+            }
             System.exit(0);
         }
-        return v;
+        return null;
     }
 
     @Nullable

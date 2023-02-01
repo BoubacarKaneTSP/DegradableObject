@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
-import eu.cloudbutton.dobj.key.Key;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;

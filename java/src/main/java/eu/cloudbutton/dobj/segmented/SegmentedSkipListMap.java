@@ -1,13 +1,16 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap;
 import eu.cloudbutton.dobj.swsr.SWSRSkipListMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap> implements Map<K,V> {
 
@@ -48,12 +51,32 @@ public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap>
         return false;
     }
 
+    @SneakyThrows
     @Override
     public V get(Object o) {
         V v = null;
         for(SWSRSkipListMap m: segments()){
             v = (V) m.get(o);
-            if (v!=null) break;;
+            if (v!=null) break;
+        }
+
+        if (v == null) {
+            TimeUnit.SECONDS.sleep(10);
+            for(SWSRSkipListMap m: segments()){
+                System.out.println("v = " + m.get(o));
+                v = (V) m.get(o);
+                if (v!=null) break;
+            }
+            System.out.println();
+            System.out.println("Thread " + Thread.currentThread().getName() + " is trying to get : " + o );
+            System.out.println("value associated with " + o + " : " + v);
+            for(SWSRSkipListMap m: segments()){
+                System.out.println(m.keySet());
+                System.out.println(m.containsKey(o));
+                System.out.println(m.get(o));
+                System.out.println();
+            }
+            System.exit(0);
         }
         return v;
     }

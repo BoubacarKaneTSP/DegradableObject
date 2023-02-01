@@ -3,10 +3,7 @@ package eu.cloudbutton.dobj;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.asymmetric.SetMWSR;
-import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
-import eu.cloudbutton.dobj.incrementonly.CounterJUC;
-import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
+import eu.cloudbutton.dobj.incrementonly.*;
 import eu.cloudbutton.dobj.list.DegradableLinkedList;
 import eu.cloudbutton.dobj.list.DegradableList;
 import eu.cloudbutton.dobj.list.LinkedList;
@@ -78,7 +75,7 @@ public class Factory {
 
     public static Object createObject(String object, int parallelism) throws ClassNotFoundException{
 
-        if (object.contains("Counter"))
+        if (object.contains("Counter") || object.contains("LongAdder"))
             return createCounter(object);
         else if (object.contains("Set"))
             return createSet(object, parallelism);
@@ -118,6 +115,8 @@ public class Factory {
                 return new CounterIncrementOnly();
             case "FuzzyCounter":
                 return new FuzzyCounter();
+            case "LongAdder":
+                return new WrappedLongAdder();
             default:
                 throw new ClassNotFoundException();
         }
