@@ -24,7 +24,6 @@ public class QueueTester extends Tester<Queue> {
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.offer(rand);
-                    object.poll();
                 }
                 endTime = System.nanoTime();
                 break;
