@@ -692,10 +692,10 @@ public class Retwis {
                 switch (typeComputed){
                     case ADD:
                         if (_completionTime){
-                            database.addUser();
+                            database.addUser(database.generateUser());
                         }else{
                             startTime = System.nanoTime();
-                            database.addUser();
+                            database.addUser(database.generateUser());
                             endTime = System.nanoTime();
                         }
                         break;

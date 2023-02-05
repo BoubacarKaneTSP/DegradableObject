@@ -49,27 +49,26 @@ public class SWMRHashMap<K, V> implements Map<K,V> {
         return this.m.get(key);
     }
 
-    public V put(K key, V value) {
+    public V put(K key, V value){
+        UNSAFE.fullFence();
         V r = this.m.put(key, value);
-        UNSAFE.storeFence();
+        UNSAFE.fullFence();
         return r;
     }
 
     @Override
     public V remove(Object o) {
         V r = this.m.remove(o);
-        UNSAFE.storeFence();
+        UNSAFE.fullFence();
         return r;
-    }
+        }
 
     @Override
     public void putAll(@NotNull Map<? extends K, ? extends V> map) {
-
     }
 
     @Override
     public void clear() {
-        m.clear();
     }
 
     @NotNull

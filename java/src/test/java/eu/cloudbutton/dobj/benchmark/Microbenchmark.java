@@ -63,6 +63,8 @@ public class Microbenchmark {
     public boolean _quickTest = false;
     @Option(name = "-gcinfo", handler = ExplicitBooleanOptionHandler.class, usage = "Compute gc info")
     public boolean _gcinfo = false;
+    @Option(name = "-latex", handler = ExplicitBooleanOptionHandler.class, usage = "save results in LaTeX format")
+    public boolean _latex = false;
 
     public static Map<String, Integer> map = new ConcurrentHashMap<>();
 
@@ -286,7 +288,11 @@ public class Microbenchmark {
                         fileWriter = new FileWriter(nameFile, true);
 
                     printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread + " " + throughputTotal);
+
+                    if (_latex)
+                        printWriter.println("(\""+nbCurrentThread + "\", " + (int) throughputTotal+")");
+                    else
+                        printWriter.println(nbCurrentThread + " " + throughputTotal);
                     printWriter.close();
                     fileWriter.close();
                 }

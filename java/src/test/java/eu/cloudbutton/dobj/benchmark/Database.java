@@ -6,10 +6,7 @@ import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
-import nl.peterbloem.powerlaws.Continuous;
-import nl.peterbloem.powerlaws.Discrete;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
-import nl.peterbloem.powerlaws.PowerLaws;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -64,7 +61,7 @@ public class Database {
         System.out.println("powerlaw array : " + powerlawArray +"\n");
         for (int i = 0; i < this.powerlawArray.size();) {
 
-            Key user = addUser();
+            Key user = generateUser();
             if (!queueUsers.contains(user)) {
                 queueUsers.offer(user);
                 somme += this.powerlawArray.get(i);
@@ -80,7 +77,7 @@ public class Database {
         random = ThreadLocalRandom.current();
 
         int userPerThread, somme = 0;
-        Key user, userB = null;
+        Key user, userB;
 
         //adding all users
 
@@ -100,7 +97,7 @@ public class Database {
         for (int id = 0; id < userPerThread; id++) {
             somme += data.get(id);
             user = queueUsers.poll();
-
+            addUser(user);
             usersFollow.put(user, new LinkedList<>());
 
             localUsersProbability.get().put(somme, user);
@@ -145,17 +142,17 @@ public class Database {
 //        System.out.println("done("+Thread.currentThread().getName()+")"+"\n");
     }
 
-    public Key addUser() throws ClassNotFoundException {
+    public Key generateUser(){
+        return keyGenerator.nextKey();
+    }
 
-        Key userID;
+    public void addUser(Key user) throws ClassNotFoundException {
 
-        userID = keyGenerator.nextKey();
-        if (!mapFollowers.containsKey(userID)) {
-            mapFollowers.put(userID, new ConcurrentSkipListSet<>());
-            mapTimelines.put(userID, new Timeline(Factory.createQueue(typeQueue)));
-            mapFollowing.put(userID, new HashSet<>());
+        if (!mapFollowers.containsKey(user)) {
+            mapFollowers.put(user, new ConcurrentSkipListSet<>());
+            mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
+            mapFollowing.put(user, new HashSet<>());
         }
-        return userID;
     }
 
     // Adding user_A to the followers of user_B
