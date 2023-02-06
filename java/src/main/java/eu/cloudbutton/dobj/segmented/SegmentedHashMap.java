@@ -56,31 +56,11 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
         V v = null;
 
         for(SWMRHashMap m: segments()){
-            if (m.containsKey(o)){
-                v = (V) m.get(o);
-                return v;
-            }
+            v = (V) m.get(o);
+            if (v!=null) break;
         }
 
-        if (v == null) {
-            TimeUnit.SECONDS.sleep(10);
-            for(SWMRHashMap<K,V> m: segments()){
-                System.out.println("v = " + m.get(o));
-                v = m.get(o);
-                if (v!=null) break;
-            }
-            System.out.println();
-            System.out.println("Thread " + Thread.currentThread().getName() + " is trying to get : " + o );
-            System.out.println("value associated with " + o + " : " + v);
-            for(SWMRHashMap<K,V> m: segments()){
-                System.out.println("Key set : " + m.keySet());
-                System.out.println("Contains key : " + m.containsKey(o));
-                System.out.println("Return from get : " + m.get(o));
-                System.out.println();
-            }
-            System.exit(1);
-        }
-        return null;
+        return v;
     }
 
     @Nullable

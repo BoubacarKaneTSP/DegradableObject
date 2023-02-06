@@ -1,4 +1,6 @@
-package eu.cloudbutton.dobj.swsr;
+package eu.cloudbutton.dobj.asymmetric.swmr;
+
+import eu.cloudbutton.dobj.swsr.SWSRSkipListMap;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -6,15 +8,15 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class SWSRSkipListSet<E extends Comparable<E>> extends AbstractSet<E> {
+public class SWMRSkipListSet<E extends Comparable<E>> extends AbstractSet<E> {
 
     private final SortedMap m;
 
-    public SWSRSkipListSet() {
+    public SWMRSkipListSet() {
         m = new SWSRSkipListMap<E,Object>();
     }
 
-    public SWSRSkipListSet(Collection<? extends E> c) {
+    public SWMRSkipListSet(Collection<? extends E> c) {
         m =  new SWSRSkipListMap<E,Object>();
         addAll(c);
     }

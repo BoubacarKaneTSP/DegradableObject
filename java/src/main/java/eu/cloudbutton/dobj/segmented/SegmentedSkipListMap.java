@@ -60,24 +60,6 @@ public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap>
             if (v!=null) break;
         }
 
-        if (v == null) {
-            TimeUnit.SECONDS.sleep(10);
-            for(SWSRSkipListMap m: segments()){
-                System.out.println("v = " + m.get(o));
-                v = (V) m.get(o);
-                if (v!=null) break;
-            }
-            System.out.println();
-            System.out.println("Thread " + Thread.currentThread().getName() + " is trying to get : " + o );
-            System.out.println("value associated with " + o + " : " + v);
-            for(SWSRSkipListMap m: segments()){
-                System.out.println(m.keySet());
-                System.out.println(m.containsKey(o));
-                System.out.println(m.get(o));
-                System.out.println();
-            }
-            System.exit(0);
-        }
         return v;
     }
 

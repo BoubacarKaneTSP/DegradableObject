@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.swsr.SWSRSkipListSet;
-import eu.cloudbutton.dobj.swsr.SWSRSkipListSet;
+import eu.cloudbutton.dobj.asymmetric.swmr.SWMRSkipListSet;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import eu.cloudbutton.dobj.utils.NonLinearizable;
@@ -9,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentation<SWSRSkipListSet> implements Set<E> {
+public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentation<SWMRSkipListSet> implements Set<E> {
 
     public SegmentedSkipListSet(int parallelism) {
-        super(SWSRSkipListSet.class, parallelism);
+        super(SWMRSkipListSet.class, parallelism);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentat
     @NonLinearizable
     public Iterator<E> iterator() {
         Collection<Iterator<E>> iterators = new ArrayList<>();
-        for(SWSRSkipListSet<E> set: segments()) {
+        for(SWMRSkipListSet<E> set: segments()) {
             iterators.add(set.iterator());
         }
         return new ComposedIterator<E>(iterators);
@@ -58,7 +57,7 @@ public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentat
     @NonLinearizable
     public int size() {
         int ret = 0;
-        for(SWSRSkipListSet<E> set: segments()) {
+        for(SWMRSkipListSet<E> set: segments()) {
             ret+=set.size();
         }
         return ret;
