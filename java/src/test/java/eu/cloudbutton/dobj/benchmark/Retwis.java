@@ -309,15 +309,6 @@ public class Retwis {
 
                         for(Key user: database.getUsersProbability().values()){
                             Set<Key> followers = database.getMapFollowers().get(user);
-
-
-
-
-                            System.out.println(user + " : " + database.getMapFollowing().get(user));
-
-
-
-
                             nbFollower = followers.size();
                             if (nbFollower > maxFollower) {
                                 maxFollower = nbFollower;
@@ -429,11 +420,6 @@ public class Retwis {
                         if (_s)
                             printWriter.flush();
                     }
-
-                    System.out.println("MapFollower size : " + database.getMapFollowers().size());
-                    System.out.println("MapFollowing size : " + database.getMapFollowing().size());
-                    System.out.println("MapTimeline size : " + database.getMapTimelines().size());
-                    System.out.println();
 
                     if (_gcinfo){
                         long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
@@ -766,10 +752,6 @@ public class Retwis {
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
-                if ((endTime - startTime) < 0) {
-                    System.out.println(typeComputed);
-                    System.out.println("time = " + (endTime - startTime) + " => ( "+endTime+" - "+startTime+" )\n");
-                }
                 if (!flagWarmingUp.get() && !_completionTime) {
                     nbOps.get(typeComputed).val += 1;
                     timeOps.get(typeComputed).val+= endTime - startTime;

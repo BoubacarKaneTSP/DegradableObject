@@ -49,8 +49,6 @@ public class Database {
         localUsersProbabilityRange = new ThreadLocal<>();
         random = null;
         this.queueUsers = new ConcurrentLinkedQueue<>();
-
-        System.out.println("nb User init : "+nbUsersInit);
         this.powerlawArray = powerlawArray;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
@@ -58,7 +56,6 @@ public class Database {
 
 //        System.out.println("Adding users");
 
-        System.out.println("powerlaw array : " + powerlawArray +"\n");
         for (int i = 0; i < this.powerlawArray.size();) {
 
             Key user = generateUser();
@@ -103,7 +100,6 @@ public class Database {
             localUsersProbability.get().put(somme, user);
         }
 
-        System.out.println("Local users from thread " + Thread.currentThread().getName() + " : " + localUsersProbability.get().values() + "\n");
         localUsersProbabilityRange.set(somme);
 
         latchDatabase.countDown();
