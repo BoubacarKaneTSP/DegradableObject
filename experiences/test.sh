@@ -241,10 +241,10 @@ if [[ $typeTest == "Microbenchmark" ]]
 then
   if [[ $computeGCInfo == true ]]
   then
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -latex -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
   python3 analyse_gc.py $type $nbTest
   else
-  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -latex
+  CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
   fi
 elif [[ $typeTest == "Retwis" ]]
 then

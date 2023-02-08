@@ -63,9 +63,6 @@ public class Microbenchmark {
     public boolean _quickTest = false;
     @Option(name = "-gcinfo", handler = ExplicitBooleanOptionHandler.class, usage = "Compute gc info")
     public boolean _gcinfo = false;
-    @Option(name = "-latex", handler = ExplicitBooleanOptionHandler.class, usage = "save results in LaTeX format")
-    public boolean _latex = false;
-
     public static Map<String, Integer> map = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
@@ -122,7 +119,7 @@ public class Microbenchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter = null;
-            Object object;
+            Object object = null;
             long startTime, endTime, benchmarkAvgTime = 0;
 
 
@@ -280,7 +277,7 @@ public class Microbenchmark {
                 throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
 
                 if (_s){
-                    String nameFile = type + "_ALL.txt";
+                    String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
 
                     if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                         fileWriter = new FileWriter(nameFile, false);
@@ -289,10 +286,8 @@ public class Microbenchmark {
 
                     printWriter = new PrintWriter(fileWriter);
 
-                    if (_latex)
-                        printWriter.println("(\""+nbCurrentThread + "\", " + (int) throughputTotal+")");
-                    else
-                        printWriter.println(nbCurrentThread + " " + throughputTotal);
+                    printWriter.println(nbCurrentThread + " " + throughputTotal);
+
                     printWriter.close();
                     fileWriter.close();
                 }
@@ -307,7 +302,7 @@ public class Microbenchmark {
 
                 opNumber = 0;
                 for (opType op: opType.values()) {
-                    String nameFile = type + "_" + op + ".txt";
+                    String nameFile = object.getClass().getSimpleName() + "_" + op + ".txt";
                     nbOp = nbOperations.get(opNumber).get();
                     timeOp = timeOperations.get(opNumber).get();
                     opNumber++;
@@ -374,7 +369,6 @@ public class Microbenchmark {
         }
 
     }
-
 
     public class Coordinator implements Callable<Void> {
 
