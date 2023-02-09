@@ -54,22 +54,7 @@ public class Database {
         nbUsers = powerlawArray.size();
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
-        int somme = 0;
-
-//        System.out.println("Adding users");
-
-//        System.out.println(powerlawArray);
-        for (int i = 0; i < this.powerlawArray.size();) {
-
-            Key user = generateUser();
-            if (!queueUsers.contains(user)) {
-                queueUsers.offer(user);
-                somme += this.powerlawArray.get(i);
-                usersProbability.put(somme, user);
-                i++;
-            }
-        }
-        usersProbabilityRange = somme;
+        generateUsers();
     }
 
     public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
@@ -95,18 +80,40 @@ public class Database {
         }
 
         for (int id = 0; id < userPerThread; id++) {
-            somme += data.get(id);
-            user = queueUsers.poll();
-            addUser(user);
-            usersFollow.put(user, new LinkedList<>());
 
-            localUsersProbability.get().put(somme, user);
+            try{
+                somme += data.get(id);
+                user = queueUsers.poll();
+                addUser(user);
+
+                assert mapFollowers.containsKey(user) : "Failed to add " + user + " to mapFollowers";
+                assert mapFollowing.containsKey(user) : "Failed to add " + user + " to mapFollowing";
+                assert mapTimelines.containsKey(user) : "Failed to add " + user + " to mapTimeline";
+
+                usersFollow.put(user, new LinkedList<>());
+
+                localUsersProbability.get().put(somme, user);
+            }catch (Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
-
-        localUsersProbabilityRange.set(somme);
 
         latchDatabase.countDown();
         latchDatabase.await();
+
+        while (queueUsers.size() != 0){
+            user = queueUsers.poll();
+            if (user != null){
+                somme += 1;
+                addUser(user);
+
+                usersFollow.put(user, new LinkedList<>());
+                localUsersProbability.get().put(somme, user);
+            }
+        }
+
+        localUsersProbabilityRange.set(somme);
 
         //Following phase
 
@@ -123,18 +130,23 @@ public class Database {
         i = 0;
 
         int randVal;
-        Map.Entry<Integer, Key> k;
 
 //        System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet()+"\n");
         for (Key userA: usersFollow.keySet()){
             int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
             for(int j = 0; j < nbFollow; j++){
 
-                randVal = random.nextInt(usersProbabilityRange);
-                k = usersProbability.ceilingEntry(randVal);
-                userB = k.getValue();
+                try{
+                    randVal = random.nextInt(usersProbabilityRange);
+                    userB = usersProbability.ceilingEntry(randVal).getValue();
 
-                followUser(userA, userB);
+                    assert userB != null : "User generated is null";
+
+                    followUser(userA, userB);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    System.exit(1);
+                }
             }
             i++;
         }
@@ -143,6 +155,25 @@ public class Database {
 
     public Key generateUser(){
         return keyGenerator.nextKey();
+    }
+
+    public void generateUsers(){
+        int somme = 0;
+
+//        System.out.println("Adding users");
+
+//        System.out.println(powerlawArray);
+        for (int i = 0; i < this.powerlawArray.size();) {
+
+            Key user = generateUser();
+            if (!queueUsers.contains(user)) {
+                queueUsers.offer(user);
+                somme += this.powerlawArray.get(i);
+                usersProbability.put(somme, user);
+                i++;
+            }
+        }
+        usersProbabilityRange = somme;
     }
 
     public void addUser(Key user) throws ClassNotFoundException {

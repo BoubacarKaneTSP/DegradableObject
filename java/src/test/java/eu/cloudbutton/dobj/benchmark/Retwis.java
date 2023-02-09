@@ -582,7 +582,6 @@ public class Retwis {
                 latch.countDown();
                 latch.await();
 
-                System.out.println("=> done filling " + Thread.currentThread().getName());
                 usersProbabilityRange = database.getUsersProbabilityRange();
                 localUsersProbabilityRange = database.getLocalUsersProbabilityRange().get();
                 nbLocalUsers = database.getLocalUsersProbability().get().size();
@@ -710,7 +709,7 @@ public class Retwis {
                                     e.printStackTrace();
                                     System.out.println("Trying to add " + userA + " (userA) to "+ userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
                                     System.out.println("Trying to add " + userB + " (userB) to "+ userA + " (userA) map following : " + database.getMapFollowing().get(userA));
-                                    System.exit(0);
+                                    System.exit(1);
                                 }
                                 endTime = System.nanoTime();
                             }
@@ -732,7 +731,7 @@ public class Retwis {
                                     e.printStackTrace();
                                     System.out.println("Trying to remove " + userA + " (userA) from "+ userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
                                     System.out.println("Trying to remove " + userB + " (userB) from "+ userA + " (userA) map following : " + database.getMapFollowing().get(userA));
-                                    System.exit(0);
+                                    System.exit(1);
                                 }
                                 endTime = System.nanoTime();
                             }
