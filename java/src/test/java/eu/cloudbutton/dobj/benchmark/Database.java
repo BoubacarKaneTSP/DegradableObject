@@ -21,6 +21,7 @@ public class Database {
     private final String typeCounter;
     private final double alpha;
     private final int nbThread;
+    private final int nbUsers;
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
@@ -33,7 +34,7 @@ public class Database {
     private ThreadLocal<Integer> localUsersProbabilityRange;
     private List<Integer> powerlawArray;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUsersInit, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -48,14 +49,16 @@ public class Database {
         localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersProbabilityRange = new ThreadLocal<>();
         random = null;
-        this.queueUsers = new ConcurrentLinkedQueue<>();
+        queueUsers = new ConcurrentLinkedQueue<>();
         this.powerlawArray = powerlawArray;
+        nbUsers = powerlawArray.size();
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
 
         int somme = 0;
 
 //        System.out.println("Adding users");
 
+//        System.out.println(powerlawArray);
         for (int i = 0; i < this.powerlawArray.size();) {
 
             Key user = generateUser();
@@ -69,7 +72,7 @@ public class Database {
         usersProbabilityRange = somme;
     }
 
-    public void fill(int nbUsers, CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocalRandom.current();
 
@@ -78,7 +81,7 @@ public class Database {
 
         //adding all users
 
-        System.out.println("Adding users");
+//        System.out.println("Adding users");
 
         userPerThread = nbUsers / nbThread;
 
@@ -122,7 +125,7 @@ public class Database {
         int randVal;
         Map.Entry<Integer, Key> k;
 
-        System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet()+"\n");
+//        System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet()+"\n");
         for (Key userA: usersFollow.keySet()){
             int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
             for(int j = 0; j < nbFollow; j++){
@@ -135,7 +138,7 @@ public class Database {
             }
             i++;
         }
-        System.out.println("done("+Thread.currentThread().getName()+")"+"\n");
+//        System.out.println("done("+Thread.currentThread().getName()+")"+"\n");
     }
 
     public Key generateUser(){

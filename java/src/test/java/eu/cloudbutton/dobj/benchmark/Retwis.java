@@ -196,6 +196,14 @@ public class Retwis {
 
         List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(NB_USERS);
 
+        int index = 0;
+        for (int val: powerLawArray){
+            if (val < 0)
+                powerLawArray.set(index, 1);
+            index++;
+        }
+
+
         for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
 
             if (_gcinfo)
@@ -246,7 +254,7 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, NB_USERS,_nbItems, powerLawArray);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, _nbItems, powerLawArray);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
@@ -569,11 +577,12 @@ public class Retwis {
                     timeLocalOperations.put(op, new BoxedLong());
                 }
 
-                database.fill(NB_USERS, latchFillDatabase, usersFollow);
+                database.fill(latchFillDatabase, usersFollow);
 
                 latch.countDown();
                 latch.await();
 
+                System.out.println("=> done filling " + Thread.currentThread().getName());
                 usersProbabilityRange = database.getUsersProbabilityRange();
                 localUsersProbabilityRange = database.getLocalUsersProbabilityRange().get();
                 nbLocalUsers = database.getLocalUsersProbability().get().size();
