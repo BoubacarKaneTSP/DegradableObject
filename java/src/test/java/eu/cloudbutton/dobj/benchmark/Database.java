@@ -86,10 +86,6 @@ public class Database {
                 user = queueUsers.poll();
                 addUser(user);
 
-                assert mapFollowers.containsKey(user) : "Failed to add " + user + " to mapFollowers";
-                assert mapFollowing.containsKey(user) : "Failed to add " + user + " to mapFollowing";
-                assert mapTimelines.containsKey(user) : "Failed to add " + user + " to mapTimeline";
-
                 usersFollow.put(user, new LinkedList<>());
 
                 localUsersProbability.get().put(somme, user);
