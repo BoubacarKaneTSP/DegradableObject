@@ -1,28 +1,28 @@
 nbThread : 1
 Start benchmark
 End benchmark
-benchmarkAvgTime : 21044ms
+benchmarkAvgTime : 20026ms
 nbThread : 2
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20012ms
+benchmarkAvgTime : 20006ms
 nbThread : 4
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20005ms
+benchmarkAvgTime : 20002ms
 nbThread : 8
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20460ms
+benchmarkAvgTime : 20002ms
 nbThread : 16
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20005ms
+benchmarkAvgTime : 20002ms
 nbThread : 32
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20143ms
+benchmarkAvgTime : 20572ms
 nbThread : 48
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20407ms
+benchmarkAvgTime : 20303ms
