@@ -1,28 +1,84 @@
 nbThread : 1
 Start benchmark
 End benchmark
-benchmarkAvgTime : 21044ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20120ms
 nbThread : 2
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20012ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20221ms
 nbThread : 4
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20005ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20133ms
 nbThread : 8
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20460ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20345ms
 nbThread : 16
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20005ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20231ms
 nbThread : 32
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20143ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20270ms
 nbThread : 48
 Start benchmark
 End benchmark
-benchmarkAvgTime : 20407ms
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+Start benchmark
+End benchmark
+benchmarkAvgTime : 20364ms
