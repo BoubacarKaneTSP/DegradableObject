@@ -111,6 +111,7 @@ public class Database {
 
         localUsersProbabilityRange.set(somme);
 
+//        System.out.println("following phase");
         //Following phase
 
         long max = nbUsers;
@@ -127,7 +128,14 @@ public class Database {
 
         int randVal;
 
-//        System.out.println("usersFollow ("+Thread.currentThread().getName()+") : " + usersFollow.keySet()+"\n");
+        long startTime = 0, endTime, totalTime = 0;
+
+        for (int val : powerlawArray){
+            if (val >= nbUsers)
+                startTime++;
+        }
+
+
         for (Key userA: usersFollow.keySet()){
             int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
             for(int j = 0; j < nbFollow; j++){
@@ -135,7 +143,6 @@ public class Database {
                 try{
                     randVal = random.nextInt(usersProbabilityRange);
                     userB = usersProbability.ceilingEntry(randVal).getValue();
-
                     assert userB != null : "User generated is null";
 
                     followUser(userA, userB);
@@ -146,7 +153,6 @@ public class Database {
             }
             i++;
         }
-//        System.out.println("done("+Thread.currentThread().getName()+")"+"\n");
     }
 
     public Key generateUser(){
@@ -154,21 +160,20 @@ public class Database {
     }
 
     public void generateUsers(){
-        int somme = 0;
-
-//        System.out.println("Adding users");
+        int i = 0, somme = 0;
+        Set<Key> localSetUser = new HashSet<>();
 
 //        System.out.println(powerlawArray);
-        for (int i = 0; i < this.powerlawArray.size();) {
-
+        while (localSetUser.size() < powerlawArray.size()){
             Key user = generateUser();
-            if (!queueUsers.contains(user)) {
-                queueUsers.offer(user);
+            if (localSetUser.add(user)){
                 somme += this.powerlawArray.get(i);
                 usersProbability.put(somme, user);
                 i++;
             }
         }
+
+        queueUsers.addAll(localSetUser);
         usersProbabilityRange = somme;
     }
 
@@ -177,7 +182,7 @@ public class Database {
         if (!mapFollowers.containsKey(user)) {
             mapFollowers.put(user, new ConcurrentSkipListSet<>());
             mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
-            mapFollowing.put(user, new HashSet<>());
+            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
         }
     }
 
