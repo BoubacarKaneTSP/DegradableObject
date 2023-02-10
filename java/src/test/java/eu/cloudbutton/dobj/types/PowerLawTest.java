@@ -16,7 +16,7 @@ public class PowerLawTest {
             listAlpha.add(i);
         }*/
 
-        listAlpha.add(1.39);
+        listAlpha.add(1.7);
 
         for (double alpha : listAlpha){
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
@@ -42,9 +42,6 @@ public class PowerLawTest {
 
             Collections.sort(data);
 
-            for (int j = 1; j < 10; j++) {
-                System.out.println(data);
-            }
             System.out.println();
             System.out.println("======= " + alpha + " =======");
             System.out.println("max : " + Collections.max(data) + " => " + Collections.max(data)/ (double) max * 100 +"%");

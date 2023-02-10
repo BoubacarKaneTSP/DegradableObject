@@ -27,11 +27,11 @@ public class Database {
     private final Map<Key, Timeline<String>> mapTimelines;
     private ThreadLocalRandom random;
     private KeyGenerator keyGenerator;
-    private ConcurrentSkipListMap<Integer, Key> usersProbability;
-    private ThreadLocal<ConcurrentSkipListMap<Integer,Key>> localUsersProbability;
+    private ConcurrentSkipListMap<Long, Key> usersProbability;
+    private ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersProbability;
     private Queue<Key> queueUsers;
-    private int usersProbabilityRange;
-    private ThreadLocal<Integer> localUsersProbabilityRange;
+    private long usersProbabilityRange;
+    private ThreadLocal<Long> localUsersProbabilityRange;
     private List<Integer> powerlawArray;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
@@ -61,8 +61,9 @@ public class Database {
 
         random = ThreadLocalRandom.current();
 
-        int userPerThread, somme = 0;
-        Key user, userB;
+        int userPerThread;
+        long somme = 0;
+        Key user, userB = null;
 
         //adding all users
 
@@ -124,16 +125,16 @@ public class Database {
             i++;
         }
 
-        i = 0;
 
-        int randVal;
+        long randVal;
 
         for (Key userA: usersFollow.keySet()){
             int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
+            assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
                 try{
-                    randVal = random.nextInt(usersProbabilityRange);
+                    randVal = random.nextLong(usersProbabilityRange);
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
@@ -143,8 +144,9 @@ public class Database {
                     System.exit(1);
                 }
             }
-            i++;
+            assert mapFollowers.get(userB).size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
         }
+
     }
 
     public Key generateUser(){
@@ -152,7 +154,8 @@ public class Database {
     }
 
     public void generateUsers(){
-        int i = 0, somme = 0;
+        int i = 0;
+        long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
 
 //        System.out.println(powerlawArray);

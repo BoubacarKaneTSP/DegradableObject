@@ -75,10 +75,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.39;
+    private double _alphaInit = 1.7;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.39;
+    private double _alphaMin = 1.7;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.2;
@@ -198,7 +198,7 @@ public class Retwis {
 
         int index = 0;
         for (int val: powerLawArray){
-            if (val < 0)
+            if (val <= 0)
                 powerLawArray.set(index, 1);
             index++;
         }
@@ -327,7 +327,7 @@ public class Retwis {
                             Set<Key> followers = database.getMapFollowers().get(user);
                             nbFollower = followers.size();
 
-                            if (nbFollower>= maxFollower*0.9)
+                            if (nbFollower>= maxFollower*0.8)
                                 userWithMaxFollower++;
                             else if (nbFollower == 0)
                                 userWithoutFollower++;
@@ -342,7 +342,7 @@ public class Retwis {
                     executor.shutdown();
                 }
 
-                if (_gcinfo)
+                if (_gcinfo || _p)
                     System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest + "ms");
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
@@ -464,7 +464,7 @@ public class Retwis {
                             System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
                             System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
                             System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
-                            System.out.println(" ==> nb user with max follower (or 10% less) : " + sumNbUserWithMaxFollower/_nbTest);
+                            System.out.println(" ==> nb user with max follower (or 20% less) : " + sumNbUserWithMaxFollower/_nbTest);
                             System.out.println(" ==> nb user without follower : " + sumNbUserWithoutFollower/_nbTest);
                             System.out.println();
 //                            System.out.println("Map Follower : " + database.getMapFollowers());
@@ -544,8 +544,8 @@ public class Retwis {
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
-        private Integer usersProbabilityRange;
-        private Integer localUsersProbabilityRange;
+        private Long usersProbabilityRange;
+        private Long localUsersProbabilityRange;
         private int nbRepeat = 1000;
         private final String msg = "new msg";
         int nbLocalUsers;
@@ -680,7 +680,7 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
 
-                int val = random.nextInt(localUsersProbabilityRange);
+                long val = random.nextLong(localUsersProbabilityRange);
                 userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
@@ -695,7 +695,7 @@ public class Retwis {
                         break;
                     case FOLLOW:
 
-                        val = random.nextInt(usersProbabilityRange); // We choose a user to follow according to a probability
+                        val = random.nextLong(usersProbabilityRange); // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
                         if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
