@@ -128,14 +128,6 @@ public class Database {
 
         int randVal;
 
-        long startTime = 0, endTime, totalTime = 0;
-
-        for (int val : powerlawArray){
-            if (val >= nbUsers)
-                startTime++;
-        }
-
-        System.out.println(startTime);
         for (Key userA: usersFollow.keySet()){
             int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
             for(int j = 0; j < nbFollow; j++){
