@@ -135,7 +135,7 @@ public class Database {
                 startTime++;
         }
 
-
+        System.out.println(startTime);
         for (Key userA: usersFollow.keySet()){
             int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
             for(int j = 0; j < nbFollow; j++){
@@ -182,7 +182,7 @@ public class Database {
         if (!mapFollowers.containsKey(user)) {
             mapFollowers.put(user, new ConcurrentSkipListSet<>());
             mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
-            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
+            mapFollowing.put(user, new HashSet<>());
         }
     }
 
