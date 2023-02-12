@@ -129,7 +129,7 @@ public class Database {
         long randVal;
 
         for (Key userA: usersFollow.keySet()){
-            int nbFollow = Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers);
+            int nbFollow = (int) Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers*0.00432); // nbFollow max to match Twitter Graph
             assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
