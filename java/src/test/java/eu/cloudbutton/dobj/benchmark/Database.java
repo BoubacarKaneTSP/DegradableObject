@@ -183,10 +183,10 @@ public class Database {
         Set set;
 
         set = mapFollowers.get(userB);
-        set.add(userA);
+//        set.add(userA);
 
         set = mapFollowing.get(userA);
-        set.add(userB);
+//        set.add(userB);
     }
 
     // Removing user_A to the followers of user_B
