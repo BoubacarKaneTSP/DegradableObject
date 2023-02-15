@@ -80,7 +80,7 @@ public class SWMRHashMap<K, V> implements Map<K,V> {
     @NotNull
     @Override
     public Collection<V> values() {
-        return null;
+        return m.values();
     }
 
     @NotNull

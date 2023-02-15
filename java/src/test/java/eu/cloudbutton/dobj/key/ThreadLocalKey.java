@@ -1,10 +1,11 @@
 package eu.cloudbutton.dobj.key;
 
+import eu.cloudbutton.dobj.utils.SegmentAware;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ThreadLocalKey implements Key, Comparable<ThreadLocalKey>{
+public class ThreadLocalKey extends SegmentAware<ThreadLocalKey> implements Key, Comparable<ThreadLocalKey>{
 
     public long tid;
     public long id;

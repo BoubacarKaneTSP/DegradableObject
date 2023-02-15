@@ -129,13 +129,13 @@ public class Factory {
         switch (list){
 
             case "List":
-                return new ListJUC();
+                return new ListJUC<>();
             case "DegradableList":
-                return new DegradableList();
+                return new DegradableList<>();
             case "LinkedList":
                 return new LinkedList<>();
             case "ShardedLinkedList":
-                return new ShardedLinkedList(parallelism);
+                return new ShardedLinkedList<>(parallelism);
             case "DegradableLinkedList":
                 return new DegradableLinkedList<>();
             default:
@@ -149,25 +149,27 @@ public class Factory {
 
         switch (set){
             case "SegmentedSkipListSet":
-                return new SegmentedSkipListSet(parallelism);
+                return new SegmentedSkipListSet<>(parallelism);
             case "SegmentedTreeSet":
-                return new SegmentedTreeSet(parallelism);
+                return new SegmentedTreeSet<>(parallelism);
             case "SegmentedHashSet":
-                return new SegmentedHashSet(parallelism);
+                return new SegmentedHashSet<>(parallelism);
             case "ShardedTreeSet":
-                return new ShardedTreeSet(parallelism);
+                return new ShardedTreeSet<>(parallelism);
             case "ShardedHashSet":
-                return new ShardedHashSet(parallelism);
+                return new ShardedHashSet<>(parallelism);
             case "Set":
                 return new ConcurrentSkipListSet<>();
             case "ConcurrentHashSet":
-                return new ConcurrentHashSet();
+                return new ConcurrentHashSet<>();
             case "SetReadIntensive":
                 return new SetReadIntensive<>();
             case "SetAddIntensive":
                 return new SetAddIntensive<>();
             case "SetMWSR":
                 return new SetMWSR<>();
+            case "ExtendedSegmentedHashSet":
+                return new ExtendedSegmentedHashSet<>(parallelism);
             default:
                 throw new ClassNotFoundException();
         }
@@ -180,7 +182,7 @@ public class Factory {
         switch (queue){
 
             case "Queue":
-                return new ConcurrentLinkedQueue();
+                return new ConcurrentLinkedQueue<>();
             case "QueueMASP":
                 return new QueueMASP<>();
             case "MapQueue":
@@ -204,21 +206,23 @@ public class Factory {
         switch (map){
 
             case "SegmentedHashMap":
-                return new SegmentedHashMap(parallelism);
+                return new SegmentedHashMap<>(parallelism);
             case "SegmentedSkipListMap":
-                return new SegmentedSkipListMap(parallelism);
+                return new SegmentedSkipListMap<>(parallelism);
             case "SegmentedTreeMap":
-                return new SegmentedTreeMap(parallelism);
+                return new SegmentedTreeMap<>(parallelism);
             case "ShardedHashMap":
-                return new ShardedHashMap(parallelism);
+                return new ShardedHashMap<>(parallelism);
             case "Map":
                 return new ConcurrentHashMap<>();
             case "ConcurrentSkipListMap":
-                return new ConcurrentSkipListMap();
+                return new ConcurrentSkipListMap<>();
             case "MapReadIntensive":
                 return new MapReadIntensive<>();
             case "MapAddIntensive":
                 return new MapAddIntensive<>();
+            case "ExtendedSegmentedHashMap":
+                return new ExtendedSegmentedHashMap<>(parallelism);
             default:
                 throw new ClassNotFoundException();
         }

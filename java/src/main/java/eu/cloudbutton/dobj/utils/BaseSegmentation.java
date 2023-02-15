@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 
-    private final ThreadLocal<T> local;
+    protected final ThreadLocal<T> local;
     private final AtomicInteger next;
 
     private final List<T> segments;
@@ -27,19 +27,17 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     }
 
     @Override
-    public final T segmentFor(Object x) {
+    public T segmentFor(Object x) {
         T segment = null;
         
         try{
             segment = local.get();
         }catch (NullPointerException e){
             e.printStackTrace();
-            System.out.println("Failed to get a segment for " + e);
+            System.out.println("Failed to get a segment for " + x);
             System.exit(0);
         }
-        
-        
-        
+
         return segment;
     }
 

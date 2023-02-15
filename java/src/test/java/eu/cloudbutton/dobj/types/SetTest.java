@@ -4,6 +4,10 @@ import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.key.ThreadLocalKey;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
+import eu.cloudbutton.dobj.swsr.SWSRHashSet;
+import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
@@ -16,11 +20,14 @@ public class SetTest {
 
     private Factory factory;
     private KeyGenerator generator;
+    private static int nbThread;
 
     @BeforeTest
     void setUp() {
         factory = new Factory();
         generator = new SimpleKeyGenerator(1000);
+//        nbThread = 1;
+        nbThread = Runtime.getRuntime().availableProcessors();
     }
 
     @Test
@@ -47,6 +54,7 @@ public class SetTest {
         Class cls = Class.forName("eu.cloudbutton.dobj.mcwmcr.SetReadIntensive");
         factory.setFactorySet(cls);
         doTestIterator(factory.getSet());
+        doTestIterator(Factory.createSet("ExtendedSegmentedHashSet", nbThread));
     }
 
     private void doRemove(Set set) {
@@ -69,26 +77,42 @@ public class SetTest {
         assertEquals(set.isEmpty(),true, set.toString());
     }
 
-    private void doTestIterator(Set<String> set) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+    private void doTestIterator(Set set) throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
+
+        int nbIteration = 100;
+        int nbTask = 20;
+
         Callable<Void> callable = () -> {
-            String name = Thread.currentThread().getName();
-            set.add(name +" : v1");
-            set.add(name +" : v2");
-            set.add(name +" : v3");
-            set.add(name +" : v4");
-            set.add(name +" : v5");
-            set.add(name +" : v6");
+
+            Object obj = null;
+
+            for (int i = 0; i < nbIteration; i++) {
+                obj = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
+                set.add(obj);
+            }
+//            System.out.println(((ExtendedSegmentedHashSet<ThreadLocalKey>) set).segmentFor(obj).size());
             return null;
         };
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < nbTask; i++) {
             futures.add(executor.submit(callable));
         }
 
         for (Future<Void> future : futures) {
             future.get();
         }
+
+        int nbElement = 0;
+
+        for (Object ignored : set){
+            nbElement++;
+        }
+
+        int nbElementExpcted = nbThread > nbTask ? nbIteration * nbTask : nbIteration * nbThread;
+
+        assertEquals(nbElement == nbElementExpcted,true, "Error with iterator");
     }
+
 }

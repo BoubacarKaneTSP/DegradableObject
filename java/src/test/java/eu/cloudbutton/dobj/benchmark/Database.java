@@ -2,15 +2,19 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
+import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
+import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public class Database {
@@ -33,6 +37,8 @@ public class Database {
     private long usersProbabilityRange;
     private ThreadLocal<Long> localUsersProbabilityRange;
     private List<Integer> powerlawArray;
+    private List<List<Key>> usersCollections;
+    private AtomicInteger count;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
 
@@ -43,6 +49,9 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         mapFollowers = new ConcurrentHashMap<>();
+//        mapFollowers = (ExtendedSegmentedHashMap<Key, Set<Key>>) Factory.createMap(typeMap, nbThread);
+//        mapFollowing = (ExtendedSegmentedHashMap<Key, Set<Key>>) Factory.createMap(typeMap, nbThread);
+//        mapFollowing = new SegmentedHashMap<>(nbThread);
         mapFollowing = Factory.createMap(typeMap, nbThread);
         mapTimelines = new ConcurrentHashMap<>();
         usersProbability = new ConcurrentSkipListMap<>();
@@ -53,25 +62,29 @@ public class Database {
         this.powerlawArray = powerlawArray;
         nbUsers = powerlawArray.size();
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
+        usersCollections = new ArrayList<>();
+        count = new AtomicInteger();
+
+        for (int i = 0; i < nbThread; i++) {
+            usersCollections.add(new ArrayList<>());
+        }
 
         generateUsers();
     }
 
-    public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> usersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocalRandom.current();
 
-        int userPerThread;
         long somme = 0;
         Key user, userB = null;
+        List<Key> users = usersCollections.get(count.getAndIncrement());
 
         //adding all users
 
 //        System.out.println("Adding users");
 
-        userPerThread = nbUsers / nbThread;
-
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(userPerThread);
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(users.size());
 
         int i = 0;
         for (int val: data){
@@ -80,37 +93,22 @@ public class Database {
             i++;
         }
 
-        for (int id = 0; id < userPerThread; id++) {
+        Collections.sort(data);
+        for (int id = 0; id < users.size(); id++) {
 
-            try{
-                somme += data.get(id);
-                user = queueUsers.poll();
-                addUser(user);
-
-                usersFollow.put(user, new LinkedList<>());
-
-                localUsersProbability.get().put(somme, user);
-            }catch (Exception e){
-                e.printStackTrace();
-                System.exit(1);
-            }
+            somme += data.get(id);
+            user = users.get(id);
+            addUser(user);
+            localUsersProbability.get().put(somme, user);
+            localUsersFollow.put(user, new LinkedList<>());
         }
+
+
+        localUsersProbabilityRange.set(somme);
 
         latchDatabase.countDown();
         latchDatabase.await();
 
-        while (queueUsers.size() != 0){
-            user = queueUsers.poll();
-            if (user != null){
-                somme += 1;
-                addUser(user);
-
-                usersFollow.put(user, new LinkedList<>());
-                localUsersProbability.get().put(somme, user);
-            }
-        }
-
-        localUsersProbabilityRange.set(somme);
 
 //        System.out.println("following phase");
         //Following phase
@@ -128,8 +126,8 @@ public class Database {
 
         long randVal;
 
-        for (Key userA: usersFollow.keySet()){
-            int nbFollow = (int) Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers*0.00432); // nbFollow max to match Twitter Graph
+        for (Key userA: localUsersFollow.keySet()){
+            int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.nextInt(nbUsers)), nbUsers*0.00432), 1); // nbFollow max to match Twitter Graph
             assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
@@ -144,7 +142,8 @@ public class Database {
                     System.exit(1);
                 }
             }
-            assert mapFollowers.get(userB).size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
+            Set set = mapFollowers.get(userB);
+            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
         }
 
     }
@@ -157,35 +156,37 @@ public class Database {
         int i = 0;
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
+        Collections.sort(powerlawArray);
 
-//        System.out.println(powerlawArray);
         while (localSetUser.size() < powerlawArray.size()){
             Key user = generateUser();
             if (localSetUser.add(user)){
+                usersCollections.get(i%nbThread).add(user);
                 somme += this.powerlawArray.get(i);
                 usersProbability.put(somme, user);
                 i++;
             }
         }
 
-        queueUsers.addAll(localSetUser);
         usersProbabilityRange = somme;
     }
 
     public void addUser(Key user) throws ClassNotFoundException {
-
-        if (!mapFollowers.containsKey(user)) {
-            mapFollowers.put(user, new ConcurrentSkipListSet<>());
-            mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
-            mapFollowing.put(user, new HashSet<>());
-        }
+        mapFollowers.put(user, new ConcurrentSkipListSet<>());
+        mapFollowing.put(user, new HashSet<>());
+        mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
     public void followUser(Key userA, Key userB){
-        mapFollowers.get(userB).add(userA);
-        mapFollowing.get(userA).add(userB);
+        Set set;
+
+        set = mapFollowers.get(userB);
+        set.add(userA);
+
+        set = mapFollowing.get(userA);
+        set.add(userB);
     }
 
     // Removing user_A to the followers of user_B
@@ -196,7 +197,9 @@ public class Database {
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {
-        for (Key follower : mapFollowers.get(user)) {
+        Set<Key> set = mapFollowers.get(user);
+
+        for (Key follower : set) {
             mapTimelines.get(follower).add(msg);
         }
     }

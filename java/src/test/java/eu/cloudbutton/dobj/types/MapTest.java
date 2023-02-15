@@ -28,6 +28,10 @@ public class MapTest {
         Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap");
         factory.setFactoryMap(cls);
         doAdd(factory.getMap());
+
+//        cls = Class.forName("eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap");
+//        factory.setFactoryMap(cls);
+//        doAdd(factory.getMap());
     }
 
     @Test
