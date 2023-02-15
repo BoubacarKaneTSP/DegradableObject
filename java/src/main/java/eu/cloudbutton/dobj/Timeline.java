@@ -18,21 +18,20 @@ public class Timeline<T> {
     }
 
     public void add(T elt) throws InterruptedException {
-//        timeline.offer(elt);
+        timeline.offer(elt);
    }
 
    public Queue<T> read() throws InterruptedException {
 
-//       long queueSize = 10;
-       long queueSize = timeline.size();
-
-       for (int i = 0; i < queueSize; i++)
-           topk.add(timeline.poll());
-
-       int topkSize = topk.size();
-
-        for (int i = 0; i < topkSize - LENGTH; i++)
-            topk.poll();
+//       long queueSize = timeline.size();
+//
+//       for (int i = 0; i < queueSize; i++)
+//           topk.add(timeline.poll());
+//
+//       int topkSize = topk.size();
+//
+//        for (int i = 0; i < topkSize - LENGTH; i++)
+//            topk.poll();
 
         return topk;
    }
