@@ -136,7 +136,7 @@ public class Database {
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
-                    followUser(userA, userB);
+                    followUserB(userA, userB);
                 }catch (Exception e){
                     e.printStackTrace();
                     System.exit(1);
@@ -187,6 +187,16 @@ public class Database {
 
         set = mapFollowing.get(userA);
 //        set.add(userB);
+    }
+
+    public void followUserB(Key userA, Key userB){
+        Set set;
+
+        set = mapFollowers.get(userB);
+        set.add(userA);
+
+        set = mapFollowing.get(userA);
+        set.add(userB);
     }
 
     // Removing user_A to the followers of user_B
