@@ -136,7 +136,7 @@ public class Database {
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
-                    followUserB(userA, userB);
+                    followUser(userA, userB);
                 }catch (Exception e){
                     e.printStackTrace();
                     System.exit(1);
@@ -183,16 +183,6 @@ public class Database {
         Set set;
 
         set = mapFollowers.get(userB);
-//        set.add(userA);
-
-        set = mapFollowing.get(userA);
-//        set.add(userB);
-    }
-
-    public void followUserB(Key userA, Key userB){
-        Set set;
-
-        set = mapFollowers.get(userB);
         set.add(userA);
 
         set = mapFollowing.get(userA);
@@ -202,8 +192,8 @@ public class Database {
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB).remove(userA);
-        mapFollowing.get(userA).remove(userB);
+        mapFollowers.get(userB);//.remove(userA);
+        mapFollowing.get(userA);//.remove(userB);
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {
