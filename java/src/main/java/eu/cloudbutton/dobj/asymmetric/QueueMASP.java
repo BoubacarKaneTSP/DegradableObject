@@ -188,7 +188,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
 
     static final class Node<E> {
-        volatile E item;
+        E item;
         volatile Node<E> next;
 
         /**
@@ -247,7 +247,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
     private transient volatile Node<E> tail;
 
     private Counter queueSize;
-//    private LongAdder queueSize;
 
     /**
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
@@ -255,7 +254,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
     public QueueMASP() {
         head = tail = new Node<>();
         queueSize = new CounterMISD();
-//        queueSize = new LongAdder();
     }
 
     /**
@@ -379,7 +377,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
                         TAIL.weakCompareAndSet(this, t, newNode);
 
                     queueSize.incrementAndGet();
-//                    queueSize.increment();
 
                     return true;
                 }

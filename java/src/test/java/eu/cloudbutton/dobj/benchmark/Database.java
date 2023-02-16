@@ -2,12 +2,9 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
-import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -49,9 +46,6 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         mapFollowers = new ConcurrentHashMap<>();
-//        mapFollowers = (ExtendedSegmentedHashMap<Key, Set<Key>>) Factory.createMap(typeMap, nbThread);
-//        mapFollowing = (ExtendedSegmentedHashMap<Key, Set<Key>>) Factory.createMap(typeMap, nbThread);
-//        mapFollowing = new SegmentedHashMap<>(nbThread);
         mapFollowing = Factory.createMap(typeMap, nbThread);
         mapTimelines = new ConcurrentHashMap<>();
         usersProbability = new ConcurrentSkipListMap<>();
@@ -82,8 +76,6 @@ public class Database {
 
         //adding all users
 
-//        System.out.println("Adding users");
-
         List<Integer> data = new DiscreteApproximate(1, alpha).generate(users.size());
 
         int i = 0;
@@ -103,14 +95,11 @@ public class Database {
             localUsersFollow.put(user, new LinkedList<>());
         }
 
-
         localUsersProbabilityRange.set(somme);
 
         latchDatabase.countDown();
         latchDatabase.await();
 
-
-//        System.out.println("following phase");
         //Following phase
 
         long max = nbUsers;
@@ -173,7 +162,7 @@ public class Database {
 
     public void addUser(Key user) throws ClassNotFoundException {
         mapFollowers.put(user, new ConcurrentSkipListSet<>());
-        mapFollowing.put(user, new HashSet<>());
+        mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 
@@ -192,8 +181,8 @@ public class Database {
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB);//.remove(userA);
-        mapFollowing.get(userA);//.remove(userB);
+        mapFollowers.get(userB).remove(userA);
+        mapFollowing.get(userA).remove(userB);
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {

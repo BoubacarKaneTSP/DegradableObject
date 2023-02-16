@@ -8,10 +8,10 @@ public class SegmentAware<T> {
 
     @Getter
     @Setter
-    AtomicWriteOnceReference<T> segment;
+    AtomicWriteOnceReference<T> reference;
 
     public SegmentAware(){
-        segment = new AtomicWriteOnceReference<>();
+        reference = new AtomicWriteOnceReference<>();
     }
 
 }
