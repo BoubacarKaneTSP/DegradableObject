@@ -12,7 +12,8 @@ public class ExtendedSegmentation<T> extends BaseSegmentation<T>{
         SegmentAware<T> obj = (SegmentAware<T>) x;
         T segment = obj.getReference().get();
         if (segment==null) {
-            obj.getReference().set(local.get());
+            segment = local.get();
+            obj.getReference().set(segment);
         }
         return segment;
     }
