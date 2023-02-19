@@ -15,6 +15,9 @@ public class ExtendedSegmentation<T> extends BaseSegmentation<T>{
             segment = local.get();
             obj.getReference().set(segment);
         }
+
+        assert segment != null : "Value not associated with a segment";
+
         return segment;
     }
 }

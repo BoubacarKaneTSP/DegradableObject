@@ -223,6 +223,8 @@ public class Factory {
                 return new MapAddIntensive<>();
             case "ExtendedSegmentedHashMap":
                 return new ExtendedSegmentedHashMap<>(parallelism);
+            case "ExtendedSegmentedConcurrentHashMap":
+                return new ExtendedSegmentedConcurrentHashMap<>(parallelism);
             default:
                 throw new ClassNotFoundException();
         }

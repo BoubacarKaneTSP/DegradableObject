@@ -6,8 +6,8 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=10
-benchmarkTime=20
+nbTest=15
+benchmarkTime=30
 warmingUpTime=5
 
 #perf stat -B -e cache-references,cache-misses ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
@@ -24,7 +24,7 @@ warmingUpTime=5
 perf stat -B -e cache-references,cache-misses ./test.sh -m Map -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -m ShardedHashMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
-perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedHashMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
+perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedConcurrentHashMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -m ConcurrentSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedTreeMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k

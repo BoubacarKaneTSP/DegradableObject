@@ -5,6 +5,7 @@ import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -45,9 +46,12 @@ public class Database {
         this.typeCounter = typeCounter;
         this.alpha = alpha;
         this.nbThread = nbThread;
+//        mapFollowers = Factory.createMap(typeMap, nbThread);
         mapFollowers = new ConcurrentHashMap<>();
-        mapFollowing = Factory.createMap(typeMap, nbThread);
-        mapTimelines = new ConcurrentHashMap<>();
+        mapFollowing = new ConcurrentHashMap<>();
+//        mapFollowing = Factory.createMap(typeMap, nbThread);
+        mapTimelines = Factory.createMap(typeMap, nbThread);
+//        mapTimelines = new ConcurrentHashMap<>();
         usersProbability = new ConcurrentSkipListMap<>();
         localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersProbabilityRange = new ThreadLocal<>();
@@ -189,7 +193,16 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
 
         for (Key follower : set) {
-            mapTimelines.get(follower).add(msg);
+            Timeline timeline = mapTimelines.get(follower);
+            try{
+                timeline.add(msg);
+            }catch (NullPointerException e){
+                e.printStackTrace();
+                System.out.println(follower);
+                System.out.println("Segment for : " + ((ExtendedSegmentedHashMap) mapTimelines).segmentFor(follower));
+                System.out.println(timeline);
+                System.exit(0);
+            }
         }
     }
 
