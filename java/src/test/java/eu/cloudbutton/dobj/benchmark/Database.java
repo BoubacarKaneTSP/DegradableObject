@@ -194,15 +194,8 @@ public class Database {
 
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
-            try{
-                timeline.add(msg);
-            }catch (NullPointerException e){
-                e.printStackTrace();
-                System.out.println(follower);
-                System.out.println("Segment for : " + ((ExtendedSegmentedHashMap) mapTimelines).segmentFor(follower));
-                System.out.println(timeline);
-                System.exit(0);
-            }
+
+            timeline.add(msg);
         }
     }
 
