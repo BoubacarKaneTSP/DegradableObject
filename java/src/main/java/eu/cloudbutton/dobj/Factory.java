@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.asymmetric.SetMWSR;
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.incrementonly.*;
 import eu.cloudbutton.dobj.list.DegradableLinkedList;
 import eu.cloudbutton.dobj.list.DegradableList;
@@ -225,6 +226,8 @@ public class Factory {
                 return new ExtendedSegmentedHashMap<>(parallelism);
             case "ExtendedSegmentedConcurrentHashMap":
                 return new ExtendedSegmentedConcurrentHashMap<>(parallelism);
+            case "SWMRHashMap":
+                return new SWMRHashMap();
             default:
                 throw new ClassNotFoundException();
         }

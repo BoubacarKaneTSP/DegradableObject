@@ -1,12 +1,12 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +15,15 @@ public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentatio
 
     public ExtendedSegmentedConcurrentHashMap(int parallelism) {
         super(ConcurrentHashMap.class, parallelism);
+    }
+
+    @Override
+    public String toString() {
+        String ret = "";
+        for(Map m: segments()){
+            ret += m.toString();
+        }
+        return ret;
     }
 
     @Override
@@ -94,6 +103,11 @@ public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentatio
     @NotNull
     @Override
     public Set<Entry<K, V>> entrySet() {
-        throw new UnsupportedOperationException();
+        Set<Entry<K, V>> ret = new HashSet<>();
+        for(Map m: segments()){
+            ret.addAll(m.entrySet());
+        }
+        return ret;
     }
+
 }
