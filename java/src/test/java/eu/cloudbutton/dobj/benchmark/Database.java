@@ -48,8 +48,8 @@ public class Database {
         this.nbThread = nbThread;
 //        mapFollowers = Factory.createMap(typeMap, nbThread);
         mapFollowers = new ConcurrentHashMap<>();
-//        mapFollowing = new ConcurrentHashMap<>();
-        mapFollowing = Factory.createMap(typeMap, nbThread);
+        mapFollowing = new ConcurrentHashMap<>();
+//        mapFollowing = Factory.createMap(typeMap, nbThread);
         mapTimelines = Factory.createMap(typeMap, nbThread);
 //        mapTimelines = new ConcurrentHashMap<>();
         usersProbability = new ConcurrentSkipListMap<>();

@@ -66,7 +66,10 @@ public class Retwis {
     private int _nbTest = 1;
 
     @Option(name = "-nbOps", usage = "Number of operation done")
-    private long _nbOps = 1_000_00;
+    private long _nbOps = 1_000_000;
+
+    @Option(name = "-nbUserInit", usage = "Number of user initially added")
+    private long _nbUserInit = 1_000_000;
 
     @Option(name = "-time", usage = "test time (seconds)")
     private long _time = 20;
@@ -119,11 +122,13 @@ public class Retwis {
     private List<AtomicLong> timeOperations;
     private LongAdder timeBenchmark;
     private LongAdder queueSizes;
-    private List<Integer> allAvgQueueSizes;
-    private List<Integer> allAvgFollower;
-    private List<Integer> allNbMaxFollower;
-    private List<Integer> allNbUserWithMaxFollower;
-    private List<Integer> allNbUserWithoutFollower;
+    private Long nbUserFinal;
+    private Long nbTweetFinal;
+    private List<Float> allAvgQueueSizes;
+    private List<Float> allAvgFollower;
+    private List<Float> allNbMaxFollower;
+    private List<Float> allNbUserWithMaxFollower;
+    private List<Float> allNbUserWithoutFollower;
 
     private Database database;
 
@@ -192,7 +197,7 @@ public class Retwis {
             listAlpha.add(i);
         }
 
-        NB_USERS = (int) _nbOps;
+        NB_USERS = (int) _nbUserInit;
 
         List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(NB_USERS);
 
@@ -211,14 +216,12 @@ public class Retwis {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            long startTime, endTime, timeTotal = 0L, benchmarkAvgTime = 0;;
+            long startTime, endTime, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
             allAvgFollower = new ArrayList();
             allNbMaxFollower = new ArrayList();
             allNbUserWithMaxFollower = new ArrayList();
             allNbUserWithoutFollower = new ArrayList();
-
-//            NB_USERS = nbCurrThread;
 
             if (_p){
                 System.out.println();
@@ -240,6 +243,8 @@ public class Retwis {
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
                 queueSizes = new LongAdder();
+                nbUserFinal = 0L;
+                nbTweetFinal = 0L;
                 timeBenchmark = new LongAdder();
 
                 for (int op: mapIntOptoStringOp.keySet()) {
@@ -274,10 +279,6 @@ public class Retwis {
                     executorServiceCoordinator.submit(new Coordinator(latch));
                     List<Future<Void>> futures;
 
-                    if (flagWarmingUp.get()) {
-                        benchmarkAvgTime -= _wTime * 1_000_000_000;
-                    }
-
                     startTime = System.nanoTime();
 
                     futures = executor.invokeAll(callables);
@@ -296,16 +297,9 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(1);
 
                     benchmarkAvgTime += endTime - startTime;
-                    timeTotal = endTime - startTime;
 
-                    if (nbCurrThread == 1 && nbCurrTest == 1)
-
-                    if (flagWarmingUp.get()) {
-                        timeTotal -= _wTime * 1_000_000_000;
-                    }
                     if(_p)
                         System.out.println(" ==> End of test num : " + nbCurrTest);
-
 
                     if (_breakdown){
 
@@ -333,14 +327,19 @@ public class Retwis {
                                 userWithoutFollower++;
                         }
 
-                        allAvgQueueSizes.add((int) ((queueSizes.longValue()/ NB_USERS)/nbCurrThread));
-                        allAvgFollower.add(nbFollowerTotal/NB_USERS);
-                        allNbMaxFollower.add(maxFollower);
-                        allNbUserWithMaxFollower.add(userWithMaxFollower);
-                        allNbUserWithoutFollower.add(userWithoutFollower);
+                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
+                        nbTweetFinal += queueSizes.longValue();
+                        nbUserFinal += database.getMapTimelines().size();
+                        allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
+                        allNbMaxFollower.add((float) maxFollower);
+                        allNbUserWithMaxFollower.add((float) userWithMaxFollower);
+                        allNbUserWithoutFollower.add((float) userWithoutFollower);
                     }
                     executor.shutdown();
                 }
+
+                if(_p)
+                    System.out.println();
 
                 if (_gcinfo || _p)
                     System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest + "ms");
@@ -362,9 +361,8 @@ public class Retwis {
                 String strAlpha = Double.toString(alpha).replace(".","");
                 if (strAlpha.length() >= 3)
                     strAlpha = strAlpha.substring(0,3);
-//                String strAlpha = Integer.toString(nbCurrThread);
 
-//              long avgTimeTotal = timeTotal / nbCurrThread; // Compute the avg time to get the global throughput
+                long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
 
                 if (_s){
 
@@ -376,21 +374,23 @@ public class Retwis {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(unit +" "+ timeTotal);
+                        printWriter.println(unit +" "+ timeBenchmarkAvg/_nbTest);
                     else
-                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed/_nbTest) * 1_000_000_000);
 
                 }
 
                 if (_p){
                     for (int j = 0; j < nbSign; j++) System.out.print("-");
+
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(timeTotal/1_000_000_000 +" seconds");
+                        System.out.println(timeBenchmarkAvg + " ms");
+
                     }
                     else {
                         System.out.print(" ==> Throughput (op/s) for all operations : ");
-                        System.out.println( String.format("%.3E",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000));
+                        System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                         System.out.println(" ==> - temps d'execution : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
                     }
 
@@ -430,13 +430,12 @@ public class Retwis {
                     }
 
                     if (_gcinfo){
-                        long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
                         System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
                     }
 
                     if (_breakdown){
 
-                        int sumAvgQueueSizes = 0,
+                        float sumAvgQueueSizes = 0,
                                 sumAvgFollower = 0,
                                 sumNbMaxFollower = 0,
                                 sumNbUserWithMaxFollower = 0,
@@ -461,46 +460,45 @@ public class Retwis {
                             }
 
                             System.out.println(" ==> nb original users : " + NB_USERS);
+                            System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
                             System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
                             System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
                             System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
                             System.out.println(" ==> nb user with max follower (or 20% less) : " + sumNbUserWithMaxFollower/_nbTest);
                             System.out.println(" ==> nb user without follower : " + sumNbUserWithoutFollower/_nbTest);
+                            System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
                             System.out.println();
-//                            System.out.println("Map Follower : " + database.getMapFollowers());
-//                            System.out.println("Map Following : " + database.getMapFollowing());
                         }
 
                         if (_s){
-                            FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile;
-                            PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint;
+                            FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
+                            PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
 
-                            if (flag_append == 0) {
-                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", false);
-                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", false);
-                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", false);
-                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", false);
-                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", false);
-                            }
-                            else {
-                                queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", true);
-                                avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", true);
-                                nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", true);
-                                nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt", true);
-                                nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", true);
-                            }
+                            boolean append = flag_append != 0;
+
+                            queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", append);
+                            avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", append);
+                            nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", append);
+                            nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt",append);
+                            nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", append);
+                            nbUserFinalFile = new FileWriter("nb_user_final_"+_tag+".txt", append);
+                            nbTweetFinalFile = new FileWriter("nb_tweet_final_"+_tag+".txt", append);
 
                             queueSizePrint = new PrintWriter(queueSizeFile);
                             avgFollowerPrint = new PrintWriter(avgFollowerFile);
                             nbMaxFollowerPrint = new PrintWriter(nbMaxFollowerFile);
                             nbUserWithMaxFollowerPrint = new PrintWriter(nbUserWithMaxFollowerFile);
                             nbUserWithoutFollowerPrint = new PrintWriter(nbUserWithoutFollowerFile);
+                            nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
+                            nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
 
                             queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
                             avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
                             nbMaxFollowerPrint.println(unit + " " + sumNbMaxFollower/_nbTest);
                             nbUserWithMaxFollowerPrint.println(unit + " " + sumNbUserWithMaxFollower/_nbTest);
                             nbUserWithoutFollowerPrint.println(unit + " " + sumNbUserWithoutFollower/_nbTest);
+                            nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
+                            nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
 
                             queueSizePrint.flush();
                             avgFollowerPrint.flush();
@@ -595,7 +593,8 @@ public class Retwis {
 
                 startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
-                    for (int i = 0; i < _nbOps/_nbThreads; i++) {
+                    int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
+                    for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
                         compute(type, nbLocalOperations, timeLocalOperations);
                     }
@@ -685,13 +684,9 @@ public class Retwis {
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
-                        if (_completionTime){
-                            database.addUser(database.generateUser());
-                        }else{
-                            startTime = System.nanoTime();
-                            database.addUser(database.generateUser());
-                            endTime = System.nanoTime();
-                        }
+                        startTime = System.nanoTime();
+                        database.addUser(database.generateUser());
+                        endTime = System.nanoTime();
                         break;
                     case FOLLOW:
 
@@ -699,20 +694,10 @@ public class Retwis {
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
                         if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
-                            if (_completionTime){
-                                database.followUser(userA, userB);
-                            }else {
-                                startTime = System.nanoTime();
-                                try{
-                                    database.followUser(userA, userB);
-                                }catch (NullPointerException e) {
-                                    e.printStackTrace();
-                                    System.out.println("Trying to add " + userA + " (userA) to "+ userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
-                                    System.out.println("Trying to add " + userB + " (userB) to "+ userA + " (userA) map following : " + database.getMapFollowing().get(userA));
-                                    System.exit(1);
-                                }
-                                endTime = System.nanoTime();
-                            }
+                            startTime = System.nanoTime();
+                            database.followUser(userA, userB);
+                            endTime = System.nanoTime();
+
                             listFollow.add(userB);
                         }else
                             continue restartOperation;
@@ -721,46 +706,28 @@ public class Retwis {
                     case UNFOLLOW:
                         userB = listFollow.poll();
                         if (userB != null){ // Perform unfollow only if userA already follow someone
-                            if (_completionTime){
-                                database.unfollowUser(userA, userB);
-                            }else{
-                                startTime = System.nanoTime();
-                                try{
-                                    database.unfollowUser(userA, userB);
-                                }catch (NullPointerException e) {
-                                    e.printStackTrace();
-                                    System.out.println("Trying to remove " + userA + " (userA) from "+ userB + " (userB) map followers : " + database.getMapFollowers().get(userB));
-                                    System.out.println("Trying to remove " + userB + " (userB) from "+ userA + " (userA) map following : " + database.getMapFollowing().get(userA));
-                                    System.exit(1);
-                                }
-                                endTime = System.nanoTime();
-                            }
-                            }else
+                            startTime = System.nanoTime();
+                            database.unfollowUser(userA, userB);
+                            endTime = System.nanoTime();
+                        }else
                             continue restartOperation;
                         break;
                     case TWEET:
-                        if (_completionTime){
-                            database.tweet(userA, msg);
-                        }else{
-                            startTime = System.nanoTime();
-                            database.tweet(userA, msg);
-                            endTime = System.nanoTime();
-                        }
+                        startTime = System.nanoTime();
+                        database.tweet(userA, msg);
+                        endTime = System.nanoTime();
                         break;
                     case READ:
-                        if (_completionTime){
-                            database.showTimeline(userA);
-                        }else{
-                            startTime = System.nanoTime();
-                            database.showTimeline(userA);
-                            endTime = System.nanoTime();
-                        }
+                        startTime = System.nanoTime();
+                        database.showTimeline(userA);
+                        endTime = System.nanoTime();
+
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + type);
                 }
 
-                if (!flagWarmingUp.get() && !_completionTime) {
+                if (!flagWarmingUp.get()) {
                     nbOps.get(typeComputed).val += 1;
                     timeOps.get(typeComputed).val+= endTime - startTime;
                 }
