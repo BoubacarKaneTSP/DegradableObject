@@ -428,90 +428,90 @@ public class Retwis {
                         if (_s)
                             printWriter.flush();
                     }
+                }
 
-                    if (_gcinfo){
-                        System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
+                if (_gcinfo){
+                    System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
+                }
+
+                if (_breakdown){
+
+                    float sumAvgQueueSizes = 0,
+                            sumAvgFollower = 0,
+                            sumNbMaxFollower = 0,
+                            sumNbUserWithMaxFollower = 0,
+                            sumNbUserWithoutFollower = 0;
+
+                    for (int i = 0; i < _nbTest; i++) {
+                        sumAvgQueueSizes += allAvgQueueSizes.get(i);
+                        sumAvgFollower += allAvgFollower.get(i);
+                        sumNbMaxFollower += allNbMaxFollower.get(i);
+                        sumNbUserWithMaxFollower += allNbUserWithMaxFollower.get(i);
+                        sumNbUserWithoutFollower += allNbUserWithoutFollower.get(i);
+
+                    }
+                    if (_p){
+                        for (int op: mapIntOptoStringOp.keySet()) {
+                            int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
+                            System.out.print("==> - " + mapIntOptoStringOp.get(op));
+                            for (int i = 0; i < nbSpace; i++) System.out.print(" ");
+                            System.out.println(": Nb op : " + nbOperations.get(op).get()
+                                    + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
+                                    + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000_000 + " milli seconds");
+                        }
+
+                        System.out.println(" ==> nb original users : " + NB_USERS);
+                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
+                        System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
+                        System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
+                        System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
+                        System.out.println(" ==> nb user with max follower (or 20% less) : " + sumNbUserWithMaxFollower/_nbTest);
+                        System.out.println(" ==> nb user without follower : " + sumNbUserWithoutFollower/_nbTest);
+                        System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
+                        System.out.println();
                     }
 
-                    if (_breakdown){
+                    if (_s){
+                        FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
+                        PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
 
-                        float sumAvgQueueSizes = 0,
-                                sumAvgFollower = 0,
-                                sumNbMaxFollower = 0,
-                                sumNbUserWithMaxFollower = 0,
-                                sumNbUserWithoutFollower = 0;
+                        boolean append = flag_append != 0;
 
-                        for (int i = 0; i < _nbTest; i++) {
-                            sumAvgQueueSizes += allAvgQueueSizes.get(i);
-                            sumAvgFollower += allAvgFollower.get(i);
-                            sumNbMaxFollower += allNbMaxFollower.get(i);
-                            sumNbUserWithMaxFollower += allNbUserWithMaxFollower.get(i);
-                            sumNbUserWithoutFollower += allNbUserWithoutFollower.get(i);
+                        queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", append);
+                        avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", append);
+                        nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", append);
+                        nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt",append);
+                        nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", append);
+                        nbUserFinalFile = new FileWriter("nb_user_final_"+_tag+".txt", append);
+                        nbTweetFinalFile = new FileWriter("nb_tweet_final_"+_tag+".txt", append);
 
-                        }
-                        if (_p){
-                            for (int op: mapIntOptoStringOp.keySet()) {
-                                int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
-                                System.out.print("==> - " + mapIntOptoStringOp.get(op));
-                                for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                                System.out.println(": Nb op : " + nbOperations.get(op).get()
-                                        + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
-                                        + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000_000 + " milli seconds");
-                            }
+                        queueSizePrint = new PrintWriter(queueSizeFile);
+                        avgFollowerPrint = new PrintWriter(avgFollowerFile);
+                        nbMaxFollowerPrint = new PrintWriter(nbMaxFollowerFile);
+                        nbUserWithMaxFollowerPrint = new PrintWriter(nbUserWithMaxFollowerFile);
+                        nbUserWithoutFollowerPrint = new PrintWriter(nbUserWithoutFollowerFile);
+                        nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
+                        nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
 
-                            System.out.println(" ==> nb original users : " + NB_USERS);
-                            System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
-                            System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
-                            System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
-                            System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
-                            System.out.println(" ==> nb user with max follower (or 20% less) : " + sumNbUserWithMaxFollower/_nbTest);
-                            System.out.println(" ==> nb user without follower : " + sumNbUserWithoutFollower/_nbTest);
-                            System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
-                            System.out.println();
-                        }
+                        queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
+                        avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
+                        nbMaxFollowerPrint.println(unit + " " + sumNbMaxFollower/_nbTest);
+                        nbUserWithMaxFollowerPrint.println(unit + " " + sumNbUserWithMaxFollower/_nbTest);
+                        nbUserWithoutFollowerPrint.println(unit + " " + sumNbUserWithoutFollower/_nbTest);
+                        nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
+                        nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
 
-                        if (_s){
-                            FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
-                            PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
+                        queueSizePrint.flush();
+                        avgFollowerPrint.flush();
+                        nbMaxFollowerPrint.flush();
+                        nbUserWithMaxFollowerPrint.flush();
+                        nbUserWithoutFollowerPrint.flush();
 
-                            boolean append = flag_append != 0;
-
-                            queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", append);
-                            avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", append);
-                            nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", append);
-                            nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt",append);
-                            nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", append);
-                            nbUserFinalFile = new FileWriter("nb_user_final_"+_tag+".txt", append);
-                            nbTweetFinalFile = new FileWriter("nb_tweet_final_"+_tag+".txt", append);
-
-                            queueSizePrint = new PrintWriter(queueSizeFile);
-                            avgFollowerPrint = new PrintWriter(avgFollowerFile);
-                            nbMaxFollowerPrint = new PrintWriter(nbMaxFollowerFile);
-                            nbUserWithMaxFollowerPrint = new PrintWriter(nbUserWithMaxFollowerFile);
-                            nbUserWithoutFollowerPrint = new PrintWriter(nbUserWithoutFollowerFile);
-                            nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
-                            nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
-
-                            queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
-                            avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
-                            nbMaxFollowerPrint.println(unit + " " + sumNbMaxFollower/_nbTest);
-                            nbUserWithMaxFollowerPrint.println(unit + " " + sumNbUserWithMaxFollower/_nbTest);
-                            nbUserWithoutFollowerPrint.println(unit + " " + sumNbUserWithoutFollower/_nbTest);
-                            nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
-                            nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
-
-                            queueSizePrint.flush();
-                            avgFollowerPrint.flush();
-                            nbMaxFollowerPrint.flush();
-                            nbUserWithMaxFollowerPrint.flush();
-                            nbUserWithoutFollowerPrint.flush();
-
-                            queueSizeFile.close();
-                            avgFollowerFile.close();
-                            nbMaxFollowerFile.close();
-                            nbUserWithMaxFollowerFile.close();
-                            nbUserWithoutFollowerFile.close();
-                        }
+                        queueSizeFile.close();
+                        avgFollowerFile.close();
+                        nbMaxFollowerFile.close();
+                        nbUserWithMaxFollowerFile.close();
+                        nbUserWithoutFollowerFile.close();
                     }
                 }
 
