@@ -74,16 +74,16 @@ public class Factory {
         return constructorList.newInstance();
     }
 
-    public static Object createObject(String object, int parallelism) throws ClassNotFoundException{
+    public static Object createObject(String object, FactoryIndice factoryIndice) throws ClassNotFoundException{
 
         if (object.contains("Counter") || object.contains("LongAdder"))
             return createCounter(object);
         else if (object.contains("Set"))
-            return createSet(object, parallelism);
+            return createSet(object, factoryIndice);
         else if (object.contains("Map"))
-            return createMap(object, parallelism);
+            return createMap(object, factoryIndice);
         else if (object.contains("List"))
-            return createList(object, parallelism);
+            return createList(object, factoryIndice);
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Noop"))
@@ -125,7 +125,7 @@ public class Factory {
 
     /* List */
 
-    public static List createList(String list, int parallelism) throws ClassNotFoundException {
+    public static List createList(String list, FactoryIndice factoryIndice) throws ClassNotFoundException {
 
         switch (list){
 
@@ -136,7 +136,7 @@ public class Factory {
             case "LinkedList":
                 return new LinkedList<>();
             case "ShardedLinkedList":
-                return new ShardedLinkedList<>(parallelism);
+                return new ShardedLinkedList<>(factoryIndice);
             case "DegradableLinkedList":
                 return new DegradableLinkedList<>();
             default:
@@ -146,19 +146,19 @@ public class Factory {
 
     /* Set */
 
-    public static Set createSet(String set, int parallelism) throws ClassNotFoundException {
+    public static Set createSet(String set, FactoryIndice factoryIndice) throws ClassNotFoundException {
 
         switch (set){
             case "SegmentedSkipListSet":
-                return new SegmentedSkipListSet<>(parallelism);
+                return new SegmentedSkipListSet<>(factoryIndice);
             case "SegmentedTreeSet":
-                return new SegmentedTreeSet<>(parallelism);
+                return new SegmentedTreeSet<>(factoryIndice);
             case "SegmentedHashSet":
-                return new SegmentedHashSet<>(parallelism);
+                return new SegmentedHashSet<>(factoryIndice);
             case "ShardedTreeSet":
-                return new ShardedTreeSet<>(parallelism);
+                return new ShardedTreeSet<>(factoryIndice);
             case "ShardedHashSet":
-                return new ShardedHashSet<>(parallelism);
+                return new ShardedHashSet<>(factoryIndice);
             case "Set":
                 return new ConcurrentSkipListSet<>();
             case "ConcurrentHashSet":
@@ -170,7 +170,7 @@ public class Factory {
             case "SetMWSR":
                 return new SetMWSR<>();
             case "ExtendedSegmentedHashSet":
-                return new ExtendedSegmentedHashSet<>(parallelism);
+                return new ExtendedSegmentedHashSet<>(factoryIndice);
             default:
                 throw new ClassNotFoundException();
         }
@@ -202,18 +202,18 @@ public class Factory {
 
     /* Map */
 
-    public static Map createMap(String map, int parallelism) throws ClassNotFoundException {
+    public static Map createMap(String map, FactoryIndice factoryIndice) throws ClassNotFoundException {
 
         switch (map){
 
             case "SegmentedHashMap":
-                return new SegmentedHashMap<>(parallelism);
+                return new SegmentedHashMap<>(factoryIndice);
             case "SegmentedSkipListMap":
-                return new SegmentedSkipListMap<>(parallelism);
+                return new SegmentedSkipListMap<>(factoryIndice);
             case "SegmentedTreeMap":
-                return new SegmentedTreeMap<>(parallelism);
+                return new SegmentedTreeMap<>(factoryIndice);
             case "ShardedHashMap":
-                return new ShardedHashMap<>(parallelism);
+                return new ShardedHashMap<>(factoryIndice);
             case "Map":
                 return new ConcurrentHashMap<>();
             case "ConcurrentSkipListMap":
@@ -223,9 +223,9 @@ public class Factory {
             case "MapAddIntensive":
                 return new MapAddIntensive<>();
             case "ExtendedSegmentedHashMap":
-                return new ExtendedSegmentedHashMap<>(parallelism);
+                return new ExtendedSegmentedHashMap<>(factoryIndice);
             case "ExtendedSegmentedConcurrentHashMap":
-                return new ExtendedSegmentedConcurrentHashMap<>(parallelism);
+                return new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
             case "SWMRHashMap":
                 return new SWMRHashMap();
             default:

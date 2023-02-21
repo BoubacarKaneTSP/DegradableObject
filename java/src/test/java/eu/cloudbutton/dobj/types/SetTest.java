@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
@@ -19,6 +20,7 @@ import java.util.concurrent.*;
 public class SetTest {
 
     private Factory factory;
+    private FactoryIndice factoryIndice;
     private KeyGenerator generator;
     private static int nbThread;
 
@@ -26,8 +28,9 @@ public class SetTest {
     void setUp() {
         factory = new Factory();
         generator = new SimpleKeyGenerator(1000);
-//        nbThread = 1;
         nbThread = Runtime.getRuntime().availableProcessors();
+        factoryIndice = new FactoryIndice(nbThread);
+//        nbThread = 1;
     }
 
     @Test
@@ -54,7 +57,7 @@ public class SetTest {
         Class cls = Class.forName("eu.cloudbutton.dobj.mcwmcr.SetReadIntensive");
         factory.setFactorySet(cls);
         doTestIterator(factory.getSet());
-        doTestIterator(Factory.createSet("ExtendedSegmentedHashSet", nbThread));
+        doTestIterator(Factory.createSet("ExtendedSegmentedHashSet", factoryIndice));
     }
 
     private void doRemove(Set set) {

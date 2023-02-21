@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import lombok.SneakyThrows;
@@ -12,8 +13,8 @@ import java.util.Set;
 
 public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
-    public SegmentedHashMap(int parallelism) {
-        super(SWMRHashMap.class, parallelism);
+    public SegmentedHashMap(FactoryIndice factoryIndice) {
+        super(SWMRHashMap.class, factoryIndice);
     }
 
     @Override

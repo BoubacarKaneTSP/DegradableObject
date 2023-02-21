@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRTreeMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +12,8 @@ import java.util.Set;
 
 public class SegmentedTreeMap<K,V> extends BaseSegmentation<SWSRTreeMap> implements Map<K,V> {
 
-    public SegmentedTreeMap(int parallelism) {
-        super(SWSRTreeMap.class, parallelism);
+    public SegmentedTreeMap(FactoryIndice factoryIndice) {
+        super(SWSRTreeMap.class, factoryIndice);
     }
 
     @Override

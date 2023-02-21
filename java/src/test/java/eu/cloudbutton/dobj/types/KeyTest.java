@@ -1,8 +1,11 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.key.*;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -12,6 +15,17 @@ import static org.testng.Assert.assertEquals;
 
 public class KeyTest {
 
+    private Factory factory;
+    private FactoryIndice factoryIndice;
+    private static Integer nbThread;
+
+    @BeforeTest
+    void setUp() {
+        factory = new Factory();
+        nbThread = Runtime.getRuntime().availableProcessors();
+//        nbThread = 1;
+        factoryIndice = new FactoryIndice(nbThread);
+    }
 
     @Test
     public void SequentialKeyTest(){
@@ -19,7 +33,7 @@ public class KeyTest {
         int max_item_per_thread = 2048;
         int nbAdd = 100000;
         int size = 0;
-        Set<Key> set = new SegmentedSkipListSet(1);
+        Set<Key> set = new SegmentedSkipListSet(factoryIndice);
 
         KeyGenerator keyGenerator = new SimpleKeyGenerator(max_item_per_thread);
 

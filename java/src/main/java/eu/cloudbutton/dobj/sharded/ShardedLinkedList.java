@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.sharded;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,8 +8,8 @@ import java.util.*;
 
 public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implements List<E> {
 
-    public ShardedLinkedList(int parallelism) {
-        super(LinkedList.class, parallelism);
+    public ShardedLinkedList(FactoryIndice factoryIndice) {
+        super(LinkedList.class, factoryIndice);
     }
 
 

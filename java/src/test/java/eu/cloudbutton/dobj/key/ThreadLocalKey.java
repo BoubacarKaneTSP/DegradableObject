@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ThreadLocalKey extends SegmentAware<ThreadLocalKey> implements Key, Comparable<ThreadLocalKey>{
+public class ThreadLocalKey extends SegmentAware implements Key, Comparable<ThreadLocalKey>{
 
     public long tid;
     public long id;

@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.SWMRSkipListSet;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
@@ -13,8 +14,8 @@ import java.util.Set;
 
 public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentation<SWMRSkipListSet> implements Set<E> {
 
-    public SegmentedSkipListSet(int parallelism) {
-        super(SWMRSkipListSet.class, parallelism);
+    public SegmentedSkipListSet(FactoryIndice factoryIndice) {
+        super(SWMRSkipListSet.class, factoryIndice);
     }
 
     @Override

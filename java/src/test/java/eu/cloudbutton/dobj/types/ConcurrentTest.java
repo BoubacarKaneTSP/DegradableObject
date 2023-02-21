@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
@@ -19,21 +20,23 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ConcurrentTest {
 
     private Factory factory;
+    private FactoryIndice factoryIndice;
     private static Integer nbThread;
 
     @BeforeTest
     void setUp() {
         factory = new Factory();
-//        nbThread = 1;
         nbThread = Runtime.getRuntime().availableProcessors();
+//        nbThread = 1;
+        factoryIndice = new FactoryIndice(nbThread);
     }
 
 
     @Test
     void add() throws ExecutionException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException {
-        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", nbThread));
-        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , nbThread));
-        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", nbThread));
+        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
+        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
+        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {

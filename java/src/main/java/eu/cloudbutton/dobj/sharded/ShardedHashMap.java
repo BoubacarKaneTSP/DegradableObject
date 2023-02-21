@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.sharded;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,8 +12,8 @@ import java.util.Set;
 
 public class ShardedHashMap<K,V> extends BaseSegmentation<HashMap> implements Map<K,V> {
 
-    public ShardedHashMap(int parallelism) {
-        super(HashMap.class, parallelism);
+    public ShardedHashMap(FactoryIndice factoryIndice) {
+        super(HashMap.class, factoryIndice);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.sharded;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,8 +8,8 @@ import java.util.*;
 
 public class ShardedTreeSet<E> extends BaseSegmentation<TreeSet> implements Set<E> {
 
-    public ShardedTreeSet(int parallelism) {
-        super(TreeSet.class, parallelism);
+    public ShardedTreeSet(FactoryIndice factoryIndice) {
+        super(TreeSet.class, factoryIndice);
     }
 
 

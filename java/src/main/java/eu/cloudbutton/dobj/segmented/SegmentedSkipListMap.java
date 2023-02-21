@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRSkipListMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import lombok.SneakyThrows;
@@ -13,8 +14,8 @@ import java.util.Set;
 
 public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap> implements Map<K,V> {
 
-    public SegmentedSkipListMap(int parallelism) {
-        super(SWSRSkipListMap.class, parallelism);
+    public SegmentedSkipListMap(FactoryIndice factoryIndice) {
+        super(SWSRSkipListMap.class, factoryIndice);
     }
     
     @Override

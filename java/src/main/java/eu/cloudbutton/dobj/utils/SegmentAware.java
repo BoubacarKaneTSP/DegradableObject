@@ -4,11 +4,11 @@ import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import lombok.Getter;
 import lombok.Setter;
 
-public class SegmentAware<T> {
+public class SegmentAware {
 
     @Getter
     @Setter
-    AtomicWriteOnceReference<T> reference;
+    AtomicWriteOnceReference<Integer> reference;
 
     public SegmentAware(){
         reference = new AtomicWriteOnceReference<>();
