@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
@@ -10,40 +9,38 @@ import eu.cloudbutton.dobj.swsr.SWSRHashSet;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConcurrentTest {
 
     private Factory factory;
-    private FactoryIndice factoryIndice;
     private static Integer nbThread;
 
     @BeforeTest
     void setUp() {
         factory = new Factory();
-        nbThread = Runtime.getRuntime().availableProcessors();
 //        nbThread = 1;
-        factoryIndice = new FactoryIndice(nbThread);
+        nbThread = Runtime.getRuntime().availableProcessors();
     }
 
 
     @Test
-    void add() throws ExecutionException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException {
-        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
-        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
-        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
+    void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
+        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", nbThread));
+        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , nbThread));
+        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", nbThread));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
 
-        int nbIteration = 100;
+        int nbIteration = 10000;
         Callable<Void> callable = () -> {
             for (int i = 0; i < nbIteration; i++) {
                 ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
@@ -52,7 +49,7 @@ public class ConcurrentTest {
                 SWMRHashMap<ThreadLocalKey, String> map = obj.segmentFor(key);
 
                 for (String s : map.values() ){
-                    assert s.equals(Thread.currentThread().getName()) : "Thread : "+ Thread.currentThread().getName() +" => values : " + map.values();
+                    assert s.equals(Thread.currentThread().getName()) : "Reading the wrong segment";
                 }
 
             }
@@ -100,26 +97,25 @@ public class ConcurrentTest {
     private static void concurrentSWMRMapTest(Map<ThreadLocalKey, Integer> map) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
-        List<ThreadLocalKey> list = new CopyOnWriteArrayList<>();
+        Queue<ThreadLocalKey> list = new ConcurrentLinkedQueue<>();
         AtomicReference<ThreadLocalRandom> random = new AtomicReference<>();
-        int nbIteration = 1000;
+        int nbIteration = 100000;
         Callable<Void> callable = () -> {
             random.set(ThreadLocalRandom.current());
-            String name = Thread.currentThread().getName();
             ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), 0, nbIteration);
             map.put(key, 0);
             list.add(key);
             assert map.get(key) == 0 : "error with put method";
 
             for (int i = 0; i < nbIteration; i++) {
-                if (name.contains("thread-1")){
-                    key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
-                    map.put(key, i);
-                }else{
-                    int val = random.get().nextInt(list.size());
-                    ThreadLocalKey key1 = list.get(val);
+                key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
+                map.put(key, i);
+                list.add(key);
+
+                ThreadLocalKey key1 = list.poll();
+                if (key1 != null)
                     assert map.get(key1) != null : "get shouldn't return null : " + Thread.currentThread().getName();
-                }
+
             }
             return null;
         };

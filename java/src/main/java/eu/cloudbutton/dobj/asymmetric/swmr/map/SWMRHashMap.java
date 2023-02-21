@@ -36,7 +36,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import jdk.internal.misc.SharedSecrets;
 import sun.misc.Unsafe;
 
 /**
@@ -236,8 +235,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-//    static final int DEFAULT_INITIAL_CAPACITY = 100000; // aka 16
-    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+    static final int DEFAULT_INITIAL_CAPACITY = 1000000; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
      * The maximum capacity, used if a higher value is implicitly specified
@@ -260,7 +259,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * shrinkage.
      */
     static final int TREEIFY_THRESHOLD = 8;
-//    static final int TREEIFY_THRESHOLD = 1000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -763,7 +761,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
         table = newTab;
-        UNSAFE.storeFence();
+        UNSAFE.fullFence();
         return newTab;
     }
 
@@ -1474,7 +1472,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
             // Check Map.Entry[].class since it's the nearest public type to
             // what we're actually creating.
-            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap);
+//            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap); //Quoting this line since SharedSecrets is not visible
             @SuppressWarnings({"rawtypes","unchecked"})
             Node<K,V>[] tab = (Node<K,V>[])new Node[cap];
             table = tab;
