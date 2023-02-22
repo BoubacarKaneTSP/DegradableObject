@@ -235,8 +235,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-    static final int DEFAULT_INITIAL_CAPACITY = 1000000; // aka 16
-//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 1000000; // aka 16
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
      * The maximum capacity, used if a higher value is implicitly specified
@@ -258,7 +258,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-    static final int TREEIFY_THRESHOLD = 8;
+//    static final int TREEIFY_THRESHOLD = 8;
+    static final int TREEIFY_THRESHOLD = 10000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -592,6 +593,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 } while ((e = e.next) != null);
             }
         }
+
+        assert false : "The object " + key + " is not present in " + Arrays.toString(Arrays.stream(table).toArray());
+
         return null;
     }
 
@@ -640,7 +644,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
             tab[i] = newNode(hash, key, value, null);
-            UNSAFE.storeFence();
         }
         else {
             Node<K,V> e; K k;
@@ -649,13 +652,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 e = p;
             else if (p instanceof TreeNode) {
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
-                UNSAFE.storeFence();
             }
             else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
-                        UNSAFE.storeFence();
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -671,6 +672,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 afterNodeAccess(e);
+                UNSAFE.fullFence();
                 return oldValue;
             }
         }
@@ -678,6 +680,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);
+        UNSAFE.fullFence();
         return null;
     }
 
@@ -860,7 +863,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else
                     p.next = node.next;
 
-                UNSAFE.storeFence();
+                UNSAFE.fullFence();
 
                 ++modCount;
                 --size;
@@ -1819,22 +1822,29 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
     // Create a regular (non-tree) node
     Node<K,V> newNode(int hash, K key, V value, Node<K,V> next) {
-        return new Node<>(hash, key, value, next);
+        Node<K,V> node = new Node<>(hash, key, value, next);
+        UNSAFE.fullFence();
+        return node;
     }
 
     // For conversion from TreeNodes to plain nodes
     Node<K,V> replacementNode(Node<K,V> p, Node<K,V> next) {
-        return new Node<>(p.hash, p.key, p.value, next);
+        Node<K,V> node = new Node<>(p.hash, p.key, p.value, next);
+        UNSAFE.fullFence();
+        return node;
     }
 
     // Create a tree bin node
     TreeNode<K,V> newTreeNode(int hash, K key, V value, Node<K,V> next) {
-        return new TreeNode<>(hash, key, value, next);
+        TreeNode<K,V> treeNode = new TreeNode<>(hash, key, value, next);
+        UNSAFE.fullFence();
+        return treeNode;
     }
 
     // For treeifyBin
     TreeNode<K,V> replacementTreeNode(Node<K,V> p, Node<K,V> next) {
-        return new TreeNode<>(p.hash, p.key, p.value, next);
+        TreeNode<K,V> treeNode = new TreeNode<>(p.hash, p.key, p.value, next);
+        return treeNode;
     }
 
     /**
