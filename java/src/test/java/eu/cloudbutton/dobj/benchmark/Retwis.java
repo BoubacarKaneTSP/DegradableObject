@@ -138,6 +138,8 @@ public class Retwis {
 
     int flag_append = 0;
 
+    private long completionTime;
+
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
 /*        Queue queue1 = new LinkedList();
         KeyGenerator keyGenerator = new RetwisKeyGenerator(1000000, 1000000, 1.39);
@@ -246,6 +248,7 @@ public class Retwis {
                 nbUserFinal = 0L;
                 nbTweetFinal = 0L;
                 timeBenchmark = new LongAdder();
+                completionTime = 0;
 
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOperations.add(op, new AtomicLong());
@@ -267,16 +270,18 @@ public class Retwis {
 
                     CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
+                    CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latch,
-                                latchFillDatabase
+                                latchFillDatabase,
+                                latchCompletionTime
                         );
                         callables.add(retwisApp);
                     }
 
-                    executorServiceCoordinator.submit(new Coordinator(latch));
+                    executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime));
                     List<Future<Void>> futures;
 
                     startTime = System.nanoTime();
@@ -343,7 +348,7 @@ public class Retwis {
                     System.out.println();
 
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000_000)/_nbTest + " seconds");
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1000000)/_nbTest + " milli seconds");
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
@@ -374,9 +379,9 @@ public class Retwis {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(unit +" "+ timeBenchmarkAvg/_nbTest);
+                        printWriter.println(unit +" "+ completionTime/_nbTest);
                     else
-                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed/_nbTest) * 1_000_000_000);
+                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
 
                 }
 
@@ -385,7 +390,7 @@ public class Retwis {
 
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(timeBenchmarkAvg + " nano secondes");
+                        System.out.println(completionTime/1000000 + " milli secondes");
 
                     }
                     else {
@@ -451,6 +456,7 @@ public class Retwis {
 
                     }
                     if (_p){
+                        System.out.println("Stats for each op over (" + _nbTest + ") tests :");
                         for (int op: mapIntOptoStringOp.keySet()) {
                             int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
                             System.out.print("==> - " + mapIntOptoStringOp.get(op));
@@ -460,6 +466,7 @@ public class Retwis {
                                     + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000_000 + " milli seconds");
                         }
 
+                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
                         System.out.println(" ==> nb original users : " + NB_USERS);
                         System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
                         System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
@@ -506,12 +513,16 @@ public class Retwis {
                         nbMaxFollowerPrint.flush();
                         nbUserWithMaxFollowerPrint.flush();
                         nbUserWithoutFollowerPrint.flush();
+                        nbUserFinalPrint.flush();
+                        nbTweetFinalPrint.flush();
 
                         queueSizeFile.close();
                         avgFollowerFile.close();
                         nbMaxFollowerFile.close();
                         nbUserWithMaxFollowerFile.close();
                         nbUserWithoutFollowerFile.close();
+                        nbUserFinalFile.close();
+                        nbTweetFinalFile.close();
                     }
                 }
 
@@ -541,6 +552,7 @@ public class Retwis {
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
+        private final CountDownLatch latchFillCompletionTime;
         private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private Long usersProbabilityRange;
         private Long localUsersProbabilityRange;
@@ -553,11 +565,12 @@ public class Retwis {
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
 
-        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase) {
+        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, CountDownLatch latchFillCompletionTime) {
             this.random = ThreadLocalRandom.current();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
+            this.latchFillCompletionTime = latchFillCompletionTime;
             this.usersFollow = new HashMap<>();
         }
 
@@ -615,6 +628,11 @@ public class Retwis {
                 }
 
                 endTimeBenchmark = System.nanoTime();
+
+                if (_completionTime){
+                    latchFillCompletionTime.countDown();
+                    latchFillCompletionTime.await();
+                }
 
                 timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
@@ -740,9 +758,11 @@ public class Retwis {
     public class Coordinator implements Callable<Void> {
 
         private final CountDownLatch latch;
+        private final CountDownLatch latchCompletionTime;
 
-        public Coordinator(CountDownLatch latch) {
+        public Coordinator(CountDownLatch latch, CountDownLatch latchCompletionTime) {
             this.latch = latch;
+            this.latchCompletionTime = latchCompletionTime;
         }
 
         @Override
@@ -770,21 +790,35 @@ public class Retwis {
                     latch.await();
                 }
 
+                if (_gcinfo)
+                    System.out.println("Start benchmark");
                 if (! _completionTime) {
-                    if (_p)
+                    if (_p) {
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
-                    if (_gcinfo) {
-                        System.out.println("Start benchmark");
                     }
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
-                    if (_gcinfo) {
-                        System.out.println("End benchmark");
-                    }
+
                 }else{
+
+                    long startTime, endTime;
+
                     if (_p)
                         System.out.println(" ==> Computing the completion time for " + _nbOps + " operations");
+
+                    startTime = System.nanoTime();
+
+                    latchCompletionTime.countDown();
+                    latchCompletionTime.await();
+
+                    endTime = System.nanoTime();
+
+                    completionTime += endTime - startTime;
                 }
+
+                if (_gcinfo)
+                    System.out.println("End benchmark");
+
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);
             }
