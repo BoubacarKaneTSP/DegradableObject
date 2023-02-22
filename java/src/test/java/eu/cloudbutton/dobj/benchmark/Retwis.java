@@ -294,12 +294,13 @@ public class Retwis {
 
                     endTime = System.nanoTime();
 
-                    TimeUnit.SECONDS.sleep(1);
 
                     benchmarkAvgTime += endTime - startTime;
 
                     if(_p)
                         System.out.println(" ==> End of test num : " + nbCurrTest);
+
+                    TimeUnit.SECONDS.sleep(1);
 
                     if (_breakdown){
 
@@ -342,12 +343,11 @@ public class Retwis {
                     System.out.println();
 
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000)/_nbTest + "ms");
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000_000)/_nbTest + " seconds");
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
                 int unit = nbCurrThread;
-//                int unit = NB_USERS;
 
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOpTotal += nbOperations.get(op).get();
@@ -385,7 +385,7 @@ public class Retwis {
 
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(timeBenchmarkAvg/1_000 + " micro secondes");
+                        System.out.println(timeBenchmarkAvg + " nano secondes");
 
                     }
                     else {
