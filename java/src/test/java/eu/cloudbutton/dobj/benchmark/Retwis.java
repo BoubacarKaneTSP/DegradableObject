@@ -362,7 +362,7 @@ public class Retwis {
                 if (strAlpha.length() >= 3)
                     strAlpha = strAlpha.substring(0,3);
 
-                long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
+                long timeBenchmarkAvg = ((timeBenchmark.longValue()) / nbCurrThread) / _nbTest;
 
                 if (_s){
 
@@ -385,7 +385,7 @@ public class Retwis {
 
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(timeBenchmarkAvg + " ms");
+                        System.out.println(timeBenchmarkAvg/1_000 + " micro secondes");
 
                     }
                     else {
