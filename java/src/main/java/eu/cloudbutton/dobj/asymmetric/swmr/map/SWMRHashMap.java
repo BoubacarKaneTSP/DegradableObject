@@ -594,7 +594,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
 
-        assert false : "The object " + key + " is not present in " + Arrays.toString(Arrays.stream(table).toArray());
+        assert false : "The object " + key + " is not present in " + Arrays.toString(tab);
 
         return null;
     }
