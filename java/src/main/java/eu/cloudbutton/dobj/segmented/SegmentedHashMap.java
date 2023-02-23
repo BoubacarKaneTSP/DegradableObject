@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import lombok.SneakyThrows;

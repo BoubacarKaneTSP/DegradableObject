@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;

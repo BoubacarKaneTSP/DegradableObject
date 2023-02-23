@@ -36,6 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+//import jdk.internal.misc.SharedSecrets;
 import sun.misc.Unsafe;
 
 /**
@@ -235,7 +236,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-//    static final int DEFAULT_INITIAL_CAPACITY = 1000000; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 100000; // aka 16
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
@@ -258,8 +259,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-//    static final int TREEIFY_THRESHOLD = 8;
-    static final int TREEIFY_THRESHOLD = 10000000;
+    static final int TREEIFY_THRESHOLD = 8;
+//    static final int TREEIFY_THRESHOLD = 1000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -593,9 +594,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 } while ((e = e.next) != null);
             }
         }
-
-        assert false : "The object " + key + " is not present in " + Arrays.toString(tab);
-
         return null;
     }
 
@@ -644,6 +642,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
             tab[i] = newNode(hash, key, value, null);
+            UNSAFE.storeFence();
         }
         else {
             Node<K,V> e; K k;
@@ -652,11 +651,13 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 e = p;
             else if (p instanceof TreeNode) {
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
+                UNSAFE.storeFence();
             }
             else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
+                        UNSAFE.storeFence();
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -672,7 +673,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 afterNodeAccess(e);
-                UNSAFE.fullFence();
                 return oldValue;
             }
         }
@@ -680,7 +680,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);
-        UNSAFE.fullFence();
         return null;
     }
 
@@ -764,7 +763,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
         table = newTab;
-        UNSAFE.fullFence();
+        UNSAFE.storeFence();
         return newTab;
     }
 
@@ -863,7 +862,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else
                     p.next = node.next;
 
-                UNSAFE.fullFence();
+                UNSAFE.storeFence();
 
                 ++modCount;
                 --size;
@@ -1475,7 +1474,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
             // Check Map.Entry[].class since it's the nearest public type to
             // what we're actually creating.
-//            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap); //Quoting this line since SharedSecrets is not visible
+//            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap);
             @SuppressWarnings({"rawtypes","unchecked"})
             Node<K,V>[] tab = (Node<K,V>[])new Node[cap];
             table = tab;
@@ -1822,29 +1821,22 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
     // Create a regular (non-tree) node
     Node<K,V> newNode(int hash, K key, V value, Node<K,V> next) {
-        Node<K,V> node = new Node<>(hash, key, value, next);
-        UNSAFE.fullFence();
-        return node;
+        return new Node<>(hash, key, value, next);
     }
 
     // For conversion from TreeNodes to plain nodes
     Node<K,V> replacementNode(Node<K,V> p, Node<K,V> next) {
-        Node<K,V> node = new Node<>(p.hash, p.key, p.value, next);
-        UNSAFE.fullFence();
-        return node;
+        return new Node<>(p.hash, p.key, p.value, next);
     }
 
     // Create a tree bin node
     TreeNode<K,V> newTreeNode(int hash, K key, V value, Node<K,V> next) {
-        TreeNode<K,V> treeNode = new TreeNode<>(hash, key, value, next);
-        UNSAFE.fullFence();
-        return treeNode;
+        return new TreeNode<>(hash, key, value, next);
     }
 
     // For treeifyBin
     TreeNode<K,V> replacementTreeNode(Node<K,V> p, Node<K,V> next) {
-        TreeNode<K,V> treeNode = new TreeNode<>(p.hash, p.key, p.value, next);
-        return treeNode;
+        return new TreeNode<>(p.hash, p.key, p.value, next);
     }
 
     /**

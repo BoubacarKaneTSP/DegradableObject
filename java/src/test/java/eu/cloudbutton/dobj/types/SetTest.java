@@ -1,14 +1,11 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
-import eu.cloudbutton.dobj.swsr.SWSRHashSet;
-import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;

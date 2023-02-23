@@ -1,11 +1,11 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 
@@ -37,6 +37,7 @@ public class Database {
     private List<Integer> powerlawArray;
     private List<List<Key>> usersCollections;
     private AtomicInteger count;
+    private FactoryIndice factoryIndice;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
 
@@ -46,11 +47,12 @@ public class Database {
         this.typeCounter = typeCounter;
         this.alpha = alpha;
         this.nbThread = nbThread;
+        this.factoryIndice = new FactoryIndice(nbThread);
 //        mapFollowers = Factory.createMap(typeMap, nbThread);
         mapFollowers = new ConcurrentHashMap<>();
-        mapFollowing = new ConcurrentHashMap<>();
-//        mapFollowing = Factory.createMap(typeMap, nbThread);
-        mapTimelines = Factory.createMap(typeMap, nbThread);
+//        mapFollowing = new ConcurrentHashMap<>();
+        mapFollowing = Factory.createMap(typeMap, factoryIndice);
+        mapTimelines = Factory.createMap(typeMap, factoryIndice);
 //        mapTimelines = new ConcurrentHashMap<>();
         usersProbability = new ConcurrentSkipListMap<>();
         localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
@@ -166,7 +168,7 @@ public class Database {
 
     public void addUser(Key user) throws ClassNotFoundException {
         mapFollowers.put(user, new ConcurrentSkipListSet<>());
-        mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
+        mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 

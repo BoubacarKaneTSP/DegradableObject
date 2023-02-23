@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.key.*;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;

@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.FactoryIndice;
-import eu.cloudbutton.dobj.swsr.SWSRTreeSet;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRTreeSet;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;

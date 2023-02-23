@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
