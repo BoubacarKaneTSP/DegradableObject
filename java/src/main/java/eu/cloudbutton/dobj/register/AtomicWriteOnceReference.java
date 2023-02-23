@@ -39,14 +39,15 @@ public class AtomicWriteOnceReference<T> implements Serializable {
     }
 
     /**
-     * Sets the value.  Throws an IllegalStateException if a value has already been set.
+     * Sets the value.  Return false if a value has already been set. True otherwise.
      *
      * @param value the value to set.  Setting a null will result in a thrown exception.
      */
-    public void set(T value) {
+    public boolean set(T value) {
         if (!trySet(value)) {
-            throw new IllegalStateException("Value has already been set");
+            return false;
         }
+        return true;
     }
 
     /**

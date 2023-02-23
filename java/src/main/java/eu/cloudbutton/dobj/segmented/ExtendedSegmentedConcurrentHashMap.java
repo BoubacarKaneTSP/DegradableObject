@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentation<ConcurrentHashMap> implements Map<K,V> {
 
-    public ExtendedSegmentedConcurrentHashMap(int parallelism) {
-        super(ConcurrentHashMap.class, parallelism);
+    public ExtendedSegmentedConcurrentHashMap(FactoryIndice factoryIndice) {
+        super(ConcurrentHashMap.class, factoryIndice);
     }
 
     @Override

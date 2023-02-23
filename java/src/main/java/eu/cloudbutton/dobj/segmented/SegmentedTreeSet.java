@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.swsr.SWSRTreeSet;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRTreeSet;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
@@ -11,8 +11,8 @@ import java.util.*;
 
 public class SegmentedTreeSet<E extends Comparable<E>> extends BaseSegmentation<SWSRTreeSet> implements Set<E> {
 
-    public SegmentedTreeSet(int parallelism) {
-        super(SWSRTreeSet.class, parallelism);
+    public SegmentedTreeSet(FactoryIndice factoryIndice) {
+        super(SWSRTreeSet.class, factoryIndice);
     }
 
     @Override

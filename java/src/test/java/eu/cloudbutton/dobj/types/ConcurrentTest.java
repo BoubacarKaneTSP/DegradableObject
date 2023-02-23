@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
@@ -9,35 +10,38 @@ import eu.cloudbutton.dobj.swsr.SWSRHashSet;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConcurrentTest {
 
     private Factory factory;
+    private FactoryIndice factoryIndice;
     private static Integer nbThread;
+    private static ExecutorService executor;
 
     @BeforeTest
     void setUp() {
         factory = new Factory();
-//        nbThread = 1;
         nbThread = Runtime.getRuntime().availableProcessors();
+//        nbThread = 1;
+        factoryIndice = new FactoryIndice(nbThread);
+        executor = Executors.newFixedThreadPool(nbThread);
     }
 
 
     @Test
     void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
-//        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", nbThread));
-//        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , nbThread));
-        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", nbThread));
+        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
+        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
+//        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbIteration = 10000;
@@ -49,7 +53,7 @@ public class ConcurrentTest {
                 SWMRHashMap<ThreadLocalKey, String> map = obj.segmentFor(key);
 
                 for (String s : map.values() ){
-                    assert s.equals(Thread.currentThread().getName()) : "Reading the wrong segment";
+                    assert s.equals(Thread.currentThread().getName()) : "Thread : "+ Thread.currentThread().getName() +" => values : " + map.values();
                 }
 
             }
@@ -66,7 +70,6 @@ public class ConcurrentTest {
     }
 
     private static void addExtendedSegmentedHashSet(ExtendedSegmentedHashSet<ThreadLocalKey> obj) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbIteration = 100;
@@ -95,7 +98,6 @@ public class ConcurrentTest {
     }
 
     private static void concurrentSWMRMapTest(Map<ThreadLocalKey, Integer> map) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
         Queue<ThreadLocalKey> list = new ConcurrentLinkedQueue<>();
         AtomicReference<ThreadLocalRandom> random = new AtomicReference<>();

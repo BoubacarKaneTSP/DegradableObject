@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.benchmark.tester.*;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
@@ -122,8 +123,6 @@ public class Microbenchmark {
             Object object = null;
             long startTime, endTime, benchmarkAvgTime = 0;
 
-
-
             nbCurrentThread = _asymmetric ? 2 : 1;
 
             if(_quickTest)
@@ -153,11 +152,12 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
+                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread);
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
-                    object = Factory.createObject(type, nbCurrentThread);
+                    object = Factory.createObject(type, factoryIndice);
 
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);

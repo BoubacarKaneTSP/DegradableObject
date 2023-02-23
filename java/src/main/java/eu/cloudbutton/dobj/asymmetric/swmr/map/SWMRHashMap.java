@@ -36,6 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+//import jdk.internal.misc.SharedSecrets;
 import sun.misc.Unsafe;
 
 /**
@@ -235,7 +236,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-//    static final int DEFAULT_INITIAL_CAPACITY = 1000000; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 100000; // aka 16
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
@@ -258,8 +259,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-//    static final int TREEIFY_THRESHOLD = 8;
-    static final int TREEIFY_THRESHOLD = 10000000;
+    static final int TREEIFY_THRESHOLD = 8;
+//    static final int TREEIFY_THRESHOLD = 10000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a

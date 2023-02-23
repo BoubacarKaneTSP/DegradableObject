@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRHashSet;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
@@ -13,8 +14,8 @@ import java.util.Set;
 
 public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<SWSRHashSet> implements Set<E> {
     
-    public SegmentedHashSet(int parallelism){
-        super(SWSRHashSet.class, parallelism);
+    public SegmentedHashSet(FactoryIndice factoryIndice){
+        super(SWSRHashSet.class, factoryIndice);
     }
 
 

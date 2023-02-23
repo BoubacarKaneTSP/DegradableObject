@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import lombok.SneakyThrows;
@@ -12,8 +13,8 @@ import java.util.Set;
 
 public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHashMap> implements Map<K,V> {
 
-    public ExtendedSegmentedHashMap(int parallelism) {
-        super(SWMRHashMap.class, parallelism);
+    public ExtendedSegmentedHashMap(FactoryIndice factoryIndice) {
+        super(SWMRHashMap.class, factoryIndice);
     }
 
     @Override
@@ -60,7 +61,14 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @Nullable
     @Override
     public V put(K k, V v) {
-        return (V) segmentFor(k).put(k,v);
+        SWMRHashMap map = segmentFor(k);
+
+        for (Object s : map.values()){
+//            System.out.println(s + " => " + Thread.currentThread().getName());
+            assert s.equals(Thread.currentThread().getName()) : s + " != " + Thread.currentThread().getName();
+        }
+
+        return (V) map.put(k,v);
     }
 
     @Override
