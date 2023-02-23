@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
@@ -33,7 +33,7 @@ public class ConcurrentTest {
 
 
     @Test
-    void add() throws ExecutionException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException {
+    void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
         addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
         addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
         concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));

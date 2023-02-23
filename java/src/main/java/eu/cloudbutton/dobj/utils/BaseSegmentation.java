@@ -1,13 +1,8 @@
 package eu.cloudbutton.dobj.utils;
 
-import eu.cloudbutton.dobj.FactoryIndice;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 

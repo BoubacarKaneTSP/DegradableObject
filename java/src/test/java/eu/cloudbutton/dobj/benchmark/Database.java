@@ -1,12 +1,11 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import lombok.Getter;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 

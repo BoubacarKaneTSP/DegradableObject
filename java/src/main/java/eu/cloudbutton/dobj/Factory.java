@@ -22,6 +22,7 @@ import eu.cloudbutton.dobj.sharded.ShardedHashMap;
 import eu.cloudbutton.dobj.sharded.ShardedHashSet;
 import eu.cloudbutton.dobj.sharded.ShardedLinkedList;
 import eu.cloudbutton.dobj.sharded.ShardedTreeSet;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

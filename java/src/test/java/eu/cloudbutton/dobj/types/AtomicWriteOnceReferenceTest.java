@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.FactoryIndice;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

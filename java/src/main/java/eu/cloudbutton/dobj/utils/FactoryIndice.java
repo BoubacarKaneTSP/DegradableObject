@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj;
+package eu.cloudbutton.dobj.utils;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import lombok.Getter;
