@@ -12,6 +12,10 @@ public class BoxedLong {
     public BoxedLong(){
         val = 0;
     }
+
+    public BoxedLong(long val){
+        this.val = val;
+    }
 }
 
 

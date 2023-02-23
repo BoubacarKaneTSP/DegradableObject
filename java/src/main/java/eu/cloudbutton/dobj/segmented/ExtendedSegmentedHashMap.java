@@ -61,7 +61,14 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @Nullable
     @Override
     public V put(K k, V v) {
-        return (V) segmentFor(k).put(k,v);
+        SWMRHashMap map = segmentFor(k);
+
+        for (Object s : map.values()){
+//            System.out.println(s + " => " + Thread.currentThread().getName());
+            assert s.equals(Thread.currentThread().getName()) : s + " != " + Thread.currentThread().getName();
+        }
+
+        return (V) map.put(k,v);
     }
 
     @Override

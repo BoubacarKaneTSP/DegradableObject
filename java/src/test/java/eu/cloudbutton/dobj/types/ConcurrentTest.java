@@ -52,7 +52,7 @@ public class ConcurrentTest {
                 SWMRHashMap<ThreadLocalKey, String> map = obj.segmentFor(key);
 
                 for (String s : map.values() ){
-                    assert s.equals(Thread.currentThread().getName()) : "Reading the wrong segment";
+                    assert s.equals(Thread.currentThread().getName()) : "Thread : "+ Thread.currentThread().getName() +"=> values : " + map.values();
                 }
 
             }
