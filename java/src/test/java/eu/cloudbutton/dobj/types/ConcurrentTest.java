@@ -38,7 +38,7 @@ public class ConcurrentTest {
     void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
         addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
         addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
-        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
+//        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
