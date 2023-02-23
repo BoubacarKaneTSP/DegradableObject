@@ -48,8 +48,8 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         this.factoryIndice = new FactoryIndice(nbThread);
-//        mapFollowers = Factory.createMap(typeMap, nbThread);
-        mapFollowers = new ConcurrentHashMap<>();
+        mapFollowers = Factory.createMap(typeMap, factoryIndice);
+//        mapFollowers = new ConcurrentHashMap<>();
 //        mapFollowing = new ConcurrentHashMap<>();
         mapFollowing = Factory.createMap(typeMap, factoryIndice);
         mapTimelines = Factory.createMap(typeMap, factoryIndice);

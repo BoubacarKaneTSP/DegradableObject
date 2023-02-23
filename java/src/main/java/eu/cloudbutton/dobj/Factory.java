@@ -18,10 +18,7 @@ import eu.cloudbutton.dobj.queue.WaitFreeQueue;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import eu.cloudbutton.dobj.segmented.*;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
-import eu.cloudbutton.dobj.sharded.ShardedHashMap;
-import eu.cloudbutton.dobj.sharded.ShardedHashSet;
-import eu.cloudbutton.dobj.sharded.ShardedLinkedList;
-import eu.cloudbutton.dobj.sharded.ShardedTreeSet;
+import eu.cloudbutton.dobj.sharded.*;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 
 import java.lang.reflect.Constructor;
@@ -172,6 +169,8 @@ public class Factory {
                 return new SetMWSR<>();
             case "ExtendedSegmentedHashSet":
                 return new ExtendedSegmentedHashSet<>(factoryIndice);
+            case "ExtendedShardedHashSet":
+                return new ExtendedShardedHashSet<>(factoryIndice);
             default:
                 throw new ClassNotFoundException();
         }

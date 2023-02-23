@@ -201,6 +201,11 @@ public class Retwis {
 
         NB_USERS = (int) _nbUserInit;
 
+        if (_nbUserInit > _nbItems){
+            System.out.println("Nb User must be lower or equal to number of hash");
+            System.exit(1);
+        }
+
         List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(NB_USERS);
 
         int index = 0;
