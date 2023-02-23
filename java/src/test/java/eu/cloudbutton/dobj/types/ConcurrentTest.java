@@ -22,6 +22,7 @@ public class ConcurrentTest {
     private Factory factory;
     private FactoryIndice factoryIndice;
     private static Integer nbThread;
+    private static ExecutorService executor;
 
     @BeforeTest
     void setUp() {
@@ -29,6 +30,7 @@ public class ConcurrentTest {
         nbThread = Runtime.getRuntime().availableProcessors();
 //        nbThread = 1;
         factoryIndice = new FactoryIndice(nbThread);
+        executor = Executors.newFixedThreadPool(nbThread);
     }
 
 
@@ -40,7 +42,6 @@ public class ConcurrentTest {
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbIteration = 100;
@@ -69,7 +70,6 @@ public class ConcurrentTest {
     }
 
     private static void addExtendedSegmentedHashSet(ExtendedSegmentedHashSet<ThreadLocalKey> obj) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
 
         int nbIteration = 100;
@@ -98,7 +98,6 @@ public class ConcurrentTest {
     }
 
     private static void concurrentSWMRMapTest(Map<ThreadLocalKey, Integer> map) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(nbThread);
         List<Future<Void>> futures = new ArrayList<>();
         List<ThreadLocalKey> list = new CopyOnWriteArrayList<>();
         AtomicReference<ThreadLocalRandom> random = new AtomicReference<>();

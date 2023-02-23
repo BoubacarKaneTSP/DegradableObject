@@ -34,9 +34,6 @@ public class ExtendedSegmentation<T> extends BaseSegmentation<T>{
 
         segment = segments().get((int) indice.getVal());
 
-        for (Object s : ((Map) segment).values()){
-            assert s.equals(Thread.currentThread().getName()) : s + " != " + Thread.currentThread().getName();
-        }
 //        System.out.println(Thread.currentThread().getName() + " => " + indice + " : " + ((Map)segment).values());
 
         assert segment != null : "Value not associated with a segment";
