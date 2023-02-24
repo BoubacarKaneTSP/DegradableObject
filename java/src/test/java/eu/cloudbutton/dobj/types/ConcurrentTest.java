@@ -44,7 +44,7 @@ public class ConcurrentTest {
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
         List<Future<Void>> futures = new ArrayList<>();
 
-        int nbIteration = 100;
+        int nbIteration = 10000;
         Callable<Void> callable = () -> {
             for (int i = 0; i < nbIteration; i++) {
                 ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
@@ -99,31 +99,30 @@ public class ConcurrentTest {
 
     private static void concurrentSWMRMapTest(Map<ThreadLocalKey, Integer> map) throws ExecutionException, InterruptedException {
         List<Future<Void>> futures = new ArrayList<>();
-        List<ThreadLocalKey> list = new CopyOnWriteArrayList<>();
+        Queue<ThreadLocalKey> list = new ConcurrentLinkedQueue<>();
         AtomicReference<ThreadLocalRandom> random = new AtomicReference<>();
-        int nbIteration = 1000;
+        int nbIteration = 1000000;
         Callable<Void> callable = () -> {
             random.set(ThreadLocalRandom.current());
-            String name = Thread.currentThread().getName();
             ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), 0, nbIteration);
             map.put(key, 0);
             list.add(key);
             assert map.get(key) == 0 : "error with put method";
 
             for (int i = 0; i < nbIteration; i++) {
-                if (name.contains("thread-1")){
-                    key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
-                    map.put(key, i);
-                }else{
-                    int val = random.get().nextInt(list.size());
-                    ThreadLocalKey key1 = list.get(val);
+                key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
+                map.put(key, i);
+                list.add(key);
+
+                ThreadLocalKey key1 = list.poll();
+                if (key1 != null)
                     assert map.get(key1) != null : "get shouldn't return null : " + Thread.currentThread().getName();
-                }
+
             }
             return null;
         };
 
-        for (int i = 0; i < nbThread; i++) {
+        for (int i = 0; i < 2*nbThread; i++) {
             futures.add(executor.submit(callable));
         }
 

@@ -260,7 +260,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * shrinkage.
      */
     static final int TREEIFY_THRESHOLD = 8;
-//    static final int TREEIFY_THRESHOLD = 1000000;
+//    static final int TREEIFY_THRESHOLD = 10000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -673,6 +673,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 afterNodeAccess(e);
+                UNSAFE.fullFence();
                 return oldValue;
             }
         }
@@ -680,6 +681,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);
+        UNSAFE.fullFence();
         return null;
     }
 
@@ -763,7 +765,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
         table = newTab;
-        UNSAFE.storeFence();
+        UNSAFE.fullFence();
         return newTab;
     }
 
@@ -862,7 +864,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else
                     p.next = node.next;
 
-                UNSAFE.storeFence();
+                UNSAFE.fullFence();
 
                 ++modCount;
                 --size;
@@ -1474,7 +1476,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
             // Check Map.Entry[].class since it's the nearest public type to
             // what we're actually creating.
-//            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap);
+//            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap); //Quoting this line since SharedSecrets is not visible
             @SuppressWarnings({"rawtypes","unchecked"})
             Node<K,V>[] tab = (Node<K,V>[])new Node[cap];
             table = tab;
