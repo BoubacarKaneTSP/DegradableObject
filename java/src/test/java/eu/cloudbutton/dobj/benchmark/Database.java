@@ -98,7 +98,7 @@ public class Database {
 
         for (int n = 0; n < users.size(); n++) {
 
-            somme += data.get(n*ratio);
+            somme += powerlawArray.get(n%powerlawArray.size());
             user = users.get(n);
             addUser(user);
             localUsersProbability.get().put(somme, user);
@@ -157,11 +157,12 @@ public class Database {
         Set<Key> localSetUser = new HashSet<>();
         Collections.sort(powerlawArray);
         int ratio = powerlawArray.size()/nbUsers;
+
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
                 usersCollections.get(i%nbThread).add(user);
-                somme += this.powerlawArray.get(i*ratio);
+                somme += this.powerlawArray.get(i%powerlawArray.size());
                 usersProbability.put(somme, user);
                 i++;
             }
