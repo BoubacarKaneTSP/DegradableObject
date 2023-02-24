@@ -376,7 +376,7 @@ public class Retwis {
 
                 if (_s){
 
-                    String nameFile = "ALL_"+_tag+"_"+strAlpha+".txt";
+                    String nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                     if (flag_append == 0)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -418,7 +418,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+".txt";
+                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         if (_s){
                             if (flag_append == 0)
                                 fileWriter = new FileWriter( nameFile, false);
