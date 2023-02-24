@@ -83,7 +83,7 @@ public class Database {
 
         //adding all users
 
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(users.size());
+        List<Integer> data = new DiscreteApproximate(1, alpha).generate(powerlawArray.size());
 
         int i = 0;
         for (int val: data){
@@ -93,10 +93,13 @@ public class Database {
         }
 
         Collections.sort(data);
-        for (int id = 0; id < users.size(); id++) {
 
-            somme += data.get(id);
-            user = users.get(id);
+        int ratio = powerlawArray.size()/users.size();
+
+        for (int n = 0; n < users.size(); n++) {
+
+            somme += data.get(n*ratio);
+            user = users.get(n);
             addUser(user);
             localUsersProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
