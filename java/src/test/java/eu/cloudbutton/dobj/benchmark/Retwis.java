@@ -78,10 +78,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.7;
+    private double _alphaInit = 2.5;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.7;
+    private double _alphaMin = 2.5;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.2;
@@ -205,8 +205,12 @@ public class Retwis {
             System.out.println("Nb User must be lower or equal to number of hash");
             System.exit(1);
         }
+        if (_nbUserInit > 1000000){
+            System.out.println("Nb user must lower or equal to 1 million");
+            System.exit(1);
+        }
 
-        List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(NB_USERS);
+        List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(1000000);
 
         int index = 0;
         for (int val: powerLawArray){
