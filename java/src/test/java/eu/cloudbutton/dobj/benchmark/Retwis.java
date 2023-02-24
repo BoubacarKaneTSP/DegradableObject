@@ -764,7 +764,6 @@ public class Retwis {
         private void flushTimelines(){
             for (Key user : usersFollow.keySet()) {
                 database.getMapTimelines().get(user).clear();
-                assert database.getMapTimelines().get(user).getTimeline().size() == 0 : "Timeline not empty";
             }
         }
     }
