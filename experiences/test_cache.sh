@@ -8,7 +8,7 @@ nbTest=1
 benchmarkTime=30
 warmingUpTime=5
 #nbUsersInit=1000
-nbHashCode=10000000
+nbHashCode=1000
 nbOps=10000000
 ratio="5 15 30 50"
 
