@@ -155,7 +155,7 @@ public class Database {
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
         Collections.sort(powerlawArray);
-        int ratio = 1000000/nbUsers;
+        int ratio = powerlawArray.size()/nbUsers;
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
