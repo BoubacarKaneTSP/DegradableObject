@@ -10,12 +10,12 @@ warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=10000000
-ratio="10 20 0 70"
+ratio="5 15 30 50"
 
 for nbUsersInit in 100 1000 10000 100000 1000000
 do
-perf stat -B -e cache-references,cache-misses ./test.sh -c Counter -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -h "JUC" -y $nbUsersInit -d $nbHashCode -i $nbOps -b
-#perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -s ExtendedShardedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -h "Q_M_S_C" -y $nbUsersInit -d $nbHashCode -i $nbOps -b
+#perf stat -B -e cache-references,cache-misses ./test.sh -c Counter -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -h "JUC" -y $nbUsersInit -d $nbHashCode -i $nbOps -b
+perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -s ExtendedShardedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -h "Q_M_S_C" -y $nbUsersInit -d $nbHashCode -i $nbOps -b
 
 done
 
