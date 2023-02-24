@@ -35,9 +35,7 @@
 
 package eu.cloudbutton.dobj.asymmetric;
 
-import eu.cloudbutton.dobj.incrementonly.Counter;
 import jdk.internal.vm.annotation.Contended;
-import org.javatuples.Pair;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -50,8 +48,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -1020,9 +1016,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public void clear() {
 
-        head.next = tail;
-        head.next.item = null;
-//        bulkRemove(e -> true);
+        head = tail;
     }
 
     /**
