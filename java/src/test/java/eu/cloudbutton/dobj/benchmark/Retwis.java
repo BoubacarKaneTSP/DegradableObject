@@ -405,7 +405,7 @@ public class Retwis {
                     else {
                         System.out.print(" ==> Throughput (op/s) for all operations : ");
                         System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
-                        System.out.println(" ==> - temps d'execution : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
+                        System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
                     }
 
                     System.out.println();
@@ -444,7 +444,7 @@ public class Retwis {
                     }
                 }
 
-                if (_gcinfo){
+                if (_gcinfo || _p){
                     System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
                 }
 
@@ -472,7 +472,7 @@ public class Retwis {
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                             System.out.println(": Nb op : " + nbOperations.get(op).get()
                                     + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
-                                    + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000_000 + " milli seconds");
+                                    + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
                         }
 
                         System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
