@@ -489,13 +489,14 @@ public class Retwis {
 
                         boolean append = flag_append != 0;
 
-                        queueSizeFile = new FileWriter("avg_queue_size_" + _tag + ".txt", append);
-                        avgFollowerFile = new FileWriter("avg_Follower_" + _tag + ".txt", append);
-                        nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + _tag + ".txt", append);
-                        nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + _tag + ".txt",append);
-                        nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + _tag + ".txt", append);
-                        nbUserFinalFile = new FileWriter("nb_user_final_"+_tag+".txt", append);
-                        nbTweetFinalFile = new FileWriter("nb_tweet_final_"+_tag+".txt", append);
+                        String nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                        queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
+                        avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
+                        nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + nameFile, append);
+                        nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + nameFile,append);
+                        nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + nameFile, append);
+                        nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
+                        nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
 
                         queueSizePrint = new PrintWriter(queueSizeFile);
                         avgFollowerPrint = new PrintWriter(avgFollowerFile);
@@ -756,6 +757,14 @@ public class Retwis {
                 }
 
                 break;
+            }
+            flushTimelines();
+        }
+
+        private void flushTimelines(){
+            for (Key user : usersFollow.keySet()) {
+                database.getMapTimelines().get(user).clear();
+                assert database.getMapTimelines().get(user).getTimeline().size() == 0 : "Timeline not empty";
             }
         }
     }

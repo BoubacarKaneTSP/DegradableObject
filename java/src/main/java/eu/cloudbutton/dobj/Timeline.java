@@ -35,4 +35,8 @@ public class Timeline<T> {
 
         return topk;
    }
+
+   public void clear(){
+        timeline.clear();
+   }
 }
