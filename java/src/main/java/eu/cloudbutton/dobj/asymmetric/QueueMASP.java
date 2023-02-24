@@ -1019,7 +1019,10 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }
 
     public void clear() {
-        bulkRemove(e -> true);
+
+        head.next = tail;
+        head.next.item = null;
+//        bulkRemove(e -> true);
     }
 
     /**
