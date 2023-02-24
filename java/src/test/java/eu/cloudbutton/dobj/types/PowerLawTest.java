@@ -16,10 +16,10 @@ public class PowerLawTest {
             listAlpha.add(i);
         }*/
 
-        listAlpha.add(1.7);
+        listAlpha.add(2.5);
 
         for (double alpha : listAlpha){
-            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
+            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000000);
 
             int nbUsers = 1000000;
             double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)

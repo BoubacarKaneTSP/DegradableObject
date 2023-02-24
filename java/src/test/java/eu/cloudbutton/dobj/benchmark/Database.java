@@ -152,12 +152,12 @@ public class Database {
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
         Collections.sort(powerlawArray);
-
-        while (localSetUser.size() < powerlawArray.size()){
+        int ratio = 1000000/nbUsers;
+        while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
                 usersCollections.get(i%nbThread).add(user);
-                somme += this.powerlawArray.get(i);
+                somme += this.powerlawArray.get(i*ratio);
                 usersProbability.put(somme, user);
                 i++;
             }
