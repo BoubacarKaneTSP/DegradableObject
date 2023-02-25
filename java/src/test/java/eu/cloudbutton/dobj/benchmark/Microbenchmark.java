@@ -152,7 +152,7 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
-                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread);
+                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread*2);
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);

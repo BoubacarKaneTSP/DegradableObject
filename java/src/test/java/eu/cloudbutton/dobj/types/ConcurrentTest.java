@@ -10,10 +10,7 @@ import eu.cloudbutton.dobj.swsr.SWSRHashSet;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -78,7 +75,7 @@ public class ConcurrentTest {
                 ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
 
                 obj.add(key);
-                SWSRHashSet<ThreadLocalKey> set = obj.segmentFor(key);
+                Set<ThreadLocalKey> set = obj.segmentFor(key);
 
                 for (ThreadLocalKey k : set){
                     assert k.tid == Thread.currentThread().getId() : "Reading the wrong segment";
