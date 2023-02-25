@@ -13,7 +13,6 @@ import static org.testng.Assert.*;
 public class AtomicWriteOnceReferenceTest {
 
     Factory factory = new Factory();
-    private FactoryIndice factoryIndice;
     private static Integer nbThread;
 
     @BeforeTest
@@ -21,15 +20,14 @@ public class AtomicWriteOnceReferenceTest {
         factory = new Factory();
         nbThread = Runtime.getRuntime().availableProcessors();
 //        nbThread = 1;
-        factoryIndice = new FactoryIndice(nbThread);
     }
 
     @Test
     private void setTest() throws ClassNotFoundException {
 
-        AtomicWriteOnceReference<Integer> reference = (AtomicWriteOnceReference<Integer>) factory.createObject("AtomicWriteOnceReference", factoryIndice);
+        AtomicWriteOnceReference<Integer> reference = (AtomicWriteOnceReference<Integer>) factory.createObject("AtomicWriteOnceReference", nbThread);
 
-        AtomicReference<Integer> atomicReference = (AtomicReference<Integer>) factory.createObject("AtomicReference", factoryIndice);
+        AtomicReference<Integer> atomicReference = (AtomicReference<Integer>) factory.createObject("AtomicReference", nbThread);
 
         reference.set(10);
         atomicReference.set(10);

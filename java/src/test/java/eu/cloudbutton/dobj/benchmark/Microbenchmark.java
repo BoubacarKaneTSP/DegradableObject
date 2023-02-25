@@ -157,7 +157,10 @@ public class Microbenchmark {
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 
-                    object = Factory.createObject(type, factoryIndice);
+                    if (type.contains("Extended"))
+                        object = Factory.createObject(type, factoryIndice);
+                    else
+                        object = Factory.createObject(type, nbCurrentThread);
 
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread);

@@ -25,7 +25,7 @@ public class MapTest {
 
     @Test
     void add() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashMap");
+        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap");
         factory.setFactoryMap(cls);
         doAdd(factory.getMap());
 

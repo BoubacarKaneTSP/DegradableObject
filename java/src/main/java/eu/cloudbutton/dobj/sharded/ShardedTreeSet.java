@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ShardedTreeSet<E> extends BaseSegmentation<TreeSet> implements Set<E> {
 
-    public ShardedTreeSet(FactoryIndice factoryIndice) {
-        super(TreeSet.class, factoryIndice);
+    public ShardedTreeSet(int parallelism) {
+        super(TreeSet.class, parallelism);
     }
 
 

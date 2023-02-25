@@ -2,14 +2,32 @@ package eu.cloudbutton.dobj.utils;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-public class ExtendedSegmentation<T> extends BaseSegmentation<T>{
+public class ExtendedSegmentation<T> implements Segmentation<T>{
 
-    FactoryIndice factoryIndice;
+    private final List<T> segments;
+    private final FactoryIndice factoryIndice;
+
     public ExtendedSegmentation(Class<T> clazz, FactoryIndice factoryIndice) {
-        super(clazz, factoryIndice);
         this.factoryIndice = factoryIndice;
+        int parallelism = factoryIndice.getParallelism()   ;
+        this.segments = new ArrayList<>(parallelism);
+
+        try {
+            for (int i = 0; i < parallelism; i++) {
+                this.segments.add(i, clazz.getDeclaredConstructor().newInstance());
+                assert segments.get(i) != null : "Class not added to segment";
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        assert segments.size() == parallelism : "Wrong number of segments";
     }
 
     @Override
@@ -39,5 +57,10 @@ public class ExtendedSegmentation<T> extends BaseSegmentation<T>{
         assert segment != null : "Value not associated with a segment";
 
         return segment;
+    }
+
+    @Override
+    public List<T> segments() {
+        return segments;
     }
 }

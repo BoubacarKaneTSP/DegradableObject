@@ -3,25 +3,26 @@ package eu.cloudbutton.dobj.utils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 
+    protected final ThreadLocal<T> local;
+    private final AtomicInteger next;
+
     private final List<T> segments;
 
-    public BaseSegmentation(Class<T> clazz, FactoryIndice factoryIndice) {
-        int parallelism = factoryIndice.getParallelism();
+    public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.segments = new ArrayList<>(parallelism);
-
-        try {
-            for (int i = 0; i < parallelism; i++) {
-                this.segments.add(i, clazz.getDeclaredConstructor().newInstance());
-                assert segments.get(i) != null : "Class not added to segment";
+        for(int i = 0; i<parallelism; i++ ){
+            try {
+                this.segments.add(clazz.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
             }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
         }
-
-        assert segments.size() == parallelism : "Wrong number of segments";
+        this.next = new AtomicInteger(0);
+        this.local = ThreadLocal.withInitial(() -> segments.get(next.getAndIncrement()%parallelism));
     }
 
     @Override
@@ -29,7 +30,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         T segment = null;
         
         try{
-//            segment = local.get();
+            segment = local.get();
         }catch (NullPointerException e){
             e.printStackTrace();
             System.out.println("Failed to get a segment for " + x);

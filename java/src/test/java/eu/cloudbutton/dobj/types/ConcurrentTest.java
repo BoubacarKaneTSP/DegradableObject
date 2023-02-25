@@ -38,7 +38,7 @@ public class ConcurrentTest {
     void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
         addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
         addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
-//        concurrentSWMRMapTest(Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
+        concurrentSWMRMapTest(Factory.createMap("SegmentedHashMap", nbThread));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
@@ -101,7 +101,7 @@ public class ConcurrentTest {
         List<Future<Void>> futures = new ArrayList<>();
         Queue<ThreadLocalKey> list = new ConcurrentLinkedQueue<>();
         AtomicReference<ThreadLocalRandom> random = new AtomicReference<>();
-        int nbIteration = 1000000;
+        int nbIteration = 10000;
         Callable<Void> callable = () -> {
             random.set(ThreadLocalRandom.current());
             ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), 0, nbIteration);

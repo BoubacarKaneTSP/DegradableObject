@@ -1,7 +1,5 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.utils.FactoryIndice;
-import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -10,17 +8,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
+public class SegmentedHashMap<K,V> extends BaseSegmentation<ConcurrentHashMap> implements Map<K,V> {
 
-    public SegmentedHashMap(FactoryIndice factoryIndice) {
-        super(SWMRHashMap.class, factoryIndice);
+    public SegmentedHashMap(int parallelism) {
+        super(ConcurrentHashMap.class, parallelism);
     }
 
     @Override
     public int size() { // FIXME prove this is actually linearizable
         int ret = 0;
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             ret += m.size();
         }
         return ret;
@@ -28,7 +27,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
 
     @Override
     public boolean isEmpty() {
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             if (!m.isEmpty()) return false;
         }
         return true;
@@ -36,7 +35,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
 
     @Override
     public boolean containsKey(Object o) {
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             if (m.containsKey(o)) return true;
         }
         return false;
@@ -44,7 +43,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
 
     @Override
     public boolean containsValue(Object o) {
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             if (m.containsValue(o)) return true;
         }
         return false;
@@ -55,7 +54,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
     public V get(Object o) {
         V v = null;
 
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             v = (V) m.get(o);
             if (v!=null) break;
         }

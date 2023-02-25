@@ -10,18 +10,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 
-public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap> implements Map<K,V> {
+public class SegmentedSkipListMap<K,V> extends BaseSegmentation<ConcurrentSkipListMap> implements Map<K,V> {
 
-    public SegmentedSkipListMap(FactoryIndice factoryIndice) {
-        super(SWSRSkipListMap.class, factoryIndice);
+    public SegmentedSkipListMap(int parallelism) {
+        super(ConcurrentSkipListMap.class, parallelism);
     }
     
     @Override
     public int size() {
         int ret = 0;
-        for(SWSRSkipListMap m: segments()){
+        for(Map m: segments()){
             ret += m.size();
         }
         return ret;
@@ -29,7 +30,7 @@ public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap>
 
     @Override
     public boolean isEmpty() {
-        for(SWSRSkipListMap m: segments()){
+        for(Map m: segments()){
             if (!m.isEmpty()) return false;
         }
         return true;
@@ -37,7 +38,7 @@ public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap>
 
     @Override
     public boolean containsKey(Object o) {
-        for(SWSRSkipListMap m: segments()){
+        for(Map m: segments()){
             if (m.containsKey(o)) return true;
         }
         return false;
@@ -45,7 +46,7 @@ public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap>
 
     @Override
     public boolean containsValue(Object o) {
-        for(SWSRSkipListMap m: segments()){
+        for(Map m: segments()){
             if (m.containsValue(o)) return true;
         }
         return false;
@@ -55,7 +56,7 @@ public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap>
     @Override
     public V get(Object o) {
         V v = null;
-        for(SWSRSkipListMap m: segments()){
+        for(Map m: segments()){
             v = (V) m.get(o);
             if (v!=null) break;
         }

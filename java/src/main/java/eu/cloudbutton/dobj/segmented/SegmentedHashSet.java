@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRHashSet;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
@@ -12,10 +13,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<SWSRHashSet> implements Set<E> {
+public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<ConcurrentHashSet> implements Set<E> {
     
-    public SegmentedHashSet(FactoryIndice factoryIndice){
-        super(SWSRHashSet.class, factoryIndice);
+    public SegmentedHashSet(int parallelism){
+        super(ConcurrentHashSet.class, parallelism);
     }
 
 
@@ -34,7 +35,7 @@ public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<
     @NonLinearizable
     public Iterator<E> iterator() {
         Collection<Iterator<E>> iterators = new ArrayList<>();
-        for(SWSRHashSet<E> set: segments()) {
+        for(Set<E> set: segments()) {
             iterators.add(set.iterator());
         }
         return new ComposedIterator<E>(iterators);
@@ -46,7 +47,7 @@ public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<
     @NonLinearizable
     public int size() {
         int ret = 0;
-        for(SWSRHashSet<E> set: segments()) {
+        for(Set<E> set: segments()) {
             ret+=set.size();
         }
         return ret;

@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implements List<E> {
 
-    public ShardedLinkedList(FactoryIndice factoryIndice) {
-        super(LinkedList.class, factoryIndice);
+    public ShardedLinkedList(int parallelism) {
+        super(LinkedList.class, parallelism);
     }
 
 
