@@ -89,7 +89,7 @@ public class Database {
 
         for (int n = 0; n < users.size(); n++){
 
-            somme += powerlawArray.get(n%powerlawArray.size());
+            somme += powerlawArray.get(random.nextInt(powerlawArray.size()));
             user = users.get(n);
             addUser(user);
             localUsersProbability.get().put(somme, user);
@@ -104,9 +104,10 @@ public class Database {
         //Following phase
 
         long randVal;
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
         for (Key userA: localUsersFollow.keySet()){
-            int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.nextInt(powerlawArray.size())), nbUsers*0.00432), 1); // nbFollow max to match Twitter Graph
+            int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.nextInt(powerlawArray.size())), nbUsers*ratio), 1); // nbFollow max to match Twitter Graph
             assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
@@ -141,7 +142,7 @@ public class Database {
             Key user = generateUser();
             if (localSetUser.add(user)){
                 usersCollections.get(i%nbThread).add(user);
-                somme += this.powerlawArray.get(i%powerlawArray.size());
+                somme += this.powerlawArray.get(random.nextInt(powerlawArray.size()));
                 usersProbability.put(somme, user);
                 i++;
             }
