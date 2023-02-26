@@ -48,12 +48,17 @@ public class Database {
         this.alpha = alpha;
         this.nbThread = nbThread;
         this.factoryIndice = new FactoryIndice(nbThread);
-        mapFollowers = Factory.createMap(typeMap, factoryIndice);
-//        mapFollowers = new ConcurrentHashMap<>();
-//        mapFollowing = new ConcurrentHashMap<>();
-        mapFollowing = Factory.createMap(typeMap, factoryIndice);
-        mapTimelines = Factory.createMap(typeMap, factoryIndice);
-//        mapTimelines = new ConcurrentHashMap<>();
+
+        if (typeMap.contains("Extended")){
+            mapFollowers = Factory.createMap(typeMap, factoryIndice);
+            mapFollowing = Factory.createMap(typeMap, factoryIndice);
+            mapTimelines = Factory.createMap(typeMap, factoryIndice);
+        }else{
+            mapFollowers = Factory.createMap(typeMap, nbThread);
+            mapFollowing = Factory.createMap(typeMap, nbThread);
+            mapTimelines = Factory.createMap(typeMap, nbThread);
+        }
+
         usersProbability = new ConcurrentSkipListMap<>();
         localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersProbabilityRange = new ThreadLocal<>();
@@ -120,7 +125,6 @@ public class Database {
             }
             i++;
         }
-
 
         long randVal;
 
