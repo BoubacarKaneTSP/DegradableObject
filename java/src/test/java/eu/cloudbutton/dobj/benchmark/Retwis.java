@@ -271,7 +271,7 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, _nbItems, powerLawArray);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, (int) _nbUserInit, _nbItems, powerLawArray);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);

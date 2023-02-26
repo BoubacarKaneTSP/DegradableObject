@@ -39,7 +39,7 @@ public class Database {
     private AtomicInteger count;
     private FactoryIndice factoryIndice;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserInit, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -65,7 +65,7 @@ public class Database {
         random = null;
         queueUsers = new ConcurrentLinkedQueue<>();
         this.powerlawArray = powerlawArray;
-        nbUsers = powerlawArray.size();
+        nbUsers = nbUserInit;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
         usersCollections = new ArrayList<>();
         count = new AtomicInteger();
@@ -87,20 +87,7 @@ public class Database {
 
         //adding all users
 
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(powerlawArray.size());
-
-        int i = 0;
-        for (int val: data){
-            if (val < 0)
-                data.set(i, 1);
-            i++;
-        }
-
-        Collections.sort(data);
-
-        int ratio = powerlawArray.size()/users.size();
-
-        for (int n = 0; n < users.size(); n++) {
+        for (int n = 0; n < users.size(); n++){
 
             somme += powerlawArray.get(n%powerlawArray.size());
             user = users.get(n);
@@ -115,16 +102,6 @@ public class Database {
         latchDatabase.await();
 
         //Following phase
-
-        long max = nbUsers;
-
-        i = 0;
-        for (int val: data){
-            if (val >= max) {
-                data.set(i, (int) max);
-            }
-            i++;
-        }
 
         long randVal;
 
@@ -159,7 +136,6 @@ public class Database {
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
         Collections.sort(powerlawArray);
-        int ratio = powerlawArray.size()/nbUsers;
 
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
