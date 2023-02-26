@@ -29,8 +29,9 @@ warmingUpTime=5
 #perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedConcurrentHashMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -m ConcurrentSkipListMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedSkipListMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
+perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 ##perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedTreeMap -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -k
 #
-perf stat -B -e cache-references,cache-misses ./test.sh -c Counter -t Microbenchmark -p -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
+perf stat -B -e cache-references,cache-misses ./test.sh -c Counter -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
 #perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
 #perf stat -B -e cache-references,cache-misses ./test.sh -c LongAdder -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
