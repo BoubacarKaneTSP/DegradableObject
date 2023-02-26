@@ -137,12 +137,18 @@ public class Database {
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
         Collections.sort(powerlawArray);
+        random = ThreadLocalRandom.current();
 
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
                 usersCollections.get(i%nbThread).add(user);
-                somme += this.powerlawArray.get(random.nextInt(powerlawArray.size()));
+                try{
+
+                    somme += this.powerlawArray.get(random.nextInt(powerlawArray.size()));
+                }catch (NullPointerException e){
+                    System.out.println("a");
+                }
                 usersProbability.put(somme, user);
                 i++;
             }
