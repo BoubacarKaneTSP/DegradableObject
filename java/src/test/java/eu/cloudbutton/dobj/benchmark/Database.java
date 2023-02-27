@@ -145,7 +145,7 @@ public class Database {
                 usersCollections.get(i%nbThread).add(user);
                 try{
 
-                    somme += this.powerlawArray.get(random.nextInt(powerlawArray.size()));
+                    somme += this.powerlawArray.get(i % powerlawArray.size());
                 }catch (NullPointerException e){
                     System.out.println("a");
                 }

@@ -16,7 +16,7 @@ public class PowerLawTest {
             listAlpha.add(i);
         }*/
 
-        listAlpha.add(1.8);
+        listAlpha.add(1.7);
 
         for (double alpha : listAlpha){
             List<Integer> data = new DiscreteApproximate(1, alpha).generate(100000);
@@ -29,14 +29,15 @@ public class PowerLawTest {
             long max = (long) ((long) nbUsers * ratio);
             System.out.println(max);
             int i = 0, nbMax = 0, avg = 0;;
-
+            int j = 0;
             for (int val: data){
                 if (val >= max) {
                     max = val;
                     nbMax++;
 //                    data.set(i, (int) max);
                 }
-                data.set(i, (int) (data.get(i)*0.8));
+                if (val>= 0.5*max)
+                    j++;
                 if (val < 0) {
                     data.set(i, 1);
                 }
@@ -48,6 +49,7 @@ public class PowerLawTest {
             Collections.sort(data);
 
 //            System.out.println(data);
+            System.out.println("nb half max : " + j);
             System.out.println();
             System.out.println("======= " + alpha + " =======");
             System.out.println("max : " + Collections.max(data) + " => " + Collections.max(data)/ (double) max * 100 +"%");
