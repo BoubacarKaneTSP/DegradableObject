@@ -110,6 +110,9 @@ public class Database {
 
         for (Key userA: localUsersFollow.keySet()){
             int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.get().nextInt(powerlawArray.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
+
+            nbFollow = 1;
+
             assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; ){
 
