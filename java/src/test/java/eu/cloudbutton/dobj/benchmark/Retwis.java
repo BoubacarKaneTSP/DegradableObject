@@ -349,9 +349,9 @@ public class Retwis {
                         nbTweetFinal += queueSizes.longValue();
                         nbUserFinal += database.getMapTimelines().size();
                         allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
-                        allProportionMaxFollower.add((float) (maxFollower/NB_USERS)*100);
-                        allProportionUserWithMaxFollower.add((float) (userWithMaxFollower/NB_USERS)*100);
-                        allProportionUserWithoutFollower.add((float) (userWithoutFollower/NB_USERS)*100);
+                        allProportionMaxFollower.add((float) ((double)maxFollower/NB_USERS)*100);
+                        allProportionUserWithMaxFollower.add((float) ((double)userWithMaxFollower/NB_USERS)*100);
+                        allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
                     }
                     executor.shutdown();
                 }
