@@ -215,7 +215,7 @@ public class Retwis {
 
         int index = 0;
         for (int val: powerLawArray){
-            powerLawArray.set(index, (int) (powerLawArray.get(index)*ratio));
+//            powerLawArray.set(index, (int) (powerLawArray.get(index)*ratio));
             if (val <= 0)
                 powerLawArray.set(index, 1);
 
