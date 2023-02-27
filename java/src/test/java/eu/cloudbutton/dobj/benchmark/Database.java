@@ -80,6 +80,7 @@ public class Database {
     public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocalRandom.current();
+        random.setSeed(94);
 
         long somme = 0;
         Key user, userB = null;
@@ -137,7 +138,6 @@ public class Database {
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
         Collections.sort(powerlawArray);
-        random = ThreadLocalRandom.current();
 
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
