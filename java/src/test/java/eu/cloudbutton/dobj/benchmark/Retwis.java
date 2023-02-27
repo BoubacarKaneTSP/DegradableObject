@@ -206,8 +206,8 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.35).generate(100);
-        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.28).generate(100);
+        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.7).generate(100);
+        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.6).generate(100);
         List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, _alphaInit).generate(100);
 
         int index = 0;
