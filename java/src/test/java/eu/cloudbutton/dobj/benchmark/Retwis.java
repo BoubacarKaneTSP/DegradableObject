@@ -763,7 +763,6 @@ public class Retwis {
 
                 break;
             }
-            flushTimelines();
         }
 
         private void flushTimelines(){
