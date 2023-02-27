@@ -360,7 +360,7 @@ public class Retwis {
                     System.out.println();
 
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1000000)/_nbTest + " milli seconds");
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1000000)/_nbTest );
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
