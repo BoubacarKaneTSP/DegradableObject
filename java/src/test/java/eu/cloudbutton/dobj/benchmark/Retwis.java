@@ -205,30 +205,21 @@ public class Retwis {
             System.out.println("Nb User must be lower or equal to number of hash");
             System.exit(1);
         }
-        if (_nbUserInit > 1000000){
-            System.out.println("Nb user must lower or equal to 1 million");
-            System.exit(1);
-        }
 
-        List<Integer> powerLawArrayFollowers = new DiscreteApproximate(1, _alphaInit).generate(100);
-        List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, 1.001).generate(100);
+        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.35).generate(100);
+        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.28).generate(100);
+        List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, _alphaInit).generate(100);
 
         int index = 0;
-        for (int val: powerLawArrayFollowers){
-            if (val <= 0)
-                powerLawArrayFollowers.set(index, 1);
-
-            index++;
-        }
-
-        index = 0;
-        for (int val: powerLawArrayUsers){
-            if (val <= 0)
+        for (int val: inPowerLawArrayFollowers){
+            if (val <= 0) {
+                inPowerLawArrayFollowers.set(index, 1);
+                outPowerLawArrayFollowers.set(index, 1);
                 powerLawArrayUsers.set(index, 1);
+            }
 
             index++;
         }
-
 
         for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
 
@@ -281,7 +272,13 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, (int) _nbUserInit, _nbItems, powerLawArrayFollowers, powerLawArrayUsers);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter,
+                            nbCurrThread,
+                            (int) _nbUserInit,
+                            _nbItems,
+                            inPowerLawArrayFollowers,
+                            outPowerLawArrayFollowers,
+                            powerLawArrayUsers);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);

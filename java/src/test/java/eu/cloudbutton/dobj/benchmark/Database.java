@@ -20,7 +20,6 @@ public class Database {
     private final String typeSet;
     private final String typeQueue;
     private final String typeCounter;
-    private final double alpha;
     private final int nbThread;
     private final int nbUsers;
     private final Map<Key, Set<Key>> mapFollowers;
@@ -28,25 +27,27 @@ public class Database {
     private final Map<Key, Timeline<String>> mapTimelines;
 //    private ThreadLocalRandom random;
     private ThreadLocal<Random> random;
-    private KeyGenerator keyGenerator;
-    private ConcurrentSkipListMap<Long, Key> usersProbability;
-    private ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersProbability;
-    private Queue<Key> queueUsers;
+    private final KeyGenerator keyGenerator;
+    private final ConcurrentSkipListMap<Long, Key> usersProbability;
+    private final ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersProbability;
+    private final Queue<Key> queueUsers;
     private long usersProbabilityRange;
-    private ThreadLocal<Long> localUsersProbabilityRange;
-    private List<Integer> powerlawArrayFollowers;
-    private List<Integer> powerlawArrayUsers;
-    private List<List<Key>> usersCollections;
-    private AtomicInteger count;
-    private FactoryIndice factoryIndice;
+    private final ThreadLocal<Long> localUsersProbabilityRange;
+    private final List<Integer> inPowerlawArrayFollowers;
+    private final List<Integer> outPowerlawArrayFollowers;
+    private final List<Integer> powerlawArrayUsers;
+    private final List<List<Key>> usersCollections;
+    private final AtomicInteger count;
+    private final FactoryIndice factoryIndice;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserInit, int nbUserMax, List<Integer> powerlawArrayFollowers, List<Integer> powerlawArrayUsers) throws ClassNotFoundException{
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
+                    int nbThread, int nbUserInit, int nbUserMax,
+                    List<Integer> inPowerlawArrayFollowers, List<Integer> outPowerlawArrayFollowers, List<Integer> powerlawArrayUsers) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
         this.typeQueue = typeQueue;
         this.typeCounter = typeCounter;
-        this.alpha = alpha;
         this.nbThread = nbThread;
         this.factoryIndice = new FactoryIndice(nbThread);
 
@@ -65,7 +66,8 @@ public class Database {
         localUsersProbabilityRange = new ThreadLocal<>();
         random = null;
         queueUsers = new ConcurrentLinkedQueue<>();
-        this.powerlawArrayFollowers = powerlawArrayFollowers;
+        this.inPowerlawArrayFollowers = inPowerlawArrayFollowers;
+        this.outPowerlawArrayFollowers = outPowerlawArrayFollowers;
         this.powerlawArrayUsers = powerlawArrayUsers;
         nbUsers = nbUserInit;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
@@ -84,7 +86,7 @@ public class Database {
         random = ThreadLocal.withInitial(() -> new Random(94));
 
         long somme = 0;
-        Key user, userB = null;
+        Key user, userB;
         List<Key> users = usersCollections.get(count.getAndIncrement());
 
         //adding all users
@@ -106,24 +108,17 @@ public class Database {
         //Following phase
 
         long randVal;
-        double inRatio = 60000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        double outRatio = 5000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        double inRatio = 14700000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        double outRatio = 757000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
-        Random randBool = new Random();
         for (Key userA: localUsersFollow.keySet()){
-            int nbFollow = (int) Math.max(Math.min(powerlawArrayFollowers.get(random.get().nextInt(powerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
+            int nbFollow = (int) Math.max(Math.min(outPowerlawArrayFollowers.get(random.get().nextInt(outPowerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
 
-//            nbFollow = 1;
-
-//            if (randBool.nextBoolean()){
-//                nbFollow = 0;
-//            }
 //            assert nbFollow > 0 : "not following anyone";
-            for(int j = 0; j < nbFollow; j++){
+            for(int j = 0; j < nbFollow;){
 
                 try{
                     randVal = random.get().nextLong() % usersProbabilityRange;
-//                    randVal = random.get().nextInt(10);
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
@@ -150,14 +145,15 @@ public class Database {
     public void generateUsers(){
         int i = 0;
         long somme = 0;
+        Random random = new Random(94);
         Set<Key> localSetUser = new HashSet<>();
-        Collections.sort(powerlawArrayFollowers);
+        Collections.sort(inPowerlawArrayFollowers);
 
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
-                usersCollections.get(i%nbThread).add(user);
-                somme += this.powerlawArrayFollowers.get(i % powerlawArrayFollowers.size());
+                usersCollections.get(random.nextInt(nbThread)).add(user);
+                somme += this.inPowerlawArrayFollowers.get(i % inPowerlawArrayFollowers.size());
                 usersProbability.put(somme, user);
                 i++;
             }
