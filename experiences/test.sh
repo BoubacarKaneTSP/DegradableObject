@@ -242,7 +242,7 @@ then
   if [[ $computeGCInfo == true ]]
   then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
-  python3 analyse_gc.py $type $nbTest $nbUserInit
+  python3 analyse_gc.py $type $nbTest "$nbUserInit"
   else
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
   fi
@@ -251,7 +251,7 @@ then
   if [[ $computeGCInfo == true ]]
   then
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -Xms5g -Xmx20g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
-  python3 analyse_gc.py $tag $nbTest
+  python3 analyse_gc.py $tag $nbTest $nbUserInit
   else
   CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -Xmx20g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
   fi
