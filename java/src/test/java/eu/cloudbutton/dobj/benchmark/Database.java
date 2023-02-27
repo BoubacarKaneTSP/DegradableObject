@@ -27,7 +27,8 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
-    private ThreadLocalRandom random;
+//    private ThreadLocalRandom random;
+    private ThreadLocal<Random> random;
     private KeyGenerator keyGenerator;
     private ConcurrentSkipListMap<Long, Key> usersProbability;
     private ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersProbability;
@@ -79,8 +80,7 @@ public class Database {
 
     public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
-        random = ThreadLocalRandom.current();
-        random.setSeed(94);
+        random = ThreadLocal.withInitial(() -> new Random(94));
 
         long somme = 0;
         Key user, userB = null;
@@ -90,7 +90,7 @@ public class Database {
 
         for (Key key : users) {
 
-            somme += powerlawArray.get(random.nextInt(powerlawArray.size()));
+            somme += powerlawArray.get(random.get().nextInt(powerlawArray.size()));
             user = key;
             addUser(user);
             localUsersProbability.get().put(somme, user);
@@ -108,12 +108,12 @@ public class Database {
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
         for (Key userA: localUsersFollow.keySet()){
-            int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.nextInt(powerlawArray.size())), nbUsers*ratio), 1); // nbFollow max to match Twitter Graph
+            int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.get().nextInt(powerlawArray.size())), nbUsers*ratio), 1); // nbFollow max to match Twitter Graph
             assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
                 try{
-                    randVal = random.nextLong(usersProbabilityRange);
+                    randVal = random.get().nextLong() % usersProbabilityRange;
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 

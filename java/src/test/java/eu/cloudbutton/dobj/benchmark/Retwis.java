@@ -561,7 +561,7 @@ public class Retwis {
 
     public class RetwisApp implements Callable<Void>{
 
-        private final ThreadLocalRandom random;
+        private final ThreadLocal<Random> random;
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
@@ -579,7 +579,7 @@ public class Retwis {
         Map<Integer, BoxedLong> timeLocalOperations;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, CountDownLatch latchFillCompletionTime) {
-            this.random = ThreadLocalRandom.current();
+            this.random = ThreadLocal.withInitial(() -> new Random(94));
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
@@ -671,7 +671,7 @@ public class Retwis {
         public int chooseOperation(){
             int type;
 
-            int val = random.nextInt(100);
+            int val = random.get().nextInt(100);
             if(val < ratiosArray[0]){ // add
                 type = ADD;
             }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
@@ -710,7 +710,7 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
 
-                long val = random.nextLong(localUsersProbabilityRange);
+                long val = random.get().nextLong()%localUsersProbabilityRange;
                 userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
@@ -721,7 +721,7 @@ public class Retwis {
                         break;
                     case FOLLOW:
 
-                        val = random.nextLong(usersProbabilityRange); // We choose a user to follow according to a probability
+                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
                         if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
