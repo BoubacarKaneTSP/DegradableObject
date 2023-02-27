@@ -78,10 +78,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 2.5;
+    private double _alphaInit = 1.7;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 2.5;
+    private double _alphaMin = 1.7;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.2;
@@ -126,9 +126,9 @@ public class Retwis {
     private Long nbTweetFinal;
     private List<Float> allAvgQueueSizes;
     private List<Float> allAvgFollower;
-    private List<Float> allNbMaxFollower;
-    private List<Float> allNbUserWithMaxFollower;
-    private List<Float> allNbUserWithoutFollower;
+    private List<Float> allProportionMaxFollower;
+    private List<Float> allProportionUserWithMaxFollower;
+    private List<Float> allProportionUserWithoutFollower;
 
     private Database database;
 
@@ -211,12 +211,14 @@ public class Retwis {
         }
 
         List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(100000);
+        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
         int index = 0;
         for (int val: powerLawArray){
-
+            powerLawArray.set(index, (int) (powerLawArray.get(index)*ratio));
             if (val <= 0)
                 powerLawArray.set(index, 1);
+
             index++;
         }
 
@@ -231,9 +233,9 @@ public class Retwis {
             long startTime, endTime, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
             allAvgFollower = new ArrayList();
-            allNbMaxFollower = new ArrayList();
-            allNbUserWithMaxFollower = new ArrayList();
-            allNbUserWithoutFollower = new ArrayList();
+            allProportionMaxFollower = new ArrayList();
+            allProportionUserWithMaxFollower = new ArrayList();
+            allProportionUserWithoutFollower = new ArrayList();
 
             if (_p){
                 System.out.println();
@@ -347,9 +349,9 @@ public class Retwis {
                         nbTweetFinal += queueSizes.longValue();
                         nbUserFinal += database.getMapTimelines().size();
                         allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
-                        allNbMaxFollower.add((float) maxFollower);
-                        allNbUserWithMaxFollower.add((float) userWithMaxFollower);
-                        allNbUserWithoutFollower.add((float) userWithoutFollower);
+                        allProportionMaxFollower.add((float) (maxFollower/NB_USERS)*100);
+                        allProportionUserWithMaxFollower.add((float) (userWithMaxFollower/NB_USERS)*100);
+                        allProportionUserWithoutFollower.add((float) (userWithoutFollower/NB_USERS)*100);
                     }
                     executor.shutdown();
                 }
@@ -453,16 +455,16 @@ public class Retwis {
 
                     float sumAvgQueueSizes = 0,
                             sumAvgFollower = 0,
-                            sumNbMaxFollower = 0,
-                            sumNbUserWithMaxFollower = 0,
-                            sumNbUserWithoutFollower = 0;
+                            sumProportionMaxFollower = 0,
+                            sumProportionUserWithMaxFollower = 0,
+                            sumProportionUserWithoutFollower = 0;
 
                     for (int i = 0; i < _nbTest; i++) {
                         sumAvgQueueSizes += allAvgQueueSizes.get(i);
                         sumAvgFollower += allAvgFollower.get(i);
-                        sumNbMaxFollower += allNbMaxFollower.get(i);
-                        sumNbUserWithMaxFollower += allNbUserWithMaxFollower.get(i);
-                        sumNbUserWithoutFollower += allNbUserWithoutFollower.get(i);
+                        sumProportionMaxFollower += allProportionMaxFollower.get(i);
+                        sumProportionUserWithMaxFollower += allProportionUserWithMaxFollower.get(i);
+                        sumProportionUserWithoutFollower += allProportionUserWithoutFollower.get(i);
 
                     }
                     if (_p){
@@ -481,57 +483,57 @@ public class Retwis {
                         System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
                         System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
                         System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
-                        System.out.println(" ==> nb max follower : " + sumNbMaxFollower/_nbTest);
-                        System.out.println(" ==> nb user with max follower (or 20% less) : " + sumNbUserWithMaxFollower/_nbTest);
-                        System.out.println(" ==> nb user without follower : " + sumNbUserWithoutFollower/_nbTest);
+                        System.out.println(" ==> % of the database that represent the max number of follower : " + sumProportionMaxFollower/_nbTest + "%");
+                        System.out.println(" ==> % user with max follower (or 20% less) : " + sumProportionUserWithMaxFollower/_nbTest + "%");
+                        System.out.println(" ==> % user without follower : " + sumProportionUserWithoutFollower/_nbTest + "%");
                         System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
                         System.out.println();
                     }
 
                     if (_s){
-                        FileWriter queueSizeFile, avgFollowerFile, nbMaxFollowerFile, nbUserWithMaxFollowerFile, nbUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
-                        PrintWriter queueSizePrint, avgFollowerPrint, nbMaxFollowerPrint, nbUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
+                        FileWriter queueSizeFile, avgFollowerFile, proportionMaxFollowerFile, proportionUserWithMaxFollowerFile, proportionUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
+                        PrintWriter queueSizePrint, avgFollowerPrint, proportionMaxFollowerPrint, proportionUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
 
                         boolean append = flag_append != 0;
 
                         String nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
                         avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
-                        nbMaxFollowerFile = new FileWriter("nb_Max_Follower_" + nameFile, append);
-                        nbUserWithMaxFollowerFile = new FileWriter("nb_User_With_Max_Follower_" + nameFile,append);
-                        nbUserWithoutFollowerFile = new FileWriter("nb_User_Without_Follower_" + nameFile, append);
+                        proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
+                        proportionUserWithMaxFollowerFile = new FileWriter("proportion_User_With_Max_Follower_" + nameFile,append);
+                        proportionUserWithoutFollowerFile = new FileWriter("proportion_User_Without_Follower_" + nameFile, append);
                         nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
                         nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
 
                         queueSizePrint = new PrintWriter(queueSizeFile);
                         avgFollowerPrint = new PrintWriter(avgFollowerFile);
-                        nbMaxFollowerPrint = new PrintWriter(nbMaxFollowerFile);
-                        nbUserWithMaxFollowerPrint = new PrintWriter(nbUserWithMaxFollowerFile);
-                        nbUserWithoutFollowerPrint = new PrintWriter(nbUserWithoutFollowerFile);
+                        proportionMaxFollowerPrint = new PrintWriter(proportionMaxFollowerFile);
+                        proportionUserWithMaxFollowerPrint = new PrintWriter(proportionUserWithMaxFollowerFile);
+                        nbUserWithoutFollowerPrint = new PrintWriter(proportionUserWithoutFollowerFile);
                         nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
                         nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
 
                         queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
                         avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
-                        nbMaxFollowerPrint.println(unit + " " + sumNbMaxFollower/_nbTest);
-                        nbUserWithMaxFollowerPrint.println(unit + " " + sumNbUserWithMaxFollower/_nbTest);
-                        nbUserWithoutFollowerPrint.println(unit + " " + sumNbUserWithoutFollower/_nbTest);
+                        proportionMaxFollowerPrint.println(unit + " " + sumProportionMaxFollower/_nbTest);
+                        proportionUserWithMaxFollowerPrint.println(unit + " " + sumProportionUserWithMaxFollower/_nbTest);
+                        nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
                         nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
                         nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
 
                         queueSizePrint.flush();
                         avgFollowerPrint.flush();
-                        nbMaxFollowerPrint.flush();
-                        nbUserWithMaxFollowerPrint.flush();
+                        proportionMaxFollowerPrint.flush();
+                        proportionUserWithMaxFollowerPrint.flush();
                         nbUserWithoutFollowerPrint.flush();
                         nbUserFinalPrint.flush();
                         nbTweetFinalPrint.flush();
 
                         queueSizeFile.close();
                         avgFollowerFile.close();
-                        nbMaxFollowerFile.close();
-                        nbUserWithMaxFollowerFile.close();
-                        nbUserWithoutFollowerFile.close();
+                        proportionMaxFollowerFile.close();
+                        proportionUserWithMaxFollowerFile.close();
+                        proportionUserWithoutFollowerFile.close();
                         nbUserFinalFile.close();
                         nbTweetFinalFile.close();
                     }
