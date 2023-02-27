@@ -7,7 +7,6 @@ import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
-import nl.peterbloem.powerlaws.DiscreteApproximate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -35,12 +34,13 @@ public class Database {
     private Queue<Key> queueUsers;
     private long usersProbabilityRange;
     private ThreadLocal<Long> localUsersProbabilityRange;
-    private List<Integer> powerlawArray;
+    private List<Integer> powerlawArrayFollowers;
+    private List<Integer> powerlawArrayUsers;
     private List<List<Key>> usersCollections;
     private AtomicInteger count;
     private FactoryIndice factoryIndice;
 
-    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserInit, int nbUserMax, List<Integer> powerlawArray) throws ClassNotFoundException{
+    public Database(String typeMap, String typeSet, String typeQueue, String typeCounter, double alpha, int nbThread, int nbUserInit, int nbUserMax, List<Integer> powerlawArrayFollowers, List<Integer> powerlawArrayUsers) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -65,7 +65,8 @@ public class Database {
         localUsersProbabilityRange = new ThreadLocal<>();
         random = null;
         queueUsers = new ConcurrentLinkedQueue<>();
-        this.powerlawArray = powerlawArray;
+        this.powerlawArrayFollowers = powerlawArrayFollowers;
+        this.powerlawArrayUsers = powerlawArrayUsers;
         nbUsers = nbUserInit;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
         usersCollections = new ArrayList<>();
@@ -90,7 +91,7 @@ public class Database {
 
         for (Key key : users) {
 
-            somme += powerlawArray.get(random.get().nextInt(powerlawArray.size()));
+            somme += powerlawArrayUsers.get(random.get().nextInt(powerlawArrayUsers.size()));
             user = key;
             addUser(user);
             localUsersProbability.get().put(somme, user);
@@ -110,7 +111,7 @@ public class Database {
 
         Random randBool = new Random();
         for (Key userA: localUsersFollow.keySet()){
-            int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.get().nextInt(powerlawArray.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
+            int nbFollow = (int) Math.max(Math.min(powerlawArrayFollowers.get(random.get().nextInt(powerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
 
 //            nbFollow = 1;
 
@@ -150,13 +151,13 @@ public class Database {
         int i = 0;
         long somme = 0;
         Set<Key> localSetUser = new HashSet<>();
-        Collections.sort(powerlawArray);
+        Collections.sort(powerlawArrayFollowers);
 
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
                 usersCollections.get(i%nbThread).add(user);
-                somme += this.powerlawArray.get(i % powerlawArray.size());
+                somme += this.powerlawArrayFollowers.get(i % powerlawArrayFollowers.size());
                 usersProbability.put(somme, user);
                 i++;
             }

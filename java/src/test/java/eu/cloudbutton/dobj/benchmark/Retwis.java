@@ -210,14 +210,21 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(100);
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
+        List<Integer> powerLawArrayFollowers = new DiscreteApproximate(1, _alphaInit).generate(100);
+        List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, 1.1).generate(100);
 
         int index = 0;
-        for (int val: powerLawArray){
-//            powerLawArray.set(index, (int) (powerLawArray.get(index)*ratio));
+        for (int val: powerLawArrayFollowers){
             if (val <= 0)
-                powerLawArray.set(index, 1);
+                powerLawArrayFollowers.set(index, 1);
+
+            index++;
+        }
+
+        index = 0;
+        for (int val: powerLawArrayUsers){
+            if (val <= 0)
+                powerLawArrayUsers.set(index, 1);
 
             index++;
         }
@@ -274,7 +281,7 @@ public class Retwis {
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, (int) _nbUserInit, _nbItems, powerLawArray);
+                    database = new Database(typeMap, typeSet, typeQueue, typeCounter, alpha, nbCurrThread, (int) _nbUserInit, _nbItems, powerLawArrayFollowers, powerLawArrayUsers);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
