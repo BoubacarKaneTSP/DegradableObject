@@ -210,7 +210,7 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(100000);
+        List<Integer> powerLawArray = new DiscreteApproximate(1, _alphaInit).generate(100);
         double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
         int index = 0;
