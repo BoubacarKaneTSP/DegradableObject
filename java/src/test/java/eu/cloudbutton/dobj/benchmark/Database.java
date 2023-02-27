@@ -114,22 +114,22 @@ public class Database {
 
 //            nbFollow = 1;
 
-            if (randBool.nextBoolean()){
-                nbFollow = 0;
-            }
+//            if (randBool.nextBoolean()){
+//                nbFollow = 0;
+//            }
 //            assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
                 try{
                     randVal = random.get().nextLong() % usersProbabilityRange;
-                    randVal = random.get().nextInt(10);
+//                    randVal = random.get().nextInt(10);
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
-//                    if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
-//                        j++;
-//                    }
-                    followUser(userA, userB);
+                    if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
+                        followUser(userA, userB);
+                        j++;
+                    }
 
                 }catch (Exception e){
                     e.printStackTrace();
