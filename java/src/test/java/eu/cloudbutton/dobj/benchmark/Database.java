@@ -111,21 +111,21 @@ public class Database {
         for (Key userA: localUsersFollow.keySet()){
             int nbFollow = (int) Math.max(Math.min(powerlawArray.get(random.get().nextInt(powerlawArray.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
 
-            nbFollow = 1;
+//            nbFollow = 1;
 
             assert nbFollow > 0 : "not following anyone";
-            for(int j = 0; j < nbFollow; ){
+            for(int j = 0; j < nbFollow; j++){
 
                 try{
                     randVal = random.get().nextLong() % usersProbabilityRange;
+                    randVal = random.get().nextInt(10);
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
-                    if (mapFollowers.get(userB).size() <= 1) {
 //                    if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
-                        followUser(userA, userB);
-                        j++;
-                    }
+//                        j++;
+//                    }
+                    followUser(userA, userB);
 
                 }catch (Exception e){
                     e.printStackTrace();
