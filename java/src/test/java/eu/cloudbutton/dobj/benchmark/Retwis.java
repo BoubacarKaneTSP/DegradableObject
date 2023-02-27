@@ -211,7 +211,7 @@ public class Retwis {
         }
 
         List<Integer> powerLawArrayFollowers = new DiscreteApproximate(1, _alphaInit).generate(100);
-        List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, 1.1).generate(100);
+        List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, 1.001).generate(100);
 
         int index = 0;
         for (int val: powerLawArrayFollowers){
