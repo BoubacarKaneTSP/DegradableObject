@@ -121,7 +121,8 @@ public class Database {
                     userB = usersProbability.ceilingEntry(randVal).getValue();
                     assert userB != null : "User generated is null";
 
-                    if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
+                    if (mapFollowers.get(userB).size() <= 1) {
+//                    if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
                         followUser(userA, userB);
                         j++;
                     }
