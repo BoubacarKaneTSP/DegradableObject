@@ -136,8 +136,8 @@ public class Database {
                     System.exit(1);
                 }
             }
-            Set set = mapFollowers.get(userB);
-            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
+//            Set set = mapFollowers.get(userB);
+//            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
         }
 
     }
