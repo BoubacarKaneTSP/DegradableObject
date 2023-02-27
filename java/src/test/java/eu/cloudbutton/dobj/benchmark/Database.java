@@ -87,10 +87,10 @@ public class Database {
 
         //adding all users
 
-        for (int n = 0; n < users.size(); n++){
+        for (Key key : users) {
 
             somme += powerlawArray.get(random.nextInt(powerlawArray.size()));
-            user = users.get(n);
+            user = key;
             addUser(user);
             localUsersProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -143,12 +143,7 @@ public class Database {
             Key user = generateUser();
             if (localSetUser.add(user)){
                 usersCollections.get(i%nbThread).add(user);
-                try{
-
-                    somme += this.powerlawArray.get(i % powerlawArray.size());
-                }catch (NullPointerException e){
-                    System.out.println("a");
-                }
+                somme += this.powerlawArray.get(i % powerlawArray.size());
                 usersProbability.put(somme, user);
                 i++;
             }
