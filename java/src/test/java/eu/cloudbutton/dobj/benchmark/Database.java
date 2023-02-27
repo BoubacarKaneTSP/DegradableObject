@@ -117,7 +117,7 @@ public class Database {
             if (randBool.nextBoolean()){
                 nbFollow = 0;
             }
-            assert nbFollow > 0 : "not following anyone";
+//            assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow; j++){
 
                 try{
