@@ -710,6 +710,8 @@ public class Retwis {
             * When probability of not doing an operation on userA is less than 1%.
             * */
             restartOperation : for (;;){
+                if (nbLocalUsers == 0)
+                    break ;
                 nbAttempt ++;
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
