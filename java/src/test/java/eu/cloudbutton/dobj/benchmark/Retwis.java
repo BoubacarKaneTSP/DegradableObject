@@ -757,26 +757,27 @@ public class Retwis {
 
                         val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
-                        boolean b = listFollow.contains(userB);
-                        if (!b){ // Perform follow only if userB is not already followed
+//                        boolean b = listFollow.contains(userB);
+//                        if (!b){ // Perform follow only if userB is not already followed
                             startTime = System.nanoTime();
-//                            database.followUser(userA, userB);
+                            database.followUser(userA, userB);
                             endTime = System.nanoTime();
 
                             listFollow.add(userB);
-                        }else
-                            continue restartOperation;
+//                        }else
+//                            continue restartOperation;
 
                         break;
                     case UNFOLLOW:
-                        userB = listFollow.poll();
-                        if (userB != null){ // Perform unfollow only if userA already follow someone
+//                        userB = listFollow.poll();
+                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
+//                        if (userB != null){ // Perform unfollow only if userA already follow someone
                             startTime = System.nanoTime();
-//                            database.unfollowUser(userA, userB);
+                            database.unfollowUser(userA, userB);
                             endTime = System.nanoTime();
-                        }else
-                            continue restartOperation;
-                        break;
+//                        }else
+//                            continue restartOperation;
+//                        break;
                     case TWEET:
                         startTime = System.nanoTime();
                         database.tweet(userA, msg);
