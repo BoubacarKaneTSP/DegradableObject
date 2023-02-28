@@ -420,7 +420,7 @@ public class Retwis {
 
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(completionTime/1000000 + " milli secondes");
+                        System.out.println((completionTime/_nbTest)/1000000 + " milli secondes");
 
                     }
                     else {
