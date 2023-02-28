@@ -96,7 +96,7 @@ public class Database {
             user = key;
             addUser(user);
             localUsersProbability.get().put(somme, user);
-//            localUsersFollow.put(user, new LinkedList<>());
+            localUsersFollow.put(user, new LinkedList<>());
         }
 
         localUsersProbabilityRange.set(somme);
