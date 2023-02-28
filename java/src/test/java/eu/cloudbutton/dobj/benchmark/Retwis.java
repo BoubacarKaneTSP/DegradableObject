@@ -1,13 +1,15 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
-import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.*;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -122,6 +124,7 @@ public class Retwis {
     private List<AtomicLong> timeOperations;
     private LongAdder timeBenchmark;
     private LongAdder queueSizes;
+    private LongAdder memoryUsed;
     private Long nbUserFinal;
     private Long nbTweetFinal;
     private List<Float> allAvgQueueSizes;
@@ -141,17 +144,13 @@ public class Retwis {
     private long completionTime;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-/*        Queue queue1 = new LinkedList();
-        KeyGenerator keyGenerator = new RetwisKeyGenerator(1000000, 1000000, 1.39);
-        Key retwisKey = keyGenerator.nextKey();
+        Queue queue1 = new QueueMASP();
         Key key = new ThreadLocalKey(1, 1000, 10000000);
         System.out.println("node size :");
-        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("last").getDeclaringClass()).toPrintable());
+        System.out.println(ClassLayout.parseClass(queue1.getClass()).toPrintable());
         System.out.println("ThreadLocalKey size :");
-        System.out.println(ClassLayout.parseClass(key.getClass()).toPrintable());
-        System.out.println("RetwisKey size :");
-        System.out.println(ClassLayout.parseClass(retwisKey.getClass()).toPrintable());
-        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());*/
+        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());
+        Runtime.getRuntime().totalMemory();
         new Retwis().doMain(args);
     }
 
@@ -243,11 +242,11 @@ public class Retwis {
             PrintWriter printWriter = null;
             FileWriter fileWriter;
             long startTime, endTime, benchmarkAvgTime = 0;;
-            allAvgQueueSizes = new ArrayList();
-            allAvgFollower = new ArrayList();
-            allProportionMaxFollower = new ArrayList();
-            allProportionUserWithMaxFollower = new ArrayList();
-            allProportionUserWithoutFollower = new ArrayList();
+            allAvgQueueSizes = new ArrayList<>();
+            allAvgFollower = new ArrayList<>();
+            allProportionMaxFollower = new ArrayList<>();
+            allProportionUserWithMaxFollower = new ArrayList<>();
+            allProportionUserWithoutFollower = new ArrayList<>();
 
             if (_p){
                 System.out.println();
@@ -269,8 +268,11 @@ public class Retwis {
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
                 queueSizes = new LongAdder();
+                memoryUsed = new LongAdder();
+
                 nbUserFinal = 0L;
                 nbTweetFinal = 0L;
+
                 timeBenchmark = new LongAdder();
                 completionTime = 0;
 
@@ -365,6 +367,7 @@ public class Retwis {
 
                         allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
                         nbTweetFinal += queueSizes.longValue();
+
                         nbUserFinal += database.getMapTimelines().size();
                         allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
                         allProportionMaxFollower.add((float) ((double)maxFollower/NB_USERS)*100);
@@ -496,6 +499,7 @@ public class Retwis {
                                     + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
                         }
 
+                        System.out.println(" ==> Memory Used : " + ((memoryUsed.longValue()/nbCurrThread)/_nbTest)/1_000_000 + "Mb" );
                         System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
                         System.out.println(" ==> nb original users : " + NB_USERS);
                         System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
@@ -509,8 +513,8 @@ public class Retwis {
                     }
 
                     if (_s){
-                        FileWriter queueSizeFile, avgFollowerFile, proportionMaxFollowerFile, proportionUserWithMaxFollowerFile, proportionUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
-                        PrintWriter queueSizePrint, avgFollowerPrint, proportionMaxFollowerPrint, proportionUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
+                        FileWriter queueSizeFile, avgFollowerFile, proportionMaxFollowerFile, proportionUserWithMaxFollowerFile, proportionUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile, memoryUsedFile;
+                        PrintWriter queueSizePrint, avgFollowerPrint, proportionMaxFollowerPrint, proportionUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint, memoryUsedPrint;
 
                         boolean append = flag_append != 0;
 
@@ -522,6 +526,7 @@ public class Retwis {
                         proportionUserWithoutFollowerFile = new FileWriter("proportion_User_Without_Follower_" + nameFile, append);
                         nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
                         nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
+                        memoryUsedFile = new FileWriter("memory_used_" + nameFile, append);
 
                         queueSizePrint = new PrintWriter(queueSizeFile);
                         avgFollowerPrint = new PrintWriter(avgFollowerFile);
@@ -530,6 +535,7 @@ public class Retwis {
                         nbUserWithoutFollowerPrint = new PrintWriter(proportionUserWithoutFollowerFile);
                         nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
                         nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
+                        memoryUsedPrint = new PrintWriter(memoryUsedFile);
 
                         queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
                         avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
@@ -538,6 +544,7 @@ public class Retwis {
                         nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
                         nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
                         nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
+                        memoryUsedPrint.println(unit + " " + (memoryUsed.longValue()/nbCurrThread)/_nbTest);
 
                         queueSizePrint.flush();
                         avgFollowerPrint.flush();
@@ -609,7 +616,8 @@ public class Retwis {
         public Void call(){
 
             try{
-                int type;
+                int type, nbComputed = 0;
+                long avgMemoryUsed = 0L;
 
                 nbLocalOperations = new HashMap<>();
                 timeLocalOperations = new HashMap<>();
@@ -643,6 +651,7 @@ public class Retwis {
                         compute(type, nbLocalOperations, timeLocalOperations);
                     }
                 }else{
+                    int val = 0;
                     while (flagComputing.get()){
 
                         type = chooseOperation();
@@ -654,11 +663,20 @@ public class Retwis {
                         }else{
                             compute(type, nbLocalOperations, timeLocalOperations);
                         }
+
+                        if (val%10000 == 0) {
+                            Runtime rt = Runtime.getRuntime();
+                            avgMemoryUsed += rt.totalMemory() - rt.freeMemory();
+                            nbComputed++;
+                        }
+                        val++;
                     }
 
                 }
 
                 endTimeBenchmark = System.nanoTime();
+
+                memoryUsed.add(avgMemoryUsed/nbComputed);
 
                 if (_completionTime){
                     latchFillCompletionTime.countDown();
