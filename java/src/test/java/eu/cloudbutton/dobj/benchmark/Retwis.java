@@ -718,10 +718,19 @@ public class Retwis {
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
 
-                userA = database.getLocalUsersProbability()
-                        .get()
-                        .ceilingEntry(val)
-                        .getValue();
+                try{
+                    userA = database.getLocalUsersProbability()
+                            .get()
+                            .ceilingEntry(val)
+                            .getValue();
+                }catch (NullPointerException e){
+                    System.out.println("localUsersProbabilityRang : " + localUsersProbabilityRange);
+                    System.out.println();
+                    System.out.println(database.getLocalUsersProbability());
+                    System.out.println();
+                    System.out.println(random.get().nextLong()%localUsersProbabilityRange);
+                    System.exit(1);
+                }
 
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
