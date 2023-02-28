@@ -553,6 +553,7 @@ public class Retwis {
                         nbUserWithoutFollowerPrint.flush();
                         nbUserFinalPrint.flush();
                         nbTweetFinalPrint.flush();
+                        memoryUsedPrint.flush();
 
                         queueSizeFile.close();
                         avgFollowerFile.close();
@@ -561,6 +562,7 @@ public class Retwis {
                         proportionUserWithoutFollowerFile.close();
                         nbUserFinalFile.close();
                         nbTweetFinalFile.close();
+                        memoryUsedFile.close();
                     }
                 }
 
