@@ -746,7 +746,7 @@ public class Retwis {
                     System.exit(1);
                 }
 
-                Queue<Key> listFollow = usersFollow.get(userA);
+//                Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
                         startTime = System.nanoTime();
@@ -763,7 +763,7 @@ public class Retwis {
                             database.followUser(userA, userB);
                             endTime = System.nanoTime();
 
-                            listFollow.add(userB);
+//                            listFollow.add(userB);
 //                        }else
 //                            continue restartOperation;
 
