@@ -78,10 +78,10 @@ public class Retwis {
     private long _wTime = 5;
 
     @Option(name = "-alphaInit", usage = "first value tested for alpha (powerlaw settings)")
-    private double _alphaInit = 1.001;
+    private double _alphaInit = 1.7;
 
     @Option(name = "-alphaMin", usage = "min value tested for alpha (powerlaw settings)")
-    private double _alphaMin = 1.001;
+    private double _alphaMin = 1.7;
 
     @Option(name = "-alphaStep", usage = "step between two value tested for alpha (powerlaw settings)")
     private double _alphaStep = 0.2;
