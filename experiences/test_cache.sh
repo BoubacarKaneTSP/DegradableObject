@@ -10,7 +10,7 @@ warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=1000000
 nbOps=100000
-ratio="0 15 30 55"
+ratio="5 15 30 50"
 
 for nbUsersInit in 100 10000 1000000
 do
