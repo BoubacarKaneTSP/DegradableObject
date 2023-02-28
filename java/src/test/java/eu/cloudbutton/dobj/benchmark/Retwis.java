@@ -732,7 +732,7 @@ public class Retwis {
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
                 userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
-                Queue<Key> listFollow = usersFollow.get(userA);
+//                Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
                         startTime = System.nanoTime();
@@ -744,25 +744,27 @@ public class Retwis {
                         val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
-                        if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
-                            startTime = System.nanoTime();
-                            database.followUser(userA, userB);
-                            endTime = System.nanoTime();
-
-                            listFollow.add(userB);
-                        }else
-                            continue restartOperation;
+                        startTime = System.nanoTime();
+                        database.followUser(userA, userB);
+                        endTime = System.nanoTime();
+//                        if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
+//
+//                            listFollow.add(userB);
+//                        }else
+//                            continue restartOperation;
 
                         break;
                     case UNFOLLOW:
-                        userB = listFollow.poll();
-                        if (userB != null){ // Perform unfollow only if userA already follow someone
-                            startTime = System.nanoTime();
-                            database.unfollowUser(userA, userB);
-                            endTime = System.nanoTime();
-                        }else
-                            continue restartOperation;
-                        break;
+                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
+                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
+//                        userB = listFollow.poll();
+                        startTime = System.nanoTime();
+                        database.unfollowUser(userA, userB);
+                        endTime = System.nanoTime();
+//                        if (userB != null){ // Perform unfollow only if userA already follow someone
+//                        }else
+//                            continue restartOperation;
+//                        break;
                     case TWEET:
                         startTime = System.nanoTime();
                         database.tweet(userA, msg);
