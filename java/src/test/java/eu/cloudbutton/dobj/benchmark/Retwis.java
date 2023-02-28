@@ -717,7 +717,12 @@ public class Retwis {
                     typeComputed = chooseOperation();
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
-                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
+
+                userA = database.getLocalUsersProbability()
+                        .get()
+                        .ceilingEntry(val)
+                        .getValue();
+
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
