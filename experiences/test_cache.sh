@@ -9,7 +9,7 @@ benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=1000000
-nbOps=1000000
+nbOps=5000000
 ratio="5 15 30 50"
 
 for nbUsersInit in 10000
