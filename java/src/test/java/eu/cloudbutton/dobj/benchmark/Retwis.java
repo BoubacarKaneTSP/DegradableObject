@@ -411,7 +411,7 @@ public class Retwis {
                     if (_completionTime)
                         printWriter.println(unit +" "+ completionTime/_nbTest);
                     else
-                        printWriter.println(unit +" "+ (nbOpTotal / ((double) timeTotalComputed) * 1_000_000_000));
+                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
 
                 }
 
@@ -420,12 +420,12 @@ public class Retwis {
 
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println((completionTime/_nbTest)/1000000 + " milli secondes");
+                        System.out.println(completionTime/1000000 + " milli secondes");
 
                     }
                     else {
                         System.out.print(" ==> Throughput (op/s) for all operations : ");
-                        System.out.printf("%.3E%n",(nbOpTotal / ((double) timeTotalComputed) * 1_000_000_000));
+                        System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
                         System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
                     }
 
@@ -731,22 +731,8 @@ public class Retwis {
                     typeComputed = chooseOperation();
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
-
-                try{
-                    userA = database.getLocalUsersProbability()
-                            .get()
-                            .ceilingEntry(val)
-                            .getValue();
-                }catch (NullPointerException e){
-                    System.out.println("localUsersProbabilityRange : " + localUsersProbabilityRange);
-                    System.out.println();
-                    System.out.println(database.getLocalUsersProbability().get());
-                    System.out.println();
-                    System.out.println(random.get().nextLong()%localUsersProbabilityRange);
-                    System.exit(1);
-                }
-
-//                Queue<Key> listFollow = usersFollow.get(userA);
+                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
+                Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
                         startTime = System.nanoTime();
@@ -757,28 +743,26 @@ public class Retwis {
 
                         val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
-//                        boolean b = listFollow.contains(userB);
-//                        if (!b){ // Perform follow only if userB is not already followed
+
+                        if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
                             startTime = System.nanoTime();
                             database.followUser(userA, userB);
                             endTime = System.nanoTime();
 
-//                            listFollow.add(userB);
-//                        }else
-//                            continue restartOperation;
+                            listFollow.add(userB);
+                        }else
+                            continue restartOperation;
 
                         break;
                     case UNFOLLOW:
-//                        userB = listFollow.poll();
-                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
-                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
-//                        if (userB != null){ // Perform unfollow only if userA already follow someone
+                        userB = listFollow.poll();
+                        if (userB != null){ // Perform unfollow only if userA already follow someone
                             startTime = System.nanoTime();
                             database.unfollowUser(userA, userB);
                             endTime = System.nanoTime();
-//                        }else
-//                            continue restartOperation;
-//                        break;
+                        }else
+                            continue restartOperation;
+                        break;
                     case TWEET:
                         startTime = System.nanoTime();
                         database.tweet(userA, msg);
