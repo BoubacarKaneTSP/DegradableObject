@@ -214,10 +214,24 @@ public class Retwis {
         for (int val: inPowerLawArrayFollowers){
             if (val <= 0) {
                 inPowerLawArrayFollowers.set(index, 1);
-                outPowerLawArrayFollowers.set(index, 1);
-                powerLawArrayUsers.set(index, 1);
             }
 
+            index++;
+        }
+
+        index = 0;
+        for (int val: outPowerLawArrayFollowers){
+            if (val <= 0){
+                outPowerLawArrayFollowers.set(index, 1);
+            }
+            index++;
+        }
+
+        index=0;
+        for (int val: powerLawArrayUsers){
+            if (val <=0){
+                powerLawArrayUsers.set(index, 1);
+            }
             index++;
         }
 
