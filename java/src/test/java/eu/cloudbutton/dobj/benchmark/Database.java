@@ -80,7 +80,7 @@ public class Database {
         generateUsers();
     }
 
-    public void fill(CountDownLatch latchDatabase, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchDatabase) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocal.withInitial(() -> new Random(94));
 
@@ -96,7 +96,6 @@ public class Database {
             user = key;
             addUser(user);
             localUsersProbability.get().put(somme, user);
-            localUsersFollow.put(user, new LinkedList<>());
         }
 
         localUsersProbabilityRange.set(somme);
@@ -116,19 +115,14 @@ public class Database {
 //            assert nbFollow > 0 : "not following anyone";
             for(int j = 0; j < nbFollow;){
 
-                try{
-                    randVal = random.get().nextLong() % usersProbabilityRange;
-                    userB = usersProbability.ceilingEntry(randVal).getValue();
-                    assert userB != null : "User generated is null";
 
-                    if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
-                        followUser(userA, userB);
-                        j++;
-                    }
+                randVal = random.get().nextLong() % usersProbabilityRange;
+                userB = usersProbability.ceilingEntry(randVal).getValue();
+                assert userB != null : "User generated is null";
 
-                }catch (Exception e){
-                    e.printStackTrace();
-                    System.exit(1);
+                if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
+                    followUser(userA, userB);
+                    j++;
                 }
             }
 //            Set set = mapFollowers.get(userB);
@@ -172,21 +166,32 @@ public class Database {
 
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
-    public void followUser(Key userA, Key userB){
+    public boolean followUser(Key userA, Key userB){
         Set set;
 
         set = mapFollowers.get(userB);
-        set.add(userA);
+        if(set.add(userA)){
+            set = mapFollowing.get(userA);
+            set.add(userB);
+            return true;
+        }
 
-        set = mapFollowing.get(userA);
-        set.add(userB);
+        return false;
     }
 
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
-    public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB).remove(userA);
-        mapFollowing.get(userA).remove(userB);
+    public boolean unfollowUser(Key userA, Key userB){
+        Set set;
+
+        set = mapFollowers.get(userB);
+        if(set.remove(userA)){
+            set = mapFollowing.get(userA);
+            set.remove(userB);
+            return true;
+        }
+
+        return false;
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {
