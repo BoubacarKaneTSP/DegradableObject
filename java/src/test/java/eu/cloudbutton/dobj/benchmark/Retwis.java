@@ -136,7 +136,7 @@ public class Retwis {
 
     int nbSign = 5;
 
-    int flag_append = 0;
+    int flag_append;
 
     private long completionTime;
 
@@ -200,6 +200,7 @@ public class Retwis {
         }
 
         NB_USERS = (int) _nbUserInit;
+        flag_append = _nbThreads == 1 ? 0 : 1; // Testing with one thread will erase old files
 
         if (_nbUserInit > _nbItems){
             System.out.println("Nb User must be lower or equal to number of hash");
@@ -235,345 +236,335 @@ public class Retwis {
             index++;
         }
 
-        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
+        if (_gcinfo)
+            System.out.println("nbThread : "+_nbThreads);
 
-            if (_gcinfo)
-                System.out.println("nbThread : "+nbCurrThread);
+        PrintWriter printWriter = null;
+        FileWriter fileWriter;
+        long startTime, endTime, benchmarkAvgTime = 0;;
+        allAvgQueueSizes = new ArrayList();
+        allAvgFollower = new ArrayList();
+        allProportionMaxFollower = new ArrayList();
+        allProportionUserWithMaxFollower = new ArrayList();
+        allProportionUserWithoutFollower = new ArrayList();
 
-            PrintWriter printWriter = null;
-            FileWriter fileWriter;
-            long startTime, endTime, benchmarkAvgTime = 0;;
-            allAvgQueueSizes = new ArrayList();
-            allAvgFollower = new ArrayList();
-            allProportionMaxFollower = new ArrayList();
-            allProportionUserWithMaxFollower = new ArrayList();
-            allProportionUserWithoutFollower = new ArrayList();
+        if (_p){
+            System.out.println();
+            for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+            System.out.print( " Results for ["+_nbThreads+"] threads ");
+            for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+            System.out.println();
+        }
 
+        for (double alpha : listAlpha) {
             if (_p){
                 System.out.println();
-                for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                System.out.print( " Results for ["+nbCurrThread+"] threads ");
-                for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
+                for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
+                System.out.print( " Results for alpha = ["+alpha+"] ");
+                for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
                 System.out.println();
             }
 
-            for (double alpha : listAlpha) {
-                if (_p){
-                    System.out.println();
-                    for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
-                    System.out.print( " Results for alpha = ["+alpha+"] ");
-                    for (int j = 0; j < 2*nbSign; j++) System.out.print("-");
-                    System.out.println();
+            nbOperations = new CopyOnWriteArrayList<>();
+            timeOperations = new CopyOnWriteArrayList<>();
+            queueSizes = new LongAdder();
+            nbUserFinal = 0L;
+            nbTweetFinal = 0L;
+            timeBenchmark = new LongAdder();
+            completionTime = 0;
+
+            for (int op: mapIntOptoStringOp.keySet()) {
+                nbOperations.add(op, new AtomicLong());
+                timeOperations.add(op, new AtomicLong());
+            }
+
+            for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
+                List<Callable<Void>> callables = new ArrayList<>();
+                ExecutorService executor = Executors.newFixedThreadPool(_nbThreads); // Additional count for the UserAdder
+                ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
+
+                flagComputing = new AtomicBoolean(true);
+                flagWarmingUp = new AtomicBoolean(false);
+                database = new Database(typeMap, typeSet, typeQueue, typeCounter,
+                        _nbThreads,
+                        (int) _nbUserInit,
+                        _nbItems,
+                        inPowerLawArrayFollowers,
+                        outPowerLawArrayFollowers,
+                        powerLawArrayUsers);
+
+                if (flag_append == 0 && nbCurrTest == 1){
+                    flagWarmingUp.set(true);
                 }
 
-                nbOperations = new CopyOnWriteArrayList<>();
-                timeOperations = new CopyOnWriteArrayList<>();
-                queueSizes = new LongAdder();
-                nbUserFinal = 0L;
-                nbTweetFinal = 0L;
-                timeBenchmark = new LongAdder();
-                completionTime = 0;
+                CountDownLatch latch = new CountDownLatch(_nbThreads+1); // Additional counts for the coordinator
+                CountDownLatch latchFillDatabase = new CountDownLatch(_nbThreads);
+                CountDownLatch latchCompletionTime = new CountDownLatch(_nbThreads+1);// Additional counts for the coordinator
 
-                for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOperations.add(op, new AtomicLong());
-                    timeOperations.add(op, new AtomicLong());
+                for (int j = 0; j < _nbThreads; j++) {
+                    RetwisApp retwisApp = new RetwisApp(
+                            latch,
+                            latchFillDatabase,
+                            latchCompletionTime
+                    );
+                    callables.add(retwisApp);
                 }
 
-                for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
-                    List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread); // Additional count for the UserAdder
-                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
+                executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime));
+                List<Future<Void>> futures;
 
-                    flagComputing = new AtomicBoolean(true);
-                    flagWarmingUp = new AtomicBoolean(false);
-                    database = new Database(typeMap, typeSet, typeQueue, typeCounter,
-                            nbCurrThread,
-                            (int) _nbUserInit,
-                            _nbItems,
-                            inPowerLawArrayFollowers,
-                            outPowerLawArrayFollowers,
-                            powerLawArrayUsers);
+                startTime = System.nanoTime();
 
-                    if (flag_append == 0 && nbCurrTest == 1){
-                        flagWarmingUp.set(true);
+                futures = executor.invokeAll(callables);
+
+                try{
+                    for (Future<Void> future : futures) {
+                        future.get();
                     }
-
-                    CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
-                    CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
-                    CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
-
-                    for (int j = 0; j < nbCurrThread; j++) {
-                        RetwisApp retwisApp = new RetwisApp(
-                                latch,
-                                latchFillDatabase,
-                                latchCompletionTime
-                        );
-                        callables.add(retwisApp);
-                    }
-
-                    executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime));
-                    List<Future<Void>> futures;
-
-                    startTime = System.nanoTime();
-
-                    futures = executor.invokeAll(callables);
-
-                    try{
-                        for (Future<Void> future : futures) {
-                            future.get();
-                        }
-                    } catch (OutOfMemoryError | CancellationException | ExecutionException e) {
-                        e.printStackTrace();
-                        System.exit(0);
-                    }
-
-                    endTime = System.nanoTime();
-
-
-                    benchmarkAvgTime += endTime - startTime;
-
-                    if(_p)
-                        System.out.println(" ==> End of test num : " + nbCurrTest);
-
-                    TimeUnit.SECONDS.sleep(1);
-
-                    if (_breakdown){
-
-                        int nbFollowerTotal = 0,
-                                maxFollower = 0,
-                                nbFollower,
-                                userWithMaxFollower = 0,
-                                userWithoutFollower = 0;
-
-                        for(Key user: database.getUsersProbability().values()){
-                            Set<Key> followers = database.getMapFollowers().get(user);
-                            nbFollower = followers.size();
-                            if (nbFollower > maxFollower) {
-                                maxFollower = nbFollower;
-                            }
-                            nbFollowerTotal += nbFollower;
-                        }
-                        for(Key user: database.getUsersProbability().values()){
-                            Set<Key> followers = database.getMapFollowers().get(user);
-                            nbFollower = followers.size();
-
-                            if (nbFollower>= maxFollower*0.8)
-                                userWithMaxFollower++;
-                            else if (nbFollower == 0)
-                                userWithoutFollower++;
-                        }
-
-                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
-                        nbTweetFinal += queueSizes.longValue();
-                        nbUserFinal += database.getMapTimelines().size();
-                        allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
-                        allProportionMaxFollower.add((float) ((double)maxFollower/NB_USERS)*100);
-                        allProportionUserWithMaxFollower.add((float) ((double)userWithMaxFollower/NB_USERS)*100);
-                        allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
-                    }
-                    executor.shutdown();
+                } catch (OutOfMemoryError | CancellationException | ExecutionException e) {
+                    e.printStackTrace();
+                    System.exit(0);
                 }
+
+                endTime = System.nanoTime();
+
+
+                benchmarkAvgTime += endTime - startTime;
 
                 if(_p)
-                    System.out.println();
+                    System.out.println(" ==> End of test num : " + nbCurrTest);
 
-                if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1000000)/_nbTest );
-
-                long nbOpTotal = 0, timeTotalComputed = 0;
-
-                int unit = nbCurrThread;
-
-                for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOpTotal += nbOperations.get(op).get();
-                    timeTotalComputed += timeOperations.get(op).get();
-                }
-
-                if (_p)
-                    System.out.println(" ==> Results :");
-
-                long nbOp, timeOp;
-                String strAlpha = Double.toString(alpha).replace(".","");
-                if (strAlpha.length() >= 3)
-                    strAlpha = strAlpha.substring(0,3);
-
-                long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
-
-                if (_s){
-
-                    String nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
-                    if (flag_append == 0)
-                        fileWriter = new FileWriter(nameFile, false);
-                    else
-                        fileWriter = new FileWriter(nameFile, true);
-
-                    printWriter = new PrintWriter(fileWriter);
-                    if (_completionTime)
-                        printWriter.println(unit +" "+ completionTime/_nbTest);
-                    else
-                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
-
-                }
-
-                if (_p){
-                    for (int j = 0; j < nbSign; j++) System.out.print("-");
-
-                    if (_completionTime) {
-                        System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(completionTime/1000000 + " milli secondes");
-
-                    }
-                    else {
-                        System.out.print(" ==> Throughput (op/s) for all operations : ");
-                        System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
-                        System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
-                    }
-
-                    System.out.println();
-                }
-
-                if (_s)
-                    printWriter.flush();
-
-                if (! _completionTime){
-                    for (int op: mapIntOptoStringOp.keySet()){
-
-                        nbOp = nbOperations.get(op).get();
-                        timeOp = timeOperations.get(op).get();
-
-//                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
-
-                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
-                        if (_s){
-                            if (flag_append == 0)
-                                fileWriter = new FileWriter( nameFile, false);
-                            else
-                                fileWriter = new FileWriter(nameFile, true);
-                            printWriter = new PrintWriter(fileWriter);
-                            printWriter.println(unit +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
-                        }
-
-                        if (_p){
-                            for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.print(" ==> Throughput (op/s) for "+mapIntOptoStringOp.get(op)+" : ");
-                            System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
-                            System.out.println();
-                        }
-
-                        if (_s)
-                            printWriter.flush();
-                    }
-                }
-
-                if (_gcinfo || _p){
-                    System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
-                }
+                TimeUnit.SECONDS.sleep(1);
 
                 if (_breakdown){
 
-                    float sumAvgQueueSizes = 0,
-                            sumAvgFollower = 0,
-                            sumProportionMaxFollower = 0,
-                            sumProportionUserWithMaxFollower = 0,
-                            sumProportionUserWithoutFollower = 0;
+                    int nbFollowerTotal = 0,
+                            maxFollower = 0,
+                            nbFollower,
+                            userWithMaxFollower = 0,
+                            userWithoutFollower = 0;
 
-                    for (int i = 0; i < _nbTest; i++) {
-                        sumAvgQueueSizes += allAvgQueueSizes.get(i);
-                        sumAvgFollower += allAvgFollower.get(i);
-                        sumProportionMaxFollower += allProportionMaxFollower.get(i);
-                        sumProportionUserWithMaxFollower += allProportionUserWithMaxFollower.get(i);
-                        sumProportionUserWithoutFollower += allProportionUserWithoutFollower.get(i);
-
-                    }
-                    if (_p){
-                        System.out.println("Stats for each op over (" + _nbTest + ") tests :");
-                        for (int op: mapIntOptoStringOp.keySet()) {
-                            int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
-                            System.out.print("==> - " + mapIntOptoStringOp.get(op));
-                            for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(": Nb op : " + nbOperations.get(op).get()
-                                    + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
-                                    + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
+                    for(Key user: database.getUsersProbability().values()){
+                        Set<Key> followers = database.getMapFollowers().get(user);
+                        nbFollower = followers.size();
+                        if (nbFollower > maxFollower) {
+                            maxFollower = nbFollower;
                         }
+                        nbFollowerTotal += nbFollower;
+                    }
+                    for(Key user: database.getUsersProbability().values()){
+                        Set<Key> followers = database.getMapFollowers().get(user);
+                        nbFollower = followers.size();
 
-                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
-                        System.out.println(" ==> nb original users : " + NB_USERS);
-                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
-                        System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
-                        System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
-                        System.out.println(" ==> % of the database that represent the max number of follower : " + sumProportionMaxFollower/_nbTest + "%");
-                        System.out.println(" ==> % user with max follower (or 20% less) : " + sumProportionUserWithMaxFollower/_nbTest + "%");
-                        System.out.println(" ==> % user without follower : " + sumProportionUserWithoutFollower/_nbTest + "%");
-                        System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
+                        if (nbFollower>= maxFollower*0.8)
+                            userWithMaxFollower++;
+                        else if (nbFollower == 0)
+                            userWithoutFollower++;
+                    }
+
+                    allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/_nbThreads));
+                    nbTweetFinal += queueSizes.longValue();
+                    nbUserFinal += database.getMapTimelines().size();
+                    allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
+                    allProportionMaxFollower.add((float) ((double)maxFollower/NB_USERS)*100);
+                    allProportionUserWithMaxFollower.add((float) ((double)userWithMaxFollower/NB_USERS)*100);
+                    allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
+                }
+                executor.shutdown();
+            }
+
+            if(_p)
+                System.out.println();
+
+            if (_gcinfo || _p)
+                System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1000000)/_nbTest );
+
+            long nbOpTotal = 0, timeTotalComputed = 0;
+
+            int unit = _nbThreads;
+
+            for (int op: mapIntOptoStringOp.keySet()) {
+                nbOpTotal += nbOperations.get(op).get();
+                timeTotalComputed += timeOperations.get(op).get();
+            }
+
+            if (_p)
+                System.out.println(" ==> Results :");
+
+            long nbOp, timeOp;
+            String strAlpha = Double.toString(alpha).replace(".","");
+            if (strAlpha.length() >= 3)
+                strAlpha = strAlpha.substring(0,3);
+
+            long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / _nbThreads) / _nbTest;
+
+            if (_s){
+
+                String nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                if (flag_append == 0)
+                    fileWriter = new FileWriter(nameFile, false);
+                else
+                    fileWriter = new FileWriter(nameFile, true);
+
+                printWriter = new PrintWriter(fileWriter);
+                if (_completionTime)
+                    printWriter.println(unit +" "+ completionTime/_nbTest);
+                else
+                    printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+
+            }
+
+            if (_p){
+                for (int j = 0; j < nbSign; j++) System.out.print("-");
+
+                if (_completionTime) {
+                    System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
+                    System.out.println(completionTime/1000000 + " milli secondes");
+
+                }
+                else {
+                    System.out.print(" ==> Throughput (op/s) for all operations : ");
+                    System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+                    System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/_nbThreads)/1_000_000 + "ms");
+                }
+
+                System.out.println();
+            }
+
+            if (_s)
+                printWriter.flush();
+
+            if (! _completionTime){
+                for (int op: mapIntOptoStringOp.keySet()){
+
+                    nbOp = nbOperations.get(op).get();
+                    timeOp = timeOperations.get(op).get();
+
+//                    timeOperations.get(op).set( timeOperations.get(op).get()/_nbThreads );  // Compute the avg time to get the global throughput
+
+                    String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                    if (_s){
+                        if (flag_append == 0)
+                            fileWriter = new FileWriter( nameFile, false);
+                        else
+                            fileWriter = new FileWriter(nameFile, true);
+                        printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(unit +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
+                    }
+
+                    if (_p){
+                        for (int j = 0; j < nbSign; j++) System.out.print("-");
+                        System.out.print(" ==> Throughput (op/s) for "+mapIntOptoStringOp.get(op)+" : ");
+                        System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
                         System.out.println();
                     }
 
-                    if (_s){
-                        FileWriter queueSizeFile, avgFollowerFile, proportionMaxFollowerFile, proportionUserWithMaxFollowerFile, proportionUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
-                        PrintWriter queueSizePrint, avgFollowerPrint, proportionMaxFollowerPrint, proportionUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
+                    if (_s)
+                        printWriter.flush();
+                }
+            }
 
-                        boolean append = flag_append != 0;
+            if (_gcinfo || _p){
+                System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
+            }
 
-                        String nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
-                        queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
-                        avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
-                        proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
-                        proportionUserWithMaxFollowerFile = new FileWriter("proportion_User_With_Max_Follower_" + nameFile,append);
-                        proportionUserWithoutFollowerFile = new FileWriter("proportion_User_Without_Follower_" + nameFile, append);
-                        nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
-                        nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
+            if (_breakdown){
 
-                        queueSizePrint = new PrintWriter(queueSizeFile);
-                        avgFollowerPrint = new PrintWriter(avgFollowerFile);
-                        proportionMaxFollowerPrint = new PrintWriter(proportionMaxFollowerFile);
-                        proportionUserWithMaxFollowerPrint = new PrintWriter(proportionUserWithMaxFollowerFile);
-                        nbUserWithoutFollowerPrint = new PrintWriter(proportionUserWithoutFollowerFile);
-                        nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
-                        nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
+                float sumAvgQueueSizes = 0,
+                        sumAvgFollower = 0,
+                        sumProportionMaxFollower = 0,
+                        sumProportionUserWithMaxFollower = 0,
+                        sumProportionUserWithoutFollower = 0;
 
-                        queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
-                        avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
-                        proportionMaxFollowerPrint.println(unit + " " + sumProportionMaxFollower/_nbTest);
-                        proportionUserWithMaxFollowerPrint.println(unit + " " + sumProportionUserWithMaxFollower/_nbTest);
-                        nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
-                        nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
-                        nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
+                for (int i = 0; i < _nbTest; i++) {
+                    sumAvgQueueSizes += allAvgQueueSizes.get(i);
+                    sumAvgFollower += allAvgFollower.get(i);
+                    sumProportionMaxFollower += allProportionMaxFollower.get(i);
+                    sumProportionUserWithMaxFollower += allProportionUserWithMaxFollower.get(i);
+                    sumProportionUserWithoutFollower += allProportionUserWithoutFollower.get(i);
 
-                        queueSizePrint.flush();
-                        avgFollowerPrint.flush();
-                        proportionMaxFollowerPrint.flush();
-                        proportionUserWithMaxFollowerPrint.flush();
-                        nbUserWithoutFollowerPrint.flush();
-                        nbUserFinalPrint.flush();
-                        nbTweetFinalPrint.flush();
-
-                        queueSizeFile.close();
-                        avgFollowerFile.close();
-                        proportionMaxFollowerFile.close();
-                        proportionUserWithMaxFollowerFile.close();
-                        proportionUserWithoutFollowerFile.close();
-                        nbUserFinalFile.close();
-                        nbTweetFinalFile.close();
+                }
+                if (_p){
+                    System.out.println("Stats for each op over (" + _nbTest + ") tests :");
+                    for (int op: mapIntOptoStringOp.keySet()) {
+                        int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
+                        System.out.print("==> - " + mapIntOptoStringOp.get(op));
+                        for (int i = 0; i < nbSpace; i++) System.out.print(" ");
+                        System.out.println(": Nb op : " + nbOperations.get(op).get()
+                                + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
+                                + ", temps d'exécution : " + (timeOperations.get(op).get()/_nbThreads) / 1_000 + " micro seconds");
                     }
+
+                    System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/_nbThreads)/_nbTest + " ms");
+                    System.out.println(" ==> nb original users : " + NB_USERS);
+                    System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
+                    System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
+                    System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
+                    System.out.println(" ==> % of the database that represent the max number of follower : " + sumProportionMaxFollower/_nbTest + "%");
+                    System.out.println(" ==> % user with max follower (or 20% less) : " + sumProportionUserWithMaxFollower/_nbTest + "%");
+                    System.out.println(" ==> % user without follower : " + sumProportionUserWithoutFollower/_nbTest + "%");
+                    System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
+                    System.out.println();
                 }
 
-                if(_p)
-                    System.out.println();
-                if (_s)
-                    printWriter.close();
+                if (_s){
+                    FileWriter queueSizeFile, avgFollowerFile, proportionMaxFollowerFile, proportionUserWithMaxFollowerFile, proportionUserWithoutFollowerFile, nbUserFinalFile, nbTweetFinalFile;
+                    PrintWriter queueSizePrint, avgFollowerPrint, proportionMaxFollowerPrint, proportionUserWithMaxFollowerPrint, nbUserWithoutFollowerPrint, nbUserFinalPrint, nbTweetFinalPrint;
+
+                    boolean append = flag_append != 0;
+
+                    String nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                    queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
+                    avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
+                    proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
+                    proportionUserWithMaxFollowerFile = new FileWriter("proportion_User_With_Max_Follower_" + nameFile,append);
+                    proportionUserWithoutFollowerFile = new FileWriter("proportion_User_Without_Follower_" + nameFile, append);
+                    nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
+                    nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
+
+                    queueSizePrint = new PrintWriter(queueSizeFile);
+                    avgFollowerPrint = new PrintWriter(avgFollowerFile);
+                    proportionMaxFollowerPrint = new PrintWriter(proportionMaxFollowerFile);
+                    proportionUserWithMaxFollowerPrint = new PrintWriter(proportionUserWithMaxFollowerFile);
+                    nbUserWithoutFollowerPrint = new PrintWriter(proportionUserWithoutFollowerFile);
+                    nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
+                    nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
+
+                    queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
+                    avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
+                    proportionMaxFollowerPrint.println(unit + " " + sumProportionMaxFollower/_nbTest);
+                    proportionUserWithMaxFollowerPrint.println(unit + " " + sumProportionUserWithMaxFollower/_nbTest);
+                    nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
+                    nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
+                    nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
+
+                    queueSizePrint.flush();
+                    avgFollowerPrint.flush();
+                    proportionMaxFollowerPrint.flush();
+                    proportionUserWithMaxFollowerPrint.flush();
+                    nbUserWithoutFollowerPrint.flush();
+                    nbUserFinalPrint.flush();
+                    nbTweetFinalPrint.flush();
+
+                    queueSizeFile.close();
+                    avgFollowerFile.close();
+                    proportionMaxFollowerFile.close();
+                    proportionUserWithMaxFollowerFile.close();
+                    proportionUserWithoutFollowerFile.close();
+                    nbUserFinalFile.close();
+                    nbTweetFinalFile.close();
+                }
             }
 
-            flag_append++;
-            nbCurrThread *= 2;
-
-            if (_quickTest){
-                if(nbCurrThread==2)
-                    nbCurrThread = _nbThreads;
-            }
-
-            if (nbCurrThread > _nbThreads && nbCurrThread != 2 * _nbThreads)
-                nbCurrThread = _nbThreads;
+            if(_p)
+                System.out.println();
+            if (_s)
+                printWriter.close();
         }
+
+        flag_append++;
+        _nbThreads *= 2;
+
         System.exit(0);
     }
 
