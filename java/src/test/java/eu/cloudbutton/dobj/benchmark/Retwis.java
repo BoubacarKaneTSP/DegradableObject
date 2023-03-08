@@ -136,7 +136,7 @@ public class Retwis {
 
     int nbSign = 5;
 
-    int flag_append = 0;
+    int flag_append;
 
     private long completionTime;
 
@@ -200,6 +200,7 @@ public class Retwis {
         }
 
         NB_USERS = (int) _nbUserInit;
+        flag_append = _nbThreads == 1 ? 0 : 1; // Testing with one thread will erase old files
 
         if (_nbUserInit > _nbItems){
             System.out.println("Nb User must be lower or equal to number of hash");
@@ -235,10 +236,8 @@ public class Retwis {
             index++;
         }
 
-        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
-
             if (_gcinfo)
-                System.out.println("nbThread : "+nbCurrThread);
+            System.out.println("nbThread : "+_nbThreads);
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -252,7 +251,7 @@ public class Retwis {
             if (_p){
                 System.out.println();
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
-                System.out.print( " Results for ["+nbCurrThread+"] threads ");
+            System.out.print( " Results for ["+_nbThreads+"] threads ");
                 for (int j = 0; j < 2*nbSign; j++) System.out.print("*");
                 System.out.println();
             }
@@ -281,13 +280,13 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread); // Additional count for the UserAdder
+                ExecutorService executor = Executors.newFixedThreadPool(_nbThreads); // Additional count for the UserAdder
                     ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter,
-                            nbCurrThread,
+                        _nbThreads,
                             (int) _nbUserInit,
                             _nbItems,
                             inPowerLawArrayFollowers,
@@ -298,11 +297,11 @@ public class Retwis {
                         flagWarmingUp.set(true);
                     }
 
-                    CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
-                    CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
-                    CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
+                CountDownLatch latch = new CountDownLatch(_nbThreads+1); // Additional counts for the coordinator
+                CountDownLatch latchFillDatabase = new CountDownLatch(_nbThreads);
+                CountDownLatch latchCompletionTime = new CountDownLatch(_nbThreads+1);// Additional counts for the coordinator
 
-                    for (int j = 0; j < nbCurrThread; j++) {
+                for (int j = 0; j < _nbThreads; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latch,
                                 latchFillDatabase,
@@ -363,7 +362,7 @@ public class Retwis {
                                 userWithoutFollower++;
                         }
 
-                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
+                    allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/_nbThreads));
                         nbTweetFinal += queueSizes.longValue();
                         nbUserFinal += database.getMapTimelines().size();
                         allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
@@ -382,7 +381,7 @@ public class Retwis {
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
-                int unit = nbCurrThread;
+            int unit = _nbThreads;
 
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOpTotal += nbOperations.get(op).get();
@@ -397,7 +396,7 @@ public class Retwis {
                 if (strAlpha.length() >= 3)
                     strAlpha = strAlpha.substring(0,3);
 
-                long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
+            long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / _nbThreads) / _nbTest;
 
                 if (_s){
 
@@ -426,7 +425,7 @@ public class Retwis {
                     else {
                         System.out.print(" ==> Throughput (op/s) for all operations : ");
                         System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
-                        System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
+                    System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/_nbThreads)/1_000_000 + "ms");
                     }
 
                     System.out.println();
@@ -441,7 +440,7 @@ public class Retwis {
                         nbOp = nbOperations.get(op).get();
                         timeOp = timeOperations.get(op).get();
 
-//                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
+//                    timeOperations.get(op).set( timeOperations.get(op).get()/_nbThreads );  // Compute the avg time to get the global throughput
 
                         String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         if (_s){
@@ -493,10 +492,10 @@ public class Retwis {
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
                             System.out.println(": Nb op : " + nbOperations.get(op).get()
                                     + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
-                                    + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
+                                + ", temps d'exécution : " + (timeOperations.get(op).get()/_nbThreads) / 1_000 + " micro seconds");
                         }
 
-                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
+                    System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/_nbThreads)/_nbTest + " ms");
                         System.out.println(" ==> nb original users : " + NB_USERS);
                         System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
                         System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
@@ -564,16 +563,8 @@ public class Retwis {
             }
 
             flag_append++;
-            nbCurrThread *= 2;
+        _nbThreads *= 2;
 
-            if (_quickTest){
-                if(nbCurrThread==2)
-                    nbCurrThread = _nbThreads;
-            }
-
-            if (nbCurrThread > _nbThreads && nbCurrThread != 2 * _nbThreads)
-                nbCurrThread = _nbThreads;
-        }
         System.exit(0);
     }
 
@@ -764,6 +755,7 @@ public class Retwis {
 
                         }else
                             continue restartOperation;
+
                         break;
                     case TWEET:
                         startTime = System.nanoTime();
