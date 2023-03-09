@@ -110,11 +110,11 @@ public class Database {
         double inRatio = 50000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
         double outRatio = 7000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
+        int nbFollow = 0;
         for (Key userA: users){
-            int nbFollow = (int) Math.max(Math.min(outPowerlawArrayFollowers.get(random.get().nextInt(outPowerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
+            nbFollow = (int) Math.max(Math.min(outPowerlawArrayFollowers.get(random.get().nextInt(outPowerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
 
 //            assert nbFollow > 0 : "not following anyone";
-            System.out.println("nb follow : " + nbFollow);
             for(int j = 0; j < nbFollow;){
 
                 try{
@@ -135,6 +135,7 @@ public class Database {
 //            Set set = mapFollowers.get(userB);
 //            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
         }
+        System.out.println("nb follow : " + nbFollow);
 
     }
 
