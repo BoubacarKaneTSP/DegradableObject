@@ -114,6 +114,7 @@ public class Database {
             int nbFollow = (int) Math.max(Math.min(outPowerlawArrayFollowers.get(random.get().nextInt(outPowerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
 
 //            assert nbFollow > 0 : "not following anyone";
+            System.out.println("nb follow : " + nbFollow);
             for(int j = 0; j < nbFollow;){
 
                 try{

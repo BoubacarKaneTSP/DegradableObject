@@ -1,13 +1,20 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
+import eu.cloudbutton.dobj.key.ThreadLocalKey;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap;
+import eu.cloudbutton.dobj.utils.FactoryIndice;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -141,18 +148,40 @@ public class Retwis {
     private long completionTime;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-/*        Queue queue1 = new LinkedList();
+        Queue queue1 = new LinkedList();
+        Map<Key, Integer> map = new ExtendedSegmentedConcurrentHashMap<>(new FactoryIndice(8));
+        Set<Key> set = new ConcurrentSkipListSet<>();
+        Timeline<String> timeline = new Timeline<>(queue1);
+
         KeyGenerator keyGenerator = new RetwisKeyGenerator(1000000, 1000000, 1.39);
         Key retwisKey = keyGenerator.nextKey();
         Key key = new ThreadLocalKey(1, 1000, 10000000);
+
+        map.put(retwisKey, 0);
+
         System.out.println("node size :");
-        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("last").getDeclaringClass()).toPrintable());
+        System.out.println(ClassLayout.parseClass(queue1.getClass()).toPrintable());
+
+//        System.out.println(ClassLayout.parseClass(queue1.getClass().getDeclaredField("last").getDeclaringClass()).toPrintable());
+
         System.out.println("ThreadLocalKey size :");
         System.out.println(ClassLayout.parseClass(key.getClass()).toPrintable());
+
         System.out.println("RetwisKey size :");
         System.out.println(ClassLayout.parseClass(retwisKey.getClass()).toPrintable());
-        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());*/
-        new Retwis().doMain(args);
+
+        System.out.println("Map size :");
+        System.out.println(ClassLayout.parseClass(map.getClass()).toPrintable());
+
+        System.out.println("Set size :");
+        System.out.println(ClassLayout.parseClass(set.getClass()).toPrintable());
+
+        System.out.println("Timeline size :");
+        System.out.println(ClassLayout.parseClass(timeline.getClass()).toPrintable());
+
+
+        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());
+//        new Retwis().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, OutOfMemoryError {
