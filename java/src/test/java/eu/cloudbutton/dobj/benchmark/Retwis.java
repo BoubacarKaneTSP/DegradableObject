@@ -148,7 +148,7 @@ public class Retwis {
     private long completionTime;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        Queue queue1 = new LinkedList();
+      /*  Queue queue1 = new LinkedList();
         Map<Key, Integer> map = new ExtendedSegmentedConcurrentHashMap<>(new FactoryIndice(8));
         Set<Key> set = new ConcurrentSkipListSet<>();
         Timeline<String> timeline = new Timeline<>(queue1);
@@ -180,8 +180,8 @@ public class Retwis {
         System.out.println(ClassLayout.parseClass(timeline.getClass()).toPrintable());
 
 
-        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());
-//        new Retwis().doMain(args);
+        System.out.println("Max memory : " + Runtime.getRuntime().maxMemory());*/
+        new Retwis().doMain(args);
     }
 
     public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, OutOfMemoryError {
