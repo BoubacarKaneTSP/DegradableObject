@@ -130,6 +130,8 @@ public class Retwis {
     private List<Float> allProportionUserWithMaxFollower;
     private List<Float> allProportionUserWithoutFollower;
 
+    private FileWriter heapDumpFileWriter;
+    private PrintWriter heapDumpPrintWriter;
     private Database database;
 
     int NB_USERS;
@@ -215,7 +217,6 @@ public class Retwis {
             if (val <= 0) {
                 inPowerLawArrayFollowers.set(index, 1);
             }
-
             index++;
         }
 
@@ -242,6 +243,10 @@ public class Retwis {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
+            String nameFile = "heapdump_"+_tag+"_"+_nbUserInit+".txt";
+            heapDumpFileWriter = new FileWriter(nameFile , false);
+            heapDumpPrintWriter = new PrintWriter(heapDumpFileWriter);
+
             long startTime, endTime, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
             allAvgFollower = new ArrayList();
@@ -401,7 +406,7 @@ public class Retwis {
 
                 if (_s){
 
-                    String nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                    nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                     if (flag_append == 0)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -443,7 +448,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        String nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                        nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         if (_s){
                             if (flag_append == 0)
                                 fileWriter = new FileWriter( nameFile, false);
@@ -514,7 +519,7 @@ public class Retwis {
 
                         boolean append = flag_append != 0;
 
-                        String nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                        nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
                         avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
                         proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
@@ -573,6 +578,11 @@ public class Retwis {
 
             if (nbCurrThread > _nbThreads && nbCurrThread != 2 * _nbThreads)
                 nbCurrThread = _nbThreads;
+
+            heapDumpPrintWriter.flush();
+            heapDumpFileWriter.close();
+
+            TimeUnit.SECONDS.sleep(10);
         }
         System.exit(0);
     }
@@ -830,6 +840,8 @@ public class Retwis {
                     }
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
+                    heapDumpPrintWriter.println("heap dump");
+                    heapDumpPrintWriter.flush();
 
                 }else{
 
