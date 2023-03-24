@@ -582,7 +582,6 @@ public class Retwis {
             heapDumpPrintWriter.flush();
             heapDumpFileWriter.close();
 
-            TimeUnit.SECONDS.sleep(10);
         }
         System.exit(0);
     }
@@ -819,6 +818,9 @@ public class Retwis {
                     latch.countDown();
                     latch.await();
 
+                    heapDumpPrintWriter.println("heap dump");
+                    heapDumpPrintWriter.flush();
+
                     if (_p){
                         System.out.println(" ==> Warming up for " + _wTime + " seconds");
                     }
@@ -830,6 +832,9 @@ public class Retwis {
                 else{
                     latch.countDown();
                     latch.await();
+
+                    heapDumpPrintWriter.println("heap dump");
+                    heapDumpPrintWriter.flush();
                 }
 
                 if (_gcinfo)
@@ -840,8 +845,7 @@ public class Retwis {
                     }
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
-                    heapDumpPrintWriter.println("heap dump");
-                    heapDumpPrintWriter.flush();
+
 
                 }else{
 
