@@ -113,6 +113,9 @@ public class Retwis {
     @Option(name = "-collisionKey", handler = ExplicitBooleanOptionHandler.class, usage = "Testing map with collision on key")
     public boolean _collisionKey = false;
 
+    @Option(name = "-heapDump", handler = ExplicitBooleanOptionHandler.class, usage = "Computing heap dump")
+    public boolean _heapDump = false;
+
     @Option(name = "-nbItems", usage = "Number of items max per thread")
     private int _nbItems = Integer.MAX_VALUE;
 
@@ -133,6 +136,7 @@ public class Retwis {
     private FileWriter heapDumpFileWriter;
     private PrintWriter heapDumpPrintWriter;
     private Database database;
+    CountDownLatch latchHeapDump;
 
     int NB_USERS;
 
@@ -236,10 +240,13 @@ public class Retwis {
             index++;
         }
 
-        for (int nbCurrThread = 1; nbCurrThread <= _nbThreads;) {
+        for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
 
-            if (_gcinfo)
+            if (_gcinfo) {
                 System.out.println("nbThread : "+nbCurrThread);
+            }
+
+            flag_append = nbCurrThread == 1 ? 0 : 1;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -253,6 +260,7 @@ public class Retwis {
             allProportionMaxFollower = new ArrayList();
             allProportionUserWithMaxFollower = new ArrayList();
             allProportionUserWithoutFollower = new ArrayList();
+
 
             if (_p){
                 System.out.println();
@@ -279,6 +287,9 @@ public class Retwis {
                 timeBenchmark = new LongAdder();
                 completionTime = 0;
 
+                if (_heapDump)
+                    latchHeapDump = new CountDownLatch(nbCurrThread+1); // Additional count for the Coordinator
+
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOperations.add(op, new AtomicLong());
                     timeOperations.add(op, new AtomicLong());
@@ -286,7 +297,7 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread); // Additional count for the UserAdder
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
                     ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
 
                     flagComputing = new AtomicBoolean(true);
@@ -450,10 +461,11 @@ public class Retwis {
 
                         nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         if (_s){
-                            if (flag_append == 0)
-                                fileWriter = new FileWriter( nameFile, false);
-                            else
-                                fileWriter = new FileWriter(nameFile, true);
+
+                            boolean append = flag_append != 0;
+
+                            fileWriter = new FileWriter( nameFile, append);
+
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(unit +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
                         }
@@ -568,7 +580,6 @@ public class Retwis {
                     printWriter.close();
             }
 
-            flag_append++;
             nbCurrThread *= 2;
 
             if (_quickTest){
@@ -666,6 +677,12 @@ public class Retwis {
                 }
 
                 endTimeBenchmark = System.nanoTime();
+
+                if (_heapDump){
+                    latchHeapDump.countDown();
+                    latchHeapDump.await();
+                    Thread.sleep(1000000);
+                }
 
                 if (_completionTime){
                     latchFillCompletionTime.countDown();
@@ -818,9 +835,6 @@ public class Retwis {
                     latch.countDown();
                     latch.await();
 
-                    heapDumpPrintWriter.println("heap dump");
-                    heapDumpPrintWriter.flush();
-
                     if (_p){
                         System.out.println(" ==> Warming up for " + _wTime + " seconds");
                     }
@@ -832,9 +846,6 @@ public class Retwis {
                 else{
                     latch.countDown();
                     latch.await();
-
-                    heapDumpPrintWriter.println("heap dump");
-                    heapDumpPrintWriter.flush();
                 }
 
                 if (_gcinfo)
@@ -846,7 +857,20 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
 
+                    if (_heapDump){
+                        latchHeapDump.countDown();
+                        latchHeapDump.await();
 
+                        System.out.println("Running GC");
+
+                        System.runFinalization();
+                        System.gc();
+
+                        System.out.println("END GC");
+
+                        heapDumpPrintWriter.println("heap dump");
+                        heapDumpPrintWriter.flush();
+                    }
                 }else{
 
                     long startTime, endTime;

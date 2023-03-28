@@ -236,6 +236,7 @@ echo "The workload time is : $workloadTime"
 echo "The warming up time is : $warmingUpTime"
 echo "The number of test is : $nbTest"
 echo "Number of object initially added : $nbInitialAdd"
+echo "The number of threads is : $nbThreads"
 echo "Status of collisionKey : $collisionKey"
 echo ""
 
@@ -256,9 +257,9 @@ then
     python3 analyse_gc.py $tag $nbTest $nbUserInit
   else
 
-    rm heapdump_${tag}_${nbUser}.txt
-    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -Xmx20g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag #&
-    lastpid=$!
+#    rm heapdump_${tag}_${nbUser}.txt
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -Xmx20g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
+#    lastpid=$!
 #    ./heapdump.sh $tag $nbUser $lastpid
   fi
 fi
