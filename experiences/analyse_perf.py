@@ -20,7 +20,7 @@ if avg_flag == "true":
             nb_line = 0
             
             for line in file.readlines():
-                sum += int(line)
+                sum += float(line)
                 nb_line += 1
             
             file_avg.write(str(i) + " " + str(sum/nb_line) +"\n")
@@ -46,15 +46,15 @@ if avg_flag == "true":
         nb_line_instruction_per_cycles = 0
 
         for line in ratio_cache_misses.readlines():
-            sum_cache_misses += int(line)
+            sum_cache_misses += float(line)
             nb_line_cache_misses += 1
         
         for line in ratio_branch_misses.readlines():
-            sum_branch_misses += int(line)
+            sum_branch_misses += float(line)
             nb_line_branch_misses += 1
         
         for line in instruction_per_cycle.readlines():
-            sum_instruction_per_cycles += int(line)
+            sum_instruction_per_cycles += float(line)
             nb_line_instruction_per_cycles += 1
         
         ratio_cache_misses_avg.write(str(i) + " " + str(sum_cache_misses/nb_line_cache_misses) + "\n")
