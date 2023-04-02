@@ -17,12 +17,12 @@ do
   for nbThread in 1 2 4 8 16 32 48
   do
     perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -j -g $nbThread
-    python3 analyse_perf.py "false" perf.log "JUC" $nbThread $nbUsersInit
+    python3 analyse_perf.py perf.log "false" "JUC" $nbThread $nbUsersInit
     perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -n $nbTest -h "Q_M_S_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -j -g $nbThread
-    python3 analyse_perf.py "false" perf.log "Q_M_S_C" $nbThread $nbUsersInit
+    python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
   done
-  python3 analyse_perf.py "true" perf.log "JUC" "48" $nbUsersInit
-  python3 analyse_perf.py "true" perf.log "Q_M_S_C" "48" $nbUsersInit
+  python3 analyse_perf.py perf.log "true" "JUC" "48" $nbUsersInit
+  python3 analyse_perf.py perf.log "true" "Q_M_S_C" "48" $nbUsersInit
 
 done
 
