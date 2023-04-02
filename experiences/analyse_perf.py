@@ -16,7 +16,7 @@ if avg_flag == "true":
         sum = 0
 
         for i in range(int(nb_thread)):
-            file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + i+"_thread.txt", "r")
+            file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt", "r")
             nb_line = 0
             
             for line in file.readlines():
@@ -25,7 +25,7 @@ if avg_flag == "true":
             
             file_avg.write(i + " " + str(sum/nb_line) +"\n")
             file.close()
-            os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + i+"_thread.txt")
+            os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt")
         file_avg.close()
     
     ratio_cache_misses_avg = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+".txt", "w")
@@ -33,9 +33,9 @@ if avg_flag == "true":
     instruction_per_cycle_avg = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ ".txt", "w")
 
     for i in range(int(nb_thread)):
-        ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt", "r")
-        ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt", "r")
-        instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt", "r")
+        ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
+        ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
+        instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
 
         sum_cache_misses = 0
         sum_branch_misses = 0
@@ -65,9 +65,9 @@ if avg_flag == "true":
         ratio_branch_misses.close()
         instruction_per_cycle.close()
 
-        os.remove("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt")
-        os.remove("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt")
-        os.remove("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt")
+        os.remove("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt")
+        os.remove("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt")
+        os.remove("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt")
     
     ratio_cache_misses_avg.close()
     ratio_branch_misses_avg.close()
