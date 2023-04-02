@@ -8,14 +8,14 @@ nb_thread = sys.argv[4]
 nb_user = sys.argv[5]
 
 list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "cycles", "instructions"]
-
+list_nb_thread = [1,2,4,8,16,32,48]
 if avg_flag == "true":
 
     for event in list_event:
         file_avg = open("perf_"+event+"_"+object_name+"_"+nb_user+".txt", "w")
         sum = 0
 
-        for i in range(int(nb_thread)):
+        for i in list_nb_thread:
             file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt", "r")
             nb_line = 0
             
@@ -32,7 +32,7 @@ if avg_flag == "true":
     ratio_branch_misses_avg = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ ".txt", "w")
     instruction_per_cycle_avg = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ ".txt", "w")
 
-    for i in range(int(nb_thread)):
+    for i in list_nb_thread:
         ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
         ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
         instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
