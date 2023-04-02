@@ -1,5 +1,5 @@
 import sys
-
+import os
 
 perf_file_name = sys.argv[1]
 avg_flag = sys.argv[2]
@@ -25,6 +25,7 @@ if avg_flag == "true":
             
             file_avg.write(i + " " + str(sum/nb_line) +"\n")
             file.close()
+            os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + i+"_thread.txt")
         file_avg.close()
     
     ratio_cache_misses_avg = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+".txt", "w")
@@ -63,6 +64,10 @@ if avg_flag == "true":
         ratio_cache_misses.close()
         ratio_branch_misses.close()
         instruction_per_cycle.close()
+
+        os.remove("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt")
+        os.remove("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt")
+        os.remove("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + i +"_thread.txt")
     
     ratio_cache_misses_avg.close()
     ratio_branch_misses_avg.close()
