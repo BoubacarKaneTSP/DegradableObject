@@ -13,11 +13,11 @@ if avg_flag == "true":
 
     for event in list_event:
         file_avg = open("perf_"+event+"_"+object_name+"_"+nb_user+".txt", "w")
-        sum = 0
 
         for i in list_nb_thread:
             file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt", "r")
             nb_line = 0
+            sum = 0
             
             for line in file.readlines():
                 sum += float(line)
