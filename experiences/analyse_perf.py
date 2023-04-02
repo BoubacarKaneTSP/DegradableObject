@@ -23,7 +23,7 @@ if avg_flag == "true":
                 sum += int(line)
                 nb_line += 1
             
-            file_avg.write(i + " " + str(sum/nb_line) +"\n")
+            file_avg.write(str(i) + " " + str(sum/nb_line) +"\n")
             file.close()
             os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt")
         file_avg.close()
@@ -57,9 +57,9 @@ if avg_flag == "true":
             sum_instruction_per_cycles += int(line)
             nb_line_instruction_per_cycles += 1
         
-        ratio_cache_misses_avg.write(i + " " + str(sum_cache_misses/nb_line_cache_misses) + "\n")
-        ratio_branch_misses_avg.write(i + " " + str(sum_branch_misses/nb_line_branch_misses) + "\n")
-        instruction_per_cycle_avg.write(i + " " + str(sum_instruction_per_cycles/nb_line_instruction_per_cycles) +"\n")
+        ratio_cache_misses_avg.write(str(i) + " " + str(sum_cache_misses/nb_line_cache_misses) + "\n")
+        ratio_branch_misses_avg.write(str(i) + " " + str(sum_branch_misses/nb_line_branch_misses) + "\n")
+        instruction_per_cycle_avg.write(str(i) + " " + str(sum_instruction_per_cycles/nb_line_instruction_per_cycles) +"\n")
 
         ratio_cache_misses.close()
         ratio_branch_misses.close()
