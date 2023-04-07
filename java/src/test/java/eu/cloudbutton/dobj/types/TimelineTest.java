@@ -19,7 +19,13 @@ public class TimelineTest {
 
     @Test
     void append() throws ExecutionException, InterruptedException {
-/*
+
+//        for (int i = 0; i < 1600000000; i++) {
+//            someMethods();
+////            someOtherMethods();
+//        }
+
+        /*
         Class cls = Class.forName("ConcurrentLinkedQueue");
         doAppend(factory.getQueue());
 
@@ -29,6 +35,18 @@ public class TimelineTest {
                 .getQueue()
         );*/
     }
+
+//    private void someMethods() throws InterruptedException {
+////        Thread.sleep(15);
+////        for (int i = 0; i < 1000; i++) {
+////        }
+//    }
+
+//    private void someOtherMethods() throws InterruptedException {
+//        for (int i = 0; i < 2000; i++) {
+//            Thread.sleep(1);
+//        }
+//    }
 
     private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
 

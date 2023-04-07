@@ -142,7 +142,7 @@ public class Retwis {
 
     int nbSign = 5;
 
-    int flag_append = 0;
+    int flag_append = 1;
 
     private long completionTime;
 
@@ -246,7 +246,7 @@ public class Retwis {
                 System.out.println("nbThread : "+nbCurrThread);
             }
 
-            flag_append = nbCurrThread == 1 ? 0 : 1;
+            flag_append = 1; //nbCurrThread == 1 ? 0 : 1;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;

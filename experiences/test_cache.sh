@@ -12,8 +12,14 @@ nbHashCode=1000000
 nbOps=100000
 ratio="5 15 30 50"
 
-for nbUsersInit in 100 10000 # 1000000
+for nbUsersInit in 100 10000 1000000
 do
+  # Cleaning old file
+  for op in "ALL" "ADD" "FOLLOW" "UNFOLLOW" "TWEET" "READ":
+  do
+    rm "${op}_JUC_139_${nbUsersInit}.txt"
+  done
+
   for nbThread in 1 2 4 8 16 32 48
   do
     for (( c=1; c<=nbTest; c++ ))
@@ -24,6 +30,8 @@ do
       python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
     done
   done
+  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48"
+  python3 compute_avg_throughput.py $nbUsersInit "Q_M_S_C" "1 2 4 8 16 32 48"
   python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
   python3 analyse_perf.py perf.log "true" "Q_M_S_C" $nbThread $nbUsersInit
 
