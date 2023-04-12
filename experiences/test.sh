@@ -16,6 +16,7 @@ print=""
 save=""
 completionTime=""
 nbUserInit=""
+nbUser=""
 workloadTime=""
 warmingUpTime=""
 nbTest=1
@@ -149,6 +150,7 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:j' OPTION; do
       ;;
     y)
       nbUserInit="-nbUserInit $OPTARG"
+      nbUser="$OPTARG"
       ;;
     b)
       breakdown="-breakdown"

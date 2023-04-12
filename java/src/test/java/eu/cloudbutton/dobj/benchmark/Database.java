@@ -80,7 +80,7 @@ public class Database {
         generateUsers();
     }
 
-    public void fill(CountDownLatch latchDatabase) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchDatabase,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
         random = ThreadLocal.withInitial(() -> new Random(94));
 
@@ -91,11 +91,11 @@ public class Database {
         //adding all users
 
         for (Key key : users) {
-
             somme += powerlawArrayUsers.get(random.get().nextInt(powerlawArrayUsers.size()));
             user = key;
             addUser(user);
             localUsersProbability.get().put(somme, user);
+            localUsersFollow.put(user, new LinkedList<>());
         }
 
         localUsersProbabilityRange.set(somme);
@@ -122,6 +122,7 @@ public class Database {
 
                 if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
                     followUser(userA, userB);
+                    localUsersFollow.get(userA).add(userB);
                     j++;
                 }
             }
