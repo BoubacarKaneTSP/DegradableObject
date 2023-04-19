@@ -12,7 +12,9 @@ nbHashCode=10000000
 nbOps=100000
 ratio="5 15 30 50"
 
-for nbUsersInit in 100 10000 1000000
+#ExtendedSegmentedConcurrentHash
+
+for nbUsersInit in 100 #10000 1000000
 do
   # Cleaning old file
   for op in "ALL" "ADD" "FOLLOW" "UNFOLLOW" "TWEET" "READ":
@@ -29,7 +31,7 @@ do
 	    echo " "
       perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -j -g $nbThread
       python3 analyse_perf.py perf.log "false" "JUC" $nbThread $nbUsersInit
-      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_S_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -j -g $nbThread
+      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_S_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -j -g $nbThread
       python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
     done
   done
