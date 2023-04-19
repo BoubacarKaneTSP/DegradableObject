@@ -20,7 +20,7 @@ do
   for op in "ALL" "ADD" "FOLLOW" "UNFOLLOW" "TWEET" "READ":
   do
     rm "${op}_JUC_139_${nbUsersInit}.txt"
-    rm "${op}_Q_Q_M_S_C_139_${nbUsersInit}.txt"
+    rm "${op}_Q_M_S_C_139_${nbUsersInit}.txt"
   done
 
   for nbThread in 1 2 4 8 16 32 48
