@@ -1,0 +1,22 @@
+# started on Wed Apr 19 18:47:06 2023
+
+
+ Performance counter stats for './test.sh -c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r 5 15 30 50 -p -e -w 300 -u 60 -h Q_M_S_C -y 1000000 -d 1000000 -i 100000 -b -j -g 48':
+
+      200543288423      cache-references                                              (40.00%)
+      135943383809      cache-misses              #   67.788 % of all cache refs      (40.01%)
+     6570910714696      branches                                                      (40.01%)
+       64164847795      branch-misses             #    0.98% of all branches          (40.01%)
+    31578331457790      cycles                                                        (40.00%)
+    36448771374044      instructions              #    1.15  insn per cycle           (50.00%)
+    10854616094067      L1-dcache-loads                                               (50.00%)
+      441140212183      L1-dcache-load-misses     #    4.06% of all L1-dcache accesses  (49.99%)
+       70963622373      LLC-loads                                                     (49.99%)
+       31366429679      LLC-load-misses           #   44.20% of all LL-cache accesses  (49.99%)
+
+     313.319965561 seconds time elapsed
+
+   11180.421224000 seconds user
+      27.790989000 seconds sys
+
+
