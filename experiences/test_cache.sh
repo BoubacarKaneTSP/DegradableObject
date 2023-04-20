@@ -4,8 +4,8 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=1
-benchmarkTime=300
+nbTest=10
+benchmarkTime=30
 warmingUpTime=10
 #nbUsersInit=1000
 nbHashCode=10000000
@@ -14,7 +14,7 @@ ratio="5 15 30 50"
 
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 10000 1000000
+for nbUsersInit in 100 10000 1000000
 do
   # Cleaning old file
   for op in "ALL" "ADD" "FOLLOW" "UNFOLLOW" "TWEET" "READ"
