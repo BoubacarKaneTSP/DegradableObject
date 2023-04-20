@@ -158,11 +158,13 @@ public class Database {
 
     public void addUser(Key user) throws ClassNotFoundException {
         mapFollowers.put(user, new ConcurrentSkipListSet<>());
-        if (typeSet.contains("Extended"))
+        mapFollowing.put(user, new ConcurrentSkipListSet<>());
+        /*if (typeSet.contains("Extended"))
             mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
         else
-            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
-        mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
+            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));*/
+//        mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
+        mapTimelines.put(user, new Timeline(new ConcurrentLinkedQueue()));
     }
 
     // Adding user_A to the followers of user_B
