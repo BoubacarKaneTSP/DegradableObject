@@ -14,7 +14,7 @@ ratio="5 15 30 50"
 
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 100 #10000 1000000
+for nbUsersInit in 10000 1000000
 do
   # Cleaning old file
   for op in "ALL" "ADD" "FOLLOW" "UNFOLLOW" "TWEET" "READ"
