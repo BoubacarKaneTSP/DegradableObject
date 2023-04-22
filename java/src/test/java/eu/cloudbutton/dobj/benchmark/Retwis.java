@@ -604,6 +604,7 @@ public class Retwis {
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
         private final CountDownLatch latchFillCompletionTime;
+        private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private Long usersProbabilityRange;
         private Long localUsersProbabilityRange;
         private int nbRepeat = 1000;
@@ -621,6 +622,7 @@ public class Retwis {
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
             this.latchFillCompletionTime = latchFillCompletionTime;
+            this.usersFollow = new HashMap<>();
         }
 
         @Override
@@ -637,7 +639,7 @@ public class Retwis {
                     timeLocalOperations.put(op, new BoxedLong());
                 }
 
-                database.fill(latchFillDatabase);
+                database.fill(latchFillDatabase, usersFollow);
 
                 latch.countDown();
                 latch.await();
@@ -756,6 +758,7 @@ public class Retwis {
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
                 userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
+                Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
                         startTime = System.nanoTime();
@@ -767,24 +770,25 @@ public class Retwis {
                         val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
                         userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
+                        if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
                         startTime = System.nanoTime();
-                        b = database.followUser(userA, userB);
+                            database.followUser(userA, userB);
                         endTime = System.nanoTime();
 
-                        if(!b)
+                            listFollow.add(userB);
+                        }else
                             continue restartOperation;
 
                         break;
                     case UNFOLLOW:
 
-                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
-                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
-
+                        userB = listFollow.poll();
+                        if (userB != null){ // Perform unfollow only if userA already follow someone
                         startTime = System.nanoTime();
-                        b = database.unfollowUser(userA, userB);
+                            database.unfollowUser(userA, userB);
                         endTime = System.nanoTime();
 
-                        if(!b)
+                        }else
                             continue restartOperation;
 
                         break;
