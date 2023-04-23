@@ -221,6 +221,7 @@ public class Retwis {
             if (val <= 0) {
                 inPowerLawArrayFollowers.set(index, 1);
             }
+
             index++;
         }
 
@@ -250,9 +251,7 @@ public class Retwis {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
-            String nameFile = "heapdump_"+_tag+"_"+_nbUserInit+".txt";
-            heapDumpFileWriter = new FileWriter(nameFile , false);
-            heapDumpPrintWriter = new PrintWriter(heapDumpFileWriter);
+            String nameFile;
 
             long startTime, endTime, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
@@ -260,7 +259,6 @@ public class Retwis {
             allProportionMaxFollower = new ArrayList();
             allProportionUserWithMaxFollower = new ArrayList();
             allProportionUserWithoutFollower = new ArrayList();
-
 
             if (_p){
                 System.out.println();
@@ -286,9 +284,6 @@ public class Retwis {
                 nbTweetFinal = 0L;
                 timeBenchmark = new LongAdder();
                 completionTime = 0;
-
-                if (_heapDump)
-                    latchHeapDump = new CountDownLatch(nbCurrThread+1); // Additional count for the Coordinator
 
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOperations.add(op, new AtomicLong());
@@ -680,12 +675,6 @@ public class Retwis {
 
                 endTimeBenchmark = System.nanoTime();
 
-                if (_heapDump){
-                    latchHeapDump.countDown();
-                    latchHeapDump.await();
-                    Thread.sleep(1000000);
-                }
-
                 if (_completionTime){
                     latchFillCompletionTime.countDown();
                     latchFillCompletionTime.await();
@@ -693,7 +682,7 @@ public class Retwis {
 
                 timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
-                for (Key user : database.getLocalUsersProbability().get().values()){
+                for (Key user : usersFollow.keySet()){
                     queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
                 }
 
@@ -738,7 +727,7 @@ public class Retwis {
             startTime = 0L;
             endTime= 0L;
             nbAttempt = -1;
-            boolean b;
+
             int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
 
             int typeComputed = type;
@@ -790,7 +779,6 @@ public class Retwis {
 
                         }else
                             continue restartOperation;
-
                         break;
                     case TWEET:
                         startTime = System.nanoTime();
@@ -861,20 +849,6 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
 
-                    if (_heapDump){
-                        latchHeapDump.countDown();
-                        latchHeapDump.await();
-
-                        System.out.println("Running GC");
-
-                        System.runFinalization();
-                        System.gc();
-
-                        System.out.println("END GC");
-
-                        heapDumpPrintWriter.println("heap dump");
-                        heapDumpPrintWriter.flush();
-                    }
                 }else{
 
                     long startTime, endTime;
