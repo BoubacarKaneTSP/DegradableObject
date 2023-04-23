@@ -133,10 +133,7 @@ public class Retwis {
     private List<Float> allProportionUserWithMaxFollower;
     private List<Float> allProportionUserWithoutFollower;
 
-    private FileWriter heapDumpFileWriter;
-    private PrintWriter heapDumpPrintWriter;
     private Database database;
-    CountDownLatch latchHeapDump;
 
     int NB_USERS;
 
@@ -584,9 +581,6 @@ public class Retwis {
 
             if (nbCurrThread > _nbThreads && nbCurrThread != 2 * _nbThreads)
                 nbCurrThread = _nbThreads;
-
-            heapDumpPrintWriter.flush();
-            heapDumpFileWriter.close();
 
         }
         System.exit(0);
