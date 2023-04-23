@@ -200,17 +200,18 @@ public class Database {
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {
-        Set<Key> set = mapFollowers.get(user);
+
+       /* Set<Key> set = mapFollowers.get(user);
 
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
 
             timeline.add(msg);
-        }
+        }*/
     }
 
     public void showTimeline(Key user) throws InterruptedException {
-        mapTimelines.get(user).read();
+//        mapTimelines.get(user).read();
     }
     
 }
