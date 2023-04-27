@@ -4,9 +4,9 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=5
+nbTest=10
 benchmarkTime=180
-warmingUpTime=10
+warmingUpTime=60
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=100000
@@ -21,7 +21,7 @@ do
   do
     rm "${op}_JUC_139_${nbUsersInit}.txt"
     rm "${op}_Q_M_C_139_${nbUsersInit}.txt"
-    rm "${op}_Q_M_S_C_139_${nbUsersInit}.txt"
+#    rm "${op}_Q_M_S_C_139_${nbUsersInit}.txt"
   done
 
   for nbThread in 1 2 4 8 16 32 48
