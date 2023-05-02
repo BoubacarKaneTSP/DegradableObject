@@ -17,12 +17,9 @@ ratio="5 15 30 50"
 for nbUsersInit in 100 10000 1000000
 do
   # Cleaning old file
-  for op in "ALL" "ADD" "FOLLOW" "UNFOLLOW" "TWEET" "READ"
-  do
-    rm "${op}_JUC_139_${nbUsersInit}.txt"
-    rm "${op}_Q_M_C_139_${nbUsersInit}.txt"
-#    rm "${op}_Q_M_S_C_139_${nbUsersInit}.txt"
-  done
+  python3 rm_file.py $nbUsersInit "JUC"
+  python3 rm_file.py $nbUsersInit "Q_M_C"
+#  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
   for nbThread in 1 2 4 8 16 32 48
   do
