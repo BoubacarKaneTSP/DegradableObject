@@ -409,7 +409,8 @@ public class Retwis {
 
                 if (_s){
 
-                    nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+//                    nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                    nameFile = "ALL_"+_tag+"_"+_nbUserInit+".txt";
                     if (flag_append == 0)
                         fileWriter = new FileWriter(nameFile, false);
                     else
@@ -523,7 +524,8 @@ public class Retwis {
 
                         boolean append = flag_append != 0;
 
-                        nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+//                        nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                        nameFile = _tag+"_"+_nbUserInit+".txt";
                         queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
                         avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
                         proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
