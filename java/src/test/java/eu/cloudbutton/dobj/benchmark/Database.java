@@ -82,7 +82,7 @@ public class Database {
 
     public void fill(CountDownLatch latchDatabase,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 
-        random = ThreadLocal.withInitial(() -> new Random(94));
+        random = ThreadLocal.withInitial(Random::new);
 
         long somme = 0;
         Key user, userB;

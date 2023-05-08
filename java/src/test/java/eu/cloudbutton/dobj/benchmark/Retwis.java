@@ -453,6 +453,7 @@ public class Retwis {
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
                         nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+                        nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+_nbUserInit+".txt";
                         if (_s){
 
                             boolean append = flag_append != 0;
