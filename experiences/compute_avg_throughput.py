@@ -7,10 +7,10 @@ list_nb_thread = sys.argv[3]
 list_nb_thread = list_nb_thread.split(" ")
 
 
-list_op = ["ALL", "ADD", "FOLLOW", "UNFOLLOW", "TWEET", "READ", "avg_queue_size", "avg_Follower", "proportion_Max_Follower", "proportion_User_With_Max_Follower", "proportion_User_Without_Follower", "nb_user_final", "nb_tweet_final"]
+list_op = ["ALL", "FOLLOW", "UNFOLLOW", "TWEET", "READ", "avg_queue_size", "avg_Follower", "proportion_Max_Follower", "proportion_User_With_Max_Follower", "proportion_User_Without_Follower", "nb_user_final", "nb_tweet_final"]
 
 for op in list_op:
-    file = open(op+"_"+type_obj+"_139_"+nb_user+".txt","r")
+    file = open(op+"_"+type_obj+"_"+nb_user+".txt","r")
 
     str_result_avg = ""
 
@@ -35,7 +35,7 @@ for op in list_op:
 
     file.close()
 
-    file = open(op+"_"+type_obj+"_139_"+nb_user+".txt","w")
+    file = open(op+"_"+type_obj+"_"+nb_user+".txt","w")
 
     file.write(str_result_avg)
     file.close()
