@@ -29,7 +29,14 @@ for op in list_op:
             line = line.strip().split(" ")
             nb_test += 1
 
-        val = val/(int(nb_test))
+        try:
+            val = val/(int(nb_test))
+        except ZeroDivisionError as e:
+            print(e)
+            file = open(op+"_"+type_obj+"_"+nb_user+".txt","r")
+            print(op+"_"+type_obj+"_"+nb_user+".txt")
+            print(file.readlines())
+            exit(0)
 
         str_result_avg += nb_thread + " " + str(val) + "\n"
 

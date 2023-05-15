@@ -35,9 +35,11 @@ public class Database {
     private final List<Integer> inPowerlawArrayFollowers;
     private final List<Integer> outPowerlawArrayFollowers;
     private final List<Integer> powerlawArrayUsers;
-    private final List<List<Key>> usersCollections;
+    private final List<List<Key>> listLocalUser;
+    private final List<Map<Key,Integer>> mapUsersFollowing;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
+    private ArrayList<Double> ListNbFollow = new ArrayList<>(Arrays.asList(0.5, 0.3, 0.15 , 0.07, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001));
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax,
@@ -70,11 +72,14 @@ public class Database {
         this.powerlawArrayUsers = powerlawArrayUsers;
         nbUsers = nbUserInit;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
-        usersCollections = new ArrayList<>();
+        listLocalUser = new ArrayList<>();
+        mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
 
+
         for (int i = 0; i < nbThread; i++) {
-            usersCollections.add(new ArrayList<>());
+            listLocalUser.add(new ArrayList<>());
+            mapUsersFollowing.add(new ConcurrentSkipListMap<>());
         }
 
         generateUsers();
@@ -84,9 +89,12 @@ public class Database {
 
         random = ThreadLocal.withInitial(Random::new);
 
+//        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
+
         long somme = 0;
-        Key user, userB;
-        List<Key> users = usersCollections.get(count.getAndIncrement());
+        Key user;
+        int threadID = count.getAndIncrement();
+        List<Key> users = listLocalUser.get(threadID);
 
         //adding all users
 
@@ -105,35 +113,53 @@ public class Database {
 
         //Following phase
 
+//        System.out.println("start following phase thread : " + Thread.currentThread().getName());
+
         long randVal;
         double inRatio = 50000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
         double outRatio = 7000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
 
+        int y = 0;
+        int nbLocalUsers = users.size();
+
         for (Key userA: users){
-            int nbFollow = (int) Math.max(Math.min(outPowerlawArrayFollowers.get(random.get().nextInt(outPowerlawArrayFollowers.size())), nbUsers*outRatio), 1); // nbFollow max to match Twitter Graph
 
-//            assert nbFollow > 0 : "not following anyone";
-            for(int j = 0; j < nbFollow;){
+            int nbFollow = (int) (ListNbFollow.get((int) (y/(nbLocalUsers*0.1))) * nbUsers);
+            int j = 0;
+            boolean flagFollowMax = true;
+            int nbUserIterated;
 
-                try{
-                randVal = random.get().nextLong() % usersProbabilityRange;
-                userB = usersProbability.ceilingEntry(randVal).getValue();
-                assert userB != null : "User generated is null";
+            while (j < nbFollow){
+                nbUserIterated = 0;
+                flagFollowMax = true;
+                for (Key userB: mapUsersFollowing.get(threadID).keySet()){
+                    nbUserIterated++;
 
-                if (mapFollowers.get(userB).size() <= nbUsers*inRatio) {
-                    followUser(userA, userB);
-                    localUsersFollow.get(userA).add(userB);
-                    j++;
+                    int nbFollowingLeft = mapUsersFollowing.get(threadID).get(userB);
+
+                    if (nbFollowingLeft > 0){
+                        followUser(userA, userB);
+                        localUsersFollow.get(userA).add(userB);
+                        flagFollowMax = false;
+                        mapUsersFollowing.get(threadID).put(userB, nbFollowingLeft - 1);
+                        j++;
+                    }
+                    if (j >= nbFollow)
+                        break;
                 }
 
-                }catch (Exception e){
-                    e.printStackTrace();
-                    System.exit(1);
-                }
+                if (flagFollowMax && nbUserIterated == mapUsersFollowing.get(threadID).size())
+                    break;
+
             }
+
 //            Set set = mapFollowers.get(userB);
 //            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
+            y++;
         }
+
+//        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+
 
     }
 
@@ -142,23 +168,39 @@ public class Database {
     }
 
     public void generateUsers(){
-        int i = 0;
+
+        Set<Key> localSetUser = new ConcurrentSkipListSet<>();
+        Random random = new Random();
         long somme = 0;
-        Random random = new Random(94);
-        Set<Key> localSetUser = new HashSet<>();
+
+        for (int i = 0; i < nbUsers;) {
+            Key user = generateUser();
+            if (localSetUser.add(user)){
+                int nbFollower = (int) (ListNbFollow.get((int) (i/(nbUsers*0.1)))*nbUsers);
+                somme += nbFollower;
+                usersProbability.put(somme, user);
+                listLocalUser.get(random.nextInt(nbThread)).add(user);
+                mapUsersFollowing.get(i%nbThread).put(user, nbFollower);
+                i++;
+            }
+
+        }
+
+        usersProbabilityRange = somme;
+
+        /*int i = 0;
+        long somme = 0;
         Collections.sort(inPowerlawArrayFollowers);
 
         while (localSetUser.size() < nbUsers){
             Key user = generateUser();
             if (localSetUser.add(user)){
-                usersCollections.get(random.nextInt(nbThread)).add(user);
                 somme += this.inPowerlawArrayFollowers.get(i % inPowerlawArrayFollowers.size());
-                usersProbability.put(somme, user);
                 i++;
             }
         }
 
-        usersProbabilityRange = somme;
+        usersProbabilityRange = somme;*/
     }
 
     public void addUser(Key user) throws ClassNotFoundException {
