@@ -39,7 +39,8 @@ public class Database {
     private final List<Map<Key,Integer>> mapUsersFollowing;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
-    private ArrayList<Double> ListNbFollow = new ArrayList<>(Arrays.asList(0.5, 0.3, 0.15 , 0.07, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001));
+    private ArrayList<Double> ListNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.3, 0.15 , 0.07, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001));
+    private ArrayList<Double> ListNbFollower = new ArrayList<>(Arrays.asList(0.5, 0.3, 0.15 , 0.07, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001));
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax,
@@ -115,18 +116,14 @@ public class Database {
 
 //        System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
-        long randVal;
-        double inRatio = 50000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        double outRatio = 7000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-
         int y = 0;
         int nbLocalUsers = users.size();
 
         for (Key userA: users){
 
-            int nbFollow = (int) (ListNbFollow.get((int) (y/(nbLocalUsers*0.1))) * nbUsers);
+            int nbFollow = (int) (ListNbFollowing.get((int) (y/(nbLocalUsers*0.1))) * nbUsers);
             int j = 0;
-            boolean flagFollowMax = true;
+            boolean flagFollowMax;
             int nbUserIterated;
 
             while (j < nbFollow){
@@ -143,6 +140,8 @@ public class Database {
                         flagFollowMax = false;
                         mapUsersFollowing.get(threadID).put(userB, nbFollowingLeft - 1);
                         j++;
+                    }else{
+                        mapUsersFollowing.get(threadID).remove(userB);
                     }
                     if (j >= nbFollow)
                         break;
@@ -157,6 +156,9 @@ public class Database {
 //            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
             y++;
         }
+
+        //helping gc
+        mapUsersFollowing.remove(threadID);
 
 //        System.out.println("end following phase thread : " + Thread.currentThread().getName());
 
@@ -176,7 +178,7 @@ public class Database {
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int nbFollower = (int) (ListNbFollow.get((int) (i/(nbUsers*0.1)))*nbUsers);
+                int nbFollower = (int) (ListNbFollower.get((int) (i/(nbUsers*0.1)))*nbUsers);
                 somme += nbFollower;
                 usersProbability.put(somme, user);
                 listLocalUser.get(random.nextInt(nbThread)).add(user);
