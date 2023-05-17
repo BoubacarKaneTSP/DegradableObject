@@ -257,7 +257,7 @@ public class Retwis {
             long startTime, endTime, benchmarkAvgTime = 0;;
             allAvgQueueSizes = new ArrayList();
             allAvgFollower = new ArrayList();
-            allAvgFollower = new ArrayList();
+            allAvgFollowing = new ArrayList();
             allProportionMaxFollower = new ArrayList();
             allProportionMaxFollowing = new ArrayList();
             allProportionUserWithMaxFollower = new ArrayList();
@@ -359,8 +359,8 @@ public class Retwis {
                                 nbFollowingTotal = 0,
                                 maxFollower = 0,
                                 maxFollowing = 0,
-                                nbFollower = 0,
-                                nbFollowing = 0,
+                                nbFollower,
+                                nbFollowing,
                                 userWithMaxFollower = 0,
                                 userWithMaxFollowing = 0,
                                 userWithoutFollower = 0,
