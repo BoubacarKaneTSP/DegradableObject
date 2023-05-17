@@ -7,7 +7,22 @@ list_nb_thread = sys.argv[3]
 list_nb_thread = list_nb_thread.split(" ")
 
 
-list_op = ["ALL", "FOLLOW", "UNFOLLOW", "TWEET", "READ", "avg_queue_size", "avg_Follower", "proportion_Max_Follower", "proportion_User_With_Max_Follower", "proportion_User_Without_Follower", "nb_user_final", "nb_tweet_final"]
+list_op = ["ALL",
+           "FOLLOW",
+           "UNFOLLOW",
+           "TWEET",
+           "READ",
+           "avg_queue_size",
+           "avg_Follower",
+           "avg_Following",
+           "proportion_Max_Follower",
+           "proportion_Max_Following",
+           "proportion_User_With_Max_Follower",
+           "proportion_User_With_Max_Following",
+           "proportion_User_Without_Follower",
+           "proportion_User_Without_Following",
+           "nb_user_final",
+           "nb_tweet_final"]
 
 for op in list_op:
     file = open(op+"_"+type_obj+"_"+nb_user+".txt","r")

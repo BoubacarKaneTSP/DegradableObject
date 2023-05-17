@@ -39,8 +39,8 @@ public class Database {
     private final List<Map<Key,Integer>> mapUsersFollowing;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
-    private ArrayList<Double> ListNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.3, 0.15 , 0.07, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001));
-    private ArrayList<Double> ListNbFollower = new ArrayList<>(Arrays.asList(0.5, 0.3, 0.15 , 0.07, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001));
+    private ArrayList<Double> ListNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
+    private ArrayList<Double> ListNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax,
