@@ -122,6 +122,7 @@ public class Database {
         for (Key userA: users){
 
             int nbFollow = (int) (ListNbFollowing.get((int) (y/(nbLocalUsers*0.1))) * nbUsers);
+            nbFollow = nbFollow > 0 ? nbFollow : 1;
             int j = 0;
             boolean flagFollowMax;
             int nbUserIterated;
@@ -134,6 +135,7 @@ public class Database {
 
                     int nbFollowingLeft = mapUsersFollowing.get(threadID).get(userB);
 
+                    System.out.println(nbFollowingLeft);
                     if (nbFollowingLeft > 0){
                         followUser(userA, userB);
                         localUsersFollow.get(userA).add(userB);
@@ -157,8 +159,6 @@ public class Database {
             y++;
         }
 
-        //helping gc
-        mapUsersFollowing.remove(threadID);
 
 //        System.out.println("end following phase thread : " + Thread.currentThread().getName());
 
