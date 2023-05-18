@@ -135,7 +135,6 @@ public class Database {
 
                     int nbFollowingLeft = mapUsersFollowing.get(threadID).get(userB);
 
-                    System.out.println(nbFollowingLeft);
                     if (nbFollowingLeft > 0){
                         followUser(userA, userB);
                         localUsersFollow.get(userA).add(userB);
