@@ -112,11 +112,54 @@ public class Database {
         latchDatabase.countDown();
         latchDatabase.await();
 
-        //Following phase
+//        followingPhase(threadID, localUsersFollow);
+    }
 
-//        System.out.println("start following phase thread : " + Thread.currentThread().getName());
+    public Key generateUser(){
+        return keyGenerator.nextKey();
+    }
+
+    public void generateUsers(){
+
+        Set<Key> localSetUser = new ConcurrentSkipListSet<>();
+        Random random = new Random();
+        long somme = 0;
+
+        for (int i = 0; i < nbUsers;) {
+            Key user = generateUser();
+            if (localSetUser.add(user)){
+                int nbFollower = (int) (ListNbFollower.get((int) (i/(nbUsers*0.1)))*nbUsers);
+                somme += nbFollower;
+                usersProbability.put(somme, user);
+                listLocalUser.get(random.nextInt(nbThread)).add(user);
+                mapUsersFollowing.get(i%nbThread).put(user, nbFollower);
+                i++;
+            }
+
+        }
+
+        usersProbabilityRange = somme;
+
+        /*int i = 0;
+        long somme = 0;
+        Collections.sort(inPowerlawArrayFollowers);
+
+        while (localSetUser.size() < nbUsers){
+            Key user = generateUser();
+            if (localSetUser.add(user)){
+                somme += this.inPowerlawArrayFollowers.get(i % inPowerlawArrayFollowers.size());
+                i++;
+            }
+        }
+
+        usersProbabilityRange = somme;*/
+    }
+
+    public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
+        //  System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         int y = 0;
+        List<Key> users = listLocalUser.get(threadID);
         int nbLocalUsers = users.size();
 
         for (Key userA: users){
@@ -162,46 +205,6 @@ public class Database {
 //        System.out.println("end following phase thread : " + Thread.currentThread().getName());
 
 
-    }
-
-    public Key generateUser(){
-        return keyGenerator.nextKey();
-    }
-
-    public void generateUsers(){
-
-        Set<Key> localSetUser = new ConcurrentSkipListSet<>();
-        Random random = new Random();
-        long somme = 0;
-
-        for (int i = 0; i < nbUsers;) {
-            Key user = generateUser();
-            if (localSetUser.add(user)){
-                int nbFollower = (int) (ListNbFollower.get((int) (i/(nbUsers*0.1)))*nbUsers);
-                somme += nbFollower;
-                usersProbability.put(somme, user);
-                listLocalUser.get(random.nextInt(nbThread)).add(user);
-                mapUsersFollowing.get(i%nbThread).put(user, nbFollower);
-                i++;
-            }
-
-        }
-
-        usersProbabilityRange = somme;
-
-        /*int i = 0;
-        long somme = 0;
-        Collections.sort(inPowerlawArrayFollowers);
-
-        while (localSetUser.size() < nbUsers){
-            Key user = generateUser();
-            if (localSetUser.add(user)){
-                somme += this.inPowerlawArrayFollowers.get(i % inPowerlawArrayFollowers.size());
-                i++;
-            }
-        }
-
-        usersProbabilityRange = somme;*/
     }
 
     public void addUser(Key user) throws ClassNotFoundException {
