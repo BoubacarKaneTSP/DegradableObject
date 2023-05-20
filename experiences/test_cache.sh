@@ -14,7 +14,7 @@ ratio="0 0 50 50"
 
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 100 #10000 1000000
+for nbUsersInit in 100 10000 1000000
 do
   # Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC"
