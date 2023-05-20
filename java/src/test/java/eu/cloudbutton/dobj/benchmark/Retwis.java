@@ -867,6 +867,9 @@ public class Retwis {
                         break;
                     case UNFOLLOW:
 
+                        if (listFollow.size() == 0)
+                            continue restartOperation;
+
                         val = random.get().nextInt(listFollow.size());
                         v = 0;
                         for (Key user : listFollow){
