@@ -43,9 +43,9 @@ public class TimelineTest {
     }
 
     private void someOtherMethods() throws InterruptedException {
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 3000; i++) {
             Thread.sleep(1);
-            someOtherMethods2();
+//            someOtherMethods2();
         }
     }
 

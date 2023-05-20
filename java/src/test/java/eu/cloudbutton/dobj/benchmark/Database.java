@@ -112,6 +112,8 @@ public class Database {
         latchDatabase.countDown();
         latchDatabase.await();
 
+
+        followingTest(threadID);
 //        followingPhase(threadID, localUsersFollow);
     }
 
@@ -153,6 +155,16 @@ public class Database {
         }
 
         usersProbabilityRange = somme;*/
+    }
+
+    public void followingTest(int threadID){
+        List<Key> users = listLocalUser.get(threadID);
+        int nbLocalUsers = users.size();
+        ThreadLocal<Random> random = ThreadLocal.withInitial(() -> new Random());;
+
+        for (Key userA: users){
+            followUser(userA, users.get(random.get().nextInt(nbLocalUsers)));
+        }
     }
 
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
