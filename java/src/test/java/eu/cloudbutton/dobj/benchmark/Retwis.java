@@ -842,8 +842,18 @@ public class Retwis {
                         break;
                     case FOLLOW:
 
-                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
-                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
+                        val = random.get().nextInt(NB_USERS);
+                        int v = 0;
+                        for (Key user : database.getUsersProbability().values()){
+                            if (v==val) {
+                                userB = user;
+                                break;
+                            }
+                            v++;
+                        }
+
+//                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
+//                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
 
                         if (!listFollow.contains(userB)){ // Perform follow only if userB is not already followed
                         startTime = System.nanoTime();
@@ -857,7 +867,18 @@ public class Retwis {
                         break;
                     case UNFOLLOW:
 
-                        userB = listFollow.poll();
+                        val = random.get().nextInt(listFollow.size());
+                        v = 0;
+                        for (Key user : listFollow){
+                            if (v==val) {
+                                userB = user;
+                                listFollow.remove(user);
+                                break;
+                            }
+                            v++;
+                        }
+
+//                        userB = listFollow.poll();
                         if (userB != null){ // Perform unfollow only if userA already follow someone
                         startTime = System.nanoTime();
                             database.unfollowUser(userA, userB);
