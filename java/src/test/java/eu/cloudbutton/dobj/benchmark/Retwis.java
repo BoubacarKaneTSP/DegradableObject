@@ -841,6 +841,9 @@ public class Retwis {
                     v++;
                 }
 
+                if (userA == null)
+                    continue restartOperation;
+
 //                long val = random.get().nextLong()%localUsersProbabilityRange;
 //                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
                 Queue<Key> listFollow = usersFollow.get(userA);
