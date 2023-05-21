@@ -831,8 +831,18 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
 
-                long val = random.get().nextLong()%localUsersProbabilityRange;
-                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
+                long val = random.get().nextInt(nbLocalUsers);
+                int v = 0;
+                for (Key user : database.getLocalUsersProbability().get().values()){
+                    if (v==val) {
+                        userA = user;
+                        break;
+                    }
+                    v++;
+                }
+
+//                long val = random.get().nextLong()%localUsersProbabilityRange;
+//                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
                 Queue<Key> listFollow = usersFollow.get(userA);
                 switch (typeComputed){
                     case ADD:
@@ -843,7 +853,7 @@ public class Retwis {
                     case FOLLOW:
 
                         val = random.get().nextInt(NB_USERS);
-                        int v = 0;
+                        v = 0;
                         for (Key user : database.getUsersProbability().values()){
                             if (v==val) {
                                 userB = user;
