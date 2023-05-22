@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
-import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -213,35 +212,6 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.7).generate(100);
-        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.6).generate(100);
-        List<Integer> powerLawArrayUsers = new DiscreteApproximate(1, _alphaInit).generate(100);
-
-        int index = 0;
-        for (int val: inPowerLawArrayFollowers){
-            if (val <= 0) {
-                inPowerLawArrayFollowers.set(index, 1);
-            }
-
-            index++;
-        }
-
-        index = 0;
-        for (int val: outPowerLawArrayFollowers){
-            if (val <= 0){
-                outPowerLawArrayFollowers.set(index, 1);
-            }
-            index++;
-        }
-
-        index=0;
-        for (int val: powerLawArrayUsers){
-            if (val <=0){
-                powerLawArrayUsers.set(index, 1);
-            }
-            index++;
-        }
-
         for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
 
             if (_gcinfo) {
@@ -305,10 +275,8 @@ public class Retwis {
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter,
                             nbCurrThread,
                             (int) _nbUserInit,
-                            _nbItems,
-                            inPowerLawArrayFollowers,
-                            outPowerLawArrayFollowers,
-                            powerLawArrayUsers);
+                            _nbItems
+                    );
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
@@ -366,7 +334,7 @@ public class Retwis {
                                 userWithoutFollower = 0,
                                 userWithoutFollowing = 0;
 
-                        for(Key user: database.getUsersProbability().values()){
+                        for(Key user: database.getUsersFollowProbability().values()){
                             Set<Key> followers = database.getMapFollowers().get(user);
                             Set<Key> followings = database.getMapFollowing().get(user);
 
@@ -384,7 +352,7 @@ public class Retwis {
                             nbFollowingTotal += nbFollowing;
                         }
 
-                        for(Key user: database.getUsersProbability().values()){
+                        for(Key user: database.getUsersFollowProbability().values()){
                             Set<Key> followers = database.getMapFollowers().get(user);
                             Set<Key> followings = database.getMapFollowing().get(user);
 
@@ -686,8 +654,8 @@ public class Retwis {
         private final CountDownLatch latchFillDatabase;
         private final CountDownLatch latchFillCompletionTime;
         private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
-        private Long usersProbabilityRange;
         private Long localUsersProbabilityRange;
+        private Long usersFollowProbabilityRange;
         private int nbRepeat = 1000;
         private final String msg = "new msg";
         int nbLocalUsers;
@@ -725,9 +693,9 @@ public class Retwis {
                 latch.countDown();
                 latch.await();
 
-                usersProbabilityRange = database.getUsersProbabilityRange();
-                localUsersProbabilityRange = database.getLocalUsersProbabilityRange().get();
-                nbLocalUsers = database.getLocalUsersProbability().get().size();
+                localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get();
+                usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
+                nbLocalUsers = database.getLocalUsersUsageProbability().get().size();
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
@@ -831,22 +799,11 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
 
-                long val = random.get().nextInt(nbLocalUsers);
-                int v = 0;
-                for (Key user : database.getLocalUsersProbability().get().values()){
-                    if (v==val) {
-                        userA = user;
-                        break;
-                    }
-                    v++;
-                }
+                long val = random.get().nextLong()%localUsersProbabilityRange;
+                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
-                if (userA == null)
-                    continue restartOperation;
-
-//                long val = random.get().nextLong()%localUsersProbabilityRange;
-//                userA = database.getLocalUsersProbability().get().ceilingEntry(val).getValue();
                 Queue<Key> listFollow = usersFollow.get(userA);
+
                 switch (typeComputed){
                     case ADD:
                         startTime = System.nanoTime();
@@ -855,18 +812,8 @@ public class Retwis {
                         break;
                     case FOLLOW:
 
-                        val = random.get().nextInt(NB_USERS);
-                        v = 0;
-                        for (Key user : database.getUsersProbability().values()){
-                            if (v==val) {
-                                userB = user;
-                                break;
-                            }
-                            v++;
-                        }
-
-//                        val = random.get().nextLong()%usersProbabilityRange; // We choose a user to follow according to a probability
-//                        userB = database.getUsersProbability().ceilingEntry(val).getValue();
+                        val = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
+                        userB = database.getUsersFollowProbability().ceilingEntry(val).getValue();
 
                         if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                         startTime = System.nanoTime();
@@ -884,7 +831,7 @@ public class Retwis {
                             continue restartOperation;
 
                         val = random.get().nextInt(listFollow.size());
-                        v = 0;
+                        int v = 0;
                         for (Key user : listFollow){
                             if (v==val) {
                                 userB = user;

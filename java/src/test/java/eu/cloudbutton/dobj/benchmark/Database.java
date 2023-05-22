@@ -25,26 +25,21 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
-    private ThreadLocal<Random> random;
     private final KeyGenerator keyGenerator;
-    private final ConcurrentSkipListMap<Long, Key> usersProbability;
-    private final ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersProbability;
-    private final Queue<Key> queueUsers;
-    private long usersProbabilityRange;
-    private final ThreadLocal<Long> localUsersProbabilityRange;
-    private final List<Integer> inPowerlawArrayFollowers;
-    private final List<Integer> outPowerlawArrayFollowers;
-    private final List<Integer> powerlawArrayUsers;
+    private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
+    private final ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
+    private long usersFollowProbabilityRange;
+    private final ThreadLocal<Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final List<Map<Key,Integer>> mapUsersFollowing;
+    private final Map<Key,AtomicInteger> mapUsersFollower;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
-    private ArrayList<Double> ListNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
-    private ArrayList<Double> ListNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
+    private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
+    private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, int nbUserMax,
-                    List<Integer> inPowerlawArrayFollowers, List<Integer> outPowerlawArrayFollowers, List<Integer> powerlawArrayUsers) throws ClassNotFoundException{
+                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -63,18 +58,14 @@ public class Database {
             mapTimelines = Factory.createMap(typeMap, nbThread);
         }
 
-        usersProbability = new ConcurrentSkipListMap<>();
-        localUsersProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
-        localUsersProbabilityRange = new ThreadLocal<>();
-        random = null;
-        queueUsers = new ConcurrentLinkedQueue<>();
-        this.inPowerlawArrayFollowers = inPowerlawArrayFollowers;
-        this.outPowerlawArrayFollowers = outPowerlawArrayFollowers;
-        this.powerlawArrayUsers = powerlawArrayUsers;
+        usersFollowProbability = new ConcurrentSkipListMap<>();
+        localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
+        localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
+        mapUsersFollower = new ConcurrentSkipListMap<>();
         count = new AtomicInteger();
 
 
@@ -87,27 +78,23 @@ public class Database {
     }
 
     public void fill(CountDownLatch latchDatabase,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
-
-        random = ThreadLocal.withInitial(Random::new);
-
 //        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
 
-        long somme = 0;
-        Key user;
         int threadID = count.getAndIncrement();
         List<Key> users = listLocalUser.get(threadID);
 
         //adding all users
 
-        for (Key key : users) {
-            somme += powerlawArrayUsers.get(random.get().nextInt(powerlawArrayUsers.size()));
-            user = key;
+        long somme = 0;
+        int i = 0;
+        for (Key user : users) {
+            somme += ++i % 10;
             addUser(user);
-            localUsersProbability.get().put(somme, user);
+            localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
         }
 
-        localUsersProbabilityRange.set(somme);
+        localUsersUsageProbabilityRange.set(somme);
 
         latchDatabase.countDown();
         latchDatabase.await();
@@ -123,24 +110,27 @@ public class Database {
 
     public void generateUsers(){
 
-        Set<Key> localSetUser = new ConcurrentSkipListSet<>();
+        Set<Key> localSetUser = new HashSet<>();
+        long sommeFollow = 0;
         Random random = new Random();
-        long somme = 0;
+        int sizeListNbFollowing = listNbFollowing.size();
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int nbFollower = (int) (ListNbFollower.get((int) (i/(nbUsers*0.1)))*nbUsers);
-                somme += nbFollower;
-                usersProbability.put(somme, user);
-                listLocalUser.get(random.nextInt(nbThread)).add(user);
-                mapUsersFollowing.get(i%nbThread).put(user, nbFollower);
+                int nbFollower = (int) (listNbFollower.get((int) (i/(nbUsers*0.1)))*nbUsers);
+                int nbFollowing = (int) (listNbFollowing.get(random.nextInt(sizeListNbFollowing)) * nbUsers);
+                sommeFollow += nbFollower;
+                usersFollowProbability.put(sommeFollow, user);
+                listLocalUser.get(i%nbThread).add(user);
+                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
+                mapUsersFollower.put(user, new AtomicInteger(nbFollower));
                 i++;
             }
 
         }
 
-        usersProbabilityRange = somme;
+        usersFollowProbabilityRange = sommeFollow;
 
         /*int i = 0;
         long somme = 0;
@@ -157,60 +147,54 @@ public class Database {
         usersProbabilityRange = somme;*/
     }
 
-    public void followingTest(int threadID){
+    public void followingTest(int threadID){ // Each user follow only one user at first
         List<Key> users = listLocalUser.get(threadID);
-        int nbLocalUsers = users.size();
-        ThreadLocal<Random> random = ThreadLocal.withInitial(() -> new Random());;
+        ThreadLocal<Random> random = ThreadLocal.withInitial(() -> new Random());
 
         for (Key userA: users){
-            followUser(userA, users.get(random.get().nextInt(nbLocalUsers)));
+            long val = random.get().nextLong()%usersFollowProbabilityRange;
+            Key userB = usersFollowProbability.ceilingEntry(val).getValue();
+            followUser(userA, userB);
         }
     }
 
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
         //  System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
-        int y = 0;
         List<Key> users = listLocalUser.get(threadID);
-        int nbLocalUsers = users.size();
 
         for (Key userA: users){
 
-            int nbFollow = (int) (ListNbFollowing.get((int) (y/(nbLocalUsers*0.1))) * nbUsers);
+            int nbFollow = mapUsersFollowing.get(threadID).get(userA);
             nbFollow = nbFollow > 0 ? nbFollow : 1;
             int j = 0;
             boolean flagFollowMax;
-            int nbUserIterated;
 
             while (j < nbFollow){
-                nbUserIterated = 0;
                 flagFollowMax = true;
-                for (Key userB: mapUsersFollowing.get(threadID).keySet()){
-                    nbUserIterated++;
+                for (Key userB: mapUsersFollower.keySet()){
 
-                    int nbFollowingLeft = mapUsersFollowing.get(threadID).get(userB);
+                    int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
 
-                    if (nbFollowingLeft > 0){
+                    if (nbFollowerLeft > 0){
                         followUser(userA, userB);
                         localUsersFollow.get(userA).add(userB);
                         flagFollowMax = false;
-                        mapUsersFollowing.get(threadID).put(userB, nbFollowingLeft - 1);
                         j++;
                     }else{
-                        mapUsersFollowing.get(threadID).remove(userB);
+                        mapUsersFollower.remove(userB);
                     }
                     if (j >= nbFollow)
                         break;
                 }
 
-                if (flagFollowMax && nbUserIterated == mapUsersFollowing.get(threadID).size())
+                if (flagFollowMax)
                     break;
 
             }
 
 //            Set set = mapFollowers.get(userB);
 //            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
-            y++;
         }
 
 
