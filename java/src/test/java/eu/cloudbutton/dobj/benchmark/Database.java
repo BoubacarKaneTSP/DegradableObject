@@ -100,8 +100,8 @@ public class Database {
         latchDatabase.await();
 
 
-        followingTest(threadID);
-//        followingPhase(threadID, localUsersFollow);
+//        followingTest(threadID);
+        followingPhase(threadID, localUsersFollow);
     }
 
     public Key generateUser(){
