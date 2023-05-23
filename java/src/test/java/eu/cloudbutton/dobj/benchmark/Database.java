@@ -159,7 +159,7 @@ public class Database {
     }
 
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
-        //  System.out.println("start following phase thread : " + Thread.currentThread().getName());
+        System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
 
@@ -181,8 +181,6 @@ public class Database {
                         localUsersFollow.get(userA).add(userB);
                         flagFollowMax = false;
                         j++;
-                    }else{
-                        mapUsersFollower.remove(userB);
                     }
                     if (j >= nbFollow)
                         break;
@@ -198,7 +196,7 @@ public class Database {
         }
 
 
-//        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+        System.out.println("end following phase thread : " + Thread.currentThread().getName());
 
 
     }
