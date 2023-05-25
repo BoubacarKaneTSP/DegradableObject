@@ -213,8 +213,8 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.35).generate(100);
-        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.28).generate(100);
+        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.39).generate(100);
+        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.39).generate(100);
         List<Double> proportionInPowerLawArrayFollowers = new ArrayList<>();
         List<Double> proportionOutPowerLawArrayFollowers = new ArrayList<>();
 
@@ -252,7 +252,17 @@ public class Retwis {
             proportionOutPowerLawArrayFollowers.add((double) ((val*100)/totalOutPowerLawArrayFollowers));
         }
 
+        Collections.sort(inPowerLawArrayFollowers);
+        Collections.reverse(inPowerLawArrayFollowers);
 
+        Collections.sort(outPowerLawArrayFollowers);
+        Collections.reverse(outPowerLawArrayFollowers);
+
+        Collections.sort(proportionInPowerLawArrayFollowers);
+        Collections.reverse(proportionInPowerLawArrayFollowers);
+
+        Collections.sort(proportionOutPowerLawArrayFollowers);
+        Collections.reverse(proportionOutPowerLawArrayFollowers);
 
         for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
 
@@ -319,7 +329,7 @@ public class Retwis {
                             (int) _nbUserInit,
                             _nbItems,
                             proportionInPowerLawArrayFollowers,
-                            proportionOutPowerLawArrayFollowers);
+                            proportionInPowerLawArrayFollowers);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);

@@ -79,6 +79,7 @@ public class Database {
             mapUsersFollowing.add(new ConcurrentSkipListMap<>());
         }
 
+        System.out.println("generate user");
         generateUsers();
     }
 
@@ -123,7 +124,12 @@ public class Database {
         maxFollower = (int) ((8.4 * nbUsers)/100);
         maxFollowing = (int) ((0.43 * nbUsers)/100);
 
+        System.out.println("er : "+maxFollower);
+        System.out.println("ing : "+maxFollowing);
+
         for (int i = 0; i < nbUsers;) {
+//            if (i%1000 == 0)
+//                System.out.println("user : " + i);
             Key user = generateUser();
             if (localSetUser.add(user)){
                 int nbFollower = (int) ((proportionInPowerLawArrayFollowers.get(i%sizeArray) * nbUsers)/100);
@@ -141,8 +147,9 @@ public class Database {
 
                 i++;
             }
-
         }
+
+        System.out.println("adjust degree");
 
         usersFollowProbabilityRange = sommeFollower;
         adjustDegrees(nbTotalFollower-nbTotalFollowing);
@@ -150,6 +157,7 @@ public class Database {
 
     public void adjustDegrees(long differential){
 
+        System.out.println(differential);
         if (differential < 0){ // More following than follower
             while (differential < 0){
                 for (AtomicInteger count : mapUsersFollower.values()){
@@ -211,7 +219,8 @@ public class Database {
 //            nbFollow = nbFollow > 0 ? nbFollow : 1;
 
             for (int i = 0; i < nbFollow;) {
-		    System.out.println(i);
+                if (i%5 == 0)
+		            System.out.println("nbFollow" + i);
                 for (Key userB: mapUsersFollower.keySet()) {
 
                    int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
