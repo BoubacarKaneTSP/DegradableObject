@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
+import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -212,6 +213,47 @@ public class Retwis {
             System.exit(1);
         }
 
+        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.35).generate(100);
+        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.28).generate(100);
+        List<Double> proportionInPowerLawArrayFollowers = new ArrayList<>();
+        List<Double> proportionOutPowerLawArrayFollowers = new ArrayList<>();
+
+        long totalInPowerLawArrayFollowers = 0, totalOutPowerLawArrayFollowers = 0;
+
+        int index = 0;
+        for (int val: inPowerLawArrayFollowers){
+            if (val <= 0) {
+                val = 1;
+                inPowerLawArrayFollowers.set(index, val);
+            }
+
+            totalInPowerLawArrayFollowers += val;
+            index++;
+        }
+
+        index = 0;
+
+        for (int val: outPowerLawArrayFollowers){
+            if (val <= 0){
+                val = 1;
+                outPowerLawArrayFollowers.set(index, val);
+            }
+
+            totalOutPowerLawArrayFollowers+= val;
+            index++;
+        }
+
+        for (int val: inPowerLawArrayFollowers){
+            proportionInPowerLawArrayFollowers.add((double) ((val*100)/totalInPowerLawArrayFollowers));
+        }
+
+
+        for (int val: outPowerLawArrayFollowers){
+            proportionOutPowerLawArrayFollowers.add((double) ((val*100)/totalOutPowerLawArrayFollowers));
+        }
+
+
+
         for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
 
             if (_gcinfo) {
@@ -275,8 +317,9 @@ public class Retwis {
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter,
                             nbCurrThread,
                             (int) _nbUserInit,
-                            _nbItems
-                    );
+                            _nbItems,
+                            proportionInPowerLawArrayFollowers,
+                            proportionOutPowerLawArrayFollowers);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
@@ -819,8 +862,8 @@ public class Retwis {
                         startTime = System.nanoTime();
                             database.followUser(userA, userB);
                         endTime = System.nanoTime();
+                        database.unfollowUser(userA,userB);
 
-                            listFollow.add(userB);
                         }else
                             continue restartOperation;
 
@@ -835,7 +878,6 @@ public class Retwis {
                         for (Key user : listFollow){
                             if (v==val) {
                                 userB = user;
-                                listFollow.remove(user);
                                 break;
                             }
                             v++;
@@ -846,6 +888,8 @@ public class Retwis {
                         startTime = System.nanoTime();
                             database.unfollowUser(userA, userB);
                         endTime = System.nanoTime();
+
+                        database.followUser(userA, userB);
 
                         }else
                             continue restartOperation;
