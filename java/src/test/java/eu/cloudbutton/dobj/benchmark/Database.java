@@ -203,25 +203,27 @@ public class Database {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
-
-        int v = 0;
+	int v=0,n=0;
         for (Key userA: users){
-            System.out.println(++v);
-
+	    if(v++%1000 == 0)
+		    System.out.println("v :" + v);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //            nbFollow = nbFollow > 0 ? nbFollow : 1;
 
-            for (int i = 0; i < nbFollow; i++) {
+            for (int i = 0; i < nbFollow;) {
+		    System.out.println(i);
                 for (Key userB: mapUsersFollower.keySet()) {
-                    if(!localUsersFollow.get(userA).contains(userB)){
 
-                        int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
+                   int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
 
-                        if (nbFollowerLeft > 0){
-                            followUser(userA, userB);
-                            localUsersFollow.get(userA).add(userB);
-                        }
-                    }
+                   if (nbFollowerLeft > 0){
+                       followUser(userA, userB);
+                       localUsersFollow.get(userA).add(userB);
+                       i++;
+		       if(i==nbFollow){
+			   break;
+		       }
+		   }
                 }
             }
 
