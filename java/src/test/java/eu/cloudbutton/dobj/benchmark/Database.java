@@ -204,7 +204,9 @@ public class Database {
 
         List<Key> users = listLocalUser.get(threadID);
 
+        int v = 0;
         for (Key userA: users){
+            System.out.println(++v);
 
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //            nbFollow = nbFollow > 0 ? nbFollow : 1;
