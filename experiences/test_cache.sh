@@ -5,8 +5,8 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=1
-benchmarkTime=10
-warmingUpTime=1
+benchmarkTime=900
+warmingUpTime=120
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=100000
@@ -14,7 +14,7 @@ ratio="0 10 40 50"
 
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 1000000
+for nbUsersInit in 100 10000 1000000
 do
   # Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC"
@@ -26,7 +26,7 @@ do
     for (( c=1; c<=nbTest; c++ ))
     do
 	    echo " "
-	    echo $nbThread
+	    echo "test number : $c"
 	    echo " "
       perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
       python3 analyse_perf.py perf.log "false" "JUC" $nbThread $nbUsersInit

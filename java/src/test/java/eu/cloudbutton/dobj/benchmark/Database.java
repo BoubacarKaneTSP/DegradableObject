@@ -28,21 +28,21 @@ public class Database {
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
     private final ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
-    private long usersFollowProbabilityRange;
     private final ThreadLocal<Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final List<Map<Key,Integer>> mapUsersFollowing;
     private final Map<Key,AtomicInteger> mapUsersFollower;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
-    private final List<Double> proportionInPowerLawArrayFollowers;
-    private final List<Double> proportionOutPowerLawArrayFollowers;
+    private final List<Integer> powerLawArray;
+    private long usersFollowProbabilityRange;
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
     private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
+    private CountDownLatch countDownLatchFollowing;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax,
-                    List<Double> proportionInPowerLawArrayFollowers, List<Double> proportionOutPowerLawArrayFollowers) throws ClassNotFoundException{
+                    List<Integer> powerLawArray) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -70,8 +70,8 @@ public class Database {
         mapUsersFollowing = new ArrayList<>();
         mapUsersFollower = new ConcurrentSkipListMap<>();
         count = new AtomicInteger();
-        this.proportionInPowerLawArrayFollowers = proportionInPowerLawArrayFollowers;
-        this.proportionOutPowerLawArrayFollowers = proportionOutPowerLawArrayFollowers;
+        this.powerLawArray = powerLawArray;
+        this.countDownLatchFollowing = new CountDownLatch(nbThread);
 
 
         for (int i = 0; i < nbThread; i++) {
@@ -107,6 +107,11 @@ public class Database {
 
 //        followingTest(threadID);
         followingPhase(threadID, localUsersFollow);
+
+        countDownLatchFollowing.countDown();
+        countDownLatchFollowing.await();
+
+        addDummyUsers(threadID);
     }
 
     public Key generateUser(){
@@ -116,43 +121,39 @@ public class Database {
     public void generateUsers(){
 
         Set<Key> localSetUser = new HashSet<>();
-        long sommeFollower = 0, nbTotalFollower = 0, nbTotalFollowing = 0;
+        long sommeProba = 0, nbTotalFollower = 0, nbTotalFollowing = 0;
         Random random = new Random();
-        int sizeArray = proportionInPowerLawArrayFollowers.size();
+        int sizeArray = powerLawArray.size();
         int maxFollower, maxFollowing;
 
         maxFollower = (int) ((8.4 * nbUsers)/100);
         maxFollowing = (int) ((0.43 * nbUsers)/100);
 
-        System.out.println("er : "+maxFollower);
-        System.out.println("ing : "+maxFollowing);
-
         for (int i = 0; i < nbUsers;) {
-//            if (i%1000 == 0)
-//                System.out.println("user : " + i);
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int nbFollower = (int) ((proportionInPowerLawArrayFollowers.get(i%sizeArray) * nbUsers)/100);
-                int nbFollowing = (int) ((proportionOutPowerLawArrayFollowers.get(random.nextInt(sizeArray)) * nbUsers)/100);
+                int powerLawVal = powerLawArray.get(random.nextInt(sizeArray)),
+                        nbFollower = Math.min(powerLawVal, maxFollower) ,
+                        nbFollowing = Math.min(powerLawArray.get(random.nextInt(sizeArray)), maxFollowing);
 
-                sommeFollower += nbFollower;
+                sommeProba += powerLawVal;
 
-                usersFollowProbability.put(sommeFollower, user);
+                usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
-                mapUsersFollowing.get(i%nbThread).put(user, Math.min(nbFollowing, maxFollowing));
-                mapUsersFollower.put(user, new AtomicInteger(Math.min(nbFollower, maxFollower)));
+                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
+                mapUsersFollower.put(user, new AtomicInteger(nbFollower));
 
-                nbTotalFollower += Math.min(nbFollower, maxFollower);
-                nbTotalFollowing += Math.min(nbFollowing, maxFollowing);
+                nbTotalFollower += nbFollower;
+                nbTotalFollowing += nbFollowing;
 
                 i++;
             }
         }
 
-        System.out.println("adjust degree");
+        System.out.println("Done adding users");
 
-        usersFollowProbabilityRange = sommeFollower;
-        adjustDegrees(nbTotalFollower-nbTotalFollowing);
+        usersFollowProbabilityRange = sommeProba;
+//        adjustDegrees(nbTotalFollower-nbTotalFollowing);
     }
 
     public void adjustDegrees(long differential){
@@ -196,6 +197,24 @@ public class Database {
 
     }
 
+    public void addDummyUsers(int threadID) throws ClassNotFoundException {
+
+        List<Key> users = listLocalUser.get(threadID);
+        int nbFollowLeft;
+        Key userB;
+
+        for (Key userA: users){
+            nbFollowLeft = mapUsersFollower.get(userA).get();
+
+            for (int i = 0; i <= nbFollowLeft; i++) {
+                userB = generateUser();
+                addUser(userB);
+                followUser(userA, userB);
+            }
+        }
+
+    }
+
     public void followingTest(int threadID){ // Each user follow only one user at first
         List<Key> users = listLocalUser.get(threadID);
         ThreadLocal<Random> random = ThreadLocal.withInitial(Random::new);
@@ -208,31 +227,32 @@ public class Database {
     }
 
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
-        System.out.println("start following phase thread : " + Thread.currentThread().getName());
+//        System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
-	int v=0,n=0;
+
+        int j = 0;
         for (Key userA: users){
-	    if(v++%1000 == 0)
-		    System.out.println("v :" + v);
+
+            if(j++%10000 == 0)
+                System.out.println(j);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //            nbFollow = nbFollow > 0 ? nbFollow : 1;
 
+
             for (int i = 0; i < nbFollow;) {
-                if (i%5 == 0)
-		            System.out.println("nbFollow" + i);
                 for (Key userB: mapUsersFollower.keySet()) {
 
-                   int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
+                    int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
 
-                   if (nbFollowerLeft > 0){
-                       followUser(userA, userB);
-                       localUsersFollow.get(userA).add(userB);
-                       i++;
-		       if(i==nbFollow){
-			   break;
-		       }
-		   }
+                    if (nbFollowerLeft > 0){
+                        followUser(userA, userB);
+                        localUsersFollow.get(userA).add(userB);
+                        i++;
+                        if(i==nbFollow){
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -241,7 +261,7 @@ public class Database {
         }
 
 
-        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+//        System.out.println("end following phase thread : " + Thread.currentThread().getName());
 
 
     }
@@ -263,8 +283,8 @@ public class Database {
         set = mapFollowers.get(userB);
         set.add(userA);
 
-            set = mapFollowing.get(userA);
-            set.add(userB);
+        set = mapFollowing.get(userA);
+        set.add(userB);
     }
 
     // Removing user_A to the followers of user_B
@@ -287,7 +307,7 @@ public class Database {
     public void showTimeline(Key user) throws InterruptedException {
         mapTimelines.get(user).read();
     }
-    
+
 }
 
 

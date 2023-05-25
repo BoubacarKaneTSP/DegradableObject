@@ -213,56 +213,17 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> inPowerLawArrayFollowers = new DiscreteApproximate(1, 1.39).generate(100);
-        List<Integer> outPowerLawArrayFollowers = new DiscreteApproximate(1, 1.39).generate(100);
-        List<Double> proportionInPowerLawArrayFollowers = new ArrayList<>();
-        List<Double> proportionOutPowerLawArrayFollowers = new ArrayList<>();
-
-        long totalInPowerLawArrayFollowers = 0, totalOutPowerLawArrayFollowers = 0;
+        List<Integer> powerLawArray = new DiscreteApproximate(1, 1.39).generate(100);
 
         int index = 0;
-        for (int val: inPowerLawArrayFollowers){
+        for (int val: powerLawArray){
             if (val <= 0) {
                 val = 1;
-                inPowerLawArrayFollowers.set(index, val);
+                powerLawArray.set(index, val);
             }
-
-            totalInPowerLawArrayFollowers += val;
             index++;
         }
 
-        index = 0;
-
-        for (int val: outPowerLawArrayFollowers){
-            if (val <= 0){
-                val = 1;
-                outPowerLawArrayFollowers.set(index, val);
-            }
-
-            totalOutPowerLawArrayFollowers+= val;
-            index++;
-        }
-
-        for (int val: inPowerLawArrayFollowers){
-            proportionInPowerLawArrayFollowers.add((double) ((val*100)/totalInPowerLawArrayFollowers));
-        }
-
-
-        for (int val: outPowerLawArrayFollowers){
-            proportionOutPowerLawArrayFollowers.add((double) ((val*100)/totalOutPowerLawArrayFollowers));
-        }
-
-        Collections.sort(inPowerLawArrayFollowers);
-        Collections.reverse(inPowerLawArrayFollowers);
-
-        Collections.sort(outPowerLawArrayFollowers);
-        Collections.reverse(outPowerLawArrayFollowers);
-
-        Collections.sort(proportionInPowerLawArrayFollowers);
-        Collections.reverse(proportionInPowerLawArrayFollowers);
-
-        Collections.sort(proportionOutPowerLawArrayFollowers);
-        Collections.reverse(proportionOutPowerLawArrayFollowers);
 
         for (int nbCurrThread = _nbThreads; nbCurrThread <= _nbThreads;) {
 
@@ -328,8 +289,7 @@ public class Retwis {
                             nbCurrThread,
                             (int) _nbUserInit,
                             _nbItems,
-                            proportionInPowerLawArrayFollowers,
-                            proportionInPowerLawArrayFollowers);
+                            powerLawArray);
 
                     if (flag_append == 0 && nbCurrTest == 1){
                         flagWarmingUp.set(true);
