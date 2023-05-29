@@ -253,12 +253,12 @@ elif [[ $typeTest == "Retwis" ]]
 then
   if [[ $computeGCInfo == true ]]
   then
-    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -Xms5g -Xmx40g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -Xms5g -Xmx100g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
     python3 analyse_gc.py $tag $nbTest $nbUserInit
   else
 
 #    rm heapdump_${tag}_${nbUser}.txt
-    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -Xmx80g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -Xmx100g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
 #    lastpid=$!
 #    ./heapdump.sh $tag $nbUser $lastpid
   fi

@@ -121,13 +121,13 @@ public class Database {
     public void generateUsers(){
 
         Set<Key> localSetUser = new HashSet<>();
-        long sommeProba = 0, nbTotalFollower = 0, nbTotalFollowing = 0;
+        long sommeProba = 0;
         Random random = new Random();
         int sizeArray = powerLawArray.size();
         int maxFollower, maxFollowing;
 
-        maxFollower = (int) ((8.4 * nbUsers)/100);
-        maxFollowing = (int) ((0.43 * nbUsers)/100);
+        maxFollower = (int) ((0.84 * nbUsers)/100);
+        maxFollowing = (int) ((0.043 * nbUsers)/100);
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
@@ -142,9 +142,6 @@ public class Database {
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
                 mapUsersFollower.put(user, new AtomicInteger(nbFollower));
-
-                nbTotalFollower += nbFollower;
-                nbTotalFollowing += nbFollowing;
 
                 i++;
             }
