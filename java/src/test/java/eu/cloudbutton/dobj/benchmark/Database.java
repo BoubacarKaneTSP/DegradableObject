@@ -111,7 +111,7 @@ public class Database {
         countDownLatchFollowing.countDown();
         countDownLatchFollowing.await();
 
-        addDummyUsers(threadID);
+//        addDummyUsers(threadID);
     }
 
     public Key generateUser(){
