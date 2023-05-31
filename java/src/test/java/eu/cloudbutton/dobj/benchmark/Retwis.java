@@ -213,7 +213,7 @@ public class Retwis {
             System.exit(1);
         }
 
-        List<Integer> powerLawArray = new DiscreteApproximate(1, 1.39).generate(100);
+        List<Integer> powerLawArray = new DiscreteApproximate(1, 1.39).generate(NB_USERS);
 
         int index = 0;
         for (int val: powerLawArray){
