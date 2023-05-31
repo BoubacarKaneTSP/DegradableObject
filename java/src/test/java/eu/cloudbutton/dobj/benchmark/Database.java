@@ -126,8 +126,8 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollower, maxFollowing;
 
-        maxFollower = (int) ((0.84 * nbUsers)/100);
-        maxFollowing = (int) ((0.043 * nbUsers)/100);
+        maxFollower = 1; //(int) ((0.84 * nbUsers)/100);
+        maxFollowing = 1; //(int) ((0.043 * nbUsers)/100);
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
@@ -231,8 +231,8 @@ public class Database {
         int j = 0;
         for (Key userA: users){
 
-            if(j++%10000 == 0)
-                System.out.println(j);
+//            if(j++%10000 == 0)
+//                System.out.println(j);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //            nbFollow = nbFollow > 0 ? nbFollow : 1;
 
