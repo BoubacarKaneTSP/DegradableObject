@@ -100,6 +100,8 @@ public class Database {
 
         localUsersUsageProbabilityRange.set(somme);
 
+        System.out.println("Donne adding users");
+
         latchAddUser.countDown();
         latchAddUser.await();
 
@@ -143,7 +145,7 @@ public class Database {
 
 //        System.out.println(mapUsersFollowing);
 
-        System.out.println("Done adding users");
+        System.out.println("Done generating users");
 
         usersFollowProbabilityRange = sommeProba;
     }
