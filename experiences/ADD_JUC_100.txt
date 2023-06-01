@@ -1,3 +1,0 @@
-1 NaN
-8 NaN
-48 NaN

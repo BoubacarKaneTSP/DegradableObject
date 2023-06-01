@@ -31,14 +31,14 @@ public class Database {
     private final ThreadLocal<Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final List<Map<Key,Integer>> mapUsersFollowing;
-    private final Map<Key,AtomicInteger> mapUsersFollower;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
     private final List<Integer> powerLawArray;
     private long usersFollowProbabilityRange;
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
     private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
-    private CountDownLatch countDownLatchFollowing;
+    private final ThreadLocal<Random> random;
+
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax,
@@ -50,6 +50,7 @@ public class Database {
         this.typeCounter = typeCounter;
         this.nbThread = nbThread;
         this.factoryIndice = new FactoryIndice(nbThread);
+        this.random = ThreadLocal.withInitial(() -> new Random(94));
 
         if (typeMap.contains("Extended")){
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
@@ -68,10 +69,8 @@ public class Database {
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
-        mapUsersFollower = new ConcurrentSkipListMap<>();
         count = new AtomicInteger();
         this.powerLawArray = powerLawArray;
-        this.countDownLatchFollowing = new CountDownLatch(nbThread);
 
 
         for (int i = 0; i < nbThread; i++) {
@@ -83,7 +82,7 @@ public class Database {
         generateUsers();
     }
 
-    public void fill(CountDownLatch latchDatabase,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram,  Map<Key, List<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 //        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
 
         int threadID = count.getAndIncrement();
@@ -96,22 +95,20 @@ public class Database {
             somme += 1; // Each user have the same probability to be choose
             addUser(user);
             localUsersUsageProbability.get().put(somme, user);
-            localUsersFollow.put(user, new LinkedList<>());
+            localUsersFollow.put(user, new ArrayList<>(nbUsers/nbThread));
         }
 
         localUsersUsageProbabilityRange.set(somme);
 
-        latchDatabase.countDown();
-        latchDatabase.await();
+        latchAddUser.countDown();
+        latchAddUser.await();
 
 
 //        followingTest(threadID);
         followingPhase(threadID, localUsersFollow);
 
-        countDownLatchFollowing.countDown();
-        countDownLatchFollowing.await();
+        latchHistogram.countDown();
 
-//        addDummyUsers(threadID);
     }
 
     public Key generateUser(){
@@ -122,94 +119,33 @@ public class Database {
 
         Set<Key> localSetUser = new HashSet<>();
         long sommeProba = 0;
-        Random random = new Random();
         int sizeArray = powerLawArray.size();
-        int maxFollower, maxFollowing;
+        int maxFollowing;
 
-        maxFollower = 1; //(int) ((0.84 * nbUsers)/100);
-        maxFollowing = 1; //(int) ((0.043 * nbUsers)/100);
+
+        maxFollowing = (int) ((2.1 * nbUsers)/100);
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int powerLawVal = powerLawArray.get(random.nextInt(sizeArray)),
-                        nbFollower = Math.min(powerLawVal, maxFollower) ,
-                        nbFollowing = Math.min(powerLawArray.get(random.nextInt(sizeArray)), maxFollowing);
+                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray)),
+                        nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
 
                 sommeProba += powerLawVal;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-                mapUsersFollower.put(user, new AtomicInteger(nbFollower));
 
                 i++;
             }
         }
 
+//        System.out.println(mapUsersFollowing);
+
         System.out.println("Done adding users");
 
         usersFollowProbabilityRange = sommeProba;
-//        adjustDegrees(nbTotalFollower-nbTotalFollowing);
-    }
-
-    public void adjustDegrees(long differential){
-
-        System.out.println(differential);
-        if (differential < 0){ // More following than follower
-            while (differential < 0){
-                for (AtomicInteger count : mapUsersFollower.values()){
-                    count.incrementAndGet();
-                    differential++;
-                    if (differential == 0)
-                        return;
-                }
-            }
-        }
-        else if (differential > 0){ // More follower than following
-            while (differential > 0){
-                for (Map<Key, Integer> map : mapUsersFollowing){
-                    for (Key user: map.keySet()){
-                        map.compute(user, (key,value) -> value + 1);
-                        differential--;
-                        if (differential == 0)
-                            return;
-                    }
-                }
-            }
-        }
-
-        int nbFollower = 0, nbFollowing = 0;
-
-        for (AtomicInteger count : mapUsersFollower.values()){
-            nbFollower += count.get();
-        }
-
-        for (Map<Key, Integer> map : mapUsersFollowing){
-            for (int val: map.values())
-                nbFollowing += val;
-        }
-
-        assert nbFollower == nbFollowing : "degrees In and degrees Out are different";
-
-    }
-
-    public void addDummyUsers(int threadID) throws ClassNotFoundException {
-
-        List<Key> users = listLocalUser.get(threadID);
-        int nbFollowLeft;
-        Key userB;
-
-        for (Key userA: users){
-            nbFollowLeft = mapUsersFollower.get(userA).get();
-
-            for (int i = 0; i <= nbFollowLeft; i++) {
-                userB = generateUser();
-                addUser(userB);
-                followUser(userA, userB);
-            }
-        }
-
     }
 
     public void followingTest(int threadID){ // Each user follow only one user at first
@@ -223,44 +159,76 @@ public class Database {
         }
     }
 
-    public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
-//        System.out.println("start following phase thread : " + Thread.currentThread().getName());
+    public void followingPhase(int threadID, Map<Key, List<Key>> localUsersFollow){
+        System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
+
+        long randVal;
+        int maxFollower = (int) ((8.4 * nbUsers)/100);
+
+        System.out.println("MAX FOLLOWER : " + maxFollower);
 
         int j = 0;
         for (Key userA: users){
 
-//            if(j++%10000 == 0)
-//                System.out.println(j);
-            int nbFollow = mapUsersFollowing.get(threadID).get(userA);
-//            nbFollow = nbFollow > 0 ? nbFollow : 1;
+            if(++j%1000 == 0)
+                System.out.println(j);
 
+            List<Key> usersFollow = localUsersFollow.get(userA);
+            Set<Key> followers = new ConcurrentSkipListSet<>();
+            int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 
             for (int i = 0; i < nbFollow;) {
-                for (Key userB: mapUsersFollower.keySet()) {
 
-                    int nbFollowerLeft = mapUsersFollower.get(userB).getAndDecrement();
+                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
 
-                    if (nbFollowerLeft > 0){
-                        followUser(userA, userB);
-                        localUsersFollow.get(userA).add(userB);
-                        i++;
-                        if(i==nbFollow){
-                            break;
-                        }
-                    }
+                assert userB != null : "User generated is null";
+
+                if (mapFollowers.get(userB).size() <= maxFollower) {
+                    followUser(userA, userB);
+//                    followers.add(userB);
+                    i++;
                 }
             }
+        }
+        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+    }
 
-//            Set set = mapFollowers.get(userB);
-//            assert set.size() > 0 : userB + " from " + Thread.currentThread().getName() + " do not follow anyone.";
+    public Map<Integer,Integer> computeHistogram(int range, String type){
+
+        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
+        Map<Key, Set<Key>> computedMap = null;
+
+        if (type.equals("Follower")) {
+            computedMap = mapFollowers;
+        }else if (type.equals("Following")){
+            computedMap = mapFollowing;
         }
 
+        for (int i = 0; i <= nbUsers; i+=nbUsers/range) {
+            mapHistogram.put(i,0);
+        }
 
-//        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+        int k,v;
 
+        assert computedMap != null : "Failed initialize map while computing histogram";
 
+        for (Set<Key> s : computedMap.values()) {
+            k = mapHistogram.ceilingKey(s.size());
+            v = mapHistogram.get(k) + 1;
+            mapHistogram.put(k, v);
+        }
+
+        int totalUser = 0;
+
+        for (int nb : mapHistogram.values())
+            totalUser += nb;
+
+        assert  totalUser == nbUsers : "Wrong number of user in histogram";
+
+        return mapHistogram;
     }
 
     public void addUser(Key user) throws ClassNotFoundException {

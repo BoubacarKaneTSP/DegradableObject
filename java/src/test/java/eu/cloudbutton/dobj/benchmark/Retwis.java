@@ -231,7 +231,7 @@ public class Retwis {
                 System.out.println("nbThread : "+nbCurrThread);
             }
 
-            flag_append = 1; //nbCurrThread == 1 ? 0 : 1;
+            flag_append = 0; //nbCurrThread == 1 ? 0 : 1;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -291,24 +291,26 @@ public class Retwis {
                             _nbItems,
                             powerLawArray);
 
-                    if (flag_append == 0 && nbCurrTest == 1){
+                    if (nbCurrTest == 1){
                         flagWarmingUp.set(true);
                     }
 
                     CountDownLatch latch = new CountDownLatch(nbCurrThread+1); // Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
+                    CountDownLatch latchHistogramDatabase = new CountDownLatch(nbCurrThread);
                     CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latch,
                                 latchFillDatabase,
+                                latchHistogramDatabase,
                                 latchCompletionTime
                         );
                         callables.add(retwisApp);
                     }
 
-                    executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime));
+                    executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime, latchHistogramDatabase));
                     List<Future<Void>> futures;
 
                     startTime = System.nanoTime();
@@ -468,7 +470,7 @@ public class Retwis {
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
 
-                        nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
+//                        nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+_nbUserInit+".txt";
                         if (_s){
 
@@ -665,8 +667,9 @@ public class Retwis {
         private final int[] ratiosArray;
         private final CountDownLatch latch;
         private final CountDownLatch latchFillDatabase;
+        private final CountDownLatch latchHistogramDatabase;
         private final CountDownLatch latchFillCompletionTime;
-        private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
+        private Map<Key, List<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private Long localUsersProbabilityRange;
         private Long usersFollowProbabilityRange;
         private int nbRepeat = 1000;
@@ -678,11 +681,12 @@ public class Retwis {
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
 
-        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, CountDownLatch latchFillCompletionTime) {
+        public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, CountDownLatch latchHistogramDatabase, CountDownLatch latchFillCompletionTime) {
             this.random = ThreadLocal.withInitial(() -> new Random(94));
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
+            this.latchHistogramDatabase = latchHistogramDatabase;
             this.latchFillCompletionTime = latchFillCompletionTime;
             this.usersFollow = new HashMap<>();
         }
@@ -701,7 +705,7 @@ public class Retwis {
                     timeLocalOperations.put(op, new BoxedLong());
                 }
 
-                database.fill(latchFillDatabase, usersFollow);
+                database.fill(latchFillDatabase, latchHistogramDatabase, usersFollow);
 
                 latch.countDown();
                 latch.await();
@@ -815,7 +819,7 @@ public class Retwis {
                 long val = random.get().nextLong()%localUsersProbabilityRange;
                 userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
-                Queue<Key> listFollow = usersFollow.get(userA);
+                List<Key> listFollow = usersFollow.get(userA);
 
                 switch (typeComputed){
                     case ADD:
@@ -891,12 +895,14 @@ public class Retwis {
 
     public class Coordinator implements Callable<Void> {
 
-        private final CountDownLatch latch;
+        private final CountDownLatch latchFillDatabase;
         private final CountDownLatch latchCompletionTime;
+        private final CountDownLatch latchHistogram;
 
-        public Coordinator(CountDownLatch latch, CountDownLatch latchCompletionTime) {
-            this.latch = latch;
+        public Coordinator(CountDownLatch latchFillDatabase, CountDownLatch latchCompletionTime, CountDownLatch latchHistogram) {
+            this.latchFillDatabase = latchFillDatabase;
             this.latchCompletionTime = latchCompletionTime;
+            this.latchHistogram = latchHistogram;
         }
 
         @Override
@@ -906,10 +912,15 @@ public class Retwis {
                 if (_p)
                     System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
+                System.out.println(flagWarmingUp.get());
                 if (flagWarmingUp.get()){
 
-                    latch.countDown();
-                    latch.await();
+                    latchHistogram.await();
+
+                    saveHistogram("Pre_Benchmark");
+
+                    latchFillDatabase.countDown();
+                    latchFillDatabase.await();
 
                     if (_p){
                         System.out.println(" ==> Warming up for " + _wTime + " seconds");
@@ -920,8 +931,8 @@ public class Retwis {
                     flagWarmingUp.set(false);
                 }
                 else{
-                    latch.countDown();
-                    latch.await();
+                    latchFillDatabase.countDown();
+                    latchFillDatabase.await();
                 }
 
                 if (_gcinfo)
@@ -950,6 +961,8 @@ public class Retwis {
                     completionTime += endTime - startTime;
                 }
 
+                saveHistogram("Post_Benchmark");
+
                 if (_gcinfo)
                     System.out.println("End benchmark");
 
@@ -957,6 +970,37 @@ public class Retwis {
                 throw new Exception("Thread interrupted", e);
             }
             return null;
+        }
+
+        private void saveHistogram(String tag) throws IOException {
+
+
+            int range = 100;
+            Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
+
+            mapHistogramFollower = database.computeHistogram(range,"Follower");
+            mapHistogramFollowing = database.computeHistogram(range,"Following");
+
+            PrintWriter printWriter;
+            FileWriter fileWriter;
+
+            fileWriter = new FileWriter("Follower_Distribution_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            printWriter = new PrintWriter(fileWriter);
+
+            for (Integer k : mapHistogramFollower.keySet())
+                printWriter.println(k + " " + mapHistogramFollower.get(k));
+
+            printWriter.flush();
+            fileWriter.close();
+
+            fileWriter = new FileWriter("Following_Distribution_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            printWriter = new PrintWriter(fileWriter);
+
+            for (Integer k : mapHistogramFollowing.keySet())
+                printWriter.println(k + " " + mapHistogramFollowing.get(k));
+
+            printWriter.flush();
+            fileWriter.close();
         }
     }
 }
