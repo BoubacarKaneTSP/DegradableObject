@@ -199,7 +199,7 @@ public class Database {
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }
 
-    public Map<Integer,Integer> computeHistogram(int range, String type){
+    public Map<Integer,Integer> computeHistogram(int range, int max, String type){
 
         NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
         Map<Key, Set<Key>> computedMap = null;
@@ -210,7 +210,7 @@ public class Database {
             computedMap = mapFollowing;
         }
 
-        for (int i = 0; i <= nbUsers; i+=nbUsers/range) {
+        for (int i = 0; i <= max; i+=max/range) {
             mapHistogram.put(i,0);
         }
 
