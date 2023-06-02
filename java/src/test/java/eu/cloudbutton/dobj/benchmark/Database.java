@@ -95,7 +95,7 @@ public class Database {
             somme += 1; // Each user have the same probability to be choose
             addUser(user);
             localUsersUsageProbability.get().put(somme, user);
-            localUsersFollow.put(user, new ArrayList<>(nbUsers/nbThread));
+            localUsersFollow.put(user, new ArrayList<>());
         }
 
         localUsersUsageProbabilityRange.set(somme);
@@ -124,8 +124,8 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing;
 
-
-        maxFollowing = (int) ((2.1 * nbUsers)/100);
+	double outRatio = 7000 / 175000000.0;
+        maxFollowing = (int) (nbUsers*outRatio);
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
@@ -167,20 +167,21 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID);
 
         long randVal;
-        int maxFollower = (int) ((8.4 * nbUsers)/100);
+	double inRatio = 50000 / 175000000.0;
+        int maxFollower = (int) (nbUsers * inRatio);
 
         System.out.println("MAX FOLLOWER : " + maxFollower);
 
         int j = 0;
         for (Key userA: users){
 
-            if(++j%1000 == 0)
+            if(++j%100000 == 0)
                 System.out.println(j);
 
-            List<Key> usersFollow = localUsersFollow.get(userA);
-            Set<Key> followers = new ConcurrentSkipListSet<>();
+            //List<Key> usersFollow = localUsersFollow.get(userA);
+            //Set<Key> followers = new ConcurrentSkipListSet<>();
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
-
+	//	System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
 
                 randVal = random.get().nextLong() % usersFollowProbabilityRange;
