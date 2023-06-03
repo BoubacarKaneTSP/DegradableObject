@@ -430,8 +430,9 @@ public class Retwis {
 //                    nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                     nameFile = "ALL_"+_tag+"_"+_nbUserInit+".txt";
 
-                    boolean append = flag_append != 0;
-                    fileWriter = new FileWriter(nameFile, append);
+//                    boolean append = flag_append != 0;
+
+                    fileWriter = new FileWriter(nameFile, true);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
@@ -473,9 +474,9 @@ public class Retwis {
                         nameFile = mapIntOptoStringOp.get(op)+"_"+_tag+"_"+_nbUserInit+".txt";
                         if (_s){
 
-                            boolean append = flag_append != 0;
+//                            boolean append = flag_append != 0;
 
-                            fileWriter = new FileWriter( nameFile, append);
+                            fileWriter = new FileWriter( nameFile, true);
 
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(unit +" "+  ((nbOp / (double) timeOp) * nbCurrThread) * 1_000_000_000);
