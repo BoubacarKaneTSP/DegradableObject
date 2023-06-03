@@ -18,7 +18,7 @@ for nbUsersInit in 1000000
 do
   # Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC"
- # python3 rm_file.py $nbUsersInit "Q_M_C"
+  python3 rm_file.py $nbUsersInit "Q_M_C"
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
   for nbThread in 1 2 4 8 16 32 48
