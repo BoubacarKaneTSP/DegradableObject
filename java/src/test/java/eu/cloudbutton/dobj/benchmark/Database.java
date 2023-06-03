@@ -37,6 +37,7 @@ public class Database {
     private long usersFollowProbabilityRange;
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
     private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
+    private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
 
 
@@ -71,6 +72,7 @@ public class Database {
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
         this.powerLawArray = powerLawArray;
+        listAllUser = new ArrayList<>();
 
 
         for (int i = 0; i < nbThread; i++) {
@@ -145,6 +147,7 @@ public class Database {
 
 //        System.out.println(mapUsersFollowing);
 
+        listAllUser.addAll(localSetUser);
         System.out.println("Done generating users");
 
         usersFollowProbabilityRange = sommeProba;
@@ -166,7 +169,6 @@ public class Database {
 
         List<Key> users = listLocalUser.get(threadID);
 
-        long randVal;
 	    double inRatio = 50000 / 175000000.0;
         int maxFollower = (int) (nbUsers * inRatio);
 
@@ -183,18 +185,11 @@ public class Database {
 //	        System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
 
-                randVal = random.get().nextLong() % usersFollowProbabilityRange;
-                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
+//                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+//                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
 
-                int val = random.get().nextInt(usersFollowProbability.size());
-                int v = 0;
-                for (Key user : usersFollowProbability.values()){
-                    if (v==val) {
-                        userB = user;
-                        break;
-                    }
-                    v++;
-                }
+                Key userB;
+                userB = listAllUser.get(random.get().nextInt(nbUsers));
 
                 assert userB != null : "User generated is null";
 
