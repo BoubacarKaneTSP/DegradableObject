@@ -975,8 +975,8 @@ public class Retwis {
         private void saveHistogram(String tag) throws IOException {
 
 
-            int range = 20;
-            int max = 500;
+            int range = 10;
+            int max = 300;
             Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
 
             mapHistogramFollower = database.computeHistogram(range, max,"Follower");

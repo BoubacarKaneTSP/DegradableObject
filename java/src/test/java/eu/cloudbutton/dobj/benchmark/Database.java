@@ -124,7 +124,7 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing;
 
-	double outRatio = 7000 / 175000000.0;
+	double outRatio = 40000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
 
         for (int i = 0; i < nbUsers;) {
@@ -178,10 +178,10 @@ public class Database {
             if(++j%100000 == 0)
                 System.out.println(j);
 
-            //List<Key> usersFollow = localUsersFollow.get(userA);
+            List<Key> usersFollow = localUsersFollow.get(userA);
             //Set<Key> followers = new ConcurrentSkipListSet<>();
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
-	//	System.out.println(nbFollow);
+	   // System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
 
                 randVal = random.get().nextLong() % usersFollowProbabilityRange;
@@ -191,6 +191,7 @@ public class Database {
 
                 if (mapFollowers.get(userB).size() <= maxFollower) {
                     followUser(userA, userB);
+		    usersFollow.add(userB);
 //                    followers.add(userB);
                     i++;
                 }
