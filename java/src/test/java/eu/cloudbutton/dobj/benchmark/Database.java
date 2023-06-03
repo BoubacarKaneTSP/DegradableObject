@@ -124,7 +124,7 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing;
 
-	double outRatio = 40000 / 175000000.0;
+	    double outRatio = 40000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
 
         for (int i = 0; i < nbUsers;) {
@@ -167,7 +167,7 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID);
 
         long randVal;
-	double inRatio = 50000 / 175000000.0;
+	    double inRatio = 50000 / 175000000.0;
         int maxFollower = (int) (nbUsers * inRatio);
 
         System.out.println("MAX FOLLOWER : " + maxFollower);
@@ -179,23 +179,32 @@ public class Database {
                 System.out.println(j);
 
             List<Key> usersFollow = localUsersFollow.get(userA);
-            //Set<Key> followers = new ConcurrentSkipListSet<>();
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
-	   // System.out.println(nbFollow);
+//	        System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
 
                 randVal = random.get().nextLong() % usersFollowProbabilityRange;
                 Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
 
+                int val = random.get().nextInt(usersFollowProbability.size());
+                int v = 0;
+                for (Key user : usersFollowProbability.values()){
+                    if (v==val) {
+                        userB = user;
+                        break;
+                    }
+                    v++;
+                }
+
                 assert userB != null : "User generated is null";
 
                 if (mapFollowers.get(userB).size() <= maxFollower) {
                     followUser(userA, userB);
-		    usersFollow.add(userB);
-//                    followers.add(userB);
+		            usersFollow.add(userB);
                     i++;
                 }
             }
+
         }
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }
