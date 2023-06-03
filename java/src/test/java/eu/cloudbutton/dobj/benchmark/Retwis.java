@@ -437,7 +437,7 @@ public class Retwis {
                     if (_completionTime)
                         printWriter.println(unit +" "+ completionTime/_nbTest);
                     else
-                        printWriter.println(unit +" "+ (nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+                        printWriter.println(unit +" "+ ((nbOpTotal / (double) timeTotalComputed) * nbCurrThread) * 1_000_000_000);
 
                 }
 
@@ -451,7 +451,7 @@ public class Retwis {
                     }
                     else {
                         System.out.print(" ==> Throughput (op/s) for all operations : ");
-                        System.out.printf("%.3E%n",(nbOpTotal / (double) timeTotalComputed) * 1_000_000_000);
+                        System.out.printf("%.3E%n",((nbOpTotal / (double) timeTotalComputed) * nbCurrThread) * 1_000_000_000);
                         System.out.println(" ==> - temps d'execution  : "+ (timeTotalComputed/nbCurrThread)/1_000_000 + "ms");
                     }
 
@@ -478,13 +478,13 @@ public class Retwis {
                             fileWriter = new FileWriter( nameFile, append);
 
                             printWriter = new PrintWriter(fileWriter);
-                            printWriter.println(unit +" "+  (nbOp / (double) timeOp) * 1_000_000_000);
+                            printWriter.println(unit +" "+  ((nbOp / (double) timeOp) * nbCurrThread) * 1_000_000_000);
                         }
 
                         if (_p){
                             for (int j = 0; j < nbSign; j++) System.out.print("-");
                             System.out.print(" ==> Throughput (op/s) for "+mapIntOptoStringOp.get(op)+" : ");
-                            System.out.println(String.format("%.3E", (nbOp / (double) timeOp) * 1_000_000_000));
+                            System.out.println(String.format("%.3E", ((nbOp / (double) timeOp) * nbCurrThread) * 1_000_000_000));
                             System.out.println();
                         }
 
