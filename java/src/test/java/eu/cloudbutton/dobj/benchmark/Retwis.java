@@ -916,7 +916,7 @@ public class Retwis {
 
                     latchHistogram.await();
 
-                    saveHistogram("Pre_Benchmark");
+//                    saveHistogram("Pre_Benchmark");
 
                     latchFillDatabase.countDown();
                     latchFillDatabase.await();
@@ -960,7 +960,7 @@ public class Retwis {
                     completionTime += endTime - startTime;
                 }
 
-                saveHistogram("Post_Benchmark");
+//                saveHistogram("Post_Benchmark");
 
                 if (_gcinfo)
                     System.out.println("End benchmark");
