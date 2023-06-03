@@ -231,7 +231,7 @@ public class Retwis {
                 System.out.println("nbThread : "+nbCurrThread);
             }
 
-            flag_append = 0; //nbCurrThread == 1 ? 0 : 1;
+            flag_append = nbCurrThread == 1 ? 0 : 1;
 
             PrintWriter printWriter = null;
             FileWriter fileWriter;
@@ -429,10 +429,9 @@ public class Retwis {
 
 //                    nameFile = "ALL_"+_tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                     nameFile = "ALL_"+_tag+"_"+_nbUserInit+".txt";
-                    if (flag_append == 0)
-                        fileWriter = new FileWriter(nameFile, false);
-                    else
-                        fileWriter = new FileWriter(nameFile, true);
+
+                    boolean append = flag_append != 0;
+                    fileWriter = new FileWriter(nameFile, append);
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
