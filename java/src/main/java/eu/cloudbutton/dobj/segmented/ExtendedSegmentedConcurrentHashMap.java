@@ -110,7 +110,7 @@ public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentatio
     }
 
     public Iterator<K> iterator() {
-        return new MapAddIntensive.KeyIterator(segments());
+        return new KeyIterator(segments());
     }
 
     @Override
@@ -197,6 +197,7 @@ public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentatio
     @NotNull
     @Override
     public Collection<V> values() {
+        System.out.println("values");
         Set<V> ret = new HashSet<>();
         for(Map m: segments()){
             System.out.println(m.values());
