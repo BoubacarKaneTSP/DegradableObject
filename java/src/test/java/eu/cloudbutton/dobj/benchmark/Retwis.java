@@ -974,6 +974,7 @@ public class Retwis {
 
         private void saveHistogram(String tag) throws IOException {
 
+            System.out.println("Computing histogram");
 
             int range = 10;
             int max = 300;
@@ -1002,6 +1003,8 @@ public class Retwis {
 
             printWriter.flush();
             fileWriter.close();
+
+            System.out.println("Ending histogram");
         }
     }
 }

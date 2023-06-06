@@ -199,6 +199,7 @@ public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentatio
     public Collection<V> values() {
         Set<V> ret = new HashSet<>();
         for(Map m: segments()){
+            System.out.println(m.values());
             ret.addAll(m.values());
         }
         return ret;

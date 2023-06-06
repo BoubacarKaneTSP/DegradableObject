@@ -223,11 +223,13 @@ public class Database {
 
         assert computedMap != null : "Failed initialize map while computing histogram";
 
+        System.out.println("starting to go through maps");
         for (Set<Key> s : computedMap.values()) {
             k = mapHistogram.ceilingKey(s.size());
             v = mapHistogram.get(k) + 1;
             mapHistogram.put(k, v);
         }
+        System.out.println("ending to go through maps");
 
         int totalUser = 0;
 
