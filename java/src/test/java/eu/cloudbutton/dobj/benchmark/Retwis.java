@@ -985,7 +985,7 @@ public class Retwis {
             PrintWriter printWriter;
             FileWriter fileWriter;
 
-            fileWriter = new FileWriter("Follower_Distribution_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            fileWriter = new FileWriter("Follower_Distribution_"+ _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
             for (Integer k : mapHistogramFollower.keySet())
@@ -994,7 +994,7 @@ public class Retwis {
             printWriter.flush();
             fileWriter.close();
 
-            fileWriter = new FileWriter("Following_Distribution_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            fileWriter = new FileWriter("Following_Distribution_" + _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
             for (Integer k : mapHistogramFollowing.keySet())
