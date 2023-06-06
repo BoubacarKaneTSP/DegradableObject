@@ -233,9 +233,11 @@ public class Database {
 
         int totalUser = 0;
 
+        System.out.println("iterator histogram");
         for (int nb : mapHistogram.values())
             totalUser += nb;
 
+        System.out.println("ending iterator histogram");
         assert  totalUser == nbUsers : "Wrong number of user in histogram";
 
         return mapHistogram;
