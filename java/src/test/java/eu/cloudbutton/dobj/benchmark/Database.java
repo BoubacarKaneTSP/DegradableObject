@@ -219,15 +219,18 @@ public class Database {
             mapHistogram.put(i,0);
         }
 
-        int k,v;
+        int v;
+        Object k;
 
         assert computedMap != null : "Failed initialize map while computing histogram";
 
         System.out.println("starting to go through maps");
         for (Set<Key> s : computedMap.values()) {
             k = mapHistogram.ceilingKey(s.size());
+            if (k == null)
+                System.out.println("ERROOOOOR");
             v = mapHistogram.get(k) + 1;
-            mapHistogram.put(k, v);
+            mapHistogram.put((Integer) k, v);
         }
         System.out.println("ending to go through maps");
 
