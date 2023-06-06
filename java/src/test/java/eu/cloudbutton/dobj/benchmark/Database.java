@@ -137,14 +137,15 @@ public class Database {
             Key user = generateUser();
             if (localSetUser.add(user)){
                 int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray)),
-                        nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
+                        nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing),
+                        nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
 
                 sommeProba += powerLawVal;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-                mapNbFollowers.put(user, new AtomicInteger(maxFollower));
+                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
                 i++;
             }
         }
