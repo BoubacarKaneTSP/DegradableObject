@@ -31,6 +31,7 @@ public class Database {
     private final ThreadLocal<Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final List<Map<Key,Integer>> mapUsersFollowing;
+    private final Map<Key, AtomicInteger> mapNbFollowers;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
     private final List<Integer> powerLawArray;
@@ -73,6 +74,7 @@ public class Database {
         count = new AtomicInteger();
         this.powerLawArray = powerLawArray;
         listAllUser = new ArrayList<>();
+        mapNbFollowers = new ConcurrentHashMap<>();
 
 
         for (int i = 0; i < nbThread; i++) {
@@ -124,10 +126,12 @@ public class Database {
         Set<Key> localSetUser = new HashSet<>();
         long sommeProba = 0;
         int sizeArray = powerLawArray.size();
-        int maxFollowing;
+        int maxFollowing, maxFollower;
 
 	    double outRatio = 40000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
+        double inRatio = 50000 / 175000000.0;
+        maxFollower = (int) (nbUsers * inRatio);
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
@@ -140,7 +144,7 @@ public class Database {
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-
+                mapNbFollowers.put(user, new AtomicInteger(maxFollower));
                 i++;
             }
         }
@@ -193,7 +197,7 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-                if (mapFollowers.get(userB).size() <= maxFollower) {
+                if (mapNbFollowers.get(userB).getAndDecrement() >= 0) {
                     followUser(userA, userB);
 		            usersFollow.add(userB);
                     i++;
