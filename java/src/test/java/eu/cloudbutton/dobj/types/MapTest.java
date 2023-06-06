@@ -41,6 +41,13 @@ public class MapTest {
         doRemove(factory.getMap());
     }
 
+    @Test
+    void iterator() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class cls = Class.forName("eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap");
+        factory.setFactoryMap(cls);
+        doAdd(factory.getMap());
+    }
+
     private void doAdd(Map map){
         Key k = generator.nextKey();
         map.put(k, null);
@@ -53,5 +60,8 @@ public class MapTest {
         map.remove(k);
         assertEquals(map.containsKey(k), false);
 
+    }
+
+    private void doIterator(Map<Integer,Integer> map){
     }
 }
