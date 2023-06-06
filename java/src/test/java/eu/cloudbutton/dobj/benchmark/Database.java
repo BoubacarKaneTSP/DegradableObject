@@ -238,8 +238,11 @@ public class Database {
             totalUser += nb;
 
         System.out.println("ending iterator histogram");
+        System.out.println(totalUser);
+        System.out.println(nbUsers);
         assert  totalUser == nbUsers : "Wrong number of user in histogram";
 
+        System.out.println("leaving computeHistogram methods");
         return mapHistogram;
     }
 
