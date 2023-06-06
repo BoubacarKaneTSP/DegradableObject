@@ -49,6 +49,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -243,14 +244,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
-    private Counter queueSize;
+    private LongAdder queueSize;
 
     /**
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<>();
-        queueSize = new CounterMISD();
+        queueSize = new LongAdder();
     }
 
     /**
@@ -373,7 +374,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
 
-                    queueSize.incrementAndGet();
+                    queueSize.increment();
 
                     return true;
                 }
@@ -396,7 +397,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
             E item = head.next.item;
             head = head.next;
-            queueSize.decrementAndGet();
+            queueSize.decrement();
 //            queueSize.decrement();
 //            head.item = null;
             return item;
@@ -490,7 +491,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-        return (int) queueSize.read();
+        return queueSize.intValue();
 //        return queueSize.intValue();
 //
 //        restartFromHead: for (;;) {
