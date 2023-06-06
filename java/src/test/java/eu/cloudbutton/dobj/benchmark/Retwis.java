@@ -973,6 +973,7 @@ public class Retwis {
         }
 
         private void saveHistogram(String tag) throws IOException {
+            System.out.println("Saving histogram");
 
             int range = 10;
             int max = 300;
