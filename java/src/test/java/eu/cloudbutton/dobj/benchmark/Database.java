@@ -225,6 +225,7 @@ public class Database {
         assert computedMap != null : "Failed initialize map while computing histogram";
 
         System.out.println("starting to go through maps");
+        System.out.println("size map Follower/ing : " + computedMap.size());
         for (Set<Key> s : computedMap.values()) {
             k = mapHistogram.ceilingKey(s.size());
             if (k == null)
