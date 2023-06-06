@@ -197,10 +197,8 @@ public class ExtendedSegmentedConcurrentHashMap<K,V> extends ExtendedSegmentatio
     @NotNull
     @Override
     public Collection<V> values() {
-        System.out.println("values");
         List<V> ret = new ArrayList<>();
         for(Map m: segments()){
-            //System.out.println(m.values());
             ret.addAll(m.values());
         }
         return ret;

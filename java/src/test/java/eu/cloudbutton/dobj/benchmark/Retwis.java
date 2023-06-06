@@ -974,16 +974,12 @@ public class Retwis {
 
         private void saveHistogram(String tag) throws IOException {
 
-            System.out.println("Computing histogram");
-
             int range = 10;
             int max = 300;
             Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
 
             mapHistogramFollower = database.computeHistogram(range, max,"Follower");
             mapHistogramFollowing = database.computeHistogram(range, max,"Following");
-
-            System.out.println("saving");
 
             PrintWriter printWriter;
             FileWriter fileWriter;
@@ -997,8 +993,6 @@ public class Retwis {
             printWriter.flush();
             fileWriter.close();
 
-            System.out.println("done saving followers");
-
             fileWriter = new FileWriter("Following_Distribution_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
@@ -1007,8 +1001,6 @@ public class Retwis {
 
             printWriter.flush();
             fileWriter.close();
-
-            System.out.println("Ending histogram");
         }
     }
 }

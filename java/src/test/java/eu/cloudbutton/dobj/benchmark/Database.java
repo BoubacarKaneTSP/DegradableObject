@@ -219,34 +219,23 @@ public class Database {
             mapHistogram.put(i,0);
         }
 
-        int v;
-        Object k;
+        int v,k;
 
         assert computedMap != null : "Failed initialize map while computing histogram";
 
-        System.out.println("starting to go through maps");
-        System.out.println("size map Follower/ing : " + computedMap.values().size());
         for (Set<Key> s : computedMap.values()) {
             k = mapHistogram.ceilingKey(s.size());
-            if (k == null)
-                System.out.println("ERROOOOOR");
             v = mapHistogram.get(k) + 1;
-            mapHistogram.put((Integer) k, v);
+            mapHistogram.put(k, v);
         }
-        System.out.println("ending to go through maps");
 
         int totalUser = 0;
 
-        System.out.println("iterator histogram");
         for (int nb : mapHistogram.values())
             totalUser += nb;
 
-        System.out.println("ending iterator histogram");
-        System.out.println(totalUser);
-        System.out.println(nbUsers);
         assert  totalUser == nbUsers : "Wrong number of user in histogram";
 
-        System.out.println("leaving computeHistogram methods");
         return mapHistogram;
     }
 
