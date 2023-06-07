@@ -36,8 +36,6 @@ public class Database {
     private final FactoryIndice factoryIndice;
     private final List<Integer> powerLawArray;
     private long usersFollowProbabilityRange;
-    private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.005, 0.003, 0.0015 , 0.0007, 0.0004, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001));
-    private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.1, 0.06, 0.03, 0.014, 0.008, 0.004, 0.002, 0.001, 0.0004, 0.0002));
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
 
@@ -128,9 +126,9 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing, maxFollower;
 
-	    double outRatio = 40000 / 175000000.0;
+	    double outRatio = 80000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
-        double inRatio = 50000 / 175000000.0;
+        double inRatio = 100000 / 175000000.0;
         maxFollower = (int) (nbUsers * inRatio);
 
         for (int i = 0; i < nbUsers;) {
