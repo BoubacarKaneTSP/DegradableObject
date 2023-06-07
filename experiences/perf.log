@@ -1,22 +1,22 @@
-# started on Wed Jun  7 09:31:43 2023
+# started on Wed Jun  7 09:51:58 2023
 
 
- Performance counter stats for './test.sh -c Counter -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r 5 15 30 50 -p -e -w 120 -u 60 -h Q_M_C -y 1000000 -d 1000000 -i 100000 -b -g 48':
+ Performance counter stats for './test.sh -c Counter -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r 5 15 30 50 -p -e -w 20 -u 5 -h Q_M_C -y 1000000 -d 1000000 -i 100000 -b -g 48':
 
-      127021817229      cache-references                                              (40.00%)
-       71815175647      cache-misses              #   56.538 % of all cache refs      (40.00%)
-     2045270704185      branches                                                      (40.01%)
-       37518548952      branch-misses             #    1.83% of all branches          (40.01%)
-    17588512209587      cycles                                                        (40.01%)
-    10425428696092      instructions              #    0.59  insn per cycle           (50.01%)
-     3010422597770      L1-dcache-loads                                               (50.00%)
-      224705413551      L1-dcache-load-misses     #    7.46% of all L1-dcache accesses  (49.99%)
-       65061831285      LLC-loads                                                     (49.99%)
-       30184243568      LLC-load-misses           #   46.39% of all LL-cache accesses  (49.98%)
+       27606588827      cache-references                                              (39.98%)
+       14763389861      cache-misses              #   53.478 % of all cache refs      (39.98%)
+      426949112270      branches                                                      (40.00%)
+        8057508023      branch-misses             #    1.89% of all branches          (40.02%)
+     3696790238734      cycles                                                        (40.03%)
+     2213274522512      instructions              #    0.60  insn per cycle           (50.04%)
+      639536318873      L1-dcache-loads                                               (50.00%)
+       48162184251      L1-dcache-load-misses     #    7.53% of all L1-dcache accesses  (50.02%)
+       13374607764      LLC-loads                                                     (50.00%)
+        6042244369      LLC-load-misses           #   45.18% of all LL-cache accesses  (49.98%)
 
-     563.376456200 seconds time elapsed
+      44.705259517 seconds time elapsed
 
-    5767.986336000 seconds user
-     607.490793000 seconds sys
+    1252.401556000 seconds user
+      37.758172000 seconds sys
 
 
