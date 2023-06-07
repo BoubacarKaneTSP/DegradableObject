@@ -823,9 +823,11 @@ public class Retwis {
 
                 switch (typeComputed){
                     case ADD:
+                        Key usr = database.generateUser();
                         startTime = System.nanoTime();
-                        database.addUser(database.generateUser());
+                        database.addUser(usr);
                         endTime = System.nanoTime();
+                        database.removeUser(usr);
                         break;
                     case FOLLOW:
 

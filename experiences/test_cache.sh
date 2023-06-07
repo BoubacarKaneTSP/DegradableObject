@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=5
+nbTest=1
 benchmarkTime=120
 warmingUpTime=60
 #nbUsersInit=1000
@@ -21,7 +21,8 @@ do
   python3 rm_file.py $nbUsersInit "Q_M_C"
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
-  for nbThread in 1 2 4 8 16 32 48
+#  for nbThread in 1 2 4 8 16 32 48
+  for nbThread in 1 16 48
   do
     for (( c=1; c<=nbTest; c++ ))
     do
@@ -38,8 +39,10 @@ do
       #python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
     done
   done
-  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48"
-  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48"
+#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48"
+  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 16 48"
+#  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48"
+  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 16 48"
   #python3 compute_avg_throughput.py $nbUsersInit "Q_M_S_C" "1 2 4 8 16 32 48"
   python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
   python3 analyse_perf.py perf.log "true" "Q_M_C" $nbThread $nbUsersInit

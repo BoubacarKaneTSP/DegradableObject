@@ -253,6 +253,12 @@ public class Database {
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 
+    public void removeUser(Key user){
+        mapFollowers.remove(user);
+        mapFollowing.remove(user);
+        mapTimelines.remove(user);
+    }
+
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
     public void followUser(Key userA, Key userB){

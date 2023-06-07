@@ -8,6 +8,7 @@ list_nb_thread = list_nb_thread.split(" ")
 
 
 list_op = ["ALL",
+            "ADD",
            "FOLLOW",
            "UNFOLLOW",
            "TWEET",
