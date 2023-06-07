@@ -10,7 +10,7 @@ warmingUpTime=30
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=100000
-ratio="0 0 5 95"
+ratio="0 0 95 5"
 
 #ExtendedSegmentedConcurrentHash
 

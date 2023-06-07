@@ -172,11 +172,6 @@ public class Database {
 
         List<Key> users = listLocalUser.get(threadID);
 
-	    double inRatio = 50000 / 175000000.0;
-        int maxFollower = (int) (nbUsers * inRatio);
-
-        System.out.println("MAX FOLLOWER : " + maxFollower);
-
         int j = 0;
         for (Key userA: users){
 
