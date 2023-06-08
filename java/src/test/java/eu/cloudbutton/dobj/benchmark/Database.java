@@ -204,7 +204,7 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-                if (mapNbFollowers.get(userB).getAndDecrement() >= 0) {
+                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
 		            usersFollow.add(userB);
                     i++;
