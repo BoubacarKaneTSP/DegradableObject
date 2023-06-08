@@ -982,10 +982,10 @@ public class Retwis {
 
             int range = 5;
             int max = 100;
-            Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
+            String histogramFollower, histogramFollowing;
 
-            mapHistogramFollower = database.computeHistogram(range, max,"Follower");
-            mapHistogramFollowing = database.computeHistogram(range, max,"Following");
+            histogramFollower = database.computeHistogram(range, max,"Follower");
+            histogramFollowing = database.computeHistogram(range, max,"Following");
 
             PrintWriter printWriter;
             FileWriter fileWriter;
@@ -993,8 +993,7 @@ public class Retwis {
             fileWriter = new FileWriter("Follower_Distribution_"+ _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
-            for (Integer k : mapHistogramFollower.keySet())
-                printWriter.println(k + " " + mapHistogramFollower.get(k));
+            printWriter.println(histogramFollower);
 
             printWriter.flush();
             fileWriter.close();
@@ -1002,8 +1001,7 @@ public class Retwis {
             fileWriter = new FileWriter("Following_Distribution_" + _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
-            for (Integer k : mapHistogramFollowing.keySet())
-                printWriter.println(k + " " + mapHistogramFollowing.get(k));
+            printWriter.println(histogramFollowing);
 
             printWriter.flush();
             fileWriter.close();
