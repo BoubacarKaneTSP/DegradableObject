@@ -10,19 +10,19 @@ warmingUpTime=30
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=100000
-ratio="0 0 95 5"
+ratio="5 15 30 50"
 
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 1000000
+for nbUsersInit in 100
 do
   # Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC"
   python3 rm_file.py $nbUsersInit "Q_M_C"
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
-#  for nbThread in 1 2 4 8 16 32 48
-  for nbThread in 1 16 48
+  for nbThread in 1 2 4 8 16 32 48
+#  for nbThread in 1 16 48
 #  for nbThread in 1
   do
     for (( c=1; c<=nbTest; c++ ))
@@ -40,11 +40,11 @@ do
       #python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
     done
   done
-#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48"
-  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 16 48"
+  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48"
+#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 16 48"
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1"
-#  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48"
-  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 16 48"
+  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48"
+#  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 16 48"
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1"
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_S_C" "1 2 4 8 16 32 48"
   python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit

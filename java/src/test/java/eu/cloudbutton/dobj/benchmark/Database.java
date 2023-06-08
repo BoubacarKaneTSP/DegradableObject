@@ -38,6 +38,8 @@ public class Database {
     private long usersFollowProbabilityRange;
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
+    private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.3, 0.2, 0.1, 0.1, 0.05, 0.05));
+    private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.2, 0.1, 0.05, 0.05, 0.02, 0.02));
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -124,19 +126,28 @@ public class Database {
         Set<Key> localSetUser = new HashSet<>();
         long sommeProba = 0;
         int sizeArray = powerLawArray.size();
-        int maxFollowing, maxFollower;
+        int maxFollowing, maxFollower, nbFollowing, nbFollower;
 
 	    double outRatio = 80000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
         double inRatio = 100000 / 175000000.0;
         maxFollower = (int) (nbUsers * inRatio);
 
+
+
+
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray)),
-                        nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing),
-                        nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
+                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
+
+                if (nbUsers >= 100000){
+                    nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
+                    nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
+                }else{
+                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
+                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
+                }
 
                 sommeProba += powerLawVal;
 

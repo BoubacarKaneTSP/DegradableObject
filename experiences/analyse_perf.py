@@ -8,8 +8,8 @@ nb_thread = sys.argv[4]
 nb_user = sys.argv[5]
 
 list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "cycles", "instructions"]
-# list_nb_thread = [1,2,4,8,16,32,48]
-list_nb_thread = [1,16,48]
+list_nb_thread = [1,2,4,8,16,32,48]
+# list_nb_thread = [1,16,48]
 # list_nb_thread = [1]
 if avg_flag == "true":
 
