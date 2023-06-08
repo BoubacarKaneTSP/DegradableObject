@@ -70,6 +70,13 @@
             <version>0.16</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.btrace</groupId>
+            <artifactId>btrace-agent</artifactId>
+            <version>2.0.4</version>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -83,6 +90,24 @@
                     <release>11</release>
                 </configuration>
             </plugin>-->
+            <plugin>
+                <groupId>io.btrace</groupId>
+                <artifactId>btrace-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>btracec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classpathElements>
+                        <classpathElement>/path/to/jar_or_folder</classpathElement>
+                        ...
+                    </classpathElements>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>

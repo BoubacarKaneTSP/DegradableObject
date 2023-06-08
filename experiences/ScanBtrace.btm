@@ -1,0 +1,59 @@
+import com.sun.btrace.annotations.*;
+import static com.sun.btrace.BTraceUtils.*;
+
+@BTrace
+public class ScanBtrace {
+
+    // Chronomètres pour chaque méthode
+    private static volatile BTraceTimer addTimer = BTraceUtils.timer("add");
+    private static volatile BTraceTimer followTimer = BTraceUtils.timer("follow");
+    private static volatile BTraceTimer unfollowTimer = BTraceUtils.timer("unfollow");
+    private static volatile BTraceTimer tweetTimer = BTraceUtils.timer("tweet");
+    private static volatile BTraceTimer readTimer = BTraceUtils.timer("read");
+
+    // Méthode appelée au début de l'exécution
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Retwis", method = "startMonitoring")
+    public static void onStartMonitoring() {
+        addTimer.reset();
+        followTimer.reset();
+        unfollowTimer.reset();
+        tweetTimer.reset();
+        readTimer.reset();
+    }
+
+    // Méthode appelée après l'exécution de chaque méthode
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "add", location = @Location(Kind.RETURN))
+    public static void onAdd() {
+        addTimer.pulse();
+    }
+
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "follow", location = @Location(Kind.RETURN))
+    public static void onFollow() {
+        followTimer.pulse();
+    }
+
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "unfollow", location = @Location(Kind.RETURN))
+    public static void onUnfollow() {
+        unfollowTimer.pulse();
+    }
+
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "tweet", location = @Location(Kind.RETURN))
+    public static void onTweet() {
+        tweetTimer.pulse();
+    }
+
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "read", location = @Location(Kind.RETURN))
+    public static void onRead() {
+        readTimer.pulse();
+    }
+
+    // Méthode appelée à la fin de l'exécution
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Retwis", method = "stopMonitoring")
+    public static void onStopMonitoring() {
+        println("Débit de la méthode add : " + addTimer.rate() + " appels/ms");
+        println("Débit de la méthode follow : " + followTimer.rate() + " appels/ms");
+        println("Débit de la méthode unfollow : " + unfollowTimer.rate() + " appels/ms");
+        println("Débit de la méthode tweet : " + tweetTimer.rate() + " appels/ms");
+        println("Débit de la méthode read : " + readTimer.rate() + " appels/ms");
+    }
+}

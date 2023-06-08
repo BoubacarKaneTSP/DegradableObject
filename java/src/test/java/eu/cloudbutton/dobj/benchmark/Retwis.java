@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
+
+
 public class Retwis {
 
     enum opType{
@@ -659,6 +661,7 @@ public class Retwis {
         System.exit(0);
     }
 
+
     public class RetwisApp implements Callable<Void>{
 
         private final ThreadLocal<Random> random;
@@ -943,9 +946,10 @@ public class Retwis {
                     if (_p) {
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
                     }
+                    startMonitoring();
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
-
+                    stopMonitoring();
                     TimeUnit.SECONDS.sleep(2);
               //      performHeapDump(_tag, "Post", (int) _nbUserInit);
 
@@ -1050,5 +1054,16 @@ public class Retwis {
     private static String getProcessId() {
         String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
         return processName.split("@")[0];
+    }
+
+    public void startMonitoring(){
+        if (_p){
+            System.out.println("===> Starting monitoring with BTrace");
+        }
+    }
+    public void stopMonitoring(){
+        if (_p){
+            System.out.println("===> Ending monitoring.");
+        }
     }
 }
