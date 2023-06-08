@@ -147,8 +147,8 @@ public class Database {
                 }else{
 //                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
 //                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
-                    nbFollowing = 1;
-                    nbFollower = 1;
+                    nbFollowing = 5;
+                    nbFollower = 10;
                 }
 
                 sommeProba += powerLawVal;
