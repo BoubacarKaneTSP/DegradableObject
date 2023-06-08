@@ -34,19 +34,19 @@ public class ScanBtrace {
     @Export
     private static long readMethodCalls;
 
-    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "add", location = @Location(Kind.RETURN))
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "addUser", location = @Location(Kind.RETURN))
     public static void onAddMethod(@Duration long duration) {
         Aggregations.addToAggregation(addMethodDuration, duration / 1000000);
         addMethodCalls++;
     }
 
-    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "follow", location = @Location(Kind.RETURN))
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "followUser", location = @Location(Kind.RETURN))
     public static void onFollowMethod(@Duration long duration) {
         Aggregations.addToAggregation(followMethodDuration, duration / 1000000);
         followMethodCalls++;
     }
 
-    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "unfollow", location = @Location(Kind.RETURN))
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "unfollowUser", location = @Location(Kind.RETURN))
     public static void onUnfollowMethod(@Duration long duration) {
         Aggregations.addToAggregation(unfollowMethodDuration, duration / 1000000);
         unfollowMethodCalls++;
@@ -58,7 +58,7 @@ public class ScanBtrace {
         tweetMethodCalls++;
     }
 
-    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "read", location = @Location(Kind.RETURN))
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "showTimeline", location = @Location(Kind.RETURN))
     public static void onReadMethod(@Duration long duration) {
         Aggregations.addToAggregation(readMethodDuration, duration / 1000000);
         readMethodCalls++;
