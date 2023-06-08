@@ -193,7 +193,7 @@ public class Database {
 
             List<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
-	        System.out.println(nbFollow);
+//	        System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
 
 //                randVal = random.get().nextLong() % usersFollowProbabilityRange;
