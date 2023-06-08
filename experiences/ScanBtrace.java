@@ -14,6 +14,7 @@ public class ScanBtrace {
     // Méthode appelée au début de l'exécution
     @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Retwis", method = "startMonitoring")
     public static void onStartMonitoring() {
+        System.out.println("D2BUT DUUUUU MMOOONITOOORING");
         addTimer.reset();
         followTimer.reset();
         unfollowTimer.reset();
