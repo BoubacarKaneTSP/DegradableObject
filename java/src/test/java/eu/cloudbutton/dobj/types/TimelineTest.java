@@ -22,7 +22,7 @@ public class TimelineTest {
 
         for (int i = 0; i < 1600000000; i++) {
             someMethods();
-            someOtherMethods();
+//            someOtherMethods();
         }
 
         /*
@@ -37,9 +37,10 @@ public class TimelineTest {
     }
 
     private void someMethods() throws InterruptedException {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 2000; i++) {
             Thread.sleep(1);
         }
+        return;
     }
 
     private void someOtherMethods() throws InterruptedException {

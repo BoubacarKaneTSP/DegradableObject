@@ -1,26 +1,22 @@
-# started on Thu Jun  8 18:56:20 2023
+# started on Thu Jun  8 19:24:51 2023
 
 
- Performance counter stats for './test.sh -c Counter -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r 5 15 30 50 -p -e -w 30 -u 15 -h Q_M_C -y 100 -d 100 -i 100000 -b -g 48':
+ Performance counter stats for './test.sh -c Counter -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r 5 15 30 50 -p -e -w 30 -u 15 -h Q_M_C -y 100 -d 100 -i 100000 -b -g 1':
 
-            591493      cache-references                                            
-            271974      cache-misses              #   45,981 % of all cache refs    
-           4752648      branches                                                    
-            101204      branch-misses             #    2,13% of all branches        
-          19542340      cycles                                                        (34,82%)
-          23123996      instructions              #    1,18  insn per cycle           (34,82%)
-     <not counted>      L1-dcache-loads                                               (0,00%)
-     <not counted>      L1-dcache-load-misses                                         (0,00%)
-     <not counted>      LLC-loads                                                     (0,00%)
-     <not counted>      LLC-load-misses                                               (0,00%)
+        1106659911      cache-references                                              (39,94%)
+         187825599      cache-misses              #   16,972 % of all cache refs      (40,19%)
+        8927562841      branches                                                      (40,71%)
+         139187050      branch-misses             #    1,56% of all branches          (41,03%)
+       32991891611      cycles                                                        (40,81%)
+       50425535906      instructions              #    1,53  insn per cycle           (50,71%)
+       14062694560      L1-dcache-loads                                               (50,50%)
+         679876704      L1-dcache-load-misses     #    4,83% of all L1-dcache accesses  (50,34%)
+         128486895      LLC-loads                                                     (49,98%)
+           9738490      LLC-load-misses           #    7,58% of all LL-cache accesses  (50,12%)
 
-       0,006639743 seconds time elapsed
+       8,016129073 seconds time elapsed
 
-       0,006672000 seconds user
-       0,000000000 seconds sys
+      10,641758000 seconds user
+       0,371510000 seconds sys
 
 
-Some events weren't counted. Try disabling the NMI watchdog:
-	echo 0 > /proc/sys/kernel/nmi_watchdog
-	perf stat ...
-	echo 1 > /proc/sys/kernel/nmi_watchdog

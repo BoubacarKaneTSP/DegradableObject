@@ -34,6 +34,16 @@ public class ScanBtrace {
     @Export
     private static long readMethodCalls;
 
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Retwis", method = "startMonitoring", location = @Location(Kind.RETURN))
+    public static void onStartMethod(@Duration long duration) {
+        println("[Start]");
+    }
+
+    @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Retwis", method = "stopMonitoring", location = @Location(Kind.RETURN))
+    public static void onStartMethod(@Duration long duration) {
+        println("[Stop]");
+    }
+
     @OnMethod(clazz = "eu.cloudbutton.dobj.benchmark.Database", method = "addUser", location = @Location(Kind.RETURN))
     public static void onAddMethod(@Duration long duration) {
         Aggregations.addToAggregation(addMethodDuration, duration / 1000000);
@@ -64,12 +74,12 @@ public class ScanBtrace {
         readMethodCalls++;
     }
 
-    @OnTimer(10000)
+    @OnTimer(1000)
     public static void printMethodThroughput() {
-        println("Débit de la méthode add : " + (addMethodCalls / 10) + " appels/s");
-        println("Débit de la méthode follow : " + (followMethodCalls / 10) + " appels/s");
-        println("Débit de la méthode unfollow : " + (unfollowMethodCalls / 10) + " appels/s");
-        println("Débit de la méthode tweet : " + (tweetMethodCalls / 10) + " appels/s");
-        println("Débit de la méthode read : " + (readMethodCalls / 10) + " appels/s");
+        println("Débit de la méthode add : " + addMethodDuration + " appels/s");
+        println("Débit de la méthode follow : " + followMethodDuration + " appels/s");
+        println("Débit de la méthode unfollow : " + unfollowMethodDuration + " appels/s");
+        println("Débit de la méthode tweet : " + tweetMethodDuration + " appels/s");
+        println("Débit de la méthode read : " + readMethodDuration + " appels/s");
     }
 }
