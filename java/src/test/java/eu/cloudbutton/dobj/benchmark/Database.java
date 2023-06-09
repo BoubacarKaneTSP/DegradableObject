@@ -96,7 +96,7 @@ public class Database {
 
         long somme = 0;
         for (Key user : users) {
-            somme += 1; // Each user have the same probability to be choose
+            somme += 1; // Each user have the same probability to be chosen
             addUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new ArrayList<>());
@@ -139,7 +139,7 @@ public class Database {
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
+//                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
 
                 if (nbUsers >= 100000){
                     nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
@@ -147,11 +147,12 @@ public class Database {
                 }else{
 //                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
 //                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
-                    nbFollowing = 5;
-                    nbFollower = 10;
+                    nbFollowing = 10;
+                    nbFollower = 20;
                 }
 
-                sommeProba += powerLawVal;
+//                sommeProba += powerLawVal;
+                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);

@@ -5,8 +5,8 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=1
-benchmarkTime=30
-warmingUpTime=15
+benchmarkTime=20
+warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=100000
@@ -21,8 +21,8 @@ do
   python3 rm_file.py $nbUsersInit "Q_M_C"
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
-#  for nbThread in 1 2 4 8 16 32 48
-  for nbThread in 1 16 48
+  for nbThread in 1 2 4 8 16 32 48
+#  for nbThread in 1 16 48
 #  for nbThread in 1
   do
     for (( c=1; c<=nbTest; c++ ))
