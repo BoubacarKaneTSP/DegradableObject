@@ -670,7 +670,7 @@ public class Retwis {
         private final CountDownLatch latchFillDatabase;
         private final CountDownLatch latchHistogramDatabase;
         private final CountDownLatch latchFillCompletionTime;
-        private Map<Key, List<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
+        private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private Long localUsersProbabilityRange;
         private Long usersFollowProbabilityRange;
         private int nbRepeat = 1000;
@@ -820,7 +820,7 @@ public class Retwis {
                 long val = random.get().nextLong()%localUsersProbabilityRange;
                 userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
-                List<Key> listFollow = usersFollow.get(userA);
+                Queue<Key> listFollow = usersFollow.get(userA);
 
                 switch (typeComputed){
                     case ADD:
@@ -828,7 +828,7 @@ public class Retwis {
                         startTime = System.nanoTime();
                         database.addUser(usr);
                         endTime = System.nanoTime();
-                        database.removeUser(usr);
+//                        database.removeUser(usr);
                         break;
                     case FOLLOW:
 
@@ -839,7 +839,8 @@ public class Retwis {
                         startTime = System.nanoTime();
                             database.followUser(userA, userB);
                         endTime = System.nanoTime();
-                        database.unfollowUser(userA,userB);
+                        listFollow.add(userB);
+//                        database.unfollowUser(userA,userB);
 
                         }else
                             continue restartOperation;
@@ -850,23 +851,23 @@ public class Retwis {
                         if (listFollow.size() == 0)
                             continue restartOperation;
 
-                        val = random.get().nextInt(listFollow.size());
-                        int v = 0;
-                        for (Key user : listFollow){
-                            if (v==val) {
-                                userB = user;
-                                break;
-                            }
-                            v++;
-                        }
+//                        val = random.get().nextInt(listFollow.size());
+//                        int v = 0;
+//                        for (Key user : listFollow){
+//                            if (v==val) {
+//                                userB = user;
+//                                break;
+//                            }
+//                            v++;
+//                        }
 
-//                        userB = listFollow.poll();
+                        userB = listFollow.poll();
                         if (userB != null){ // Perform unfollow only if userA already follow someone
                         startTime = System.nanoTime();
                             database.unfollowUser(userA, userB);
                         endTime = System.nanoTime();
 
-                        database.followUser(userA, userB);
+//                        database.followUser(userA, userB);
 
                         }else
                             continue restartOperation;

@@ -86,7 +86,7 @@ public class Database {
         generateUsers();
     }
 
-    public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram,  Map<Key, List<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 //        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
 
         int threadID = count.getAndIncrement();
@@ -96,10 +96,11 @@ public class Database {
 
         long somme = 0;
         for (Key user : users) {
-            somme += 1; // Each user have the same probability to be chosen
+            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
+//            somme += 1; // Each user have the same probability to be chosen
             addUser(user);
             localUsersUsageProbability.get().put(somme, user);
-            localUsersFollow.put(user, new ArrayList<>());
+            localUsersFollow.put(user, new LinkedList<>());
         }
 
         localUsersUsageProbabilityRange.set(somme);
@@ -139,20 +140,20 @@ public class Database {
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-//                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
+                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
 
                 if (nbUsers >= 100000){
                     nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
                     nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
                 }else{
-//                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
-//                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
-                    nbFollowing = 10;
-                    nbFollower = 20;
+                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
+                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
+//                    nbFollowing = 10;
+//                    nbFollower = 20;
                 }
 
-//                sommeProba += powerLawVal;
-                sommeProba += 1;
+                sommeProba += powerLawVal;
+//                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
@@ -181,7 +182,7 @@ public class Database {
         }
     }
 
-    public void followingPhase(int threadID, Map<Key, List<Key>> localUsersFollow){
+    public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
@@ -192,7 +193,7 @@ public class Database {
             if(++j%100000 == 0)
                 System.out.println(j);
 
-            List<Key> usersFollow = localUsersFollow.get(userA);
+            Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //	        System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
