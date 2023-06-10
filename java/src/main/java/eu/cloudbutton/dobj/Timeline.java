@@ -28,12 +28,16 @@ public class Timeline<T> {
        for (int i = 0; i < queueSize; i++)
            topk.add(timeline.poll());
 
+
        int topkSize = topk.size();
 
-        for (int i = 0; i < topkSize - LENGTH; i++)
-            topk.poll();
 
-        return topk;
+       for (int i = 0; i < topkSize - LENGTH; i++)
+           topk.poll();
+
+       timeline.clear();
+
+       return topk;
    }
 
    public void clear(){
