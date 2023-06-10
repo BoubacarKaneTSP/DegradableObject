@@ -1,22 +1,22 @@
-# started on Sat Jun 10 19:08:05 2023
+# started on Sat Jun 10 20:48:41 2023
 
 
  Performance counter stats for './test.sh -c Counter -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r 5 15 30 50 -p -e -w 60 -u 20 -h Q_M_C -y 100 -d 100 -i 100000 -b -g 48':
 
-      101701665034      cache-references                                              (39.99%)
-       13306192278      cache-misses              #   13.084 % of all cache refs      (39.99%)
-      803299733374      branches                                                      (39.99%)
-        5572508146      branch-misses             #    0.69% of all branches          (40.00%)
-     8907075043556      cycles                                                        (40.01%)
-     4941082340362      instructions              #    0.55  insn per cycle           (50.01%)
-     1467443040000      L1-dcache-loads                                               (50.01%)
-       82859815398      L1-dcache-load-misses     #    5.65% of all L1-dcache accesses  (50.01%)
-       28761501298      LLC-loads                                                     (50.01%)
-         199980822      LLC-load-misses           #    0.70% of all LL-cache accesses  (50.00%)
+      101835721677      cache-references                                              (40.00%)
+       15308333105      cache-misses              #   15.032 % of all cache refs      (40.00%)
+      919529144503      branches                                                      (40.00%)
+        5425102500      branch-misses             #    0.59% of all branches          (40.00%)
+     9345022866995      cycles                                                        (40.01%)
+     5678801629081      instructions              #    0.61  insn per cycle           (50.00%)
+     1716025073829      L1-dcache-loads                                               (50.00%)
+       80451742432      L1-dcache-load-misses     #    4.69% of all L1-dcache accesses  (49.99%)
+       28058290793      LLC-loads                                                     (49.99%)
+         224407198      LLC-load-misses           #    0.80% of all LL-cache accesses  (50.00%)
 
-      87.392556278 seconds time elapsed
+      89.799204094 seconds time elapsed
 
-    3064.785595000 seconds user
-      23.193675000 seconds sys
+    3223.703487000 seconds user
+      24.208849000 seconds sys
 
 
