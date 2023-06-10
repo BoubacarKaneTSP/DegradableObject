@@ -217,7 +217,7 @@ public class Database {
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }
 
-    public String computeHistogram(int range, int max, String type){
+    public Map<Integer,Integer> computeHistogram(int range, int max, String type){
 
         NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
         Map<Key, Set<Key>> computedMap = null;
@@ -236,9 +236,9 @@ public class Database {
 
         assert computedMap != null : "Failed initialize map while computing histogram";
 
-        String values = "";
+//        String values = "";
         for (Set<Key> s : computedMap.values()) {
-            values += s.size() +" ";
+//            values += s.size() +" ";
             k = mapHistogram.ceilingKey(s.size());
             v = mapHistogram.get(k) + 1;
             mapHistogram.put(k, v);
@@ -251,7 +251,7 @@ public class Database {
 
         assert  totalUser == nbUsers : "Wrong number of user in histogram";
 
-        return values;
+        return mapHistogram;
     }
 
     public void addUser(Key user) throws ClassNotFoundException {

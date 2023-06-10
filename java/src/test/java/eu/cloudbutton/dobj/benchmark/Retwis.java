@@ -22,8 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
-
-
 public class Retwis {
 
     enum opType{
@@ -947,11 +945,11 @@ public class Retwis {
                     if (_p) {
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
                     }
-                    startMonitoring();
+//                    startMonitoring();
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
-                    stopMonitoring();
-                    TimeUnit.SECONDS.sleep(2);
+//                    stopMonitoring();
+//                    TimeUnit.SECONDS.sleep(2);
               //      performHeapDump(_tag, "Post", (int) _nbUserInit);
 
                 }else{
@@ -987,10 +985,10 @@ public class Retwis {
 
             int range = 5;
             int max = 100;
-            String histogramFollower, histogramFollowing;
+            Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
 
-            histogramFollower = database.computeHistogram(range, max,"Follower");
-            histogramFollowing = database.computeHistogram(range, max,"Following");
+            mapHistogramFollower = database.computeHistogram(range, max,"Follower");
+            mapHistogramFollowing = database.computeHistogram(range, max,"Following");
 
             PrintWriter printWriter;
             FileWriter fileWriter;
@@ -998,7 +996,8 @@ public class Retwis {
             fileWriter = new FileWriter("Follower_Distribution_"+ _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
-            printWriter.println(histogramFollower);
+            for (Integer k : mapHistogramFollower.keySet())
+                printWriter.println(k + " " + mapHistogramFollower.get(k));
 
             printWriter.flush();
             fileWriter.close();
@@ -1006,7 +1005,8 @@ public class Retwis {
             fileWriter = new FileWriter("Following_Distribution_" + _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
-            printWriter.println(histogramFollowing);
+            for (Integer k : mapHistogramFollowing.keySet())
+                printWriter.println(k + " " + mapHistogramFollowing.get(k));
 
             printWriter.flush();
             fileWriter.close();
