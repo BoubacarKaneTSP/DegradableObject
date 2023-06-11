@@ -195,6 +195,7 @@ public class Database {
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
+            System.out.println(nbFollow);
 //	        System.out.println(nbFollow);
             for (int i = 0; i < nbFollow;) {
                 System.out.println(i + " | " + nbFollow);
