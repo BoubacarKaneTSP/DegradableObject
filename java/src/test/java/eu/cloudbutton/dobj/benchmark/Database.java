@@ -263,7 +263,11 @@ public class Database {
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 
-    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) throws ClassNotFoundException {
+    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
+        assert user != null : "User is null";
+        assert dummySet != null : "Set is null";
+        assert dummyTimeline != null : "Timeline is null";
+
         mapFollowers.put(user,dummySet);
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
