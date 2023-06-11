@@ -837,8 +837,8 @@ public class Retwis {
                         startTime = System.nanoTime();
                             database.followUser(userA, userB);
                         endTime = System.nanoTime();
-                        listFollow.add(userB);
-//                        database.unfollowUser(userA,userB);
+//                        listFollow.add(userB);
+                        database.unfollowUser(userA,userB);
 
                         }else
                             continue restartOperation;
@@ -865,8 +865,8 @@ public class Retwis {
                             database.unfollowUser(userA, userB);
                         endTime = System.nanoTime();
 
-//                        database.followUser(userA, userB);
-
+                        database.followUser(userA, userB);
+                        listFollow.add(userB);
                         }else
                             continue restartOperation;
                         break;
