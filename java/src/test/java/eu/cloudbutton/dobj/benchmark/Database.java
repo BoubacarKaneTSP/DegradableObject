@@ -98,7 +98,7 @@ public class Database {
         for (Key user : users) {
             somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
 //            somme += 1; // Each user have the same probability to be chosen
-            addUser(user);
+            addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
         }
@@ -254,13 +254,19 @@ public class Database {
         return mapHistogram;
     }
 
-    public void addUser(Key user) throws ClassNotFoundException {
+    public void addOriginalUser(Key user) throws ClassNotFoundException {
         mapFollowers.put(user, new ConcurrentSkipListSet<>());
         if (typeSet.contains("Extended"))
             mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
         else
             mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
+    }
+
+    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) throws ClassNotFoundException {
+        mapFollowers.put(user,dummySet);
+        mapFollowing.put(user, dummySet);
+        mapTimelines.put(user, dummyTimeline);
     }
 
     public void removeUser(Key user){

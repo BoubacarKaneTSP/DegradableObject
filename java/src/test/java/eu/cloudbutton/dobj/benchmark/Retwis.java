@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
@@ -675,7 +676,9 @@ public class Retwis {
         private final String msg = "new msg";
         int nbLocalUsers;
         int nbAttempt;
-        Key userB, userA;
+        Key userB, userA, dummyUser;
+        Set<Key> dummySet;
+        Timeline<String> dummyTimeline;
         long startTime, endTime;
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
@@ -728,6 +731,11 @@ public class Retwis {
                         compute(type, nbLocalOperations, timeLocalOperations);
                     }
                 }else{
+
+                    dummyUser = database.generateUser();
+                    dummySet = new HashSet<>();
+                    dummyTimeline = new Timeline<>(new LinkedList<>());
+
                     while (flagComputing.get()){
 
                         type = chooseOperation();
@@ -822,11 +830,10 @@ public class Retwis {
 
                 switch (typeComputed){
                     case ADD:
-                        Key usr = database.generateUser();
                         startTime = System.nanoTime();
-                        database.addUser(usr);
+                        database.addUser(dummyUser,dummySet, dummyTimeline);
                         endTime = System.nanoTime();
-//                        database.removeUser(usr);
+                        database.removeUser(dummyUser);
                         break;
                     case FOLLOW:
 
