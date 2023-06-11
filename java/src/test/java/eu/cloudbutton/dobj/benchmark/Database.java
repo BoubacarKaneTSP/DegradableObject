@@ -96,8 +96,8 @@ public class Database {
 
         long somme = 0;
         for (Key user : users) {
-            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
-//            somme += 1; // Each user have the same probability to be chosen
+//            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
+            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
