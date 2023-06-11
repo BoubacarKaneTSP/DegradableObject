@@ -716,6 +716,10 @@ public class Retwis {
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 nbLocalUsers = database.getLocalUsersUsageProbability().get().size();
 
+                dummyUser = database.generateUser();
+                dummySet = new HashSet<>();
+                dummyTimeline = new Timeline<>(new LinkedList<>());
+
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
                     compute(type, nbLocalOperations, timeLocalOperations);
@@ -731,10 +735,6 @@ public class Retwis {
                         compute(type, nbLocalOperations, timeLocalOperations);
                     }
                 }else{
-
-                    dummyUser = database.generateUser();
-                    dummySet = new HashSet<>();
-                    dummyTimeline = new Timeline<>(new LinkedList<>());
 
                     while (flagComputing.get()){
 
