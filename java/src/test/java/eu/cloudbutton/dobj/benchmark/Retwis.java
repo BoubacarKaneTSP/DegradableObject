@@ -826,7 +826,7 @@ public class Retwis {
                         startTime = System.nanoTime();
                         database.addUser(usr);
                         endTime = System.nanoTime();
-                        database.removeUser(usr);
+//                        database.removeUser(usr);
                         break;
                     case FOLLOW:
 
