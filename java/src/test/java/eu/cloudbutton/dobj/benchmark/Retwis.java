@@ -881,7 +881,7 @@ public class Retwis {
                         startTime = System.nanoTime();
                         database.tweet(userA, msg);
                         endTime = System.nanoTime();
-                        database.realtweet(userA, msg);
+//                        database.realtweet(userA, msg);
                         break;
                     case READ:
                         startTime = System.nanoTime();
