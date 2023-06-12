@@ -60,7 +60,8 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         segment = segments().get((int) indice.getVal());
 
-        System.out.println(Thread.currentThread().getName() + " => " + indice + " : " + System.identityHashCode(segment));
+        System.out.println(Thread.currentThread().getName() + " => " + indice.getVal() + " : " + System.identityHashCode(segment));
+
 
         assert segment != null : "Value not associated with a segment";
 
