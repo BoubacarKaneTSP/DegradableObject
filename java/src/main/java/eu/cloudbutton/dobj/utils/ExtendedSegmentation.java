@@ -13,7 +13,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
     public ExtendedSegmentation(Class<T> clazz, FactoryIndice factoryIndice) {
         this.factoryIndice = factoryIndice;
-        int parallelism = factoryIndice.getParallelism()   ;
+        int parallelism = factoryIndice.getParallelism();
         this.segments = new ArrayList<>(parallelism);
 
         try {
@@ -60,7 +60,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         System.out.println("====================");
 
-        System.out.println("There is " + segments.size() + " segments for " + Thread.currentThread().getName());
+        System.out.println("There is " + segments.size() + " segments for " + Thread.currentThread().getName() + " in the list of segments : " + System.identityHashCode(segments));
 
 
         for (int i = 0; i < segments.size(); i++) {
