@@ -294,7 +294,14 @@ public class Database {
         Set set;
 
         set = mapFollowers.get(userB);
-        set.add(userA);
+
+        if (set.add(userA)){
+            System.out.println(Thread.currentThread().getName() + " add first " + userA + " to the set of follower of " + userA);
+        }else{
+            System.out.println(Thread.currentThread().getName() + " add " + userA + " in the wrong set");
+            System.exit(0);
+
+        }
 
 
         set = mapFollowing.get(userA);
