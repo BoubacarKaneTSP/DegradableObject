@@ -1,22 +1,22 @@
-# started on Mon Jun 12 13:00:23 2023
+# started on Mon Jun 12 14:15:43 2023
 
 
  Performance counter stats for './test.sh -c Counter -s ConcurrentHashSet -q QueueMASP -m Map -t Retwis -r 5 15 30 50 -p -e -w 60 -u 20 -h Q_M_C -y 100 -d 100 -i 100000 -b -g 48':
 
-       92450566871      cache-references                                              (39.99%)
-        9811520861      cache-misses              #   10.613 % of all cache refs      (40.00%)
-     1012919433335      branches                                                      (40.01%)
-        8489695123      branch-misses             #    0.84% of all branches          (40.01%)
-     9675201569502      cycles                                                        (40.01%)
-     6240644922882      instructions              #    0.65  insn per cycle           (50.01%)
-     1866761791409      L1-dcache-loads                                               (50.00%)
-      114764994895      L1-dcache-load-misses     #    6.15% of all L1-dcache accesses  (50.00%)
-       30218904431      LLC-loads                                                     (49.99%)
-         181234550      LLC-load-misses           #    0.60% of all LL-cache accesses  (49.99%)
+       96309103149      cache-references                                              (40.00%)
+        7817275759      cache-misses              #    8.117 % of all cache refs      (40.00%)
+      789930619065      branches                                                      (40.00%)
+        8357535035      branch-misses             #    1.06% of all branches          (40.00%)
+     9120421836164      cycles                                                        (40.00%)
+     4886648496468      instructions              #    0.54  insn per cycle           (50.00%)
+     1464694499825      L1-dcache-loads                                               (50.00%)
+      108013151151      L1-dcache-load-misses     #    7.37% of all L1-dcache accesses  (50.00%)
+       31011552516      LLC-loads                                                     (50.00%)
+         149703284      LLC-load-misses           #    0.48% of all LL-cache accesses  (50.00%)
 
-     100.884818394 seconds time elapsed
+      83.324179788 seconds time elapsed
 
-    3336.321069000 seconds user
-      21.077266000 seconds sys
+    3140.916122000 seconds user
+      19.551881000 seconds sys
 
 
