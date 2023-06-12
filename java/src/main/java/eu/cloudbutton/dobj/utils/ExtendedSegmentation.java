@@ -40,12 +40,13 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
             indice = factoryIndice.getIndice();
 
             if (!obj.getReference().set(indice)){
+                System.out.println(Thread.currentThread().getName() + " failed to initialize indice");
                 indice = obj.getReference().get();
                 System.out.println(Thread.currentThread().getName() + " have now indice : " + indice);
 
                 assert indice != obj.getReference().get() : indice + " : " + obj.getReference().get();
             }else{
-                System.out.println(Thread.currentThread().getName() + " failed to initialize indice");
+                System.out.println(Thread.currentThread().getName() + " successfully to initialize indice");
                 assert System.identityHashCode(indice) == System.identityHashCode(obj.getReference().get()) : "failed to insert in atomic reference";
             }
         }
