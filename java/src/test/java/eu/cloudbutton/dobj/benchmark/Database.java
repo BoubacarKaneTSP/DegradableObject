@@ -306,6 +306,16 @@ public class Database {
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
 
+//            timeline.add(msg);
+        }
+    }
+
+    public void realtweet(Key user, String msg) throws InterruptedException {
+        Set<Key> set = mapFollowers.get(user);
+
+        for (Key follower : set) {
+            Timeline timeline = mapTimelines.get(follower);
+
             timeline.add(msg);
         }
     }
