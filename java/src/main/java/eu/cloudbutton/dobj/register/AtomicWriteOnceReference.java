@@ -32,13 +32,13 @@ public class AtomicWriteOnceReference<T> implements Serializable {
     public T get() {
 
         if (_cachedObj != null) {
-            System.out.println(Thread.currentThread().getName() + " is getting : " + _cachedObj + " from cache in atomicReference");
+//            System.out.println(Thread.currentThread().getName() + " is getting : " + _cachedObj + " from cache in atomicReference");
             return _cachedObj;
         }
 
         _cachedObj = _obj;
 
-        System.out.println(Thread.currentThread().getName() + " is getting : " + _cachedObj + " in atomicReference");
+//        System.out.println(Thread.currentThread().getName() + " is getting : " + _cachedObj + " in atomicReference");
         return _cachedObj;
     }
 
@@ -49,14 +49,14 @@ public class AtomicWriteOnceReference<T> implements Serializable {
      */
     public boolean set(T value) {
 
-        System.out.println(Thread.currentThread().getName() + " is trying to set value : " + value + " in atomicReference");
+//        System.out.println(Thread.currentThread().getName() + " is trying to set value : " + value + " in atomicReference");
 
         if (!trySet(value)) {
-            System.out.println(Thread.currentThread().getName() + " have failed to set value : " + value + " in atomicReference");
+//            System.out.println(Thread.currentThread().getName() + " have failed to set value : " + value + " in atomicReference");
 
             return false;
         }
-        System.out.println(Thread.currentThread().getName() + " have succeeded to set value : " + value + " in atomicReference");
+//        System.out.println(Thread.currentThread().getName() + " have succeeded to set value : " + value + " in atomicReference");
 
         return true;
     }

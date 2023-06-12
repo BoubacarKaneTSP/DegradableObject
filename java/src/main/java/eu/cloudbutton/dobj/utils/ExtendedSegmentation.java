@@ -35,21 +35,21 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
         T segment;
         BoxedLong indice = obj.getReference().get();
 
-        System.out.println(Thread.currentThread().getName() + " is adding with indice : " + indice + " for obj : " + x);
+//        System.out.println(Thread.currentThread().getName() + " is adding with indice : " + indice + " for obj : " + x);
 
         if (indice == null){
             indice = factoryIndice.getIndice();
 
             if (!obj.getReference().set(indice)){
-                System.out.println(Thread.currentThread().getName() + " failed to initialize indice "+ indice + " for obj : " + x);
+//                System.out.println(Thread.currentThread().getName() + " failed to initialize indice "+ indice + " for obj : " + x);
                 indice = obj.getReference().get();
-                System.out.println(Thread.currentThread().getName() + " have now indice : " + indice + " for obj : " + x);
+//                System.out.println(Thread.currentThread().getName() + " have now indice : " + indice + " for obj : " + x);
 
-                System.out.println(Thread.currentThread().getName() + " is verifiying if the indice it gets have not change");
+//                System.out.println(Thread.currentThread().getName() + " is verifiying if the indice it gets have not change");
 
                 assert indice == obj.getReference().get() : indice + " : " + obj.getReference().get();
             }else{
-                System.out.println(Thread.currentThread().getName() + " successfully initialized indice  for obj : " + x);
+//                System.out.println(Thread.currentThread().getName() + " successfully initialized indice  for obj : " + x);
                 assert System.identityHashCode(indice) == System.identityHashCode(obj.getReference().get()) : "failed to insert in atomic reference";
             }
         }
