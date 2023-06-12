@@ -289,7 +289,7 @@ public class Database {
     // and user_B to the following of user_A
     public void followUser(Key userA, Key userB){
 
-        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB);
+//        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB);
 
         Set set;
 
@@ -300,9 +300,9 @@ public class Database {
 
         set = mapFollowing.get(userA);
         if (set.add(userB)){
-            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
+//            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
         }else{
-            System.out.println(Thread.currentThread().getName() + " add " + userB + " in the wrong set");
+//            System.out.println(Thread.currentThread().getName() + " add " + userB + " in the wrong set");
             System.exit(0);
         }
 
