@@ -196,9 +196,10 @@ public class Database {
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //            System.out.println(nbFollow);
 //	        System.out.println(nbFollow);
-            System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
 
             for (int i = 0; i < nbFollow;) {
+
+
 //                System.out.println(i + " | " + nbFollow);
 
 //                randVal = random.get().nextLong() % usersFollowProbabilityRange;
@@ -208,6 +209,11 @@ public class Database {
                 userB = listAllUser.get(random.get().nextInt(nbUsers));
 
                 assert userB != null : "User generated is null";
+
+                if (i<2) {
+                    System.out.println("Nb follow is : " + nbFollow);
+                    System.out.println(Thread.currentThread().getName() + " is adding : " + userA + " : i vaut = > " + i);
+                }
 
                 if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
