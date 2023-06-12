@@ -29,7 +29,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     }
 
     @Override
-    public final T segmentFor(Object x) throws InterruptedException {
+    public final T segmentFor(Object x) {
 
         SegmentAware obj = (SegmentAware) x;
         T segment;
@@ -44,6 +44,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
                 System.out.println(Thread.currentThread().getName() + " failed to initialize indice for obj : " + x);
                 indice = obj.getReference().get();
                 System.out.println(Thread.currentThread().getName() + " have now indice : " + indice + " for obj : " + x);
+//                System.out.println(Thread.currentThread().getName() );
 
                 assert indice != obj.getReference().get() : indice + " : " + obj.getReference().get();
             }else{
@@ -62,7 +63,6 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         assert segment != null : "Value not associated with a segment";
 
-        TimeUnit.SECONDS.sleep(1000000);
         return segment;
     }
 

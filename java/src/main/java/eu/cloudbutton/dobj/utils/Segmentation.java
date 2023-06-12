@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface Segmentation<T> {
 
-    T segmentFor(Object x) throws InterruptedException;
+    T segmentFor(Object x);
 
     Collection<T> segments();
 }

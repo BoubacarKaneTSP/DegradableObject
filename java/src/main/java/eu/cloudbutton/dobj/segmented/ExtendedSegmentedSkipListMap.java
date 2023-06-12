@@ -62,14 +62,12 @@ public class ExtendedSegmentedSkipListMap<K,V> extends ExtendedSegmentation<Conc
         return v;
     }
 
-    @SneakyThrows
     @Nullable
     @Override
     public V put(K k, V v) {
         return (V) segmentFor(k).put(k,v);
     }
 
-    @SneakyThrows
     @Override
     public V remove(Object o) {
         return (V) segmentFor(o).remove(o);
