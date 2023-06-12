@@ -58,6 +58,16 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         System.out.println(Thread.currentThread().getName() + " => " + System.identityHashCode(indice) + " : " + indice);
 
+        System.out.println("====================");
+
+        System.out.println("There is " + segments.size() + " segments for " + Thread.currentThread().getName());
+
+        for (T seg : segments){
+            System.out.println(Thread.currentThread().getName() + " have segment : " + System.identityHashCode(seg));
+        }
+
+        System.out.println("====================");
+
         segment = segments().get((int) indice.getVal());
 
         System.out.println(Thread.currentThread().getName() + " => " + indice.getVal() + " : " + System.identityHashCode(segment));
