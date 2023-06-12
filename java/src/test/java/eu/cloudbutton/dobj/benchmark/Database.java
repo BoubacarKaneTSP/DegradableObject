@@ -288,6 +288,9 @@ public class Database {
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
     public void followUser(Key userA, Key userB){
+
+        System.out.println(Thread.currentThread().getName() + " is making " + userB + " follows " + userA);
+
         Set set;
 
         set = mapFollowers.get(userB);
