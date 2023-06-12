@@ -41,17 +41,19 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
             if (!obj.getReference().set(indice)){
                 indice = obj.getReference().get();
+                System.out.println(Thread.currentThread().getName() + " have indice : " + indice);
+
                 assert indice != obj.getReference().get() : indice + " : " + obj.getReference().get();
             }else{
                 assert System.identityHashCode(indice) == System.identityHashCode(obj.getReference().get()) : "failed to insert in atomic reference";
             }
         }
 
-        System.out.println(Thread.currentThread().getName() + " => " + System.identityHashCode(indice) + " : " + indice);
+//        System.out.println(Thread.currentThread().getName() + " => " + System.identityHashCode(indice) + " : " + indice);
 
         segment = segments().get((int) indice.getVal());
 
-        System.out.println(Thread.currentThread().getName() + " => " + indice + " : " + ((Set)segment));
+//        System.out.println(Thread.currentThread().getName() + " => " + indice + " : " + ((Set)segment));
 
         assert segment != null : "Value not associated with a segment";
 
