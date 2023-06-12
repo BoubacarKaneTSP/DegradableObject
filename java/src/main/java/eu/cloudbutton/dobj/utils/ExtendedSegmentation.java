@@ -3,10 +3,7 @@ package eu.cloudbutton.dobj.utils;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExtendedSegmentation<T> implements Segmentation<T>{
 
@@ -54,7 +51,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         segment = segments().get((int) indice.getVal());
 
-        System.out.println(Thread.currentThread().getName() + " => " + indice + " : " + ((Map)segment).values());
+        System.out.println(Thread.currentThread().getName() + " => " + indice + " : " + ((Set)segment));
 
         assert segment != null : "Value not associated with a segment";
 
