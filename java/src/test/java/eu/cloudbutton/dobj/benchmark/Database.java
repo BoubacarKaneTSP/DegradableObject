@@ -189,7 +189,7 @@ public class Database {
 
         int j = 0;
         for (Key userA: users){
-
+            System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
             if(++j%100000 == 0)
                 System.out.println(j);
 
