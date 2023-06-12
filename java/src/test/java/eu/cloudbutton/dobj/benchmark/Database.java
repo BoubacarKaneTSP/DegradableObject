@@ -289,7 +289,7 @@ public class Database {
     // and user_B to the following of user_A
     public void followUser(Key userA, Key userB){
 
-        System.out.println(Thread.currentThread().getName() + " is making " + userB + " follows " + userA);
+        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB);
 
         Set set;
 
