@@ -34,7 +34,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
         T segment;
         BoxedLong indice = obj.getReference().get();
 
-        System.out.println(Thread.currentThread().getName() + " is adding with indice : " + indice);
+        System.out.println(Thread.currentThread().getName() + " is adding with indice : " + indice + "for obj : " + x);
 
         if (indice == null){
             indice = factoryIndice.getIndice();
