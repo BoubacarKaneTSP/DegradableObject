@@ -34,14 +34,14 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
         T segment;
         BoxedLong indice = obj.getReference().get();
 
-        System.out.println(Thread.currentThread().getName() + " is adding");
+        System.out.println(Thread.currentThread().getName() + " is adding with indice : " + indice);
 
         if (indice == null){
             indice = factoryIndice.getIndice();
 
             if (!obj.getReference().set(indice)){
                 indice = obj.getReference().get();
-                System.out.println(Thread.currentThread().getName() + " have indice : " + indice);
+                System.out.println(Thread.currentThread().getName() + " have now indice : " + indice);
 
                 assert indice != obj.getReference().get() : indice + " : " + obj.getReference().get();
             }else{
