@@ -189,7 +189,6 @@ public class Database {
 
         int j = 0;
         for (Key userA: users){
-            System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
             if(++j%100000 == 0)
                 System.out.println(j);
 
@@ -197,6 +196,8 @@ public class Database {
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
 //            System.out.println(nbFollow);
 //	        System.out.println(nbFollow);
+            System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
+
             for (int i = 0; i < nbFollow;) {
 //                System.out.println(i + " | " + nbFollow);
 
