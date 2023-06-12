@@ -44,9 +44,16 @@ public class AtomicWriteOnceReference<T> implements Serializable {
      * @param value the value to set.  Setting a null will result in a thrown exception.
      */
     public boolean set(T value) {
+
+        System.out.println(Thread.currentThread().getName() + " is trying to set value : " + value + " in atomicReference");
+
         if (!trySet(value)) {
+            System.out.println(Thread.currentThread().getName() + " have failed to set value : " + value + " in atomicReference");
+
             return false;
         }
+        System.out.println(Thread.currentThread().getName() + " have succeeded to set value : " + value + " in atomicReference");
+
         return true;
     }
 
