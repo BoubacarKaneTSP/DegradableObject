@@ -15,14 +15,11 @@ public class FactoryIndice {
     public FactoryIndice(int parallelism){
         this.parallelism = parallelism;
         this.next = new AtomicInteger();
-        local = null;
-//        assert local.get().getVal() == -1 : "val => " + local.get().getVal() ;
+        local =  ThreadLocal.withInitial(() -> new BoxedLong(-1));
+        assert local.get().getVal() == -1 : "val => " + local.get().getVal() ;
     }
 
     public BoxedLong getIndice(){
-
-        if (local == null)
-            local =  ThreadLocal.withInitial(() -> new BoxedLong(-1));
 
         if (local.get().getVal() == -1 ){
             int indice = next.getAndIncrement();
