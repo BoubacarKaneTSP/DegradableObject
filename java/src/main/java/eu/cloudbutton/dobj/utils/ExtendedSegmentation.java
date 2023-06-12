@@ -64,7 +64,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         assert segment != null : "Value not associated with a segment";
 
-        System.out.println("Segment for " + x + " : " + segment.hashCode());
+        System.out.println("Segment for " + x + " : " + System.identityHashCode(segment));
         return segment;
     }
 
