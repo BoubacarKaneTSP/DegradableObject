@@ -49,6 +49,8 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
             }
         }
 
+        assert indice != null : "Indice is null for " + Thread.currentThread().getName();
+
 //        System.out.println(Thread.currentThread().getName() + " => " + System.identityHashCode(indice) + " : " + indice);
 
         segment = segments().get((int) indice.getVal());
