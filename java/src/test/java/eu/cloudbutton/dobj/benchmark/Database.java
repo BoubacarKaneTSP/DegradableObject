@@ -295,8 +295,8 @@ public class Database {
 
 
         set = mapFollowing.get(userA);
-        System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
         set.add(userB);
+        System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
     }
 
     // Removing user_A to the followers of user_B
