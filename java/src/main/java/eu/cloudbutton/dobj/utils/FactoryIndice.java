@@ -24,9 +24,9 @@ public class FactoryIndice {
         if (local.get().getVal() == -1 ){
             int indice = next.getAndIncrement();
             assert indice < parallelism : "The indice generated ("+indice+") excess the number of segments ("+parallelism+")";
-//            System.out.println(Thread.currentThread().getName() + " => local ("+ System.identityHashCode(local.get().getVal())+") : " + local.get().getVal() + " | indice : " + indice);
+            System.out.println(Thread.currentThread().getName() + " => local ("+ System.identityHashCode(local.get().getVal())+") : " + local.get().getVal() + " | indice : " + indice);
             local.get().setVal(indice);
-//            System.out.println(indice+ " => " + local.get().getVal());
+            System.out.println(indice+ " => " + local.get().getVal());
             assert local.get().getVal() == indice : "Failed to update local";
         }
 
