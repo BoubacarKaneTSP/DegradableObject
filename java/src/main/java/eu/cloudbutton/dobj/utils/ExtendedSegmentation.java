@@ -4,6 +4,7 @@ import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ExtendedSegmentation<T> implements Segmentation<T>{
 
@@ -28,7 +29,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     }
 
     @Override
-    public final T segmentFor(Object x) {
+    public final T segmentFor(Object x) throws InterruptedException {
 
         SegmentAware obj = (SegmentAware) x;
         T segment;
@@ -61,6 +62,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
         assert segment != null : "Value not associated with a segment";
 
+        TimeUnit.SECONDS.sleep(1000000);
         return segment;
     }
 
