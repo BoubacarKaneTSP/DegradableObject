@@ -210,10 +210,7 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-                if (i<2) {
-                    System.out.println("Nb follow is : " + nbFollow);
-                    System.out.println(Thread.currentThread().getName() + " is adding : " + userA + " : i vaut = > " + i);
-                }
+
 
                 if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
@@ -295,6 +292,8 @@ public class Database {
 
         set = mapFollowers.get(userB);
         set.add(userA);
+
+        System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
 
         set = mapFollowing.get(userA);
         set.add(userB);
