@@ -32,6 +32,7 @@ public class AtomicWriteOnceReference<T> implements Serializable {
     public T get() {
 
         if (_cachedObj != null) {
+            System.out.println(Thread.currentThread().getName() + " is getting : " + _cachedObj + " from cache in atomicReference");
             return _cachedObj;
         }
 
