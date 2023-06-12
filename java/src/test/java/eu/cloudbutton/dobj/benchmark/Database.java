@@ -299,12 +299,14 @@ public class Database {
 
 
         set = mapFollowing.get(userA);
-        if (set.add(userB)){
-//            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
-        }else{
-//            System.out.println(Thread.currentThread().getName() + " add " + userB + " in the wrong set");
-            System.exit(0);
-        }
+        set.add(userB);
+
+//        if (set.add(userB)){
+////            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
+//        }else{
+////            System.out.println(Thread.currentThread().getName() + " add " + userB + " in the wrong set");
+//            System.exit(0);
+//        }
 
     }
 
