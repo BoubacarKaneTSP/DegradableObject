@@ -293,9 +293,9 @@ public class Database {
         set = mapFollowers.get(userB);
         set.add(userA);
 
-        System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
 
         set = mapFollowing.get(userA);
+        System.out.println(Thread.currentThread().getName() + " is adding : " + userA);
         set.add(userB);
     }
 
