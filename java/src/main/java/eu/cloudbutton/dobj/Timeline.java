@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Timeline<T> {
 
-    private final static int LENGTH=50;
+    private final static int LENGTH=10;
 
     private final Queue<T> topk;
     @Getter

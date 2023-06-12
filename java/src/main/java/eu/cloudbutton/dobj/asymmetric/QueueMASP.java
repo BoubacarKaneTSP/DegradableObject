@@ -49,7 +49,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -244,14 +244,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
-//    private Counter queueSize;
+    private Counter queueSize;
 
     /**
      * Creates a {@code ConcurrentLinkedQueue} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<>();
-//        queueSize = new CounterMISD();
+        queueSize = new CounterMISD();
     }
 
     /**
@@ -373,6 +373,9 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
+
+                    queueSize.incrementAndGet();
+
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -394,7 +397,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
             E item = head.next.item;
             head = head.next;
-//            queueSize.decrementAndGet();
+            queueSize.decrementAndGet();
 //            queueSize.decrement();
 //            head.item = null;
             return item;
@@ -488,7 +491,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
 
-//        return (int) queueSize.read();
+        return (int) queueSize.read();
 //        return queueSize.intValue();
 //
 //        restartFromHead: for (;;) {
@@ -503,11 +506,11 @@ public class QueueMASP<E> extends AbstractQueue<E>
 //            return count;
 //        }
 
-        int size = 0;
-        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
-            size++;
-        }
-        return size;
+//        int size = 0;
+//        for (Node<E>  t = tail, h = head; h != t ; h = h.next) {
+//            size++;
+//        }
+//        return size;
     }
 
     /**

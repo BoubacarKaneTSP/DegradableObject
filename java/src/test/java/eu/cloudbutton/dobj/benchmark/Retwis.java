@@ -926,7 +926,7 @@ public class Retwis {
 
                     latchHistogram.await();
 
-                    saveHistogram("Pre_Benchmark");
+                    saveDistributionHistogram("Pre_Benchmark");
 
             //        performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
@@ -959,6 +959,7 @@ public class Retwis {
 //                    TimeUnit.SECONDS.sleep(2);
               //      performHeapDump(_tag, "Post", (int) _nbUserInit);
 
+                    saveTimelineHistogram();
                 }else{
 
                     long startTime, endTime;
@@ -976,7 +977,7 @@ public class Retwis {
                     completionTime += endTime - startTime;
                 }
 
-                saveHistogram("Post_Benchmark");
+                saveDistributionHistogram("Post_Benchmark");
 
                 if (_gcinfo)
                     System.out.println("End benchmark");
@@ -987,7 +988,7 @@ public class Retwis {
             return null;
         }
 
-        private void saveHistogram(String tag) throws IOException {
+        private void saveDistributionHistogram(String tag) throws IOException {
             System.out.println("Saving histogram");
 
             int range = 5;
@@ -1015,6 +1016,24 @@ public class Retwis {
             for (Integer k : mapHistogramFollowing.keySet())
                 printWriter.println(k + " " + mapHistogramFollowing.get(k));
 
+            printWriter.flush();
+            fileWriter.close();
+        }
+
+        private void saveTimelineHistogram() throws IOException {
+            PrintWriter printWriter;
+            FileWriter fileWriter;
+
+            fileWriter = new FileWriter("Timeline_Distribution_"+ _tag + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            printWriter = new PrintWriter(fileWriter);
+
+            String txt = "";
+
+            for (Timeline<String> timeline : database.getMapTimelines().values()){
+                txt += timeline.getTimeline().size() + " ";
+            }
+
+            printWriter.print(txt);
             printWriter.flush();
             fileWriter.close();
         }
