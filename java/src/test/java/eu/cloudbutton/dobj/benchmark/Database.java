@@ -6,6 +6,7 @@ import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.utils.SegmentAware;
 import lombok.Getter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -171,7 +172,7 @@ public class Database {
         usersFollowProbabilityRange = sommeProba;
     }
 
-    public void followingTest(int threadID){ // Each user follow only one user at first
+    public void followingTest(int threadID) throws InterruptedException { // Each user follow only one user at first
         List<Key> users = listLocalUser.get(threadID);
         ThreadLocal<Random> random = ThreadLocal.withInitial(Random::new);
 
@@ -182,7 +183,7 @@ public class Database {
         }
     }
 
-    public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow){
+    public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
@@ -209,8 +210,6 @@ public class Database {
                 userB = listAllUser.get(random.get().nextInt(nbUsers));
 
                 assert userB != null : "User generated is null";
-
-
 
                 if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
@@ -287,9 +286,8 @@ public class Database {
 
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
-    public void followUser(Key userA, Key userB){
+    public void followUser(Key userA, Key userB) throws InterruptedException {
 
-//        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB);
 
         Set set;
 
@@ -300,6 +298,10 @@ public class Database {
 
         set = mapFollowing.get(userA);
         set.add(userB);
+
+        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB + " and it has indice : " + ((SegmentAware)userB).getReference().get());
+
+        TimeUnit.SECONDS.sleep(100000);
 
 //        if (set.add(userB)){
 ////            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
