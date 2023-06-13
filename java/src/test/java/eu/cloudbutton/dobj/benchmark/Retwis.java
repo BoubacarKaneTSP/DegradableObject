@@ -832,7 +832,7 @@ public class Retwis {
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
 //                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
-                userA = database.getListLocalUser().get(database.getThreadID().get()).get(num);
+                userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
                 Queue<Key> listFollow = usersFollow.get(userA);
 
                 switch (typeComputed){
