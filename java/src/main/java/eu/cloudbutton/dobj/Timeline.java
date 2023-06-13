@@ -34,8 +34,8 @@ public class Timeline<T> {
 
        int topkSize = topk.size();
 
-       for (int i = 0; i < topkSize - LENGTH; i++)
-           topk.poll();
+        for (int i = 0; i < topkSize - LENGTH; i++)
+            topk.poll();
 
 //       timeline.clear();
 
