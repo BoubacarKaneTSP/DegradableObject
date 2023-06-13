@@ -323,7 +323,7 @@ public class Database {
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
 
-//            timeline.add(msg);
+            timeline.add(msg);
         }
     }
 
