@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Timeline;
+import eu.cloudbutton.dobj.asymmetric.CounterMISD;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
