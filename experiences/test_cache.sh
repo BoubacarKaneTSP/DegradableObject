@@ -6,7 +6,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=1
 benchmarkTime=20
-warmingUpTime=60
+warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=100000

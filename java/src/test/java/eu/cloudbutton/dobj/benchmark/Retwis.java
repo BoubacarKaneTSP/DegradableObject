@@ -971,6 +971,7 @@ public class Retwis {
               //      performHeapDump(_tag, "Post", (int) _nbUserInit);
 
                     saveTimelineHistogram();
+                    TimeUnit.SECONDS.sleep(5);
                 }else{
 
                     long startTime, endTime;
@@ -1035,7 +1036,7 @@ public class Retwis {
             PrintWriter printWriter;
             FileWriter fileWriter;
 
-            fileWriter = new FileWriter("Timeline_Distribution_"+ _tag + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            fileWriter = new FileWriter("Timeline_Distribution_"+ _tag +"_"+ _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
             String txt = "";
