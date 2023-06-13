@@ -261,10 +261,12 @@ public class Database {
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
         mapFollowers.put(user, new ConcurrentSkipListSet<>());
-        if (typeSet.contains("Extended"))
-            mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
-        else
-            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
+        mapFollowing.put(user, new HashSet<>());
+
+//        if (typeSet.contains("Extended"))
+//            mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
+//        else
+//            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 

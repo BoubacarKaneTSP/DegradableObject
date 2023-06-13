@@ -18,7 +18,7 @@ public class Timeline<T> {
     }
 
     public void add(T elt) throws InterruptedException {
-//        timeline.offer(elt);
+        timeline.offer(elt);
    }
 
    public void realadd(T elt) throws InterruptedException {
@@ -44,5 +44,6 @@ public class Timeline<T> {
 
    public void clear(){
         timeline.clear();
+        topk.clear();
    }
 }

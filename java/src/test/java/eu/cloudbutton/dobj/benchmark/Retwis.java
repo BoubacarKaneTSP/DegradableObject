@@ -725,6 +725,9 @@ public class Retwis {
                     compute(type, nbLocalOperations, timeLocalOperations);
                 }
 
+
+                resetAllTimeline();
+
                 long startTimeBenchmark, endTimeBenchmark;
 
                 startTimeBenchmark = System.nanoTime();
@@ -899,6 +902,12 @@ public class Retwis {
                 }
 
                 break;
+            }
+        }
+
+        public void resetAllTimeline(){
+            for (Key usr: database.getLocalUsersUsageProbability().get().values()){
+                database.getMapTimelines().get(usr).clear();
             }
         }
     }
