@@ -41,6 +41,7 @@ public class Database {
     private final ThreadLocal<Random> random;
     private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.3, 0.2, 0.1, 0.1, 0.05, 0.05));
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.2, 0.1, 0.05, 0.05, 0.02, 0.02));
+    ThreadLocal<Integer> threadID;
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -76,6 +77,7 @@ public class Database {
         this.powerLawArray = powerLawArray;
         listAllUser = new ArrayList<>();
         mapNbFollowers = new ConcurrentHashMap<>();
+        threadID = new ThreadLocal<>();
 
 
         for (int i = 0; i < nbThread; i++) {
@@ -90,8 +92,8 @@ public class Database {
     public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
 //        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
 
-        int threadID = count.getAndIncrement();
-        List<Key> users = listLocalUser.get(threadID);
+        threadID.set(count.getAndIncrement());
+        List<Key> users = listLocalUser.get(threadID.get());
 
         //adding all users
 
@@ -113,7 +115,7 @@ public class Database {
 
 
 //        followingTest(threadID);
-        followingPhase(threadID, localUsersFollow);
+        followingPhase(threadID.get(), localUsersFollow);
 
         latchHistogram.countDown();
 

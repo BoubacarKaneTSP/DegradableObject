@@ -721,9 +721,10 @@ public class Retwis {
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());
 
+                int num = 0;
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, nbLocalOperations, timeLocalOperations);
+                    compute(type, nbLocalOperations, timeLocalOperations, num++);
                 }
 
 
@@ -736,9 +737,11 @@ public class Retwis {
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-                        compute(type, nbLocalOperations, timeLocalOperations);
+                        compute(type, nbLocalOperations, timeLocalOperations, i);
                     }
                 }else{
+
+                    num=0;
 
                     while (flagComputing.get()){
 
@@ -746,10 +749,10 @@ public class Retwis {
 
                         if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, nbLocalOperations, timeLocalOperations);
+                                compute(type, nbLocalOperations, timeLocalOperations, num++);
                             }
                         }else{
-                            compute(type, nbLocalOperations, timeLocalOperations);
+                            compute(type, nbLocalOperations, timeLocalOperations, num++);
                         }
                     }
 
@@ -804,7 +807,7 @@ public class Retwis {
             return type;
         }
 
-        public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps, int num) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             startTime = 0L;
             endTime= 0L;
@@ -828,8 +831,8 @@ public class Retwis {
                     typeComputed = chooseOperation();
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
-                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
-
+//                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
+                userA = database.getListLocalUser().get(database.getThreadID().get()).get(num);
                 Queue<Key> listFollow = usersFollow.get(userA);
 
                 switch (typeComputed){
