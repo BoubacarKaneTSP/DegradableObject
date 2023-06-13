@@ -147,12 +147,12 @@ public class Database {
                     nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
                     nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
                 }else{
-                    nbFollowing = (int) (listNbFollowing.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
-                    nbFollower = (int) (listNbFollower.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
+//                    nbFollowing = (int) (listNbFollowing.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
+//                    nbFollower = (int) (listNbFollower.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
 //                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
 //                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
-//                    nbFollowing = 10;
-//                    nbFollower = 20;
+                    nbFollowing = 10;
+                    nbFollower = 20;
                 }
 
                 sommeProba += powerLawVal;
