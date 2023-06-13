@@ -299,9 +299,9 @@ public class Database {
         set = mapFollowing.get(userA);
         set.add(userB);
 
-        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB + " and it has indice : " + ((SegmentAware)userB).getReference().get());
+//        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB + " and it has indice : " + ((SegmentAware)userB).getReference().get());
 
-        TimeUnit.SECONDS.sleep(100000);
+//        TimeUnit.SECONDS.sleep(100000);
 
 //        if (set.add(userB)){
 ////            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
