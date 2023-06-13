@@ -49,6 +49,7 @@ import java.util.Queue;
 import java.util.Spliterator;
 import java.util.Spliterators;
 //import java.util.concurrent.Helpers;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -95,7 +96,7 @@ import java.util.function.Predicate;
  * @author Martin Buchholz
  * @param <E> the type of elements held in this deque
  */
-public class DequeueMASP<E>
+public class DequeMASP<E>
         extends AbstractCollection<E>
         implements Deque<E>, java.io.Serializable {
 
@@ -282,6 +283,8 @@ public class DequeueMASP<E>
      */
     private transient volatile Node<E> tail;
 
+    private LongAdder queueSize;
+
     private static final Node<Object> PREV_TERMINATOR, NEXT_TERMINATOR;
 
     @SuppressWarnings("unchecked")
@@ -320,10 +323,11 @@ public class DequeueMASP<E>
         for (;;)
             for (Node<E> h = head, p = h, q;;) {
                 if ((q = p.prev) != null &&
-                        (q = (p = q).prev) != null)
+                        (q = (p = q).prev) != null) {
                     // Check for head updates every other hop.
                     // If p == q, we are sure to follow head instead.
                     p = (h != (h = head)) ? h : q;
+                }
                 else if (p.next == p) // PREV_TERMINATOR
                     continue restartFromHead;
                 else {
@@ -335,6 +339,8 @@ public class DequeueMASP<E>
                         // and for newNode to become "live".
                         if (p != h) // hop two nodes at a time; failure is OK
                             HEAD.weakCompareAndSet(this, h, newNode);
+
+                        queueSize.increment();
                         return;
                     }
                     // Lost CAS race to another thread; re-read prev
@@ -367,6 +373,8 @@ public class DequeueMASP<E>
                         // and for newNode to become "live".
                         if (p != t) // hop two nodes at a time; failure is OK
                             TAIL.weakCompareAndSet(this, t, newNode);
+
+                        queueSize.increment();
                         return;
                     }
                     // Lost CAS race to another thread; re-read next
@@ -770,8 +778,9 @@ public class DequeueMASP<E>
     /**
      * Constructs an empty deque.
      */
-    public DequeueMASP() {
+    public DequeMASP() {
         head = tail = new Node<E>();
+        queueSize = new LongAdder();
     }
 
     /**
@@ -783,7 +792,7 @@ public class DequeueMASP<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public DequeueMASP(Collection<? extends E> c) {
+    public DequeMASP(Collection<? extends E> c) {
         // Copy c into a private chain of Nodes
         Node<E> h = null, t = null;
         for (E e : c) {
@@ -797,6 +806,7 @@ public class DequeueMASP<E>
             }
         }
         initHeadTail(h, t);
+        queueSize = new LongAdder();
     }
 
     /**
@@ -921,6 +931,7 @@ public class DequeueMASP<E>
                     if (first.prev != null) continue restart;
                     if (ITEM.compareAndSet(p, item, null)) {
                         unlink(p);
+                        queueSize.decrement();
                         return item;
                     }
                 }
@@ -934,24 +945,36 @@ public class DequeueMASP<E>
     }
 
     public E pollLast() {
-        restart: for (;;) {
-            for (Node<E> last = last(), p = last;;) {
-                final E item;
-                if ((item = p.item) != null) {
-                    // recheck for linearizability
-                    if (last.next != null) continue restart;
-                    if (ITEM.compareAndSet(p, item, null)) {
-                        unlink(p);
-                        return item;
-                    }
-                }
-                if (p == (p = p.prev)) continue restart;
-                if (p == null) {
-                    if (last.next != null) continue restart;
-                    return null;
-                }
-            }
+        if (head != tail){
+
+            E item = head.next.item;
+            head = head.next;
+//            queueSize.decrementAndGet();
+            queueSize.decrement();
+//            head.item = null;
+            return item;
         }
+
+        return null;
+//        restart: for (;;) {
+//            for (Node<E> last = last(), p = last;;) {
+//                final E item;
+//                if ((item = p.item) != null) {
+//                    // recheck for linearizability
+//                    if (last.next != null) continue restart;
+//                    if (ITEM.compareAndSet(p, item, null)) {
+//                        unlink(p);
+//                        queueSize.decrement();
+//                        return item;
+//                    }
+//                }
+//                if (p == (p = p.prev)) continue restart;
+//                if (p == null) {
+//                    if (last.next != null) continue restart;
+//                    return null;
+//                }
+//            }
+//        }
     }
 
     /**
@@ -1113,17 +1136,18 @@ public class DequeueMASP<E>
      * @return the number of elements in this deque
      */
     public int size() {
-        restart: for (;;) {
-            int count = 0;
-            for (Node<E> p = first(); p != null;) {
-                if (p.item != null)
-                    if (++count == Integer.MAX_VALUE)
-                        break;  // @see Collection.size()
-                if (p == (p = p.next))
-                    continue restart;
-            }
-            return count;
-        }
+        return queueSize.intValue();
+//        restart: for (;;) {
+//            int count = 0;
+//            for (Node<E> p = first(); p != null;) {
+//                if (p.item != null)
+//                    if (++count == Integer.MAX_VALUE)
+//                        break;  // @see Collection.size()
+//                if (p == (p = p.next))
+//                    continue restart;
+//            }
+//            return count;
+//        }
     }
 
     /**
@@ -1666,9 +1690,9 @@ public class DequeueMASP<E>
         NEXT_TERMINATOR.prev = NEXT_TERMINATOR;
         try {
             MethodHandles.Lookup l = MethodHandles.lookup();
-            HEAD = l.findVarHandle(DequeueMASP.class, "head",
+            HEAD = l.findVarHandle(DequeMASP.class, "head",
                     Node.class);
-            TAIL = l.findVarHandle(DequeueMASP.class, "tail",
+            TAIL = l.findVarHandle(DequeMASP.class, "tail",
                     Node.class);
             PREV = l.findVarHandle(Node.class, "prev", Node.class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);

@@ -32,7 +32,7 @@ public class QueueTest {
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueMASP");
         factory.setFactoryQueue(cls);
-//        doConcurrentAppend(factory.getQueue());
+        doConcurrentAppend(factory.getQueue());
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
         factory.setFactoryQueue(cls);

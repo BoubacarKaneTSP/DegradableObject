@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj;
 
+import eu.cloudbutton.dobj.asymmetric.DequeMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
 import eu.cloudbutton.dobj.asymmetric.SetMWSR;
@@ -24,10 +25,7 @@ import eu.cloudbutton.dobj.utils.FactoryIndice;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.*;
 
 public class Factory {
 
@@ -202,8 +200,12 @@ public class Factory {
 
             case "Queue":
                 return new ConcurrentLinkedQueue<>();
+            case "Deque":
+                return new ConcurrentLinkedDeque();
             case "QueueMASP":
                 return new QueueMASP<>();
+            case "DequeMASP":
+                return new DequeMASP<>();
             case "MapQueue":
                 return new MapQueue<>();
             case "QueueSASP":
