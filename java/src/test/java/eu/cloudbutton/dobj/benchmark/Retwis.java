@@ -942,7 +942,7 @@ public class Retwis {
 
 //                    saveDistributionHistogram("Pre_Benchmark");
 
-            //        performHeapDump(_tag, "Pre", (int) _nbUserInit);
+//                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
                     latchFillDatabase.countDown();
                     latchFillDatabase.await();
@@ -971,7 +971,7 @@ public class Retwis {
                     flagComputing.set(false);
 //                    stopMonitoring();
 //                    TimeUnit.SECONDS.sleep(2);
-              //      performHeapDump(_tag, "Post", (int) _nbUserInit);
+//                    performHeapDump(_tag, "Post", (int) _nbUserInit);
 
 //                    saveTimelineHistogram();
                     TimeUnit.SECONDS.sleep(5);
