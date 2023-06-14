@@ -153,8 +153,8 @@ public class Database {
 //                    nbFollower = (int) (listNbFollower.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
 //                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
 //                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
-                    nbFollowing = 100;
-                    nbFollower = 200;
+                    nbFollowing = 10;
+                    nbFollower = 20;
                 }
 
                 sommeProba += powerLawVal;
