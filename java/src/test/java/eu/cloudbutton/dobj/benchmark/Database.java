@@ -233,6 +233,7 @@ public class Database {
 //            System.out.println(nbFollow);
 //	        System.out.println(nbFollow);
 
+            int nbFailFollow = 0;
             for (int i = 0; i < nbFollow;) {
 
 
@@ -242,7 +243,7 @@ public class Database {
 //                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
 
                 Key userB;
-                userB = listAllUser.get(random.get().nextInt(nbUsers));
+                userB = listAllUser.get(i%nbUsers);
 
                 assert userB != null : "User generated is null";
 
@@ -250,7 +251,11 @@ public class Database {
                     followUser(userA, userB);
 		            usersFollow.add(userB);
                     i++;
-                }
+                }else
+                    nbFailFollow++;
+
+                if (nbFailFollow >= nbUsers)
+                    break;
             }
 
         }
