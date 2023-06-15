@@ -974,13 +974,15 @@ public class Retwis {
 //                    performHeapDump(_tag, "Post", (int) _nbUserInit);
 
                     saveTimelineHistogram();
-                    TimeUnit.SECONDS.sleep(5);
+//                    TimeUnit.SECONDS.sleep(5);
+                    saveDistributionHistogram("Post_Benchmark");
                 }else{
 
                     long startTime, endTime;
 
-                    if (_p)
+                    if (_p) {
                         System.out.println(" ==> Computing the completion time for " + _nbOps + " operations");
+                    }
 
                     startTime = System.nanoTime();
 
@@ -992,7 +994,6 @@ public class Retwis {
                     completionTime += endTime - startTime;
                 }
 
-                saveDistributionHistogram("Post_Benchmark");
 
                 if (_gcinfo)
                     System.out.println("End benchmark");
@@ -1004,7 +1005,9 @@ public class Retwis {
         }
 
         private void saveDistributionHistogram(String tag) throws IOException {
-            System.out.println("Saving histogram");
+            if (_p){
+                System.out.println("Saving "+ tag +" distribution histogram");
+            }
 
             int range = 5;
             int max = 100;
@@ -1044,6 +1047,10 @@ public class Retwis {
         }
 
         private void saveTimelineHistogram() throws IOException {
+            if (_p){
+                System.out.println("saving timeline histogram");
+            }
+
             PrintWriter printWriter;
             FileWriter fileWriter;
 
