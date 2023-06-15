@@ -46,7 +46,7 @@ public class Database {
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.3, 0.1, 0.1, 0.05, 0.05, 0.05));
     ThreadLocal<Integer> threadID;
     private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SHAPE = 2.0; // Paramètre de forme de la loi de puissance
+    private static final double SHAPE = 1.0; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -146,6 +146,7 @@ public class Database {
 
 
         for (int i = 0; i < nbUsers;) {
+            System.out.println(i);
             Key user = generateUser();
             if (localSetUser.add(user)){
                 /*int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
