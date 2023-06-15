@@ -157,8 +157,8 @@ public class Database {
 //                    nbFollower = 20;
                 }
 
-                sommeProba += powerLawVal;
-//                sommeProba += 1;
+//                sommeProba += powerLawVal;
+                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
