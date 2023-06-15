@@ -132,9 +132,9 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing, maxFollower, nbFollowing, nbFollower;
 
-	    double outRatio = 800000 / 175000000.0;
+	    double outRatio = 1600000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
-        double inRatio = 1000000 / 175000000.0;
+        double inRatio = 2000000 / 175000000.0;
         maxFollower = (int) (nbUsers * inRatio);
 
 
@@ -146,8 +146,8 @@ public class Database {
                 int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
 
                 if (nbUsers >= 10000){
-                    nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
-                    nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
+                    nbFollowing = Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
+                    nbFollower =  Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
                 }else{
 //                    nbFollowing = (int) (listNbFollowing.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
 //                    nbFollower = (int) (listNbFollower.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
