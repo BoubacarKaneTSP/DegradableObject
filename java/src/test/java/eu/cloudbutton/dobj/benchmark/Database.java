@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.math3.distribution.ParetoDistribution;
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 @Getter
 public class Database {
 
@@ -42,6 +45,8 @@ public class Database {
     private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.4, 0.2, 0.2, 0.1, 0.1, 0.1));
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.3, 0.1, 0.1, 0.05, 0.05, 0.05));
     ThreadLocal<Integer> threadID;
+    private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SHAPE = 2.0; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -143,7 +148,7 @@ public class Database {
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
             if (localSetUser.add(user)){
-                int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
+                /*int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
 
                 if (nbUsers >= 100){
                     nbFollowing = Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
@@ -166,8 +171,10 @@ public class Database {
                     nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
 //                    nbFollowing = 10;
 //                    nbFollower = 20;
-                }
+                }*/
 
+                nbFollower = generatePowerLawValue(nbUsers);
+                nbFollowing = generatePowerLawValue(nbFollower);
 //                sommeProba += powerLawVal;
                 sommeProba += 1;
 
@@ -185,6 +192,17 @@ public class Database {
         System.out.println("Done generating users");
 
         usersFollowProbabilityRange = sommeProba;
+    }
+
+    public static int generatePowerLawValue(int maxValue) {
+        ParetoDistribution distribution = new ParetoDistribution(SCALE, SHAPE);
+
+        double randomValue;
+        do {
+            randomValue = distribution.sample();
+        }while(randomValue> maxValue);
+
+        return (int) randomValue;
     }
 
     public void followingTest(int threadID) throws InterruptedException { // Each user follow only one user at first
