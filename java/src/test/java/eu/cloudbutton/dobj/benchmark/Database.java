@@ -39,8 +39,8 @@ public class Database {
     private long usersFollowProbabilityRange;
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
-    private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.3, 0.2, 0.1, 0.1, 0.05, 0.05));
-    private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.2, 0.1, 0.05, 0.05, 0.02, 0.02));
+    private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.4, 0.2, 0.2, 0.1, 0.1, 0.1));
+    private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.3, 0.1, 0.1, 0.05, 0.05, 0.05));
     ThreadLocal<Integer> threadID;
 
 
