@@ -145,7 +145,7 @@ public class Database {
             if (localSetUser.add(user)){
                 int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
 
-                if (nbUsers >= 100000){
+                if (nbUsers >= 10000){
                     nbFollowing = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
                     nbFollower = Math.min(powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
                 }else{
