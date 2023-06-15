@@ -132,9 +132,9 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing, maxFollower, nbFollowing, nbFollower;
 
-	    double outRatio = 80000 / 175000000.0;
+	    double outRatio = 8000 / 175000000.0;
         maxFollowing = (int) (nbUsers*outRatio);
-        double inRatio = 100000 / 175000000.0;
+        double inRatio = 10000 / 175000000.0;
         maxFollower = (int) (nbUsers * inRatio);
 
 
