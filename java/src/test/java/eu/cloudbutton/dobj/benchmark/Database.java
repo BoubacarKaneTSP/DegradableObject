@@ -201,6 +201,7 @@ public class Database {
         double randomValue;
         do {
             randomValue = distribution.sample();
+            System.out.println(randomValue);
         }while(randomValue> maxValue);
 
         return (int) randomValue;
