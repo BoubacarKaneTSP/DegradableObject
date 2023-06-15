@@ -196,15 +196,13 @@ public class Database {
     }
 
     public static int generatePowerLawValue(int maxValue) {
-        ParetoDistribution distribution = new ParetoDistribution(SCALE, SHAPE);
+        ParetoDistribution pareto = new ParetoDistribution(SHAPE,SCALE);
+        double y = pareto.sample();
 
-        double randomValue;
-        do {
-            randomValue = distribution.sample();
-//            System.out.println(randomValue);
-        }while(randomValue > maxValue);
+        // Appliquer une transformation linéaire pour mettre à l'échelle la valeur
+        double scaledValue = (y / SCALE) * maxValue;
 
-        return (int) randomValue;
+        return (int) scaledValue;
     }
 
     public void followingTest(int threadID) throws InterruptedException { // Each user follow only one user at first
