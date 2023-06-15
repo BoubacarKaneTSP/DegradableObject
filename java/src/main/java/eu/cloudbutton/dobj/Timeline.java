@@ -19,8 +19,8 @@ public class Timeline<T> {
     public Timeline(Queue<T> timeline) {
         this.timeline = timeline;
         topk = new LinkedList<>();
-        flagSizeCapacity = new AtomicBoolean(false);
-        this.currentSize = new AtomicInteger();
+//        flagSizeCapacity = new AtomicBoolean(false);
+//        this.currentSize = new AtomicInteger();
     }
 
     public void add(T elt) throws InterruptedException {
