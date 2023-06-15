@@ -149,11 +149,15 @@ public class Database {
                     nbFollowing = Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
                     nbFollower =  Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
 
-                    while (nbFollower <= 0)
-                        nbFollower*=10;
+                    while (nbFollower <= 0) {
+                        nbFollower *= 10;
+                        System.out.println("nbFollower " + nbFollower);
+                    }
 
-                    while (nbFollowing <= 0)
-                        nbFollowing*=10;
+                    while (nbFollowing <= 0) {
+                        nbFollowing *= 10;
+                        System.out.println(nbFollowing);
+                    }
 
                 }else{
 //                    nbFollowing = (int) (listNbFollowing.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
