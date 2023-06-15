@@ -146,7 +146,7 @@ public class Database {
 
 
         for (int i = 0; i < nbUsers;) {
-            System.out.println(i);
+//            System.out.println(i);
             Key user = generateUser();
             if (localSetUser.add(user)){
                 /*int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
@@ -175,7 +175,7 @@ public class Database {
                 }*/
 
                 nbFollower = generatePowerLawValue(nbUsers);
-                nbFollowing = generatePowerLawValue(nbFollower);
+                nbFollowing = generatePowerLawValue(nbUsers);
 //                sommeProba += powerLawVal;
                 sommeProba += 1;
 
@@ -201,8 +201,8 @@ public class Database {
         double randomValue;
         do {
             randomValue = distribution.sample();
-            System.out.println(randomValue);
-        }while(randomValue> maxValue);
+//            System.out.println(randomValue);
+        }while(randomValue > maxValue);
 
         return (int) randomValue;
     }
