@@ -198,7 +198,7 @@ public class Database {
     }
 
     public static int generatePowerLawValue(int maxValue) {
-        ParetoDistribution pareto = new ParetoDistribution(SHAPE,1000000);
+        ParetoDistribution pareto = new ParetoDistribution(SCALE,SHAPE);
         double y = pareto.sample();
 
         System.out.println("y value => " + y);
