@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.RandomGeneratorFactory;
 
 @Getter
 public class Database {
@@ -196,7 +198,7 @@ public class Database {
     }
 
     public static int generatePowerLawValue(int maxValue) {
-        ParetoDistribution pareto = new ParetoDistribution(SHAPE,SCALE);
+        ParetoDistribution pareto = new ParetoDistribution(SHAPE,1000000);
         double y = pareto.sample();
 
         System.out.println("y value => " + y);
