@@ -45,7 +45,7 @@ public class Database {
     private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.4, 0.2, 0.2, 0.1, 0.1, 0.1));
     private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.3, 0.1, 0.1, 0.05, 0.05, 0.05));
     ThreadLocal<Integer> threadID;
-    private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALE = 100.0; // Paramètre d'échelle de la loi de puissance
     private static final double SHAPE = 1.0; // Paramètre de forme de la loi de puissance
 
 
