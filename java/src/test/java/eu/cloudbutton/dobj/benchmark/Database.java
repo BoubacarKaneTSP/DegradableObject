@@ -211,7 +211,7 @@ public class Database {
         double scaleFactor = desiredMaxValue / maxGeneratedValue;
 
         for (int i = 0; i < numValues; i++) {
-            double scaledValue = values.get(i) * scaleFactor;
+            double scaledValue = doubleValues.get(i) * scaleFactor;
             values.set(i, (int) Math.round(scaledValue));
             System.out.println(scaledValue);
         }
