@@ -212,7 +212,7 @@ public class Database {
 
         for (int i = 0; i < numValues; i++) {
             double scaledValue = doubleValues.get(i) * scaleFactor;
-            values.set(i, (int) Math.round(scaledValue));
+            values.add((int) Math.round(scaledValue));
             System.out.println(scaledValue);
         }
 
