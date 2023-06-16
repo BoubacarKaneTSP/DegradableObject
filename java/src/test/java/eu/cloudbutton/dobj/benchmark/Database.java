@@ -173,8 +173,8 @@ public class Database {
                 nbFollower = listNbFollower.get(i);
                 nbFollowing = listNbFollowing.get(i);
 
-//                sommeProba += powerLawVal;
-                sommeProba += 1;
+                sommeProba += nbFollowing;
+//                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
@@ -234,6 +234,8 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID);
 
         int j = 0;
+        long randVal;
+
         for (Key userA: users){
             if(++j%100000 == 0)
                 System.out.println(j);
@@ -249,23 +251,23 @@ public class Database {
 
 //                System.out.println(i + " | " + nbFollow);
 
-//                randVal = random.get().nextLong() % usersFollowProbabilityRange;
-//                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
-
-                Key userB;
-                userB = listAllUser.get(i%nbUsers);
+                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
+//
+//                Key userB;
+//                userB = listAllUser.get(i%nbUsers);
 
                 assert userB != null : "User generated is null";
 
-                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
-                    followUser(userA, userB);
-		            usersFollow.add(userB);
-                    i++;
-                }else
-                    nbFailFollow++;
-
-                if (nbFailFollow >= nbUsers)
-                    break;
+                followUser(userA, userB);
+                usersFollow.add(userB);
+                i++;
+//                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
+//                }else
+//                    nbFailFollow++;
+//
+//                if (nbFailFollow >= nbUsers)
+//                    break;
             }
 
         }
