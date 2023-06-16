@@ -44,11 +44,10 @@ public class Database {
     private long usersFollowProbabilityRange;
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
-    private List<Double> listNbFollower = new ArrayList<>(Arrays.asList(0.7, 0.5, 0.5 , 0.4, 0.4, 0.2, 0.2, 0.1, 0.1, 0.1));
-    private List<Double> listNbFollowing = new ArrayList<>(Arrays.asList(0.5, 0.4, 0.4 , 0.3, 0.3, 0.1, 0.1, 0.05, 0.05, 0.05));
     ThreadLocal<Integer> threadID;
     private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SHAPE = 1.39; // Paramètre de forme de la loi de puissance
+    private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
+    private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -139,13 +138,8 @@ public class Database {
         int sizeArray = powerLawArray.size();
         int maxFollowing, maxFollower, nbFollowing, nbFollower;
 
-	    double outRatio = 16000000 / 175000000.0;
-        maxFollowing = (int) (nbUsers*outRatio);
-        double inRatio = 20000000 / 175000000.0;
-        maxFollower = (int) (nbUsers * inRatio);
-
-
-
+        List<Integer> listNbFollower = generateValues(nbUsers, nbUsers, FOLLOWERSHAPE);
+        List<Integer> listNbFollowing = generateValues(nbUsers, nbUsers, FOLLOWINGSHAPE);
 
         for (int i = 0; i < nbUsers;) {
 //            System.out.println(i);
@@ -176,18 +170,17 @@ public class Database {
 //                    nbFollower = 20;
                 }*/
 
-//                nbFollower = generatePowerLawValue(nbUsers);
-//                nbFollowing = generatePowerLawValue(nbUsers);
+                nbFollower = listNbFollower.get(i);
+                nbFollowing = listNbFollowing.get(i);
 
-                generateValues(nbUsers, nbUsers);
                 System.exit(0);
 //                sommeProba += powerLawVal;
                 sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
-//                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-//                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
+                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
+                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
                 i++;
             }
         }
@@ -200,15 +193,16 @@ public class Database {
         usersFollowProbabilityRange = sommeProba;
     }
 
-    public static List<Double> generateValues(int numValues, double desiredMaxValue) {
-        List<Double> values = new ArrayList<>();
+    public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE) {
+        List<Double> doubleValues = new ArrayList<>();
+        List<Integer> values = new ArrayList<>();
 
         ParetoDistribution distribution = new ParetoDistribution(SCALE,SHAPE);
 
         double maxGeneratedValue = 0;
         for (int i = 0; i < numValues; i++) {
             double randomValue = distribution.sample();
-            values.add(randomValue);
+            doubleValues.add(randomValue);
             if (randomValue > maxGeneratedValue) {
                 maxGeneratedValue = randomValue;
             }
@@ -218,25 +212,11 @@ public class Database {
 
         for (int i = 0; i < numValues; i++) {
             double scaledValue = values.get(i) * scaleFactor;
-            values.set(i, scaledValue);
+            values.set(i, (int) Math.round(scaledValue));
             System.out.println(scaledValue);
         }
 
         return values;
-    }
-
-    public static int generatePowerLawValue(int maxValue) {
-        ParetoDistribution pareto = new ParetoDistribution(SCALE,SHAPE);
-        double y = pareto.sample();
-
-        System.out.println("y value => " + y);
-        // Appliquer une transformation linéaire pour mettre à l'échelle la valeur
-        double scaledValue = (y / SCALE) * maxValue;
-
-        System.out.println("scaledValue => "+scaledValue);
-        System.out.println();
-
-        return (int) scaledValue;
     }
 
     public void followingTest(int threadID) throws InterruptedException { // Each user follow only one user at first
