@@ -199,10 +199,12 @@ public class Database {
         ParetoDistribution pareto = new ParetoDistribution(SHAPE,SCALE);
         double y = pareto.sample();
 
+        System.out.println("y value => " + y);
         // Appliquer une transformation linéaire pour mettre à l'échelle la valeur
         double scaledValue = (y / SCALE) * maxValue;
 
-        System.out.println(scaledValue);
+        System.out.println("scaledValue => "+scaledValue);
+        System.out.println();
 
         return (int) scaledValue;
     }
