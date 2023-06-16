@@ -202,6 +202,8 @@ public class Database {
         // Appliquer une transformation linéaire pour mettre à l'échelle la valeur
         double scaledValue = (y / SCALE) * maxValue;
 
+        System.out.println(scaledValue);
+
         return (int) scaledValue;
     }
 
