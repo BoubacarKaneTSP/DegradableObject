@@ -173,7 +173,6 @@ public class Database {
                 nbFollower = listNbFollower.get(i);
                 nbFollowing = listNbFollowing.get(i);
 
-                System.exit(0);
 //                sommeProba += powerLawVal;
                 sommeProba += 1;
 
@@ -213,7 +212,6 @@ public class Database {
         for (int i = 0; i < numValues; i++) {
             double scaledValue = doubleValues.get(i) * scaleFactor;
             values.add((int) Math.round(scaledValue));
-            System.out.println(scaledValue);
         }
 
         return values;
