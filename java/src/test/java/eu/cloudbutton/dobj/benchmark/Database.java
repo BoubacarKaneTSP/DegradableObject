@@ -176,15 +176,18 @@ public class Database {
 //                    nbFollower = 20;
                 }*/
 
-                nbFollower = generatePowerLawValue(nbUsers);
-                nbFollowing = generatePowerLawValue(nbUsers);
+//                nbFollower = generatePowerLawValue(nbUsers);
+//                nbFollowing = generatePowerLawValue(nbUsers);
+
+                generateValues(nbUsers, nbUsers);
+                System.exit(0);
 //                sommeProba += powerLawVal;
                 sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
-                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
+//                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
+//                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
                 i++;
             }
         }
@@ -195,6 +198,31 @@ public class Database {
         System.out.println("Done generating users");
 
         usersFollowProbabilityRange = sommeProba;
+    }
+
+    public static List<Double> generateValues(int numValues, double desiredMaxValue) {
+        List<Double> values = new ArrayList<>();
+
+        ParetoDistribution distribution = new ParetoDistribution(SCALE,SHAPE);
+
+        double maxGeneratedValue = 0;
+        for (int i = 0; i < numValues; i++) {
+            double randomValue = distribution.sample();
+            values.add(randomValue);
+            if (randomValue > maxGeneratedValue) {
+                maxGeneratedValue = randomValue;
+            }
+        }
+
+        double scaleFactor = desiredMaxValue / maxGeneratedValue;
+
+        for (int i = 0; i < numValues; i++) {
+            double scaledValue = values.get(i) * scaleFactor;
+            values.set(i, scaledValue);
+            System.out.println(scaledValue);
+        }
+
+        return values;
     }
 
     public static int generatePowerLawValue(int maxValue) {
