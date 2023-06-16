@@ -135,8 +135,7 @@ public class Database {
 
         Set<Key> localSetUser = new HashSet<>();
         long sommeProba = 0;
-        int sizeArray = powerLawArray.size();
-        int maxFollowing, maxFollower, nbFollowing, nbFollower;
+        int nbFollowing, nbFollower;
 
         List<Integer> listNbFollower = generateValues(nbUsers, nbUsers, FOLLOWERSHAPE);
         List<Integer> listNbFollowing = generateValues(nbUsers, nbUsers, FOLLOWINGSHAPE);
@@ -145,30 +144,6 @@ public class Database {
 //            System.out.println(i);
             Key user = generateUser();
             if (localSetUser.add(user)){
-                /*int powerLawVal = powerLawArray.get(random.get().nextInt(sizeArray));
-
-                if (nbUsers >= 100){
-                    nbFollowing = Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollowing);
-                    nbFollower =  Math.min(2*powerLawArray.get(random.get().nextInt(sizeArray)), maxFollower);
-
-                    while (nbFollower <= 0) {
-                        nbFollower *= 10;
-                        System.out.println("nbFollower " + nbFollower);
-                    }
-
-                    while (nbFollowing <= 0) {
-                        nbFollowing *= 10;
-                        System.out.println(nbFollowing);
-                    }
-
-                }else{
-//                    nbFollowing = (int) (listNbFollowing.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
-//                    nbFollower = (int) (listNbFollower.get(random.get().nextInt(listNbFollowing.size())) * nbUsers);
-                    nbFollowing = (int) (listNbFollowing.get(i%listNbFollowing.size()) * nbUsers);
-                    nbFollower = (int) (listNbFollower.get(i%listNbFollower.size()) * nbUsers);
-//                    nbFollowing = 10;
-//                    nbFollower = 20;
-                }*/
 
                 nbFollower = listNbFollower.get(i);
                 nbFollowing = listNbFollowing.get(i);
@@ -196,7 +171,8 @@ public class Database {
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
 
-        ParetoDistribution distribution = new ParetoDistribution(SCALE,SHAPE);
+        RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
+        ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
 
         double maxGeneratedValue = 0;
         for (int i = 0; i < numValues; i++) {
