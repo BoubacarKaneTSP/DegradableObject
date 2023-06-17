@@ -46,8 +46,8 @@ public class Database {
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
     private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
-    private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
+    private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
+    private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
