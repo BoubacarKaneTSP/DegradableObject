@@ -145,8 +145,8 @@ public class Database {
             Key user = generateUser();
             if (localSetUser.add(user)){
 
-                nbFollower = listNbFollower.get(i);
-                nbFollowing = listNbFollowing.get(i);
+                nbFollower = Math.max(1,listNbFollower.get(i));
+                nbFollowing = Math.max(1,listNbFollowing.get(i));
 
                 sommeProba += nbFollowing;
 //                sommeProba += 1;
