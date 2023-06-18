@@ -31,11 +31,15 @@ tag=""
 nbThreads=""
 nbItemsPerThread=""
 computeGCInfo=false
+alpha=""
 
-while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:j' OPTION; do
+while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
+      ;;
+    A)
+      alpha="$OPTARG"
       ;;
     c)
       typeCounter="$OPTARG"
@@ -259,7 +263,7 @@ then
 
 #    rm heapdump_${tag}_${nbUser}.txt
 #    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 btracer -o outputBtrace.txt ScanBtrace.class -Xms5g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
-    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xms5g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -alphaInit alpha
 #    lastpid=$!
 #    ./heapdump.sh $tag $nbUser $lastpid
   fi

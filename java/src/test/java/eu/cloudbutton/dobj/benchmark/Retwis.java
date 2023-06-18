@@ -202,9 +202,10 @@ public class Retwis {
 
         List<Double> listAlpha = new ArrayList<>();
 
-        for (double i = _alphaInit ; i >= _alphaMin; i-=_alphaStep) {
-            listAlpha.add(i);
-        }
+//        for (double i = _alphaInit ; i >= _alphaMin; i-=_alphaStep) {
+//            listAlpha.add(i);
+//        }
+        listAlpha.add(_alphaInit);
 
         NB_USERS = (int) _nbUserInit;
 
