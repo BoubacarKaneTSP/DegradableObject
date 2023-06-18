@@ -16,11 +16,11 @@ ratio="5 15 30 50"
 
 alphas=("0.5" "0.7" "0.9" "1.1" "1.3" "1.5" "1.7" "1.9" "2")
 
-for alpha in "${alpha[@]}";
+for alpha in "${alphas[@]}";
 do
-  # shellcheck disable=SC2001
-  str_alpha=$(echo "$alhpa" | sed "s/.//g")
-
+  str_alpha=$(echo "$alpha" | tr '.' '-')
+  echo "$str_alpha"
+  echo "$alpha"
   for nbUsersInit in 100
   do
     # Cleaning old file
