@@ -849,8 +849,8 @@ public class Retwis {
                         break;
                     case FOLLOW:
 
-                        val = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
-                        userB = database.getUsersFollowProbability().ceilingEntry(val).getValue();
+                        long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
+                        userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                         if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                         startTime = System.nanoTime();
