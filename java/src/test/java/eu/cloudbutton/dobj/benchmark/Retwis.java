@@ -831,7 +831,7 @@ public class Retwis {
                 if (nbAttempt > nbAttemptMax)
                     typeComputed = chooseOperation();
 
-                long val = random.get().nextLong()%localUsersProbabilityRange;
+                int val = random.get().nextInt(nbLocalUsers);
                 if (val < nbLocalUsers*0.1)
                     userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) val);
                 else
