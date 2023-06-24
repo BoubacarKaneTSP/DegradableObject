@@ -832,8 +832,12 @@ public class Retwis {
                     typeComputed = chooseOperation();
 
                 long val = random.get().nextLong()%localUsersProbabilityRange;
+                if (val < nbLocalUsers*0.1)
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) val);
+                else
 //                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
-                userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
+
                 Queue<Key> listFollow = usersFollow.get(userA);
 
                 switch (typeComputed){
