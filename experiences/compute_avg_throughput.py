@@ -2,9 +2,12 @@ import sys
 
 def calculate_bounds(values_func):
     # Calcul de la moyenne, du max et du min
-    mean_func = sum(values_func) / len(values_func)
-    max_value_func = max(values_func)
-    min_value_func = min(values_func)
+    try:
+        mean_func = sum(values_func) / len(values_func)
+        max_value_func = max(values_func)
+        min_value_func = min(values_func)
+    except ZeroDivisionError:
+        print(op)
 
     # Création des listes qui contiennent les valeurs supérieur ou inférieur à la moyenne
     values_sup_mean = [value for value in values_func if value >= mean_func]
