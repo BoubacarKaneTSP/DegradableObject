@@ -575,7 +575,8 @@ public class Retwis {
                                 nbUserFinalPrint,
                                 nbTweetFinalPrint;
 
-                        boolean append = flag_append != 0;
+                        boolean append = true;
+//                        boolean append = flag_append != 0;
 
 //                        nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         nameFile = _tag+"_"+_nbUserInit+".txt";
