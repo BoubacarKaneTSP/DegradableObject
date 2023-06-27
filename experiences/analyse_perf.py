@@ -7,7 +7,7 @@ object_name = sys.argv[3]
 nb_thread = sys.argv[4]
 nb_user = sys.argv[5]
 
-list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "cycles", "instructions"]
+list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "cycles", "instructions","l1d_pend_miss.pending_cycles_any"]
 list_nb_thread = [1,2,4,8,16,32,48]
 #list_nb_thread = [1,16,48]
 # list_nb_thread = [1]
@@ -100,7 +100,7 @@ else:
         # print("-------------------")
         for event in list_event:
             if event in line:
-                if dico_stat_event[event] == None :
+                if dico_stat_event[event] is None:
                     val = line.partition(event)[0].strip()
                     dico_stat_event[event] = val
 
