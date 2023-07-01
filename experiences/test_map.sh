@@ -12,6 +12,10 @@ warmingUpTime=5
 
 
 python3 rm_file_microbenchmark.py "ConcurrentSkipListSet"
+python3 rm_file_microbenchmark.py "SegmentedSkipListSet"
+
+python3 rm_file_microbenchmark.py "Queue"
+python3 rm_file_microbenchmark.py "QueueMASP"
 
 for nbThread in 1 2 4 8 16 32 48
 #for nbThread in 1 16 48
@@ -25,7 +29,16 @@ do
 
     perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
     python3 analyse_perf_microbenchmark.py perf.log "false" "ConcurrentSkipListSet" $nbThread
-  
+
+    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -s SegmentedSkipListSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+    python3 analyse_perf_microbenchmark.py perf.log "false" "SegmentedSkipListSet" $nbThread
+
+
+    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q Queue -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -a -d $range -g $nbThread
+    python3 analyse_perf_microbenchmark.py perf.log "false" "ConcurrentSkipListSet" $nbThread
+
+    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q QueueMASP -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -a -d $range -g $nbThread
+    python3 analyse_perf_microbenchmark.py perf.log "false" "SegmentedSkipListSet" $nbThread
 
   done
 done
@@ -33,7 +46,16 @@ done
 python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 2 4 8 16 32 48"
 python3 analyse_perf_microbenchmark.py perf.log "true" "ConcurrentSkipListSet" $nbThread
 
-#perf stat -B -e cache-references,cache-misses ./test.sh -s SegmentedSkipListSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j
+python3 compute_avg_throughput_microbenchmark.py "SegmentedSkipListSet" "1 2 4 8 16 32 48"
+python3 analyse_perf_microbenchmark.py perf.log "true" "SegmentedSkipListSet" $nbThread
+
+
+python3 compute_avg_throughput_microbenchmark.py "Queue" "1 2 4 8 16 32 48"
+python3 analyse_perf_microbenchmark.py perf.log "true" "Queue" $nbThread
+
+python3 compute_avg_throughput_microbenchmark.py "QueueMASP" "1 2 4 8 16 32 48"
+python3 analyse_perf_microbenchmark.py perf.log "true" "QueueMASP" $nbThread
+
 #perf stat -B -e cache-references,cache-misses ./test.sh -s ConcurrentHashSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j
 #perf stat -B -e cache-references,cache-misses ./test.sh -s SegmentedHashSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j
 #perf stat -B -e cache-references,cache-misses ./test.sh -s ShardedHashSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j
@@ -52,14 +74,3 @@ python3 analyse_perf_microbenchmark.py perf.log "true" "ConcurrentSkipListSet" $
 #perf stat -B -e cache-references,cache-misses ./test.sh -s SegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j -k
 #perf stat -B -e cache-references,cache-misses ./test.sh -s SegmentedTreeMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -j -k
 
-#perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 30 -u 10 -n 3 -i 1000 -b -h "JUC"
-##./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m MapAddIntensive -t Retwis -p -e -w 15 -u $warmingUpTime-n 1 -b -h "M"
-##./test.sh -c CounterJUC -s SetAddIntensive -q ConcurrentLinkedQueue -m MapAddIntensive -t Retwis -p -e -w 15 -u $warmingUpTime-n 1 -b -h "M_S"
-##./test.sh -c CounterJUC -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 15 -u $warmingUpTime-n 1 -b -h "Q_M_S"
-#perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -s ConcurrentSkipListSet -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 30 -u 10 -n 3 -i 1000 -b -h "Q_M_S_C"
-#
-##./test.sh -c CounterJUC -s ConcurrentSkipListSet -q ConcurrentLinkedQueue -m ConcurrentHashMap -t Retwis -p -e -w 15 -u $warmingUpTime -n $warmingUpTime -z -h "JUC_CompletionTime"
-##./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m ConcurrentHashMap -t Retwis -p -e -w 15 -u $warmingUpTime-n $warmingUpTime -z -h "Q_CompletionTime"
-##./test.sh -c CounterJUC -s ConcurrentSkipListSet -q QueueMASP -m MapAddIntensive -t Retwis -p -e  -w 15 -u $warmingUpTime-n $warmingUpTime -z -h "Q_M_CompletionTime"
-##./test.sh -c CounterJUC -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 15 -u $warmingUpTime-n $warmingUpTime -z -h "Q_M_S_CompletionTime"
-##./test.sh -c CounterIncrementOnly -s SetAddIntensive -q QueueMASP -m MapAddIntensive -t Retwis -p -e -w 15 -u $warmingUpTime-n $warmingUpTime- z -h "Q_M_S_C_CompletionTime"
