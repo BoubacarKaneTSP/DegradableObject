@@ -49,7 +49,7 @@ public class Microbenchmark {
     @Option(name = "-nbItems", usage = "Number of items max per thread")
     private int _nbItems = Integer.MAX_VALUE;
     @Option(name = "-nbTest", usage = "Number of test")
-    private int nbTest = 1;
+    private int _nbTest = 1;
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
     private boolean _s = false;
     @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
@@ -123,7 +123,8 @@ public class Microbenchmark {
             Object object = null;
             long startTime, endTime, benchmarkAvgTime = 0;
 
-            nbCurrentThread = _asymmetric ? 2 : 1;
+            nbCurrentThread = nbThreads;
+//            nbCurrentThread = _asymmetric ? 2 : 1;
 
             if(_quickTest)
                 nbCurrentThread = nbThreads;
@@ -147,7 +148,7 @@ public class Microbenchmark {
                     timeOperations.add(new AtomicLong(0));
                 }
 
-                for (int _nbTest = 0; _nbTest < nbTest; _nbTest++) {
+                for (int _nbTest = 0; _nbTest < this._nbTest; _nbTest++) {
 
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
@@ -260,7 +261,7 @@ public class Microbenchmark {
                 }
 
                 if (_gcinfo) {
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) / nbTest);
+                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) / _nbTest);
                 }
                 if (_p)
                     System.out.println("End.");
@@ -277,16 +278,17 @@ public class Microbenchmark {
 
                 double throughputTotal;
 
-                throughputTotal = nbOpTotal/(double) (timeTotal) * 1_000_000_000;
+                throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
 
                 if (_s){
                     String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
 
-                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                        fileWriter = new FileWriter(nameFile, false);
-                    else
-                        fileWriter = new FileWriter(nameFile, true);
+                    fileWriter = new FileWriter(nameFile, true);
 
+//                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+//                        fileWriter = new FileWriter(nameFile, false);
+//                    else
+//                        fileWriter = new FileWriter(nameFile, true);
                     printWriter = new PrintWriter(fileWriter);
 
                     printWriter.println(nbCurrentThread + " " + throughputTotal);
@@ -310,13 +312,15 @@ public class Microbenchmark {
                     timeOp = timeOperations.get(opNumber).get();
                     opNumber++;
                     if (_s) {
-                        if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
+                        /*if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
                             fileWriter = new FileWriter(nameFile, false);
                         else
-                            fileWriter = new FileWriter(nameFile, true);
+                            fileWriter = new FileWriter(nameFile, true);*/
+
+                        fileWriter = new FileWriter(nameFile, true);
 
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrentThread + " " + (nbOp / (double) timeOp) * 1_000_000_000);
+                        printWriter.println(nbCurrentThread + " " + ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
                         printWriter.close();
                         fileWriter.close();
                     }
@@ -324,11 +328,11 @@ public class Microbenchmark {
                     if (_p) {
                         for (int j = 0; j < 10; j++) System.out.print("-");
                         System.out.print(" Throughput (op/s) for " + op + " : ");
-                        System.out.printf("%.3E%n", (nbOp / (double) timeOp) * 1_000_000_000);
+                        System.out.printf("%.3E%n", ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
                     }
                 }
 
-                size /= nbTest;
+                size /= _nbTest;
                 if (_p)
                     System.out.print("Object's size at the end of benchmark : " + size);
                 if (_s){
