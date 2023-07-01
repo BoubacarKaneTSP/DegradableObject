@@ -10,6 +10,9 @@ nbTest=2
 benchmarkTime=10
 warmingUpTime=5
 
+
+python3 rm_file_microbenchmark.py "ConcurrentSkipListSet"
+
 for nbThread in 1 2 4 8 16 32 48
 #for nbThread in 1 16 48
 #for nbThread in 1
