@@ -6,7 +6,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=1024
 range=2048
-nbTest=2
+nbTest=10
 benchmarkTime=10
 warmingUpTime=5
 
@@ -19,13 +19,15 @@ for nbThread in 1 2 4 8 16 32 48
 do
   for (( c=1; c<=nbTest; c++ ))
   do
-	  echo " "
-	  echo " =============== > test number : $c"
-	  echo " "
+    echo " "
+    echo " =============== > test number : $c"
+    echo " "
 
-	  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -s Set -t Microbenchmark -p e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -j -g $nbThread
+    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
     python3 analyse_perf_microbenchmark.py perf.log "false" "ConcurrentSkipListSet" $nbThread
-	done
+  
+
+  done
 done
 
 python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 2 4 8 16 32 48"

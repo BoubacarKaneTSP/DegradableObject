@@ -34,7 +34,7 @@ list_op = ["ALL",
            "READ"]
 
 for op in list_op:
-    file = open(op+"_"+type_obj+".txt","r")
+    file = open(type_obj + "_" + op + ".txt","r")
 
     str_result_avg = ""
 
@@ -60,7 +60,7 @@ for op in list_op:
 
     file.close()
 
-    file = open(op+"_"+type_obj+".txt","w")
+    file = open(type_obj + "_" + op + ".txt","w")
 
     file.write(str_result_avg)
     file.close()
