@@ -116,13 +116,13 @@ public class Factory {
 
         switch (counter){
 
-            case "Counter":
+            case "CounterJUC":
                 return new CounterJUC();
             case "CounterIncrementOnly":
                 return new CounterIncrementOnly();
             case "FuzzyCounter":
                 return new FuzzyCounter();
-            case "LongAdder":
+            case "WrappedLongAdder":
                 return new WrappedLongAdder();
             default:
                 throw new ClassNotFoundException();
@@ -166,6 +166,7 @@ public class Factory {
             case "ShardedHashSet":
                 return new ShardedHashSet<>(parallelism);
             case "Set":
+            case "ConcurrentSkipListSet":
                 return new ConcurrentSkipListSet<>();
             case "ConcurrentHashSet":
                 return new ConcurrentHashSet<>();
@@ -199,6 +200,7 @@ public class Factory {
         switch (queue){
 
             case "Queue":
+            case "ConcurrentLinkedQueue":
                 return new ConcurrentLinkedQueue<>();
             case "Deque":
                 return new ConcurrentLinkedDeque();
@@ -235,6 +237,7 @@ public class Factory {
             case "ShardedHashMap":
                 return new ShardedHashMap<>(parallelism);
             case "Map":
+            case "ConcurrentHashMap":
                 return new ConcurrentHashMap<>();
             case "ConcurrentSkipListMap":
                 return new ConcurrentSkipListMap<>();

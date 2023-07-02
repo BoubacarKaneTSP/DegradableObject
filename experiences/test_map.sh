@@ -6,48 +6,45 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=1024
 range=2048
-nbTest=3
+nbTest=10
 benchmarkTime=10
 warmingUpTime=5
 
-
-python3 rm_file_microbenchmark.py "ConcurrentSkipListSet"
-python3 rm_file_microbenchmark.py "SegmentedSkipListSet"
-
-#python3 rm_file_microbenchmark.py "ConcurrentLinkedQueue"
-#python3 rm_file_microbenchmark.py "QueueMASP"
-
-for nbThread in 1 2 4 8 16 32 48
-#for nbThread in 1 16 48
-#for nbThread in 1
+for type in "Set" "SegmentedSkipListSet" "SegmentedTreeSet" "ConcurrentHashSet" "SegmentedHashSet" "ConcurrentHashMap" "SegmentedHashMap" "ConcurrentLinkedQueue" "QueueMASP" "CounterJUC" "CounterIncrementOnly" "WrappedLongAdder"
 do
-  for (( c=1; c<=nbTest; c++ ))
+
+  python3 rm_file_microbenchmark.py $type
+
+  for nbThread in 1 2 4 8 16 32 48
+  #for nbThread in 1 16 48
+  #for nbThread in 1
   do
-    echo " "
-    echo " =============== > test number : $c"
-    echo " "
+    for (( c=1; c<=nbTest; c++ ))
+    do
+      echo " "
+      echo " =============== > test number [$c] for [$nbThread] thread(s) with [$type]"
+      echo " "
 
-    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
-    python3 analyse_perf_microbenchmark.py perf.log "false" "ConcurrentSkipListSet" $nbThread
+      if [[ $type == "ConcurrentLinkedQueue" || $type == "QueueMASP" ]]
+      then
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -a -d $range -g $nbThread
+      elif [[ $type == "CounterJUC" || $type == "CounterIncrementOnly" || $type == "WrappedLongAdder" ]]
+      then
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
+      else
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
+      fi
 
-    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -s SegmentedSkipListSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
-    python3 analyse_perf_microbenchmark.py perf.log "false" "SegmentedSkipListSet" $nbThread
+      python3 analyse_perf_microbenchmark.py perf.log "false" $type $nbThread
 
-
-#    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q Queue -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -a -d $range -g $nbThread
-#    python3 analyse_perf_microbenchmark.py perf.log "false" "ConcurrentLinkedQueue" $nbThread
-#
-#    perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q QueueMASP -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -a -d $range -g $nbThread
-#    python3 analyse_perf_microbenchmark.py perf.log "false" "QueueMASP" $nbThread
-
+    done
   done
+
+  python3 compute_avg_throughput_microbenchmark.py $type "1 2 4 8 16 32 48"
+  python3 analyse_perf_microbenchmark.py perf.log "true" $type $nbThread
+
 done
 
-python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 2 4 8 16 32 48"
-python3 analyse_perf_microbenchmark.py perf.log "true" "ConcurrentSkipListSet" $nbThread
-
-python3 compute_avg_throughput_microbenchmark.py "SegmentedSkipListSet" "1 2 4 8 16 32 48"
-python3 analyse_perf_microbenchmark.py perf.log "true" "SegmentedSkipListSet" $nbThread
 
 
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentLinkedQueue" "1 2 4 8 16 32 48"
