@@ -27,12 +27,12 @@ do
 
       if [[ $type == "ConcurrentLinkedQueue" || $type == "QueueMASP" ]]
       then
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -a -d $range -g $nbThread
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -a -d $range -g $nbThread
       elif [[ $type == "CounterJUC" || $type == "CounterIncrementOnly" || $type == "WrappedLongAdder" ]]
       then
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
       else
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
       fi
 
       python3 analyse_perf_microbenchmark.py perf.log "false" $type $nbThread
