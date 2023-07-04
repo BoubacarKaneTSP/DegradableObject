@@ -1,25 +1,25 @@
-# started on Mon Jul  3 03:50:30 2023
+# started on Tue Jul  4 12:31:08 2023
 
 
- Performance counter stats for './test.sh -q WrappedLongAdder -t Microbenchmark -p -e -r 100 0 0 -w 30 -u 20 -i 1024 -d 2048 -g 48':
+ Performance counter stats for './test.sh -c Counter -s ConcurrentHashSet -q Queue -m Map -t Retwis -r 5 15 30 50 -p -e -w 30 -u 30 -h JUC -y 100 -d 100 -i 100000 -b -g 48':
 
-         115502987      cache-references                                              (30.78%)
-           3528392      cache-misses              #    3.055 % of all cache refs      (30.77%)
-     1158433313231      branches                                                      (30.76%)
-         180204282      branch-misses             #    0.02% of all branches          (30.74%)
-     6901576562165      cycles                                                        (30.74%)
-     6075110238761      instructions              #    0.88  insn per cycle           (38.43%)
-       12424562635      l1d_pend_miss.pending_cycles_any                                     (38.44%)
-          53832606      l2_rqsts.all_demand_miss                                      (38.46%)
-     3151633636616      cycle_activity.stalls_total                                     (38.47%)
-     2190768293698      L1-dcache-loads                                               (38.48%)
-         131113435      L1-dcache-load-misses     #    0.01% of all L1-dcache accesses  (30.78%)
-          27619320      LLC-loads                                                     (30.78%)
-           1121436      LLC-load-misses           #    4.06% of all LL-cache accesses  (30.79%)
+       46289302673      cache-references                                              (30.76%)
+        3140094546      cache-misses              #    6.784 % of all cache refs      (30.76%)
+      572391986807      branches                                                      (30.76%)
+        6153254143      branch-misses             #    1.08% of all branches          (30.76%)
+     8276387884270      cycles                                                        (30.77%)
+     3365991965222      instructions              #    0.41  insn per cycle           (38.47%)
+     6911641114893      l1d_pend_miss.pending_cycles_any                                     (38.48%)
+       21637277765      l2_rqsts.all_demand_miss                                      (38.48%)
+     6334462921756      cycle_activity.stalls_total                                     (38.48%)
+      866731887514      L1-dcache-loads                                               (38.47%)
+       36514614404      L1-dcache-load-misses     #    4.21% of all L1-dcache accesses  (30.75%)
+       16909435796      LLC-loads                                                     (30.76%)
+          29738051      LLC-load-misses           #    0.18% of all LL-cache accesses  (30.76%)
 
-      51.271449270 seconds time elapsed
+      61.713278702 seconds time elapsed
 
-    2397.641270000 seconds user
-       0.439924000 seconds sys
+    2865.840343000 seconds user
+       3.268502000 seconds sys
 
 
