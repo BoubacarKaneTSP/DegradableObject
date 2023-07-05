@@ -862,10 +862,14 @@ public class Retwis {
 
                     int val = random.get().nextInt(nbLocalUsers);
                     if (val < nbLocalUsers)
-                        userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.05)));
-                    else
+                        userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
+//                        userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.05)));
+                    else {
 //                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
-                        userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
+                        System.out.println("Error choosing user");
+                        System.exit(0);
+                        userA = database.getListLocalUser().get(database.getThreadID().get()).get(num % nbLocalUsers);
+                    }
 
                     Queue<Key> listFollow = usersFollow.get(userA);
 
