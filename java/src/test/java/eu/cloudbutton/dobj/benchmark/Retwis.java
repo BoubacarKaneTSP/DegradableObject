@@ -862,8 +862,8 @@ public class Retwis {
 
                     int val = random.get().nextInt(nbLocalUsers);
                     if (val < nbLocalUsers)
-                        userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
-//                        userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.05)));
+//                        userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
+                        userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.1)));
                     else {
 //                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
                         System.out.println("Error choosing user");
