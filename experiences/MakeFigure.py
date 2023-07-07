@@ -93,7 +93,7 @@ plt.gca().tick_params(axis='both', which='minor', labelsize=SIZE, length=SIZE)
 # plt.ylabel("(%)", fontsize=SIZE)
 plt.ylabel("NB request", fontsize=SIZE)
 plt.xlabel("# processes", fontsize=SIZE)
-plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncol=2, mode="expand", borderaxespad=0.,labelspacing = 1, prop={'size': SIZE})
+plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncol=1, mode="expand", borderaxespad=0.,labelspacing = 1, prop={'size': SIZE})
 # plt.yscale("log")
 
 
