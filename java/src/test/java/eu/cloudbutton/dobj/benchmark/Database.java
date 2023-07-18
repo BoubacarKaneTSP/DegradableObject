@@ -213,8 +213,8 @@ public class Database {
         long randVal;
 
         for (Key userA: users){
-            if(++j%100000 == 0)
-                System.out.println(j);
+//            if(++j%100000 == 0)
+//                System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
@@ -227,8 +227,10 @@ public class Database {
 
 //                System.out.println(i + " | " + nbFollow);
 
-                randVal = random.get().nextLong() % usersFollowProbabilityRange;
-                Key userB = usersFollowProbability.ceilingEntry(randVal).getValue();
+//                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+//                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
+                randVal = random.get().nextLong() % users.size();
+                Key userB = users.get((int) randVal);
 //
 //                Key userB;
 //                userB = listAllUser.get(i%nbUsers);

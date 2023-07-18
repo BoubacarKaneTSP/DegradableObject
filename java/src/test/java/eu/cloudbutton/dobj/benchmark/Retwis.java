@@ -861,8 +861,9 @@ public class Retwis {
                         typeComputed = chooseOperation();
 
                     int val = random.get().nextInt(nbLocalUsers);
-                    if (val < nbLocalUsers)
-//                        userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
+
+                   /* if (val < nbLocalUsers)
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.1)));
                     else {
 //                userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
@@ -870,7 +871,7 @@ public class Retwis {
                         System.exit(0);
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get(num % nbLocalUsers);
                     }
-
+*/
                     Queue<Key> listFollow = usersFollow.get(userA);
 
                     switch (typeComputed){
@@ -882,8 +883,10 @@ public class Retwis {
                             break;
                         case FOLLOW:
 
-                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
-                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+                            int val2 = random.get().nextInt(nbLocalUsers);
+                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
+//                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
+//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                                 startTime = System.nanoTime();
