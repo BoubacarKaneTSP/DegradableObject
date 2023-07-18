@@ -124,18 +124,18 @@ public class Retwis {
     private List<AtomicLong> nbOperations;
     private List<AtomicLong> timeOperations;
     private LongAdder timeBenchmark;
-    private LongAdder queueSizes;
-    private Long nbUserFinal;
-    private Long nbTweetFinal;
-    private List<Float> allAvgQueueSizes;
-    private List<Float> allAvgFollower;
-    private List<Float> allAvgFollowing;
-    private List<Float> allProportionMaxFollower;
-    private List<Float> allProportionMaxFollowing;
-    private List<Float> allProportionUserWithMaxFollower;
-    private List<Float> allProportionUserWithMaxFollowing;
-    private List<Float> allProportionUserWithoutFollower;
-    private List<Float> allProportionUserWithoutFollowing;
+//    private LongAdder queueSizes;
+//    private Long nbUserFinal;
+//    private Long nbTweetFinal;
+//    private List<Float> allAvgQueueSizes;
+//    private List<Float> allAvgFollower;
+//    private List<Float> allAvgFollowing;
+//    private List<Float> allProportionMaxFollower;
+//    private List<Float> allProportionMaxFollowing;
+//    private List<Float> allProportionUserWithMaxFollower;
+//    private List<Float> allProportionUserWithMaxFollowing;
+//    private List<Float> allProportionUserWithoutFollower;
+//    private List<Float> allProportionUserWithoutFollowing;
 
     private Database database;
 
@@ -239,15 +239,15 @@ public class Retwis {
             String nameFile;
 
             long startTime, endTime, benchmarkAvgTime = 0;;
-            allAvgQueueSizes = new ArrayList();
-            allAvgFollower = new ArrayList();
-            allAvgFollowing = new ArrayList();
-            allProportionMaxFollower = new ArrayList();
-            allProportionMaxFollowing = new ArrayList();
-            allProportionUserWithMaxFollower = new ArrayList();
-            allProportionUserWithMaxFollowing = new ArrayList();
-            allProportionUserWithoutFollower = new ArrayList();
-            allProportionUserWithoutFollowing = new ArrayList();
+//            allAvgQueueSizes = new ArrayList();
+//            allAvgFollower = new ArrayList();
+//            allAvgFollowing = new ArrayList();
+//            allProportionMaxFollower = new ArrayList();
+//            allProportionMaxFollowing = new ArrayList();
+//            allProportionUserWithMaxFollower = new ArrayList();
+//            allProportionUserWithMaxFollowing = new ArrayList();
+//            allProportionUserWithoutFollower = new ArrayList();
+//            allProportionUserWithoutFollowing = new ArrayList();
 
             if (_p){
                 System.out.println();
@@ -268,9 +268,9 @@ public class Retwis {
 
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
-                queueSizes = new LongAdder();
-                nbUserFinal = 0L;
-                nbTweetFinal = 0L;
+//                queueSizes = new LongAdder();
+//                nbUserFinal = 0L;
+//                nbTweetFinal = 0L;
                 timeBenchmark = new LongAdder();
                 completionTime = 0;
 
@@ -512,15 +512,15 @@ public class Retwis {
                             sumProportionUserWithoutFollowing = 0;
 
                     for (int i = 0; i < _nbTest; i++) {
-                        sumAvgQueueSizes += allAvgQueueSizes.get(i);
-                        sumAvgFollower += allAvgFollower.get(i);
-                        sumAvgFollowing += allAvgFollowing.get(i);
-                        sumProportionMaxFollower += allProportionMaxFollower.get(i);
-                        sumProportionMaxFollowing += allProportionMaxFollowing.get(i);
-                        sumProportionUserWithMaxFollower += allProportionUserWithMaxFollower.get(i);
-                        sumProportionUserWithMaxFollowing += allProportionUserWithMaxFollowing.get(i);
-                        sumProportionUserWithoutFollower += allProportionUserWithoutFollower.get(i);
-                        sumProportionUserWithoutFollowing += allProportionUserWithoutFollowing.get(i);
+//                        sumAvgQueueSizes += allAvgQueueSizes.get(i);
+//                        sumAvgFollower += allAvgFollower.get(i);
+//                        sumAvgFollowing += allAvgFollowing.get(i);
+//                        sumProportionMaxFollower += allProportionMaxFollower.get(i);
+//                        sumProportionMaxFollowing += allProportionMaxFollowing.get(i);
+//                        sumProportionUserWithMaxFollower += allProportionUserWithMaxFollower.get(i);
+//                        sumProportionUserWithMaxFollowing += allProportionUserWithMaxFollowing.get(i);
+//                        sumProportionUserWithoutFollower += allProportionUserWithoutFollower.get(i);
+//                        sumProportionUserWithoutFollowing += allProportionUserWithoutFollowing.get(i);
 
                     }
                     if (_p){
@@ -536,7 +536,7 @@ public class Retwis {
 
                         System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
                         System.out.println(" ==> nb original users : " + NB_USERS);
-                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
+//                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
                         System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
                         System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
                         System.out.println(" ==> avg following : " + sumAvgFollowing/_nbTest);
@@ -546,7 +546,7 @@ public class Retwis {
                         System.out.println(" ==> % user with max following (or 20% less) : " + sumProportionUserWithMaxFollowing/_nbTest + "%");
                         System.out.println(" ==> % user without follower : " + sumProportionUserWithoutFollower/_nbTest + "%");
                         System.out.println(" ==> % user without following : " + sumProportionUserWithoutFollowing/_nbTest + "%");
-                        System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
+//                        System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
                         System.out.println();
                     }
 
@@ -614,8 +614,8 @@ public class Retwis {
                         proportionUserWithMaxFollowingPrint.println(unit + " " + sumProportionUserWithMaxFollowing/_nbTest);
                         nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
                         nbUserWithoutFollowingPrint.println(unit + " " + sumProportionUserWithoutFollowing/_nbTest);
-                        nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
-                        nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
+//                        nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
+//                        nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
 
                         queueSizePrint.flush();
                         avgFollowerPrint.flush();
@@ -777,9 +777,9 @@ public class Retwis {
 
                 timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
-                for (Key user : usersFollow.keySet()){
-                    queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
-                }
+//                for (Key user : usersFollow.keySet()){
+//                    queueSizes.add(database.getMapTimelines().get(user).getTimeline().size());
+//                }
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
