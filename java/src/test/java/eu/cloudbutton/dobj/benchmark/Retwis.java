@@ -983,7 +983,7 @@ public class Retwis {
 
                     latchHistogram.await();
 
-                    saveDistributionHistogram("Pre_Benchmark");
+//                    saveDistributionHistogram("Pre_Benchmark");
 
 //                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
@@ -1016,9 +1016,9 @@ public class Retwis {
 //                    TimeUnit.SECONDS.sleep(2);
 //                    performHeapDump(_tag, "Post", (int) _nbUserInit);
 
-                    saveTimelineHistogram();
+//                    saveTimelineHistogram();
 //                    TimeUnit.SECONDS.sleep(5);
-                    saveDistributionHistogram("Post_Benchmark");
+//                    saveDistributionHistogram("Post_Benchmark");
                 }else{
 
                     long startTime, endTime;
