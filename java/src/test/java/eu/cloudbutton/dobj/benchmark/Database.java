@@ -229,7 +229,7 @@ public class Database {
 
 //                randVal = random.get().nextLong() % usersFollowProbabilityRange;
 //                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
-                randVal = random.get().nextLong() % users.size();
+                randVal = random.get().nextInt(users.size());
                 Key userB = users.get((int) randVal);
 //
 //                Key userB;
