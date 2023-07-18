@@ -350,53 +350,53 @@ public class Retwis {
                                 userWithoutFollower = 0,
                                 userWithoutFollowing = 0;
 
-                        for(Key user: database.getUsersFollowProbability().values()){
-                            Set<Key> followers = database.getMapFollowers().get(user);
-                            Set<Key> followings = database.getMapFollowing().get(user);
+//                        for(Key user: database.getUsersFollowProbability().values()){
+//                            Set<Key> followers = database.getMapFollowers().get(user);
+//                            Set<Key> followings = database.getMapFollowing().get(user);
+//
+//                            nbFollower = followers.size();
+//                            nbFollowing = followings.size();
+//
+//                            if (nbFollower > maxFollower) {
+//                                maxFollower = nbFollower;
+//                            }
+//                            nbFollowerTotal += nbFollower;
+//
+//                            if (nbFollowing > maxFollowing) {
+//                                maxFollowing = nbFollowing;
+//                            }
+//                            nbFollowingTotal += nbFollowing;
+//                        }
+//
+//                        for(Key user: database.getUsersFollowProbability().values()){
+//                            Set<Key> followers = database.getMapFollowers().get(user);
+//                            Set<Key> followings = database.getMapFollowing().get(user);
+//
+//                            nbFollower = followers.size();
+//                            nbFollowing = followings.size();
+//
+//                            if (nbFollower>= maxFollower*0.8)
+//                                userWithMaxFollower++;
+//                            else if (nbFollower == 0)
+//                                userWithoutFollower++;
+//
+//                            if (nbFollowing>= maxFollowing*0.8)
+//                                userWithMaxFollowing++;
+//                            else if (nbFollowing == 0)
+//                                userWithoutFollowing++;
+//                        }
 
-                            nbFollower = followers.size();
-                            nbFollowing = followings.size();
-
-                            if (nbFollower > maxFollower) {
-                                maxFollower = nbFollower;
-                            }
-                            nbFollowerTotal += nbFollower;
-
-                            if (nbFollowing > maxFollowing) {
-                                maxFollowing = nbFollowing;
-                            }
-                            nbFollowingTotal += nbFollowing;
-                        }
-
-                        for(Key user: database.getUsersFollowProbability().values()){
-                            Set<Key> followers = database.getMapFollowers().get(user);
-                            Set<Key> followings = database.getMapFollowing().get(user);
-
-                            nbFollower = followers.size();
-                            nbFollowing = followings.size();
-
-                            if (nbFollower>= maxFollower*0.8)
-                                userWithMaxFollower++;
-                            else if (nbFollower == 0)
-                                userWithoutFollower++;
-
-                            if (nbFollowing>= maxFollowing*0.8)
-                                userWithMaxFollowing++;
-                            else if (nbFollowing == 0)
-                                userWithoutFollowing++;
-                        }
-
-                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
-                        nbTweetFinal += queueSizes.longValue();
-                        nbUserFinal += database.getMapTimelines().size();
-                        allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
-                        allAvgFollowing.add((float)nbFollowingTotal/NB_USERS);
-                        allProportionMaxFollower.add((float) ((double)maxFollower/NB_USERS)*100);
-                        allProportionMaxFollowing.add((float) ((double)maxFollowing/NB_USERS)*100);
-                        allProportionUserWithMaxFollower.add((float) ((double)userWithMaxFollower/NB_USERS)*100);
-                        allProportionUserWithMaxFollowing.add((float) ((double)userWithMaxFollowing/NB_USERS)*100);
-                        allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
-                        allProportionUserWithoutFollowing.add((float) ((double)userWithoutFollowing/NB_USERS)*100);
+//                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
+//                        nbTweetFinal += queueSizes.longValue();
+//                        nbUserFinal += database.getMapTimelines().size();
+//                        allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
+//                        allAvgFollowing.add((float)nbFollowingTotal/NB_USERS);
+//                        allProportionMaxFollower.add((float) ((double)maxFollower/NB_USERS)*100);
+//                        allProportionMaxFollowing.add((float) ((double)maxFollowing/NB_USERS)*100);
+//                        allProportionUserWithMaxFollower.add((float) ((double)userWithMaxFollower/NB_USERS)*100);
+//                        allProportionUserWithMaxFollowing.add((float) ((double)userWithMaxFollowing/NB_USERS)*100);
+//                        allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
+//                        allProportionUserWithoutFollowing.add((float) ((double)userWithoutFollowing/NB_USERS)*100);
                     }
                     executor.shutdown();
                 }
