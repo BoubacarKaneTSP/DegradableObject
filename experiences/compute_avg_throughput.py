@@ -34,21 +34,22 @@ list_op = ["ALL",
            "FOLLOW",
            "UNFOLLOW",
            "TWEET",
-           "READ",
-           "avg_queue_size",
-           "avg_Follower",
-           "avg_Following",
-           "proportion_Max_Follower",
-           "proportion_Max_Following",
-           "proportion_User_With_Max_Follower",
-           "proportion_User_With_Max_Following",
-           "proportion_User_Without_Follower",
-           "proportion_User_Without_Following",
-           "nb_user_final",
-           "nb_tweet_final"]
+           "READ"]#,
+           #"avg_queue_size",
+           #"avg_Follower",
+           #"avg_Following",
+           #"proportion_Max_Follower",
+           #"proportion_Max_Following",
+           #"proportion_User_With_Max_Follower",
+           #"proportion_User_With_Max_Following",
+           #"proportion_User_Without_Follower",
+           #"proportion_User_Without_Following",
+           #"nb_user_final",
+           #"nb_tweet_final"]
 
 for op in list_op:
-    file = open(op+"_"+type_obj+"_"+nb_user+".txt","r")
+    name_file=op+"_"+type_obj+"_"+nb_user+".txt"
+    file = open(name_file,"r")
 
     str_result_avg = ""
 
@@ -67,7 +68,8 @@ for op in list_op:
             values.append(val)
             line = file.readline()
             line = line.strip().split(" ")
-
+        
+        print(name_file)
         mean, upper_bound, lower_bound, max_value, min_value = calculate_bounds(values)
 
         str_result_avg += nb_thread + " " + str(mean) + " " + str(upper_bound)+ " " + str(lower_bound) + " " + str(max_value) + " " + str(min_value) + "\n"
