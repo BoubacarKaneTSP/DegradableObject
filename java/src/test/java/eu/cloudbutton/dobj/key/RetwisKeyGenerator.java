@@ -1,6 +1,9 @@
 package eu.cloudbutton.dobj.key;
 
 import nl.peterbloem.powerlaws.DiscreteApproximate;
+import org.apache.commons.math3.distribution.ParetoDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.RandomGeneratorFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,52 +42,58 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     private void fill(int nbUsers, double alpha){
 
-        List<Integer> data = new DiscreteApproximate(1, alpha).generate(bound);
-        int i = 0;
+        double SCALE = 1.0;
+        double SHAPE = alpha;
+        int numValues = nbUsers;
 
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) nbUsers * ratio);
+        List<Double> doubleValues = new ArrayList<>();
 
-        for (int val: data){
-            if (val >= max) {
-                data.set(i, (int) max);
+        RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
+        ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
+
+        double maxGeneratedValue = 0;
+        for (int i = 0; i < numValues; i++) {
+            double randomValue = distribution.sample();
+            doubleValues.add(randomValue);
+            if (randomValue > maxGeneratedValue) {
+                maxGeneratedValue = randomValue;
             }
-            if (val < 0)
-                data.set(i, 0);
-            i++;
         }
 
-        for (int j = 0; j < bound; j++) {
-            for (int k = 0; k < data.get(j); k++) {
-                long toAdd = j;
-                list.add(toAdd);
-            }
+        double scaleFactor = numValues / maxGeneratedValue;
+
+        for (int i = 0; i < numValues; i++) {
+            double scaledValue = doubleValues.get(i) * scaleFactor;
+            list.add(Math.round(scaledValue));
         }
     }
 
     private void fill(){
 
-        List<Integer> data = new DiscreteApproximate(1, 1.39).generate(bound);
-        int i = 0;
+        double SCALE = 1.0;
+        double SHAPE = 1.35;
+        int numValues = 100;
 
-        int nbUsers = 1000000;
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-        long max = (long) ((long) nbUsers * ratio);
+        List<Double> doubleValues = new ArrayList<>();
+        List<Integer> values = new ArrayList<>();
 
-        for (int val: data){
-            if (val >= max) {
-                data.set(i, (int) max);
+        RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
+        ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
+
+        double maxGeneratedValue = 0;
+        for (int i = 0; i < numValues; i++) {
+            double randomValue = distribution.sample();
+            doubleValues.add(randomValue);
+            if (randomValue > maxGeneratedValue) {
+                maxGeneratedValue = randomValue;
             }
-            if (val < 0)
-                data.set(i, 0);
-            i++;
         }
 
-        for (int j = 0; j < bound; j++) {
-            for (int k = 0; k < data.get(j); k++) {
-                long toAdd = j;
-                list.add(toAdd);
-            }
+        double scaleFactor = numValues / maxGeneratedValue;
+
+        for (int i = 0; i < numValues; i++) {
+            double scaledValue = doubleValues.get(i) * scaleFactor;
+            list.add(Math.round(scaledValue));
         }
     }
 

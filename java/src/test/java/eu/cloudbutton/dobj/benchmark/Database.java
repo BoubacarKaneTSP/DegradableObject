@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
@@ -76,7 +77,8 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
+//        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
