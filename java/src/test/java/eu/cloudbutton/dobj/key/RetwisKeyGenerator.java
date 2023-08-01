@@ -6,10 +6,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.RandomGeneratorFactory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class RetwisKeyGenerator implements KeyGenerator {
 
@@ -24,13 +21,25 @@ public class RetwisKeyGenerator implements KeyGenerator {
         this.list =  new ArrayList<>();
         fill(nbUsers, alpha);
         Collections.sort(list);
-        System.out.println(list);
+        System.out.println(countOccurrences(list));
     }
     public RetwisKeyGenerator(int max_hashes_per_thread) {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
         this.bound = max_hashes_per_thread;
         this.list =  new ArrayList<>();
         fill();
+    }
+
+    public static Map<Integer, Integer> countOccurrences(List<Long> arrayList) {
+        // Créer une HashMap pour stocker les valeurs et leurs occurrences
+        Map<Integer, Integer> occurrenceMap = new HashMap<>();
+
+        // Parcourir l'ArrayList pour compter les occurrences
+        for (Long value : arrayList) {
+            occurrenceMap.put(Math.toIntExact(value), occurrenceMap.getOrDefault(value, 0) + 1);
+        }
+
+        return occurrenceMap;
     }
 
     @Override
