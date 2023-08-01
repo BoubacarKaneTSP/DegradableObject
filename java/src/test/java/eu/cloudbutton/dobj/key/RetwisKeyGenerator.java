@@ -30,13 +30,16 @@ public class RetwisKeyGenerator implements KeyGenerator {
         fill();
     }
 
-    public static Map<Integer, Integer> countOccurrences(List<Long> arrayList) {
+    public static Map<Long, Integer> countOccurrences(List<Long> arrayList) {
         // Créer une HashMap pour stocker les valeurs et leurs occurrences
-        Map<Integer, Integer> occurrenceMap = new HashMap<>();
+        Map<Long, Integer> occurrenceMap = new HashMap<>();
 
         // Parcourir l'ArrayList pour compter les occurrences
         for (Long value : arrayList) {
-            occurrenceMap.put(Math.toIntExact(value), occurrenceMap.getOrDefault(value, 0) + 1);
+            if (!occurrenceMap.containsKey(value))
+                occurrenceMap.put(value, 1);
+            else
+                occurrenceMap.put(value, occurrenceMap.get(value) + 1);
         }
 
         return occurrenceMap;
