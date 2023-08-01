@@ -98,7 +98,7 @@ public class Database {
     }
 
     public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
-//        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
+        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
 
         threadID.set(count.getAndIncrement());
         List<Key> users = listLocalUser.get(threadID.get());
@@ -106,7 +106,11 @@ public class Database {
         //adding all users
 
         long somme = 0;
+        int g = 0;
         for (Key user : users) {
+            if (++g%100000 == 0)
+                System.out.println(g);
+
 //            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
             somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
