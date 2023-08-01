@@ -221,7 +221,7 @@ public class Database {
         long randVal;
 
         for (Key userA: users){
-            if(++j%100000 == 0)
+            if(++j%10000 == 0)
                 System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);

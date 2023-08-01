@@ -20,8 +20,8 @@ public class RetwisKeyGenerator implements KeyGenerator {
         this.bound = max_hashes_per_thread;
         this.list =  new ArrayList<>();
         fill(nbUsers, alpha);
-        Collections.sort(list);
-        System.out.println(countOccurrences(list));
+    //    Collections.sort(list);
+    //    System.out.println(countOccurrences(list));
     }
     public RetwisKeyGenerator(int max_hashes_per_thread) {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
@@ -57,7 +57,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     private void fill(int nbUsers, double alpha){
 
-        double SCALE = 200.0;
+        double SCALE = 20000.0;
         double SHAPE = alpha;
         int numValues = nbUsers;
 
