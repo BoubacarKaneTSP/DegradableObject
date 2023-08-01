@@ -148,7 +148,6 @@ public class Database {
 //            System.out.println(i);
             Key user = generateUser();
             if (localSetUser.add(user)){
-/*
                 nbFollower = Math.max(1,listNbFollower.get(i));
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 
@@ -158,7 +157,7 @@ public class Database {
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-                mapNbFollowers.put(user, new AtomicInteger(nbFollower));*/
+                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
                 i++; 
             }
 	    
