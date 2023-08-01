@@ -143,6 +143,8 @@ public class Database {
         List<Integer> listNbFollowing = generateValues(nbUsers, nbUsers, FOLLOWINGSHAPE);
 
         for (int i = 0; i < nbUsers;) {
+            if(i%100000 == 0)
+                System.out.println(i);
 //            System.out.println(i);
             Key user = generateUser();
             if (localSetUser.add(user)){
