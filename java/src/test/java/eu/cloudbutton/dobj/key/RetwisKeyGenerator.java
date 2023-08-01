@@ -57,7 +57,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     private void fill(int nbUsers, double alpha){
 
-        double SCALE = 4.0;
+        double SCALE = 10.0;
         double SHAPE = alpha;
         int numValues = nbUsers;
 
