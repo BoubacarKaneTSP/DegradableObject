@@ -77,8 +77,8 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-//        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
-        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
+//        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
@@ -148,8 +148,8 @@ public class Database {
 //            System.out.println(i);
             Key user = generateUser();
             if (localSetUser.add(user)){
-
-               /* nbFollower = Math.max(1,listNbFollower.get(i));
+/*
+                nbFollower = Math.max(1,listNbFollower.get(i));
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 
                 sommeProba += nbFollowing;
@@ -159,8 +159,9 @@ public class Database {
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
                 mapNbFollowers.put(user, new AtomicInteger(nbFollower));*/
-                i++;
+                i++; 
             }
+	    
         }
 
 //        System.out.println(mapUsersFollowing);
