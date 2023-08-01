@@ -135,7 +135,7 @@ public class Database {
 
     public void generateUsers(){
 
-        Set<Key> localSetUser = new HashSet<>();
+        Set<Key> localSetUser = new TreeSet<>();
         long sommeProba = 0;
         int nbFollowing, nbFollower;
 
