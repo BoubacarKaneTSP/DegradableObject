@@ -215,8 +215,8 @@ public class Database {
         long randVal;
 
         for (Key userA: users){
-//            if(++j%100000 == 0)
-//                System.out.println(j);
+            if(++j%100000 == 0)
+                System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = mapUsersFollowing.get(threadID).get(userA);
