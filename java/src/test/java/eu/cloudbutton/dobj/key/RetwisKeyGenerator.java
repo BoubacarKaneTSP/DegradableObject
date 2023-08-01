@@ -20,8 +20,8 @@ public class RetwisKeyGenerator implements KeyGenerator {
         this.bound = max_hashes_per_thread;
         this.list =  new ArrayList<>();
         fill(nbUsers, alpha);
-        Collections.sort(list);
-        System.out.println(countOccurrences(list));
+//        Collections.sort(list);
+//        System.out.println(countOccurrences(list));
     }
     public RetwisKeyGenerator(int max_hashes_per_thread) {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
@@ -69,18 +69,19 @@ public class RetwisKeyGenerator implements KeyGenerator {
         double maxGeneratedValue = 0;
         for (int i = 0; i < numValues; i++) {
             double randomValue = distribution.sample();
-            doubleValues.add(randomValue);
-            if (randomValue > maxGeneratedValue) {
-                maxGeneratedValue = randomValue;
-            }
+            list.add(Math.round(randomValue));
+//            doubleValues.add(randomValue);
+//            if (randomValue > maxGeneratedValue) {
+//                maxGeneratedValue = randomValue;
+//            }
         }
 
-        double scaleFactor = numValues / maxGeneratedValue;
-
-        for (int i = 0; i < numValues; i++) {
-            double scaledValue = doubleValues.get(i) * scaleFactor;
-            list.add(Math.round(scaledValue));
-        }
+//        double scaleFactor = numValues / maxGeneratedValue;
+//
+//        for (int i = 0; i < numValues; i++) {
+//            double scaledValue = doubleValues.get(i) * scaleFactor;
+//            list.add(Math.round(scaledValue));
+//        }
     }
 
     private void fill(){
@@ -90,7 +91,6 @@ public class RetwisKeyGenerator implements KeyGenerator {
         int numValues = 100;
 
         List<Double> doubleValues = new ArrayList<>();
-        List<Integer> values = new ArrayList<>();
 
         RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
         ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
