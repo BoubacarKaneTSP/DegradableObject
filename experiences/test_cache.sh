@@ -16,7 +16,7 @@ ratio="5 15 30 50"
 
 for nbUsersInit in 100 10000
 do
-  # Cleaning old file
+  #  Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC"
   python3 rm_file.py $nbUsersInit "Q_M_C"
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
