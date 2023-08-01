@@ -7,6 +7,7 @@ import org.apache.commons.math3.random.RandomGeneratorFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +23,8 @@ public class RetwisKeyGenerator implements KeyGenerator {
         this.bound = max_hashes_per_thread;
         this.list =  new ArrayList<>();
         fill(nbUsers, alpha);
+        Collections.sort(list);
+        System.out.println(list);
     }
     public RetwisKeyGenerator(int max_hashes_per_thread) {
         this.random = ThreadLocal.withInitial(() -> new Random(System.nanoTime()+Thread.currentThread().getId()));
