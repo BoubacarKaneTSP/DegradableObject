@@ -246,7 +246,7 @@ public class Database {
                 assert userB != null : "User generated is null";
 
 //                followUser(userA, userB);
-//                usersFollow.add(userB);
+                usersFollow.add(userB);
                 i++;
 //                if (!usersFollow.contains(userB)) {
 //                }
