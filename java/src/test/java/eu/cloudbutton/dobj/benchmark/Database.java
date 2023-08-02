@@ -233,7 +233,7 @@ public class Database {
             for (int i = 0; i < nbFollow;) {
 
 
-//                System.out.println(i + " | " + nbFollow);
+                System.out.println(i + " | " + nbFollow);
 
 //                randVal = random.get().nextLong() % usersFollowProbabilityRange;
 //                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
