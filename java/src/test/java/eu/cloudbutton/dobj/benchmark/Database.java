@@ -108,7 +108,7 @@ public class Database {
         long somme = 0;
         int g = 0;
         for (Key user : users) {
-            if (++g%100000 == 0)
+            if (++g%nbUsers*0.05 == 0)
                 System.out.println(g);
 
 //            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
@@ -147,9 +147,9 @@ public class Database {
         List<Integer> listNbFollowing = generateValues(nbUsers, nbUsers, FOLLOWINGSHAPE);
 
         for (int i = 0; i < nbUsers;) {
-            if(i%100000 == 0)
+            if(i%nbUsers*0.05 == 0)
                 System.out.println(i);
-//            System.out.println(i);
+
             Key user = generateUser();
             if (localSetUser.add(user)){
                 nbFollower = Math.max(1,listNbFollower.get(i));
@@ -245,9 +245,11 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-                followUser(userA, userB);
-                usersFollow.add(userB);
-                i++;
+                if (!usersFollow.contains(userB)) {
+                    followUser(userA, userB);
+                    usersFollow.add(userB);
+                    i++;
+                }
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;
