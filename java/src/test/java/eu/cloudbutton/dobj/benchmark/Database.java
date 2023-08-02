@@ -216,7 +216,7 @@ public class Database {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
         List<Key> users = listLocalUser.get(threadID);
-
+        int nbLocalUser = users.size();
         int j = 0;
         long randVal;
 
@@ -225,7 +225,7 @@ public class Database {
                 System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
-            int nbFollow = mapUsersFollowing.get(threadID).get(userA);
+            int nbFollow = Math.min(mapUsersFollowing.get(threadID).get(userA), nbLocalUser);
 //            System.out.println(nbFollow);
 //	        System.out.println(nbFollow);
 
