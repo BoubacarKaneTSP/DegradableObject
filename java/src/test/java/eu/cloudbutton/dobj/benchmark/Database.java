@@ -46,7 +46,7 @@ public class Database {
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
-    private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALE = 20000.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
@@ -233,7 +233,7 @@ public class Database {
             for (int i = 0; i < nbFollow;) {
 
 
-                System.out.println(i + " | " + nbFollow);
+//                System.out.println(i + " | " + nbFollow);
 
 //                randVal = random.get().nextLong() % usersFollowProbabilityRange;
 //                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
