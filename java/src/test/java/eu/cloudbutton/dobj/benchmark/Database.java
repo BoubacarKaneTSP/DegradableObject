@@ -256,11 +256,11 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-                followUser(userA, userB);
-                usersFollow.add(userB);
-                i++;
-//                if (!usersFollow.contains(userB)) {
-//                }
+                if (!usersFollow.contains(userB)) {
+                    followUser(userA, userB);
+                    usersFollow.add(userB);
+                    i++;
+                }
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;
