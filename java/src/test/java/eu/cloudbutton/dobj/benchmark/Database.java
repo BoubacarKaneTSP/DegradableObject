@@ -142,9 +142,20 @@ public class Database {
         Set<Key> localSetUser = new TreeSet<>();
         long sommeProba = 0;
         int nbFollowing, nbFollower;
+        double maxFollower, maxFollowing;
 
-        List<Integer> listNbFollower = generateValues(nbUsers, nbUsers, FOLLOWERSHAPE);
-        List<Integer> listNbFollowing = generateValues(nbUsers, nbUsers, FOLLOWINGSHAPE);
+        if ((nbUsers*0.43)/100 <= 0)
+            maxFollower = nbUsers;
+        else
+            maxFollower = (nbUsers*0.43)/100;
+
+        if ((nbUsers*8.4)/100 <= 0)
+            maxFollowing = nbUsers;
+        else
+            maxFollowing = (nbUsers*8.4)/100;
+
+        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE);
+        List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE);
 
         for (int i = 0; i < nbUsers;) {
             if(i%nbUsers*0.05 == 0)
@@ -245,7 +256,7 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-//                followUser(userA, userB);
+                followUser(userA, userB);
                 usersFollow.add(userB);
                 i++;
 //                if (!usersFollow.contains(userB)) {
