@@ -145,12 +145,12 @@ public class Database {
         double maxFollower, maxFollowing;
 
         if ((nbUsers*0.43)/100 <= 0)
-            maxFollower = nbUsers;
+            maxFollower = nbUsers/2;
         else
             maxFollower = (nbUsers*0.43)/100;
 
         if ((nbUsers*8.4)/100 <= 0)
-            maxFollowing = nbUsers;
+            maxFollowing = nbUsers/2;
         else
             maxFollowing = (nbUsers*8.4)/100;
 
