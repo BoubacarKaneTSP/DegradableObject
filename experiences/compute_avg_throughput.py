@@ -26,25 +26,29 @@ def calculate_bounds(values_func):
 nb_user = sys.argv[1]
 type_obj = sys.argv[2]
 list_nb_thread = sys.argv[3]
+completion_time = sys.argv[4]
 
 list_nb_thread = list_nb_thread.split(" ")
 
-list_op = ["ALL",
-            "ADD",
-           "FOLLOW",
-           "UNFOLLOW",
-           "TWEET",
-           "READ"]#,
-           #"avg_queue_size",
-           #"avg_Follower",
-           #"avg_Following",
-           #"proportion_Max_Follower",
-           #"proportion_Max_Following",
-           #"proportion_User_With_Max_Follower",
-           #"proportion_User_With_Max_Following",
-           #"proportion_User_Without_Follower",
-           #"proportion_User_Without_Following",
-           #"nb_user_final",
+if completion_time == "True":
+    list_op = ["ALL"]
+else:
+    list_op = ["ALL",
+                "ADD",
+               "FOLLOW",
+               "UNFOLLOW",
+               "TWEET",
+               "READ"]#,
+               #"avg_queue_size",
+               #"avg_Follower",
+               #"avg_Following",
+               #"proportion_Max_Follower",
+               #"proportion_Max_Following",
+               #"proportion_User_With_Max_Follower",
+               #"proportion_User_With_Max_Following",
+               #"proportion_User_Without_Follower",
+               #"proportion_User_Without_Following",
+               #"nb_user_final",
            #"nb_tweet_final"]
 
 for op in list_op:

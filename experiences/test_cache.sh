@@ -9,17 +9,17 @@ benchmarkTime=30
 warmingUpTime=30
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=10000000
+nbOps=100000000
 ratio="5 15 30 50"
-
+completion_time="True"
 #ExtendedSegmentedConcurrentHash
 
 for nbUsersInit in 100
 do
   #  Cleaning old file
-  python3 rm_file.py $nbUsersInit "JUC"
-  python3 rm_file.py $nbUsersInit "Q_M_C"
-  python3 rm_file.py $nbUsersInit "SEQ"
+  python3 rm_file.py $nbUsersInit "JUC" $completion_time
+  python3 rm_file.py $nbUsersInit "Q_M_C" $completion_time
+  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
