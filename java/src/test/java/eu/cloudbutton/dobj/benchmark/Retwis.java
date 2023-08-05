@@ -424,7 +424,7 @@ public class Retwis {
                 if (strAlpha.length() >= 3)
                     strAlpha = strAlpha.substring(0,3);
 
-                long timeBenchmarkAvg = ((timeBenchmark.longValue() / 1_000_000) / nbCurrThread) / _nbTest;
+                long timeBenchmarkAvg = (timeBenchmark.longValue() / 1_000_000) / nbCurrThread;
 
                 if (_s){
 

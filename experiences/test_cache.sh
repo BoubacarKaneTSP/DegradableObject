@@ -9,12 +9,12 @@ benchmarkTime=30
 warmingUpTime=30
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000
+nbOps=10000000
 ratio="5 15 30 50"
 
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 1000000
+for nbUsersInit in 100
 do
   #  Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC"
