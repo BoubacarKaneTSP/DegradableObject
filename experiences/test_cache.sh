@@ -9,7 +9,7 @@ benchmarkTime=30
 warmingUpTime=30
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000000
+nbOps=1000000000
 ratio="5 15 30 50"
 completion_time="True"
 #ExtendedSegmentedConcurrentHash
