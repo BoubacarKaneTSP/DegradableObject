@@ -744,7 +744,6 @@ public class Retwis {
                         type = chooseOperation();
                         compute(type, nbLocalOperations, timeLocalOperations, i, cleanTimeline);
                         cleanTimeline = i % (2 * _nbUserInit) == 0;
-
                     }
                 }else{
 
