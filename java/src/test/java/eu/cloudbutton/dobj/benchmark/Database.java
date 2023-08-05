@@ -270,7 +270,7 @@ public class Database {
             }
 
         }
-        System.out.println("end following phase thread : " + Thread.currentThread().getName() + " : " + localUsersFollow);
+        System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }
 
     public String computeHistogram(int range, int max, String type){
