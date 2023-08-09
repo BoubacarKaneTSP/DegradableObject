@@ -20,10 +20,10 @@ public class PowerLawTest {
         List<Integer> values = new ArrayList<>();
         double desiredMaxValue;
 
-        if ((numValues*0.43)/100 <= 0)
+        if ((numValues*8.4)/100 <= 0)
             desiredMaxValue = numValues/2;
         else
-            desiredMaxValue = (numValues*0.43)/100;
+            desiredMaxValue = (numValues*8.4)/100;
 
         RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
         ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
@@ -44,28 +44,16 @@ public class PowerLawTest {
             values.add((int) Math.round(scaledValue));
         }
 
-        List<Double> listAlpha = new ArrayList<>();
-
-        /*for (double i = 1.315 ; i <= 1.315; i+=0.025) {
-            listAlpha.add(i);
-        }*/
-
-
-        int nbUsers= 100000;
+        System.out.println(Collections.max(values));
 
         int maxFollower, maxFollowing;
 
-        maxFollower = (int) ((0.84 * nbUsers)/100);
-        maxFollowing = (int) ((0.043 * nbUsers)/100);
+        maxFollower = (int) (0.084 * numValues);
+        maxFollowing = (int) (0.0043 * numValues);
 
         System.out.println("maxFollowers = " + maxFollower);
         System.out.println("maxFollowing = " + maxFollowing);
 
-        double ratio = 100000 / 175000000.0; //10⁵ is ~ the number of follow max on twitter and 175_000_000 is the number of user on twitter (stats from the article)
-//            long max = 0;
-        System.out.println(ratio);
-        System.out.println(nbUsers);
-        System.out.println(maxFollower);
         int i = 0, nbMax = 0, avg = 0;;
         int j = 0;
         for (int val: values){
