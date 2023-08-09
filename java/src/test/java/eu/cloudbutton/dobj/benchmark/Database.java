@@ -77,8 +77,8 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-//        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
-        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
+//        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
@@ -145,14 +145,14 @@ public class Database {
         double maxFollower, maxFollowing;
 
         if ((nbUsers*0.43)/100 <= 0)
-            maxFollower = nbUsers/2;
-        else
-            maxFollower = (nbUsers*0.43)/100;
-
-        if ((nbUsers*8.4)/100 <= 0)
             maxFollowing = nbUsers/2;
         else
-            maxFollowing = (nbUsers*8.4)/100;
+            maxFollowing = (nbUsers*0.43)/100;
+
+        if ((nbUsers*8.4)/100 <= 0)
+            maxFollower = nbUsers/2;
+        else
+            maxFollower = (nbUsers*8.4)/100;
 
         List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE);
         List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE);
