@@ -311,8 +311,8 @@ public class Database {
     }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
-        mapFollowers.put(user, new ConcurrentSkipListSet<>());
-//        mapFollowers.put(user, new HashSet<>());
+//        mapFollowers.put(user, new ConcurrentSkipListSet<>());
+        mapFollowers.put(user, new HashSet<>());
         mapFollowing.put(user, new HashSet<>());
 
 //        if (typeSet.contains("Extended"))
