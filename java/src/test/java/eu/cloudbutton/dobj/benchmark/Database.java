@@ -112,7 +112,7 @@ public class Database {
                 System.out.println(g);
 
 //            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
-            somme += 1; // Each user have the same probability to be chosen
+            somme += 1; // Each user have the same probability to be choose
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -166,8 +166,8 @@ public class Database {
                 nbFollower = Math.max(1,listNbFollower.get(i));
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 
-                sommeProba += nbFollowing;
-//                sommeProba += 1;
+//                sommeProba += nbFollowing;
+                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
@@ -243,13 +243,13 @@ public class Database {
             int nbFailFollow = 0;
             for (int i = 0; i < nbFollow;) {
 
-
 //                System.out.println(i + " | " + nbFollow);
 
-//                randVal = random.get().nextLong() % usersFollowProbabilityRange;
-//                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
-                randVal = random.get().nextInt(users.size());
-                Key userB = users.get((int) randVal);
+                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
+
+//                randVal = random.get().nextInt(users.size());
+//                Key userB = users.get((int) randVal);
 //
 //                Key userB;
 //                userB = listAllUser.get(i%nbUsers);

@@ -56,6 +56,9 @@ public class PowerLawTest {
 
         int i = 0, nbMax = 0, avg = 0;;
         int j = 0;
+
+        Map<Integer, Integer> countValues = new HashMap<>();
+
         for (int val: values){
             if (val >= maxFollower) {
                 nbMax++;
@@ -68,7 +71,16 @@ public class PowerLawTest {
 
             avg += values.get(i);
             i++;
+
+            if (!countValues.containsKey(val)){
+                countValues.put(val, 1);
+            }else {
+                countValues.put(val, countValues.get(val) + 1);
+            }
         }
+
+        countValues = sortMapByValue(countValues);
+        System.out.println(countValues);
 
         Collections.sort(values);
 
@@ -83,7 +95,29 @@ public class PowerLawTest {
         System.out.println("avg : " + avg/values.size());
 
 
+ /*       Map<String,Integer> mapTest = new HashMap<>();
 
+        mapTest.put("D", 1);
+        mapTest.put("C", 2);
+        mapTest.put("B", 3);
+        mapTest.put("A", 4);
+
+        System.out.println(mapTest);*/
     }
 
+    public static Map<Integer, Integer> sortMapByValue(Map<Integer, Integer> inputMap) {
+        // Convert the inputMap to a List of Map.Entry objects
+        List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
+
+        // Sort the entryList using a custom comparator based on values
+        Collections.sort(entryList, Comparator.comparing(Map.Entry::getValue));
+
+        // Create a new LinkedHashMap to store the sorted entries
+        Map<Integer, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
 }
