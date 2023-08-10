@@ -166,8 +166,8 @@ public class Database {
                 nbFollower = Math.max(1,listNbFollower.get(i));
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 
-//                sommeProba += nbFollowing;
-                sommeProba += 1;
+                sommeProba += nbFollowing;
+//                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
