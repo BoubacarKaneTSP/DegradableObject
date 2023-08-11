@@ -421,7 +421,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // for item to be removed from this queue.
                     if (p != h) // hop two nodes at a time
                         updateHead(h, ((q = p.next) != null) ? q : p);
-                    queueSize.decrement();
+//                    queueSize.decrement();
                     return item;
                 }
                 else if ((q = p.next) == null) {
