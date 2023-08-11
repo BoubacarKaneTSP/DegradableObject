@@ -408,7 +408,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
         return null;*/
 
         restartFromHead: for (;;) {
-            System.out.println("stuck");
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
@@ -416,6 +415,8 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // for item to be removed from this queue.
                     if (p != h) // hop two nodes at a time
                         updateHead(h, ((q = p.next) != null) ? q : p);
+//                    queueSize.decrementAndGet();
+//                    queueSize.decrement();
                     return item;
                 }
                 else if ((q = p.next) == null) {
