@@ -246,14 +246,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
-    private AtomicInteger queueSize;
+//    private AtomicInteger queueSize;
 
     /**
      * Creates a {@code QueueMASP} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
-        queueSize = new AtomicInteger();
+//        queueSize = new AtomicInteger();
     }
 
     /**
@@ -1019,7 +1019,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public void clear() {
         head = tail = new Node<E>();
-        queueSize.set(0);
+//        queueSize.set(0);
 //        bulkRemove(e -> true);
     }
 
