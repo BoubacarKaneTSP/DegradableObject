@@ -48,8 +48,8 @@ public class Timeline<T> {
 
        long queueSize = timeline.size();
 
-       for (int i = 0; i < queueSize; i++)
-           topk.add(timeline.poll());
+//       for (int i = 0; i < queueSize; i++)
+//           topk.add(timeline.poll());
 
        int topkSize = topk.size();
 
