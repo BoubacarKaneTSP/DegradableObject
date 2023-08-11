@@ -87,14 +87,19 @@ public class CounterIncrementOnly implements Counter {
     @Override
     public long decrementAndGet(int delta) {
         local.get().val -= delta;
-
+        UNSAFE.storeFence();
         return 0;
     }
 
     @Override
     public long decrementAndGet() {
         local.get().val -= 1;
+        UNSAFE.storeFence();
         return 0;
     }
 
+    public void decrement(){
+        local.get().val -=1 ;
+        UNSAFE.storeFence();
+    }
 }

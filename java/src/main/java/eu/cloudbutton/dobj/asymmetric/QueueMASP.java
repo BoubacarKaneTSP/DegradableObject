@@ -400,6 +400,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // for item to be removed from this queue.
                     if (p != h) // hop two nodes at a time
                         updateHead(h, ((q = p.next) != null) ? q : p);
+                    queueSize.decrement();
                     return item;
                 }
                 else if ((q = p.next) == null) {
@@ -475,7 +476,8 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-        restartFromHead: for (;;) {
+        return (int) queueSize.read();
+        /*restartFromHead: for (;;) {
             int count = 0;
             for (Node<E> p = first(); p != null;) {
                 if (p.item != null)
@@ -485,7 +487,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     continue restartFromHead;
             }
             return count;
-        }
+        }*/
     }
 
     /**
