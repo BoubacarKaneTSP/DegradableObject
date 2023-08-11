@@ -423,8 +423,10 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     updateHead(h, p);
                     return null;
                 }
-                else if (p == q)
+                else if (p == q) {
+                    System.out.println("restarting from head beacause : " + p + " == " + q);
                     continue restartFromHead;
+                }
             }
         }
     }
