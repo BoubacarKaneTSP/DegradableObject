@@ -36,6 +36,7 @@
 package eu.cloudbutton.dobj.asymmetric;
 
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import jdk.internal.vm.annotation.Contended;
 
 import java.lang.invoke.MethodHandles;
@@ -244,11 +245,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
+    private CounterIncrementOnly queueSize;
+
     /**
      * Creates a {@code QueueMASP} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
+        queueSize = new CounterIncrementOnly();
     }
 
     /**
@@ -370,6 +374,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
+                    queueSize.increment();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
