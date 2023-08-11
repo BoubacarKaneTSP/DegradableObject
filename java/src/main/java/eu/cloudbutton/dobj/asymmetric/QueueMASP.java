@@ -402,6 +402,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 System.out.println("head : " + head);
                 System.out.println("head next : " + head.next);
                 System.out.println("tail : " + tail);
+                System.out.println("tail next: " + tail.next);
             }
             head = head.next;
 //            queueSize.decrementAndGet();
