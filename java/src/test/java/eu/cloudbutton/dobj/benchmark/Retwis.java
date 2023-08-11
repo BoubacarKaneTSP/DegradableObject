@@ -956,9 +956,9 @@ public class Retwis {
         }
 
         public void resetAllTimeline(){
-//            for (Key usr: database.getLocalUsersUsageProbability().get().values()){
-//                database.getMapTimelines().get(usr).clear();
-//            }
+            for (Key usr: database.getLocalUsersUsageProbability().get().values()){
+                database.getMapTimelines().get(usr).clear();
+            }
         }
     }
 
