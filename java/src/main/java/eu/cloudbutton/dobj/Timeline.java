@@ -50,6 +50,7 @@ public class Timeline<T> {
 
        System.out.println("queue size : " + queueSize);
        for (int i = 0; i < queueSize; i++)
+           System.out.println("i : " + i);
            topk.add(timeline.poll());
 
        int topkSize = topk.size();
