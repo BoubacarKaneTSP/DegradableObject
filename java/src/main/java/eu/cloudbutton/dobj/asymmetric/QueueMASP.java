@@ -393,7 +393,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public E poll() {
 
-        if (head != tail){
+       /* if (head != tail){
 
             E item = null;
             try{
@@ -412,8 +412,8 @@ public class QueueMASP<E> extends AbstractQueue<E>
             return item;
         }
 
-        return null;
-        /*restartFromHead: for (;;) {
+        return null;*/
+        restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
@@ -431,7 +431,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 else if (p == q)
                     continue restartFromHead;
             }
-        }*/
+        }
     }
 
     public E peek() {
