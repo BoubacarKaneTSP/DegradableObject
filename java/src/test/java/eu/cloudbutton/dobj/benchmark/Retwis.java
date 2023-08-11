@@ -829,7 +829,7 @@ public class Retwis {
 
             if (cleanTimeline){
 
-                typeComputed = READ;
+                /*typeComputed = READ;
 
                 for (int i = 0; i < nbLocalUsers; i++) {
                     userA = database.getListLocalUser().get(database.getThreadID().get()).get(i);
@@ -842,7 +842,7 @@ public class Retwis {
                         nbOps.get(typeComputed).val += 1;
                         timeOps.get(typeComputed).val += endTime - startTime;
                     }
-                }
+                }*/
 
             }
             else{
