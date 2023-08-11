@@ -726,6 +726,7 @@ public class Retwis {
                 int num = 0;
                 boolean cleanTimeline = false;
                 while (flagWarmingUp.get()) { // warm up
+                    System.out.println(Thread.currentThread().getName());
                     type = chooseOperation();
                     compute(type, nbLocalOperations, timeLocalOperations, num++,cleanTimeline);
 
@@ -761,6 +762,7 @@ public class Retwis {
 
                             }
                         }else{
+                            System.out.println(Thread.currentThread().getName());
                             compute(type, nbLocalOperations, timeLocalOperations, num++,cleanTimeline);
                             cleanTimeline = num % (2 * _nbUserInit) == 0;
                         }
