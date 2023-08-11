@@ -375,7 +375,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
-                    queueSize.incrementAndGet();
+//                    queueSize.incrementAndGet();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
