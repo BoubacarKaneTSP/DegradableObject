@@ -1055,6 +1055,7 @@ public class Retwis {
 
 
         private void saveUserUsageDistribution() throws IOException {
+            System.out.println("save distrib");
             PrintWriter printWriter;
             FileWriter fileWriter;
 
