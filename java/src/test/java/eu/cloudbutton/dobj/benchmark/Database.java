@@ -41,7 +41,6 @@ public class Database {
     private final Map<Key, AtomicInteger> mapNbFollowers;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
-    private final List<Integer> powerLawArray;
     private long usersFollowProbabilityRange;
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
@@ -82,7 +81,6 @@ public class Database {
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
-        this.powerLawArray = powerLawArray;
         listAllUser = new ArrayList<>();
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
@@ -104,6 +102,8 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID.get());
 
         //adding all users
+        int size = users.size();
+        List<Integer> powerLawArray = generateValues(size, size, 1.38);
 
         long somme = 0;
         int g = 0;
@@ -111,8 +111,8 @@ public class Database {
             if (++g%nbUsers*0.05 == 0)
                 System.out.println(g);
 
-//            somme += powerLawArray.get(random.get().nextInt(powerLawArray.size()));
-            somme += 1; // Each user have the same probability to be chosen
+            somme += powerLawArray.get(g);
+//            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
