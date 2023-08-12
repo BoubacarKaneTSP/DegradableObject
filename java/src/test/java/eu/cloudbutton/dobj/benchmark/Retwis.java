@@ -1059,7 +1059,7 @@ public class Retwis {
             PrintWriter printWriter;
             FileWriter fileWriter;
 
-            fileWriter = new FileWriter("User_Usage_Distribution"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            fileWriter = new FileWriter("User_Usage_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
             for (String s : userUsageDistribution)

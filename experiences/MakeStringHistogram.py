@@ -10,13 +10,15 @@ def plot_word_histogram(file_path):
         text = file.read()
 
     # Séparation du texte en mots en supprimant la ponctuation et en mettant en minuscules
-    words = re.findall(r'\b\w+\b', text.lower())
+    words = text.split(" ")
 
+    print(len(words))
     # Comptage de la fréquence des mots
     word_count = Counter(words)
+    print(len(word_count))
 
     # Filtrage des mots apparaissant plus de 3 fois
-    frequent_words = {word: count for word, count in word_count.items() if count > 3}
+    frequent_words = {word: count for word, count in word_count.items() if count > 1}
 
     # Tri des mots en fonction de leur fréquence
     sorted_words = sorted(frequent_words, key=frequent_words.get, reverse=True)
