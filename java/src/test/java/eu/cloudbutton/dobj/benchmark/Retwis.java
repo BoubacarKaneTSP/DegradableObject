@@ -124,6 +124,7 @@ public class Retwis {
     private List<AtomicLong> nbOperations;
     private List<AtomicLong> timeOperations;
     private LongAdder timeBenchmark;
+    private Set<String> userUsageDistribution;
 //    private LongAdder queueSizes;
 //    private Long nbUserFinal;
 //    private Long nbTweetFinal;
@@ -268,6 +269,7 @@ public class Retwis {
 
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
+                userUsageDistribution = new ConcurrentSkipListSet<>();
 //                queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
@@ -862,7 +864,7 @@ public class Retwis {
 
                     int val = random.get().nextInt(nbLocalUsers);
                     userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
-
+                    userUsageDistribution.add(userA.toString());
 //                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
 //                    userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
@@ -1048,6 +1050,21 @@ public class Retwis {
                 throw new Exception("Thread interrupted", e);
             }
             return null;
+        }
+
+
+        private void saveUserUsageDistribution() throws IOException {
+            PrintWriter printWriter;
+            FileWriter fileWriter;
+
+            fileWriter = new FileWriter("User_Usage_Distribution"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            printWriter = new PrintWriter(fileWriter);
+
+            for (String s : userUsageDistribution)
+                printWriter.print(s + " ");
+
+            printWriter.flush();
+            fileWriter.close();
         }
 
         private void saveDistributionHistogram(String tag) throws IOException {
