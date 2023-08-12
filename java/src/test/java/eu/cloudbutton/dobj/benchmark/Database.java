@@ -104,6 +104,7 @@ public class Database {
         //adding all users
         int size = users.size();
         List<Integer> powerLawArray = generateValues(size, size, 1.38);
+        int powerLawArraySize = powerLawArray.size();
 
         long somme = 0;
         int g = 0;
@@ -111,7 +112,7 @@ public class Database {
             if (++g%nbUsers*0.05 == 0)
                 System.out.println(g);
 
-            somme += powerLawArray.get(g);
+            somme += powerLawArray.get(g%powerLawArraySize);
 //            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
