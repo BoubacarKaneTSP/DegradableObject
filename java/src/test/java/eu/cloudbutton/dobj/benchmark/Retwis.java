@@ -124,7 +124,7 @@ public class Retwis {
     private List<AtomicLong> nbOperations;
     private List<AtomicLong> timeOperations;
     private LongAdder timeBenchmark;
-    private Set<String> userUsageDistribution;
+    private Queue<String> userUsageDistribution;
 //    private LongAdder queueSizes;
 //    private Long nbUserFinal;
 //    private Long nbTweetFinal;
@@ -269,7 +269,7 @@ public class Retwis {
 
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
-                userUsageDistribution = new ConcurrentSkipListSet<>();
+                userUsageDistribution = new ConcurrentLinkedQueue<>();
 //                queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
