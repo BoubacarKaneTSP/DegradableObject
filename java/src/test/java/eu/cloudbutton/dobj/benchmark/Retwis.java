@@ -1022,7 +1022,7 @@ public class Retwis {
 //                    performHeapDump(_tag, "Post", (int) _nbUserInit);
 
 //                    saveTimelineHistogram();
-                    TimeUnit.SECONDS.sleep(5);
+//                    TimeUnit.SECONDS.sleep(5);
                     saveUserUsageDistribution();
 //                    saveDistributionHistogram("Post_Benchmark");
                 }else{
@@ -1055,7 +1055,7 @@ public class Retwis {
 
 
         private void saveUserUsageDistribution() throws IOException {
-            System.out.println("save distrib");
+            System.out.println(" ============================================================ > save distrib");
             PrintWriter printWriter;
             FileWriter fileWriter;
 
