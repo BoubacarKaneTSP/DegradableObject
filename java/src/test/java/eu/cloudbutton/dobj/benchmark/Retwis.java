@@ -735,7 +735,7 @@ public class Retwis {
                 }
 
 
-                resetAllTimeline();
+//                resetAllTimeline();
 
                 long startTimeBenchmark, endTimeBenchmark;
 

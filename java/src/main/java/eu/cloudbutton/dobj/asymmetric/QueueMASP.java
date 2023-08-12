@@ -304,6 +304,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
             NEXT.setRelease(h, h);
     }
 
+    final void sequentialUpdateHead(Node<E> h, Node<E> p) {
+        // assert h != null && p != null && (h == p || h.item == null);
+        if (h != p) {
+            head = p;
+            h.next = h;
+        }
+    }
+
     /**
      * Returns the successor of p, or the head node if p.next has been
      * linked to self, which will only be true if traversing with a
@@ -392,6 +400,20 @@ public class QueueMASP<E> extends AbstractQueue<E>
         }
     }
 
+/*    public void testOffer(E e, E e2){
+
+
+        Node<E> nodeE = new Node<E>(Objects.requireNonNull(e2));
+        Node<E> nodeA = new Node<E>(Objects.requireNonNull(e));
+        Node<E> nodeB = nodeA;
+
+        NEXT.setRelease(nodeA, nodeB);
+        if(NEXT.compareAndSet(nodeA, null, nodeE))
+            System.out.println("A");
+        if(NEXT.compareAndSet(nodeA, nodeB, nodeE))
+            System.out.println("B");
+    }*/
+
     public E poll() {
 
         /*if (head != tail){
@@ -400,13 +422,15 @@ public class QueueMASP<E> extends AbstractQueue<E>
             try{
                 item = head.next.item;
             }catch (NullPointerException e){
-                System.out.println("head : " + head);
-                System.out.println("head next : " + head.next);
-                System.out.println("tail : " + tail);
-                System.out.println("tail next: " + tail.next);
-                System.out.println("tail next next: " + tail.next.next);
+//                System.out.println(Thread.currentThread().getName());
+                System.out.println(size());
+//                System.out.println("head : " + head);
+//                System.out.println("head next : " + head.next);
+//                System.out.println("tail : " + tail);
+//                System.out.println("tail next: " + tail.next);
+//                System.out.println("tail next next: " + tail.next.next);
             }
-            head = head.next;
+//            head = head.next;
             queueSize.decrementAndGet();
 //            queueSize.decrement();
 //            head.item = null;
@@ -414,7 +438,29 @@ public class QueueMASP<E> extends AbstractQueue<E>
         }
 
         return null;*/
+
         restartFromHead: for (;;) {
+            for (Node<E> h = head, p = h, q;; p = q) {
+                final E item;
+                if ((item = p.item) != null) {
+                    // Successful CAS is the linearization point
+                    // for item to be removed from this queue.
+                    p.item = null;
+                    if (p != h) // hop two nodes at a time
+                        sequentialUpdateHead(h, ((q = p.next) != null) ? q : p);
+//                    queueSize.decrement();
+                    return item;
+                }
+                else if ((q = p.next) == null) {
+                    sequentialUpdateHead(h, p);
+                    return null;
+                }
+                else if (p == q)
+                    continue restartFromHead;
+            }
+        }
+
+        /*restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
@@ -432,7 +478,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 else if (p == q)
                     continue restartFromHead;
             }
-        }
+        }*/
     }
 
     public E peek() {

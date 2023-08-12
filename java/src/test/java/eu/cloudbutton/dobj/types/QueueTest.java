@@ -31,12 +31,14 @@ public class QueueTest {
         Class cls;
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueMASP");
+//        cls = Class.forName("java.util.concurrent.ConcurrentLinkedQueue");
         factory.setFactoryQueue(cls);
-        doConcurrentAppend(factory.getQueue());
+//        doConcurrentAppend(factory.getQueue());
+        doAppend((Queue<Integer>) factory.getQueue());
 
-        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
-        factory.setFactoryQueue(cls);
-        doAppend(factory.getQueue());
+//        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
+//        factory.setFactoryQueue(cls);
+//        doAppend(factory.getQueue());
 
         cls = Class.forName("eu.cloudbutton.dobj.queue.WaitFreeQueue");
         factory.setFactoryQueue(cls);
@@ -47,6 +49,14 @@ public class QueueTest {
 
     private static void doAppend(Queue<Integer> queue){
 
+//        queue = ((ConcurrentLinkedQueue) queue);
+        for (int i = 0; i < 1000; i++) {
+
+            queue.poll();
+            queue.offer(i);
+            queue.offer(i);
+            queue.offer(i);
+        }
     }
 
     private static void doEnqueue(WaitFreeQueue<Integer> queue){
