@@ -1022,7 +1022,8 @@ public class Retwis {
 //                    performHeapDump(_tag, "Post", (int) _nbUserInit);
 
 //                    saveTimelineHistogram();
-//                    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(5);
+                    saveUserUsageDistribution();
 //                    saveDistributionHistogram("Post_Benchmark");
                 }else{
 
