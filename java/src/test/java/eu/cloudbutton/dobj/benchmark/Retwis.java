@@ -864,7 +864,7 @@ public class Retwis {
 
                     int val = random.get().nextInt(nbLocalUsers);
                     userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
-                    userUsageDistribution.add(userA.toString());
+//                    userUsageDistribution.add(userA.toString());
 //                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
 //                    userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
@@ -888,10 +888,10 @@ public class Retwis {
                             break;
                         case FOLLOW:
 
-                            int val2 = random.get().nextInt(nbLocalUsers);
-                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
-//                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
-//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+//                            int val2 = random.get().nextInt(nbLocalUsers);
+//                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
+                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
+                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                                 startTime = System.nanoTime();
