@@ -283,8 +283,8 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
-                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1); // Coordinator
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread + 1); // Coordinator
+//                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1);
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
@@ -313,7 +313,8 @@ public class Retwis {
                         callables.add(retwisApp);
                     }
 
-                    executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime, latchHistogramDatabase));
+                    callables.add(new Coordinator(latch, latchCompletionTime, latchHistogramDatabase));
+//                    executorServiceCoordinator.submit(new Coordinator(latch, latchCompletionTime, latchHistogramDatabase));
                     List<Future<Void>> futures;
 
                     startTime = System.nanoTime();
@@ -662,6 +663,7 @@ public class Retwis {
                 nbCurrThread = _nbThreads;
 
         }
+        System.out.println("closing prog");
         System.exit(0);
     }
 
@@ -864,7 +866,9 @@ public class Retwis {
 
                     int val = random.get().nextInt(nbLocalUsers);
                     userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
-//                    userUsageDistribution.add(userA.toString());
+
+                    if (!flagWarmingUp.get())
+                        userUsageDistribution.add(userA.toString());
 //                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
 //                    userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
@@ -1024,7 +1028,7 @@ public class Retwis {
 //                    saveTimelineHistogram();
 //                    TimeUnit.SECONDS.sleep(5);
 
-//                    saveUserUsageDistribution();
+                    saveUserUsageDistribution();
 
 //                    saveDistributionHistogram("Post_Benchmark");
                 }else{
@@ -1058,14 +1062,27 @@ public class Retwis {
 
         private void saveUserUsageDistribution() throws IOException {
             System.out.println(" ============================================================ > save distrib");
+
+            Map<String, Integer> map = new HashMap<>();
+
             PrintWriter printWriter;
             FileWriter fileWriter;
 
             fileWriter = new FileWriter("User_Usage_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
             printWriter = new PrintWriter(fileWriter);
 
-            for (String s : userUsageDistribution)
-                printWriter.print(s + " ");
+            for (String s : userUsageDistribution){
+                if (!map.containsKey(s)) {
+                    map.put(s,1);
+                }
+                else {
+                    map.put(s, map.get(s)+1);
+                }
+            }
+
+            for (String s: map.keySet()){
+                printWriter.println(s + " " + map.get(s));
+            }
 
             printWriter.flush();
             fileWriter.close();

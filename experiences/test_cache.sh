@@ -5,8 +5,8 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=1
-benchmarkTime=60
-warmingUpTime=30
+benchmarkTime=3
+warmingUpTime=3
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=50000000000
@@ -25,6 +25,7 @@ do
 
 #  for nbThread in 1 2 4 8 16 32 48
   for nbThread in 1 16 48
+#  for nbThread in 1 4 8
 #  for nbThread in 1
   do
     for (( c=1; c<=nbTest; c++ ))
@@ -48,10 +49,12 @@ do
   done
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48" $completion_time
   python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 16 48" $completion_time
+#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 4 8" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48" $completion_time
  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 16 48" $completion_time
+# python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 4 8" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48" $completion_time

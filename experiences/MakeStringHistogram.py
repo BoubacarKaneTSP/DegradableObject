@@ -1,41 +1,39 @@
 import matplotlib.pyplot as plt
-from collections import Counter
-import re
 import sys
 
-
+# Vérifier si le nom du fichier et le nombre de bins sont fournis en arguments
 def plot_word_histogram(file_path):
-    # Lecture du contenu du fichier
-    with open(file_path, 'r') as file:
-        text = file.read()
+    word_count_pairs = []
 
-    # Séparation du texte en mots en supprimant la ponctuation et en mettant en minuscules
-    words = text.split(" ")
+    with open(file_path, 'r') as file:
+
+        for line in file:
+            word, count = line.strip().split()
+            count = int(count)
+            # print(count)
+            # if count > 0:
+            word_count_pairs.append((word, count))
+
+    word_count_pairs.sort(key=lambda pair: pair[1], reverse=True)
+
+    words = [pair[0] for pair in word_count_pairs]
+    counts = [pair[1] for pair in word_count_pairs]
+
+    dico = {i: 0 for i in range(max(counts) + 1)}
+
+    for count in counts:
+        dico[count] = dico[count] + 1
 
     print(len(words))
-    # Comptage de la fréquence des mots
-    word_count = Counter(words)
-    print(len(word_count))
-
-    # Filtrage des mots apparaissant plus de 3 fois
-    frequent_words = {word: count for word, count in word_count.items() if count > 1}
-
-    # Tri des mots en fonction de leur fréquence
-    sorted_words = sorted(frequent_words, key=frequent_words.get, reverse=True)
-    sorted_counts = [frequent_words[word] for word in sorted_words]
-
-    # Création de l'histogramme
-    plt.bar(sorted_words, sorted_counts)
+    plt.bar(dico.keys(), dico.values())
     plt.xlabel('Mots')
-    plt.ylabel('Fréquence')
-    plt.title('Distribution des mots dans le fichier (triés)')
+    plt.ylabel('Entier associé')
+    plt.title('Histogramme ')
     plt.xticks(rotation=45, ha='right')
 
-    # Affichage de l'histogramme
     plt.tight_layout()
     plt.show()
 
-# Vérifier si le nom du fichier et le nombre de bins sont fournis en arguments
 if len(sys.argv) < 2:
     print("Veuillez fournir le nom du fichier en arguments.")
     print("Exemple: python histogram.py fichier.txt")
