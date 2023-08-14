@@ -10,8 +10,6 @@ def plot_word_histogram(file_path):
         for line in file:
             word, count = line.strip().split()
             count = int(count)
-            # print(count)
-            # if count > 0:
             word_count_pairs.append((word, count))
 
     word_count_pairs.sort(key=lambda pair: pair[1], reverse=True)
@@ -26,10 +24,11 @@ def plot_word_histogram(file_path):
 
     print(len(words))
     plt.bar(dico.keys(), dico.values())
-    plt.xlabel('Mots')
-    plt.ylabel('Entier associé')
-    plt.title('Histogramme ')
-    plt.xticks(rotation=45, ha='right')
+    # plt.bar(dico.values(), dico.keys())
+    plt.xlabel('# of call')
+    plt.ylabel('# of user')
+    plt.title('Number of user called X times')
+    # plt.xticks(rotation=45, ha='right')
 
     plt.tight_layout()
     plt.show()
