@@ -61,7 +61,7 @@ public class Timeline<T> {
    }
 
    public void clear(){
-//        timeline.clear();
-//        topk.clear();
+        timeline.clear();
+        topk.clear();
    }
 }
