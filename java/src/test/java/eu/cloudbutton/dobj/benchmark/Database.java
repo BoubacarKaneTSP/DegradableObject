@@ -315,7 +315,7 @@ public class Database {
     }
     public Map computeFollowHistogram(int range, int max, String type){
 
-        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
+//        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
         Map<Key, Set<Key>> computedMap = null;
         Map<Integer, Integer> map = new HashMap<>();
 
