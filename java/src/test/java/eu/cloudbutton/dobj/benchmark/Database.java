@@ -212,6 +212,7 @@ public class Database {
             values.add((int) Math.round(scaledValue));
         }
 
+        System.out.println(values);
         return values;
     }
 
