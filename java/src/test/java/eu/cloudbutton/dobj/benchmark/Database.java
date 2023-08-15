@@ -45,7 +45,8 @@ public class Database {
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
-    private static final double SCALE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 20000.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
@@ -103,7 +104,7 @@ public class Database {
 
         //adding all users
         int size = users.size();
-        List<Integer> powerLawArray = generateValues(size, size, 20);
+        List<Integer> powerLawArray = generateValues(size, size, 20, SCALEUSAGE);
         int powerLawArraySize = powerLawArray.size();
 
         long somme = 0;
@@ -156,8 +157,8 @@ public class Database {
         else
             maxFollower = (nbUsers*8.4)/100;
 
-        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE);
-        List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE);
+        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE, SCALEFOLLOW);
+        List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE, SCALEFOLLOW);
 
         for (int i = 0; i < nbUsers;) {
 //            if(i%nbUsers*0.05 == 0)
@@ -188,7 +189,7 @@ public class Database {
         usersFollowProbabilityRange = sommeProba;
     }
 
-    public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE) {
+    public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) {
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
 
