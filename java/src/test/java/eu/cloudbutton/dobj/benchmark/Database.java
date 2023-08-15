@@ -380,9 +380,9 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
 
         for (Key follower : set) {
-            Timeline timeline = mapTimelines.get(follower);
-
-            timeline.add(msg);
+//            Timeline timeline = mapTimelines.get(follower);
+//
+//            timeline.add(msg);
         }
     }
 
