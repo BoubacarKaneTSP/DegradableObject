@@ -870,10 +870,10 @@ public class Retwis {
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
 
-//                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
-                    int val = random.get().nextInt(Math.toIntExact(database.getLocalUsersUsageProbabilityRange().get()));
+                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
+//                    int val = random.get().nextInt(Math.toIntExact(database.getLocalUsersUsageProbabilityRange().get()));
 
-                    userA = database.getLocalUsersUsageProbability().get().ceilingEntry((long) val).getValue();
+                    userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
 
                    /* if (val < nbLocalUsers)
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.1)));

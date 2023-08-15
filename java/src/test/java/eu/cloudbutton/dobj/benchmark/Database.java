@@ -109,8 +109,8 @@ public class Database {
         long somme = 0;
         int g = 0;
         for (Key user : users) {
-            if (++g%nbUsers*0.05 == 0)
-                System.out.println(g);
+//            if (++g%nbUsers*0.05 == 0)
+//                System.out.println(g);
 
             somme += powerLawArray.get(g%powerLawArraySize);
 //            somme += 1; // Each user have the same probability to be chosen
