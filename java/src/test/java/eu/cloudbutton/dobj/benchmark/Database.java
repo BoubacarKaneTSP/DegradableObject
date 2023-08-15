@@ -209,10 +209,10 @@ public class Database {
 
         for (int i = 0; i < numValues; i++) {
             double scaledValue = doubleValues.get(i) * scaleFactor;
-            values.add((int) Math.round(scaledValue));
+            values.add((int) Math.round(scaledValue)+1);
         }
 
-        System.out.println(values);
+        System.out.println(Collections.max(values));
         return values;
     }
 
