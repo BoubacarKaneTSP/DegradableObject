@@ -33,9 +33,22 @@ def plot_word_histogram(file_path):
     for key in key_to_remove:
         del dico[key]
 
+    nb_call_total = 0
+
+    for key in dico.keys():
+        nb_call_total += dico[key] * key
+
+
+    dico_proportion = {}
+
+    for key in dico.keys():
+        dico_proportion[key] = ((dico[key]* max(key,1)) / nb_call_total) * 100
+
+    print("nb call total : ", nb_call_total)
     nb_call = dico.keys()
     nb_user = dico.values()
-    print(dico)
+    print("dico : ",dico,"\n")
+    print("dico proportion : ",dico_proportion,"\n")
     # print(len(words))
 
     nb_call = sorted(nb_call, reverse=True)
@@ -44,8 +57,9 @@ def plot_word_histogram(file_path):
     # nb_call = nb_call[:20]
     # nb_user = nb_user[:20]
 
-    print("nb call : ", nb_call)
-    print("nb user : ", nb_user)
+    print("nb call : ", nb_call,"\n")
+
+    print("nb user : ", nb_user,"\n")
     # plt.bar(nb_call, nb_user, align='center')
     plt.bar(range(len(nb_call)), nb_user, tick_label=nb_call)
 

@@ -103,7 +103,7 @@ public class Database {
 
         //adding all users
         int size = users.size();
-        List<Integer> powerLawArray = generateValues(size, size, 1.38);
+        List<Integer> powerLawArray = generateValues(size, size, 20);
         int powerLawArraySize = powerLawArray.size();
 
         long somme = 0;
