@@ -112,12 +112,13 @@ public class Database {
             if (++g%nbUsers*0.05 == 0)
                 System.out.println(g);
 
-//            somme += powerLawArray.get(g%powerLawArraySize);
-            somme += 1; // Each user have the same probability to be chosen
+            somme += powerLawArray.get(g%powerLawArraySize);
+//            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
         }
+//        System.out.println(localUsersUsageProbability.get().keySet());
 
         localUsersUsageProbabilityRange.set(somme);
 
