@@ -1108,6 +1108,7 @@ public class Retwis {
             mapHistogramFollower = database.computeFollowHistogram(range, max,"Follower");
             mapHistogramFollowing = database.computeFollowHistogram(range, max,"Following");
 
+            System.out.println("done computing the map");
             PrintWriter printWriter;
             FileWriter fileWriter;
 
