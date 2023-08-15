@@ -160,8 +160,8 @@ public class Database {
         List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE);
 
         for (int i = 0; i < nbUsers;) {
-            if(i%nbUsers*0.05 == 0)
-                System.out.println(i);
+//            if(i%nbUsers*0.05 == 0)
+//                System.out.println(i);
 
             Key user = generateUser();
             if (localSetUser.add(user)){
@@ -234,8 +234,8 @@ public class Database {
         long randVal;
 
         for (Key userA: users){
-            if(++j%10000 == 0)
-                System.out.println(j);
+//            if(++j%10000 == 0)
+//                System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = Math.min(mapUsersFollowing.get(threadID).get(userA), nbLocalUser);
