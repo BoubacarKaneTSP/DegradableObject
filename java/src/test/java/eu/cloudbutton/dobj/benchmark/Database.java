@@ -314,6 +314,41 @@ public class Database {
         return values;
 //        return mapHistogram;
     }
+    public Map computeFollowHistogram(int range, int max, String type){
+
+        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
+        Map<Key, Set<Key>> computedMap = null;
+
+        if (type.equals("Follower")) {
+            computedMap = mapFollowers;
+        }else if (type.equals("Following")){
+            computedMap = mapFollowing;
+        }
+
+        for (int i = 0; i <= max; i+=max/range) {
+            mapHistogram.put(i,0);
+        }
+
+        int v,k;
+
+        assert computedMap != null : "Failed initialize map while computing histogram";
+
+        for (Set<Key> s : computedMap.values()) {
+            k = mapHistogram.ceilingKey(s.size());
+            v = mapHistogram.get(k) + 1;
+            mapHistogram.put(k, v);
+        }
+
+//        int totalUser = 0;
+//
+//        for (int nb : mapHistogram.values())
+//            totalUser += nb;
+//
+//        assert  totalUser == nbUsers : "Wrong number of user in histogram";
+
+//        return values;
+        return mapHistogram;
+    }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
         mapFollowers.put(user, new ConcurrentSkipListSet<>());

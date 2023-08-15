@@ -995,7 +995,7 @@ public class Retwis {
 
                     latchHistogram.await();
 
-//                    saveDistributionHistogram("Pre_Benchmark");
+                    saveDistributionHistogram("Pre_Benchmark");
 
 //                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
@@ -1033,7 +1033,7 @@ public class Retwis {
 
                     saveUserUsageDistribution();
 
-//                    saveDistributionHistogram("Post_Benchmark");
+                    saveDistributionHistogram("Post_Benchmark");
                 }else{
 
                     long startTime, endTime;
@@ -1103,10 +1103,10 @@ public class Retwis {
             distributionHistogramFollower = database.computeHistogram(range, max,"Follower");
             distributionHistogramFollowing = database.computeHistogram(range, max,"Following");
 
-//            Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
+            Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
 //
-//            mapHistogramFollower = database.computeHistogram(range, max,"Follower");
-//            mapHistogramFollowing = database.computeHistogram(range, max,"Following");
+            mapHistogramFollower = database.computeFollowHistogram(range, max,"Follower");
+            mapHistogramFollowing = database.computeFollowHistogram(range, max,"Following");
 
             PrintWriter printWriter;
             FileWriter fileWriter;
@@ -1116,8 +1116,8 @@ public class Retwis {
 
             printWriter.println(distributionHistogramFollower);
 
-//            for (Integer k : mapHistogramFollower.keySet())
-//                printWriter.println(k + " " + mapHistogramFollower.get(k));
+            for (Integer k : mapHistogramFollower.keySet())
+                printWriter.println(k + " " + mapHistogramFollower.get(k));
 
             printWriter.flush();
             fileWriter.close();
@@ -1126,8 +1126,8 @@ public class Retwis {
             printWriter = new PrintWriter(fileWriter);
 
             printWriter.println(distributionHistogramFollowing);
-//            for (Integer k : mapHistogramFollowing.keySet())
-//                printWriter.println(k + " " + mapHistogramFollowing.get(k));
+            for (Integer k : mapHistogramFollowing.keySet())
+                printWriter.println(k + " " + mapHistogramFollowing.get(k));
 
             printWriter.flush();
             fileWriter.close();
