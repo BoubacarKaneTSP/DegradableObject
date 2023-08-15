@@ -327,7 +327,7 @@ public class Database {
 
 
         for (Key key : computedMap.keySet()){
-            System.out.println(key);
+//            System.out.println(key);
             if (!map.containsKey(computedMap.get(key).size()))
                 map.put(computedMap.get(key).size(), 1);
             else
