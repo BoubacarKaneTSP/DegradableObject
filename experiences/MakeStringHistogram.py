@@ -89,7 +89,8 @@ def plot_word_histogram(file_path):
     nb_call = dico.keys()
     nb_user = dico.values()
     # print("dico : ",dico,"\n")
-    # print("dico proportion : ",dico_proportion,"\n")
+    print("dico proportion : ",dico_proportion,"\n")
+    print("total proportion : ", sum(dico_proportion.values()))
     # print(len(words))
 
     nb_call = sorted(nb_call, reverse=True)
