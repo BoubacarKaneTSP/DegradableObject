@@ -46,7 +46,7 @@ public class Database {
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
     private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 20000.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 10000.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
@@ -77,8 +77,8 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
-//        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+//        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
+        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
