@@ -448,7 +448,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     p.item = null;
                     if (p != h) // hop two nodes at a time
                         sequentialUpdateHead(h, ((q = p.next) != null) ? q : p);
-//                    queueSize.decrement();
+                    queueSize.decrementAndGet();
                     return item;
                 }
                 else if ((q = p.next) == null) {
@@ -544,18 +544,18 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-//        return queueSize.intValue();
-        restartFromHead: for (;;) {
-            int count = 0;
-            for (Node<E> p = first(); p != null;) {
-                if (p.item != null)
-                    if (++count == Integer.MAX_VALUE)
-                        break;  // @see Collection.size()
-                if (p == (p = p.next))
-                    continue restartFromHead;
-            }
-            return count;
-        }
+        return queueSize.intValue();
+//        restartFromHead: for (;;) {
+//            int count = 0;
+//            for (Node<E> p = first(); p != null;) {
+//                if (p.item != null)
+//                    if (++count == Integer.MAX_VALUE)
+//                        break;  // @see Collection.size()
+//                if (p == (p = p.next))
+//                    continue restartFromHead;
+//            }
+//            return count;
+//        }
     }
 
     /**
