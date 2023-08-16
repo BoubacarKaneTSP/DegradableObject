@@ -916,17 +916,17 @@ public class Retwis {
                             if (listFollow.size() == 0)
                                 continue restartOperation;
 
-//                        val = random.get().nextInt(listFollow.size());
-//                        int v = 0;
-//                        for (Key user : listFollow){
-//                            if (v==val) {
-//                                userB = user;
-//                                break;
-//                            }
-//                            v++;
-//                        }
+                            val = random.get().nextInt(listFollow.size());
+                            int v = 0;
+                            for (Key user : listFollow){
+                                if (v==val) {
+                                    userB = user;
+                                    break;
+                                }
+                                v++;
+                            }
 
-                            userB = listFollow.poll();
+//                            userB = listFollow.poll();
                             if (userB != null){ // Perform unfollow only if userA already follow someone
                                 startTime = System.nanoTime();
                                 database.unfollowUser(userA, userB);
