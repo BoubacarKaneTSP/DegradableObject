@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Timeline;
-import eu.cloudbutton.dobj.asymmetric.CounterMISD;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
@@ -291,8 +290,8 @@ public class Retwis {
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter,
                             nbCurrThread,
                             (int) _nbUserInit,
-                            _nbItems,
-                            powerLawArray);
+                            _nbItems
+                    );
 
                     if (nbCurrTest == 1){
                         flagWarmingUp.set(true);

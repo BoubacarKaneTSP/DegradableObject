@@ -46,14 +46,13 @@ public class Database {
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
     private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 500000.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 1000000.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, int nbUserMax,
-                    List<Integer> powerLawArray) throws ClassNotFoundException{
+                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException{
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
