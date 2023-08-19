@@ -45,6 +45,7 @@ public class Database {
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
+    Map<Integer, List<Integer>> mapUsageDistribution;
     private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
     private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
@@ -85,6 +86,19 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1, SCALEUSAGE);
+
+        Collections.sort(powerLawArray);
+
+        mapUsageDistribution = new ConcurrentHashMap<>();
+
+        for (int i = 0; i < nbThread; i++) {
+            mapUsageDistribution.put(i, new ArrayList<>());
+        }
+
+        for (int i = 0; i < nbUsers; i++) {
+            mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i));
+        }
 
         for (int i = 0; i < nbThread; i++) {
             listLocalUser.add(new ArrayList<>());
@@ -102,8 +116,7 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID.get());
 
         //adding all users
-        int size = users.size();
-        List<Integer> powerLawArray = generateValues(size, size, 1, SCALEUSAGE);
+        List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
         int powerLawArraySize = powerLawArray.size();
 
         long somme = 0;
