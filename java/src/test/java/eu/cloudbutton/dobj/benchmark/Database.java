@@ -90,9 +90,8 @@ public class Database {
 
         Collections.sort(powerLawArray);
 
-        for (int i = 0; i < powerLawArray.size(); i++) {
-            System.out.println(powerLawArray.get(i));
-        }
+
+        System.out.println(powerLawArray);
 
         mapUsageDistribution = new ConcurrentHashMap<>();
 
