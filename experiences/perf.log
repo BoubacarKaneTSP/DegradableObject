@@ -1,25 +1,25 @@
-# started on Sat Aug 19 18:05:38 2023
+# started on Sat Aug 19 18:30:51 2023
 
 
  Performance counter stats for './test.sh -c Counter -s ExtendedSegmentedHashSet -q Queue -m Map -t Retwis -r 5 15 30 50 -p -e -w 60 -u 30 -h Q_M_C -y 1000000 -d 1000000 -i 50000000000 -b -g 48':
 
-      179468964331      cache-references                                              (30.78%)
-       53816236058      cache-misses              #   29.986 % of all cache refs      (30.77%)
-     1935036288304      branches                                                      (30.77%)
-        8009953305      branch-misses             #    0.41% of all branches          (30.77%)
-    10842394125346      cycles                                                        (30.77%)
-     8153196835835      instructions              #    0.75  insn per cycle           (38.46%)
-     8102527699140      l1d_pend_miss.pending_cycles_any                                     (38.46%)
-       37577275639      l2_rqsts.all_demand_miss                                      (38.46%)
-     7088294832858      cycle_activity.stalls_total                                     (38.46%)
-     2326515059117      L1-dcache-loads                                               (38.46%)
-      165036552454      L1-dcache-load-misses     #    7.09% of all L1-dcache accesses  (30.77%)
-       34369975050      LLC-loads                                                     (30.77%)
-        8289619093      LLC-load-misses           #   24.12% of all LL-cache accesses  (30.78%)
+      173657455240      cache-references                                              (30.77%)
+       55362699429      cache-misses              #   31.880 % of all cache refs      (30.77%)
+     2222866277776      branches                                                      (30.77%)
+        7904960037      branch-misses             #    0.36% of all branches          (30.77%)
+    10964422109359      cycles                                                        (30.77%)
+     9895006961886      instructions              #    0.90  insn per cycle           (38.47%)
+     7596324373708      l1d_pend_miss.pending_cycles_any                                     (38.46%)
+       35366911706      l2_rqsts.all_demand_miss                                      (38.46%)
+     6436324181219      cycle_activity.stalls_total                                     (38.47%)
+     3082716035252      L1-dcache-loads                                               (38.46%)
+      163333583766      L1-dcache-load-misses     #    5.30% of all L1-dcache accesses  (30.77%)
+       32257984004      LLC-loads                                                     (30.76%)
+        8552480369      LLC-load-misses           #   26.51% of all LL-cache accesses  (30.76%)
 
-     128.528036952 seconds time elapsed
+     127.342235752 seconds time elapsed
 
-    3934.928473000 seconds user
-      18.240110000 seconds sys
+    3973.736881000 seconds user
+      17.753801000 seconds sys
 
 
