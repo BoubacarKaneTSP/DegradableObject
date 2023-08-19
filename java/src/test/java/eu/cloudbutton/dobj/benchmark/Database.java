@@ -272,10 +272,10 @@ public class Database {
 
 //                System.out.println(i + " | " + nbFollow);
 
-                randVal = random.get().nextLong() % usersFollowProbabilityRange;
-                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
-//                randVal = random.get().nextInt(users.size());
-//                Key userB = users.get((int) randVal);
+//                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+//                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
+                randVal = random.get().nextInt(users.size());
+                Key userB = users.get((int) randVal);
 //
 //                Key userB;
 //                userB = listAllUser.get(i%nbUsers);
