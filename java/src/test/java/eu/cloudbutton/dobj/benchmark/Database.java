@@ -220,14 +220,14 @@ public class Database {
             }
         }
 
-        double scaleFactor = desiredMaxValue / maxGeneratedValue;
+//        double scaleFactor = desiredMaxValue / maxGeneratedValue;
+//
+//        for (int i = 0; i < numValues; i++) {
+//            double scaledValue = doubleValues.get(i) * scaleFactor;
+//            values.add((int) Math.round(scaledValue)+1);
+//        }
 
-        for (int i = 0; i < numValues; i++) {
-            double scaledValue = doubleValues.get(i) * scaleFactor;
-            values.add((int) Math.round(scaledValue)+1);
-        }
-
-        System.out.println(Collections.max(values));
+//        System.out.println(Collections.max(values));
         return values;
     }
 
