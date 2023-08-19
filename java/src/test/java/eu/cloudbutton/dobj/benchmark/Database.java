@@ -221,11 +221,12 @@ public class Database {
         }
 
 //        double scaleFactor = desiredMaxValue / maxGeneratedValue;
-//
-//        for (int i = 0; i < numValues; i++) {
+
+        for (int i = 0; i < numValues; i++) {
 //            double scaledValue = doubleValues.get(i) * scaleFactor;
+            values.add((int) Math.round(doubleValues.get(i))+1);
 //            values.add((int) Math.round(scaledValue)+1);
-//        }
+        }
 
 //        System.out.println(Collections.max(values));
         return values;
