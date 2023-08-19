@@ -100,7 +100,7 @@ public class Database {
         }
 
         for (int i = 0; i < nbUsers; i++) {
-            mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i));
+            mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i) - 1000000);
         }
 
         for (int i = 0; i < nbThread; i++) {
