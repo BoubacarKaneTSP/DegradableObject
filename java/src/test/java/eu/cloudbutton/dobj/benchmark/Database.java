@@ -106,7 +106,7 @@ public class Database {
             mapUsersFollowing.add(new ConcurrentSkipListMap<>());
         }
 
-        System.out.println(mapUsageDistribution);
+//        System.out.println(mapUsageDistribution);
 
         System.out.println("generate user");
         generateUsers();
