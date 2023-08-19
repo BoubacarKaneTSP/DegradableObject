@@ -272,21 +272,21 @@ public class Database {
 
 //                System.out.println(i + " | " + nbFollow);
 
-//                randVal = random.get().nextLong() % usersFollowProbabilityRange;
-//                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
-                randVal = random.get().nextInt(users.size());
-                Key userB = users.get((int) randVal);
+                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
+//                randVal = random.get().nextInt(users.size());
+//                Key userB = users.get((int) randVal);
 //
 //                Key userB;
 //                userB = listAllUser.get(i%nbUsers);
 
                 assert userB != null : "User generated is null";
 
-                if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
+//                if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
                     usersFollow.add(userB);
                     i++;
-                }
+//                }
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;
