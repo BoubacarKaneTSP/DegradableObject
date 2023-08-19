@@ -175,14 +175,19 @@ public class Database {
         List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE, SCALEFOLLOW);
         List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE, SCALEFOLLOW);
 
+        Integer minFollower, minFollowing;
+
+        minFollower = Collections.min(listNbFollower);
+        minFollowing = Collections.min(listNbFollowing);
+
         for (int i = 0; i < nbUsers;) {
 //            if(i%nbUsers*0.05 == 0)
 //                System.out.println(i);
 
             Key user = generateUser();
             if (localSetUser.add(user)){
-                nbFollower = Math.max(1,(listNbFollower.get(i) - Collections.max(listNbFollower))%nbUsers);
-                nbFollowing = Math.max(1,(listNbFollowing.get(i) - Collections.max(listNbFollowing)) % nbUsers);
+                nbFollower = Math.max(1,(listNbFollower.get(i) - minFollower)%nbUsers);
+                nbFollowing = Math.max(1,(listNbFollowing.get(i) - minFollowing) % nbUsers);
 
                 sommeProba += nbFollowing;
 //                sommeProba += 1;
