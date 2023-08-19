@@ -91,8 +91,6 @@ public class Database {
         Collections.sort(powerLawArray);
 
 
-        System.out.println(powerLawArray);
-
         mapUsageDistribution = new ConcurrentHashMap<>();
 
         for (int i = 0; i < nbThread; i++) {
@@ -107,6 +105,8 @@ public class Database {
             listLocalUser.add(new ArrayList<>());
             mapUsersFollowing.add(new ConcurrentSkipListMap<>());
         }
+
+        System.out.println(mapUsageDistribution);
 
         System.out.println("generate user");
         generateUsers();
