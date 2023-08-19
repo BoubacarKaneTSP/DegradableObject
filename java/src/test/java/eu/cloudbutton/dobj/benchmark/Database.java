@@ -188,7 +188,7 @@ public class Database {
             if (localSetUser.add(user)){
                 nbFollower = Math.max(1,(listNbFollower.get(i) - minFollower)%nbUsers);
                 nbFollowing = Math.max(1,(listNbFollowing.get(i) - minFollowing) % nbUsers);
-                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
+//                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
                 sommeProba += nbFollowing;
 //                sommeProba += 1;
@@ -258,8 +258,8 @@ public class Database {
         long randVal;
 
         for (Key userA: users){
-//            if(++j%10000 == 0)
-//                System.out.println(j);
+            if(++j%10000 == 0)
+                System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = Math.min(mapUsersFollowing.get(threadID).get(userA), nbLocalUser);
