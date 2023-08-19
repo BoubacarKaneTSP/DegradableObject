@@ -188,6 +188,7 @@ public class Database {
             if (localSetUser.add(user)){
                 nbFollower = Math.max(1,(listNbFollower.get(i) - minFollower)%nbUsers);
                 nbFollowing = Math.max(1,(listNbFollowing.get(i) - minFollowing) % nbUsers);
+                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
                 sommeProba += nbFollowing;
 //                sommeProba += 1;
