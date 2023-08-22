@@ -46,14 +46,14 @@ public class Database {
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
     Map<Integer, List<Integer>> mapUsageDistribution;
-    private static final double SCALEUSAGE = 1000000.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 1; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException{
+                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException {
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -86,9 +86,9 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        List<Integer> powerLawArray = generateValues(nbUsers, 1000, 100, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, 1000000, 1.3, SCALEUSAGE);
 
-        Collections.sort(powerLawArray);
+//        Collections.sort(powerLawArray);
 
 
         mapUsageDistribution = new ConcurrentHashMap<>();
@@ -97,8 +97,11 @@ public class Database {
             mapUsageDistribution.put(i, new ArrayList<>());
         }
 
+//        System.out.println(powerLawArray);
+
+//        TimeUnit.SECONDS.sleep(5);
         for (int i = 0; i < nbUsers; i++) {
-            mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i) - 1000000);
+            mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i));
         }
 
         for (int i = 0; i < nbThread; i++) {
@@ -120,15 +123,17 @@ public class Database {
 
         //adding all users
         List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
+
         int powerLawArraySize = powerLawArray.size();
 
+//        System.out.println(powerLawArray);
         long somme = 0;
         int g = 0;
         for (Key user : users) {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-            somme += powerLawArray.get(g%powerLawArraySize)+1;
+            somme += powerLawArray.get(g++%powerLawArraySize)+1;
 //            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
@@ -155,7 +160,7 @@ public class Database {
         return keyGenerator.nextKey();
     }
 
-    public void generateUsers(){
+    public void generateUsers() throws InterruptedException {
 
         Set<Key> localSetUser = new TreeSet<>();
         long sommeProba = 0;
@@ -172,13 +177,13 @@ public class Database {
         else
             maxFollower = (nbUsers*8.4)/100;
 
-        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE, SCALEFOLLOW);
         List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE, SCALEFOLLOW);
+//        System.out.println(listNbFollowing);
+//        System.out.println("listNbFollowing");
+        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE, SCALEFOLLOW);
 
-        Integer minFollower, minFollowing;
-
-        minFollower = Collections.min(listNbFollower);
-        minFollowing = Collections.min(listNbFollowing);
+//        System.out.println(listNbFollower);
+//        System.out.println("listNbFollower");
 
         for (int i = 0; i < nbUsers;) {
 //            if(i%nbUsers*0.05 == 0)
@@ -186,11 +191,11 @@ public class Database {
 
             Key user = generateUser();
             if (localSetUser.add(user)){
-                nbFollower = Math.max(1,(listNbFollower.get(i) - minFollower)%nbUsers);
-                nbFollowing = Math.max(1,(listNbFollowing.get(i) - minFollowing) % nbUsers);
+                nbFollower = Math.max(1,listNbFollower.get(i));
+                nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
-                sommeProba += nbFollowing;
+                sommeProba += nbFollower;
 //                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
@@ -202,15 +207,16 @@ public class Database {
 	    
         }
 
-//        System.out.println(mapUsersFollowing);
+//        System.out.println(mapUsersFollowing.get(0).values());
 
         listAllUser.addAll(localSetUser);
         System.out.println("Done generating users");
 
         usersFollowProbabilityRange = sommeProba;
+//        System.out.println(usersFollowProbabilityRange);
     }
 
-    public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) {
+    public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) throws InterruptedException {
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
 
@@ -226,14 +232,19 @@ public class Database {
             }
         }
 
-//        double scaleFactor = desiredMaxValue / maxGeneratedValue;
+        double scaleFactor = desiredMaxValue / maxGeneratedValue;
 
         for (int i = 0; i < numValues; i++) {
-//            double scaledValue = doubleValues.get(i) * scaleFactor;
-            values.add((int) Math.round(doubleValues.get(i))+1);
-//            values.add((int) Math.round(scaledValue)+1);
+            double scaledValue = doubleValues.get(i) * scaleFactor;
+//            values.add((int) Math.round(doubleValues.get(i))+1);
+            values.add((int) Math.round(scaledValue)+1);
+//            System.out.println((int) Math.round(doubleValues.get(i))+1);
         }
 
+//        Collections.sort(values);
+//        System.out.println(values);
+//        System.out.println("aaa");
+//        TimeUnit.SECONDS.sleep(5);
 //        System.out.println(Collections.max(values));
         return values;
     }
@@ -263,17 +274,25 @@ public class Database {
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = Math.min(mapUsersFollowing.get(threadID).get(userA), nbLocalUser);
-//            System.out.println(nbFollow);
 //	        System.out.println(nbFollow);
 
             int nbFailFollow = 0;
+
+//            for (Long v : usersFollowProbability.keySet())
+//                System.out.println(v + " => " + usersFollowProbability.get(v));
+//            System.out.println(usersFollowProbability);
             for (int i = 0; i < nbFollow;) {
 
 
 //                System.out.println(i + " | " + nbFollow);
 
-                randVal = random.get().nextLong() % usersFollowProbabilityRange;
+                randVal = random.get().nextLong();
+                randVal = randVal < 0 ? (randVal * -1)  : randVal;
+                randVal =  randVal % usersFollowProbabilityRange;
+
                 Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
+
+//                System.out.println(randVal + " => " +userB);
 //                randVal = random.get().nextInt(users.size());
 //                Key userB = users.get((int) randVal);
 //
@@ -282,11 +301,11 @@ public class Database {
 
                 assert userB != null : "User generated is null";
 
-//                if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
+                if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
                     usersFollow.add(userB);
                     i++;
-//                }
+                }
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;
@@ -296,6 +315,23 @@ public class Database {
             }
 
         }
+
+//        System.out.println();
+//        for (Key user: users){
+//            if (mapFollowers.get(user).size() > 500) {
+//                System.out.println(user + " size followers => " + mapFollowers.get(user).size());
+//                System.out.println();
+//            }
+
+//            if (mapFollowing.get(user).size() > 500) {
+//                System.out.println(user + "size following = >" + mapFollowing.get(user).size());
+//                System.out.println();
+//            }
+
+
+//        }
+
+//        TimeUnit.SECONDS.sleep(5);
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }
 
@@ -350,24 +386,27 @@ public class Database {
 
         for (Key key : computedMap.keySet()){
 //            System.out.println(key);
-            if (!map.containsKey(computedMap.get(key).size()))
-                map.put(computedMap.get(key).size(), 1);
+            int size = computedMap.get(key).size();
+//            if (size > 1000)
+//                System.out.println(size);
+            if (!map.containsKey(size))
+                map.put(size, 1);
             else
-                map.put(computedMap.get(key).size(), map.get(computedMap.get(key).size()) + 1);
+                map.put(size, map.get(size) + 1);
         }
 
         return map;
     }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
-        mapFollowers.put(user, new ConcurrentSkipListSet<>());
+//        mapFollowers.put(user, new ConcurrentSkipListSet<>());
 //        mapFollowers.put(user, new HashSet<>());
         mapFollowing.put(user, new HashSet<>());
 
-//        if (typeSet.contains("Extended"))
-//            mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
-//        else
-//            mapFollowing.put(user, Factory.createSet(typeSet, nbThread));
+        if (typeSet.contains("Extended"))
+            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
+        else
+            mapFollowers.put(user, Factory.createSet(typeSet, nbThread));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 
@@ -425,6 +464,7 @@ public class Database {
     public void tweet(Key user, String msg) throws InterruptedException {
         Set<Key> set = mapFollowers.get(user);
 
+//        System.out.println(set.size());
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
 

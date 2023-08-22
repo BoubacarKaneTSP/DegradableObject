@@ -872,7 +872,13 @@ public class Retwis {
                     long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
 //                    int val = random.get().nextInt(Math.toIntExact(database.getLocalUsersUsageProbabilityRange().get()));
 
-                    userA = database.getLocalUsersUsageProbability().get().ceilingEntry(val).getValue();
+//                    System.out.println(database.getLocalUsersUsageProbability().get().keySet());
+
+//                    TimeUnit.SECONDS.sleep(20);
+                    userA = database.getLocalUsersUsageProbability()
+                            .get()
+                            .ceilingEntry(val)
+                            .getValue();
 
                    /* if (val < nbLocalUsers)
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.1)));
