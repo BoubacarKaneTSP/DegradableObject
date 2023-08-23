@@ -122,6 +122,7 @@ public class Retwis {
 
     private List<AtomicLong> nbOperations;
     private List<AtomicLong> timeOperations;
+    private Map<Integer, List<Long>> timeDurations;
     private LongAdder timeBenchmark;
     private Queue<String> userUsageDistribution;
 //    private LongAdder queueSizes;
@@ -269,6 +270,7 @@ public class Retwis {
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
                 userUsageDistribution = new ConcurrentLinkedQueue<>();
+                timeDurations = new ConcurrentHashMap<>();
 //                queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
@@ -278,6 +280,7 @@ public class Retwis {
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOperations.add(op, new AtomicLong());
                     timeOperations.add(op, new AtomicLong());
+                    timeDurations.put(op, new CopyOnWriteArrayList<>());
                 }
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
@@ -688,6 +691,7 @@ public class Retwis {
         long startTime, endTime;
         Map<Integer, BoxedLong> nbLocalOperations;
         Map<Integer, BoxedLong> timeLocalOperations;
+        Map<Integer, List<Long>> timeLocalDurations;
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, CountDownLatch latchHistogramDatabase, CountDownLatch latchFillCompletionTime) {
             this.random = ThreadLocal.withInitial(() -> new Random(94));
@@ -707,10 +711,12 @@ public class Retwis {
 
                 nbLocalOperations = new HashMap<>();
                 timeLocalOperations = new HashMap<>();
+                timeLocalDurations = new HashMap<>();
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbLocalOperations.put(op, new BoxedLong());
                     timeLocalOperations.put(op, new BoxedLong());
+                    timeLocalDurations.put(op, new ArrayList<>());
                 }
 
                 database.fill(latchFillDatabase, latchHistogramDatabase, usersFollow);
@@ -730,7 +736,7 @@ public class Retwis {
                 boolean cleanTimeline = false;
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, nbLocalOperations, timeLocalOperations, num++,cleanTimeline);
+                    compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, num++,cleanTimeline);
 
                     cleanTimeline = num % (2 * _nbUserInit) == 0;
                 }
@@ -745,7 +751,7 @@ public class Retwis {
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-                        compute(type, nbLocalOperations, timeLocalOperations, i, cleanTimeline);
+                        compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, i, cleanTimeline);
                         cleanTimeline = i % (2 * _nbUserInit) == 0;
 
                     }
@@ -759,12 +765,12 @@ public class Retwis {
 
                         if (_multipleOperation){
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, nbLocalOperations, timeLocalOperations, num++,cleanTimeline);
+                                compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, num++,cleanTimeline);
                                 cleanTimeline = num % (2 * _nbUserInit) == 0;
 
                             }
                         }else{
-                            compute(type, nbLocalOperations, timeLocalOperations, num++,cleanTimeline);
+                            compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, num++,cleanTimeline);
                             cleanTimeline = num % (2 * _nbUserInit) == 0;
                         }
                     }
@@ -787,6 +793,7 @@ public class Retwis {
                 for (int op: mapIntOptoStringOp.keySet()){
                     nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
+                    timeDurations.get(op).addAll(timeLocalDurations.get(op));
                 }
 
             } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InstantiationException e) {
@@ -820,7 +827,7 @@ public class Retwis {
             return type;
         }
 
-        public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps, int num, boolean cleanTimeline) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, int num, boolean cleanTimeline) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             startTime = 0L;
             endTime= 0L;
@@ -844,6 +851,7 @@ public class Retwis {
                     if (!flagWarmingUp.get()) {
                         nbOps.get(typeComputed).val += 1;
                         timeOps.get(typeComputed).val += endTime - startTime;
+                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
                     }
                 }
 
@@ -961,6 +969,9 @@ public class Retwis {
                     if (!flagWarmingUp.get()) {
                         nbOps.get(typeComputed).val += 1;
                         timeOps.get(typeComputed).val+= endTime - startTime;
+                        timeLocalDurations
+                                .get(typeComputed)
+                                .add(endTime - startTime);
                     }
 
                     break;
@@ -1039,6 +1050,7 @@ public class Retwis {
                     saveUserUsageDistribution();
 
                     saveDistributionHistogram("Post_Benchmark");
+                    saveOperationDistribution();
                 }else{
 
                     long startTime, endTime;
@@ -1067,9 +1079,45 @@ public class Retwis {
             return null;
         }
 
+        private void saveOperationDistribution() throws IOException {
+            System.out.println("Save operation duration distribution");
+
+            Map<Long, Integer> map;
+
+            int binSize = 10000;
+
+            PrintWriter printWriter;
+            FileWriter fileWriter;
+
+            for (int type: mapIntOptoStringOp.keySet()){
+                fileWriter = new FileWriter("Duration_"+mapIntOptoStringOp.get(type)+"_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+                printWriter = new PrintWriter(fileWriter);
+
+                map = new HashMap<>();
+
+                for(Long time : timeDurations.get(type)){
+                    time = time - time % binSize;
+
+                    if (!map.containsKey(time)) {
+                        map.put(time,1);
+                    }
+                    else {
+                        map.put(time, map.get(time)+1);
+                    }
+                }
+
+                for (Long val: map.keySet()){
+                    printWriter.println(val + " " + map.get(val));
+                }
+
+                printWriter.flush();
+                fileWriter.close();
+            }
+
+        }
 
         private void saveUserUsageDistribution() throws IOException {
-            System.out.println(" ============================================================ > save distrib");
+            System.out.println("Save user usage distribution");
 
             Map<String, Integer> map = new HashMap<>();
 
