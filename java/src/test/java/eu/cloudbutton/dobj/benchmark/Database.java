@@ -47,7 +47,7 @@ public class Database {
     ThreadLocal<Integer> threadID;
     Map<Integer, List<Integer>> mapUsageDistribution;
     private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 1; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 0.11; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
