@@ -47,7 +47,7 @@ public class Database {
     ThreadLocal<Integer> threadID;
     Map<Integer, List<Integer>> mapUsageDistribution;
     private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 0.11; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 1.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
@@ -465,11 +465,11 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
 
 //        System.out.println(set.size());
-//        for (Key follower : set) {
-//            Timeline timeline = mapTimelines.get(follower);
-//
-//            timeline.add(msg);
-//        }
+        for (Key follower : set) {
+            Timeline timeline = mapTimelines.get(follower);
+
+            timeline.add(msg);
+        }
     }
 
     public void showTimeline(Key user) throws InterruptedException {
