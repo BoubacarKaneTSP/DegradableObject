@@ -872,7 +872,7 @@ public class Retwis {
                         typeComputed = chooseOperation();
 
 //                    int val = random.get().nextInt(nbLocalUsers);
-                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num);
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
 
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
