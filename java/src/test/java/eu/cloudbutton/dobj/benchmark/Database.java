@@ -122,9 +122,9 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID.get());
 
         //adding all users
-        List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
+//        List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
 
-        int powerLawArraySize = powerLawArray.size();
+//        int powerLawArraySize = powerLawArray.size();
 
 //        System.out.println(powerLawArray);
         long somme = 0;
@@ -133,8 +133,8 @@ public class Database {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-//            somme += 1; // Each user have the same probability to be chosen
+//            somme += powerLawArray.get(g++%powerLawArraySize)+1;
+            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -167,12 +167,12 @@ public class Database {
         int nbFollowing, nbFollower;
         double maxFollower, maxFollowing;
 
-        if ((nbUsers*0.43)/100 <= 0)
+        if ((nbUsers*0.43)/100 <= 1)
             maxFollowing = nbUsers/2;
         else
             maxFollowing = (nbUsers*0.43)/100;
 
-        if ((nbUsers*8.4)/100 <= 0)
+        if ((nbUsers*8.4)/100 <= 1)
             maxFollower = nbUsers/2;
         else
             maxFollower = (nbUsers*8.4)/100;
@@ -430,16 +430,10 @@ public class Database {
     // and user_B to the following of user_A
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
-
-        Set set;
-
-        set = mapFollowers.get(userB);
-        set.add(userA);
-
-
-
-        set = mapFollowing.get(userA);
-        set.add(userB);
+        mapFollowers.get(userB)
+                .add(userA);
+        mapFollowing.get(userA)
+                .add(userB);
 
 //        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB + " and it has indice : " + ((SegmentAware)userB).getReference().get());
 
@@ -457,8 +451,10 @@ public class Database {
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB).remove(userA);
-        mapFollowing.get(userA).remove(userB);
+        mapFollowers.get(userB)
+                .remove(userA);
+        mapFollowing.get(userA)
+                .remove(userB);
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {
