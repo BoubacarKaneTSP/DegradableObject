@@ -871,8 +871,8 @@ public class Retwis {
                     if (nbAttempt > nbAttemptMax)
                         typeComputed = chooseOperation();
 
-                    int val = random.get().nextInt(nbLocalUsers);
-                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
+//                    int val = random.get().nextInt(nbLocalUsers);
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num);
 
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
