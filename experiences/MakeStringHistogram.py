@@ -25,11 +25,11 @@ def plot_word_histogram(file_path):
     nb_calls = [pair[0] for pair in word_count_pairs]
     nb_users_making_call = [pair[1] for pair in word_count_pairs]
 
-    print(word_count_pairs)
-    print()
-    print("nb_calls sum:",sum(nb_calls) , " : ", nb_calls)
-    print()
-    print("nb_users_making_call sum:",sum(nb_users_making_call), " : ", nb_users_making_call)
+    # print(word_count_pairs)
+    # print()
+    # print("nb_calls sum:",sum(nb_calls) , " : ", nb_calls)
+    # print()
+    # print("nb_users_making_call sum:",sum(nb_users_making_call), " : ", nb_users_making_call)
 
     if not is_string:
         dico = {i: 0 for i in nb_calls}
