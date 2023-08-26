@@ -281,7 +281,7 @@ public class Database {
 //            for (Long v : usersFollowProbability.keySet())
 //                System.out.println(v + " => " + usersFollowProbability.get(v));
 //            System.out.println(usersFollowProbability);
-            for (int i = 0; i < nbFollow;) {
+            for (long i = 0; i < nbFollow;) {
 
 
 //                System.out.println(i + " | " + nbFollow);
@@ -290,7 +290,7 @@ public class Database {
 //                randVal = randVal < 0 ? (randVal * -1)  : randVal;
 //                randVal =  randVal % usersFollowProbabilityRange;
 
-                Key userB =  usersFollowProbability.ceilingEntry(j%usersFollowProbabilityRange).getValue();
+                Key userB =  usersFollowProbability.ceilingEntry(i%usersFollowProbabilityRange).getValue();
 
 //                System.out.println(randVal + " => " +userB);
 //                randVal = random.get().nextInt(users.size());
@@ -304,8 +304,8 @@ public class Database {
                 if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
                     usersFollow.add(userB);
-                    i++;
                 }
+                i++;
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;
