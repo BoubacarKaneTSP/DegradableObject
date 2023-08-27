@@ -1016,7 +1016,7 @@ public class Retwis {
 
                     latchHistogram.await();
 
-                    saveDistributionHistogram("Pre_Benchmark");
+//                    saveDistributionHistogram("Pre_Benchmark");
 
 //                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
@@ -1054,7 +1054,7 @@ public class Retwis {
 
                     saveUserUsageDistribution();
 
-                    saveDistributionHistogram("Post_Benchmark");
+//                    saveDistributionHistogram("Post_Benchmark");
                     saveOperationDistribution();
                 }else{
 
