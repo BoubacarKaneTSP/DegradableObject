@@ -168,12 +168,12 @@ public class Database {
         double maxFollower, maxFollowing;
 
         if ((nbUsers*0.43)/100 <= 1)
-            maxFollowing = nbUsers/2;
+            maxFollowing = 1;
         else
             maxFollowing = (nbUsers*0.43)/100;
 
         if ((nbUsers*8.4)/100 <= 1)
-            maxFollower = nbUsers/2;
+            maxFollower = 1;
         else
             maxFollower = (nbUsers*8.4)/100;
 
@@ -192,7 +192,8 @@ public class Database {
             Key user = generateUser();
             if (localSetUser.add(user)){
                 nbFollower = Math.max(1,listNbFollower.get(i));
-                nbFollowing = Math.max(1,listNbFollowing.get(i));
+                nbFollowing =1;
+//                nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
 //                sommeProba += nbFollower;
@@ -286,11 +287,11 @@ public class Database {
 
 //                System.out.println(i + " | " + nbFollow);
 
-//                randVal = random.get().nextLong();
-//                randVal = randVal < 0 ? (randVal * -1)  : randVal;
-//                randVal =  randVal % usersFollowProbabilityRange;
+                randVal = random.get().nextLong();
+                randVal = randVal < 0 ? (randVal * -1)  : randVal;
+                randVal =  randVal % usersFollowProbabilityRange;
 
-                Key userB =  usersFollowProbability.ceilingEntry(i%usersFollowProbabilityRange).getValue();
+                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
 
 //                System.out.println(randVal + " => " +userB);
 //                randVal = random.get().nextInt(users.size());
@@ -304,8 +305,8 @@ public class Database {
                 if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
                     followUser(userA, userB);
                     usersFollow.add(userB);
+                    i++;
                 }
-                i++;
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;

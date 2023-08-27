@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=10
+nbTest=1
 benchmarkTime=60
 warmingUpTime=30
 #nbUsersInit=1000
@@ -14,7 +14,7 @@ ratio="5 15 30 50"
 completion_time="False"
 #ExtendedSegmentedConcurrentHash
 
-for nbUsersInit in 1000000
+for nbUsersInit in 100
 do
   #  Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC" $completion_time
