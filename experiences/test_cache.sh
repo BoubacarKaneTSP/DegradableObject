@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=5
+nbTest=3
 benchmarkTime=60
 warmingUpTime=30
 #nbUsersInit=1000
@@ -35,8 +35,8 @@ do
 	    echo " =============== > test number : $c"
 	    echo " "
 
-#      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c Counter -s ShardedHashSet -q SequentialQueue -m ShardedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "SEQ" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread #-z $nbOps
-#      python3 analyse_perf.py perf.log "false" "SEQ" $nbThread $nbUsersInit
+      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c Counter -s ShardedHashSet -q SequentialQueue -m ShardedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "SEQ" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread #-z $nbOps
+      python3 analyse_perf.py perf.log "false" "SEQ" $nbThread $nbUsersInit
 
       perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c Counter -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread #-z $nbOps
 #      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
@@ -61,7 +61,7 @@ do
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 4 8" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1" $completion_time
 
-#  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48" $completion_time
+  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 16 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1" $completion_time
 
@@ -69,7 +69,7 @@ do
 
   python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
   python3 analyse_perf.py perf.log "true" "Q_M_C" $nbThread $nbUsersInit
-#  python3 analyse_perf.py perf.log "true" "SEQ" $nbThread $nbUsersInit
+  python3 analyse_perf.py perf.log "true" "SEQ" $nbThread $nbUsersInit
   #python3 analyse_perf.py perf.log "true" "Q_M_S_C" $nbThread $nbUsersInit
 
 done

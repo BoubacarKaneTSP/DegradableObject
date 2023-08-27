@@ -291,11 +291,11 @@ public class Database {
                 randVal = randVal < 0 ? (randVal * -1)  : randVal;
                 randVal =  randVal % usersFollowProbabilityRange;
 
-                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
+//                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
 
 //                System.out.println(randVal + " => " +userB);
 //                randVal = random.get().nextInt(users.size());
-//                Key userB = users.get((int) randVal);
+                Key userB = users.get((int) randVal);
 //
 //                Key userB;
 //                userB = listAllUser.get(i%nbUsers);
