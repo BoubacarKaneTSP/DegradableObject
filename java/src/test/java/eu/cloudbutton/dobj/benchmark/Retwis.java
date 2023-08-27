@@ -872,23 +872,23 @@ public class Retwis {
                         typeComputed = chooseOperation();
 
 //                    int val = random.get().nextInt(nbLocalUsers);
-//                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
 
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
 
-                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
+//                    long val = random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get();
 //                    int val = random.get().nextInt(Math.toIntExact(database.getLocalUsersUsageProbabilityRange().get()));
 
 //                    System.out.println(database.getLocalUsersUsageProbability().get().keySet());
 
 //                    TimeUnit.SECONDS.sleep(20);
 
-                    userA = database
-                            .getLocalUsersUsageProbability()
-                            .get()
-                            .ceilingEntry(val)
-                            .getValue();
+//                    userA = database
+//                            .getLocalUsersUsageProbability()
+//                            .get()
+//                            .ceilingEntry(val)
+//                            .getValue();
 
                    /* if (val < nbLocalUsers)
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.1)));
@@ -912,10 +912,10 @@ public class Retwis {
 
                             listFollow = usersFollow.get(userA);
 
-//                            int val2 = random.get().nextInt(nbLocalUsers);
-//                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
-                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
-                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+                            int val2 = random.get().nextInt(nbLocalUsers);
+                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
+//                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
+//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                                 startTime = System.nanoTime();

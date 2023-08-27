@@ -155,6 +155,8 @@ public class Factory {
     public static Set createSet(String set, int parallelism) throws ClassNotFoundException {
 
         switch (set){
+            case "HashSet":
+                return new HashSet<>();
             case "SegmentedSkipListSet":
                 return new SegmentedSkipListSet<>(parallelism);
             case "SegmentedTreeSet":
