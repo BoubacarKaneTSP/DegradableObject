@@ -871,8 +871,8 @@ public class Retwis {
                     if (nbAttempt > nbAttemptMax)
                         typeComputed = chooseOperation();
 
-//                    int val = random.get().nextInt(nbLocalUsers);
-                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(num%nbLocalUsers);
+                    int val = random.get().nextInt(nbLocalUsers);
+                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(val);
 
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
@@ -912,10 +912,10 @@ public class Retwis {
 
                             listFollow = usersFollow.get(userA);
 
-//                            int val2 = random.get().nextInt(nbLocalUsers);
-//                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
-                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
-                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+                            int val2 = random.get().nextInt(nbLocalUsers);
+                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
+//                            long val2 = random.get().nextLong()%usersFollowProbabilityRange; // We choose a user to follow according to a probability
+//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                                 startTime = System.nanoTime();
@@ -1018,7 +1018,7 @@ public class Retwis {
 
 //                    saveDistributionHistogram("Pre_Benchmark");
 
-                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
+//                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
                     latchFillDatabase.countDown();
                     latchFillDatabase.await();
@@ -1047,7 +1047,7 @@ public class Retwis {
                     flagComputing.set(false);
 //                    stopMonitoring();
 //                    TimeUnit.SECONDS.sleep(2);
-                    performHeapDump(_tag, "Post", (int) _nbUserInit);
+//                    performHeapDump(_tag, "Post", (int) _nbUserInit);
 
 //                    saveTimelineHistogram();
 //                    TimeUnit.SECONDS.sleep(5);

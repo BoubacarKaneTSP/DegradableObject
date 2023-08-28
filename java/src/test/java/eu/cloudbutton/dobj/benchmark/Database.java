@@ -122,9 +122,9 @@ public class Database {
         List<Key> users = listLocalUser.get(threadID.get());
 
         //adding all users
-//        List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
+        List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
 
-//        int powerLawArraySize = powerLawArray.size();
+        int powerLawArraySize = powerLawArray.size();
 
 //        System.out.println(powerLawArray);
         long somme = 0;
@@ -133,8 +133,8 @@ public class Database {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-//            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-            somme += 1; // Each user have the same probability to be chosen
+            somme += powerLawArray.get(g++%powerLawArraySize)+1;
+//            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -192,8 +192,8 @@ public class Database {
             Key user = generateUser();
             if (localSetUser.add(user)){
                 nbFollower = Math.max(1,listNbFollower.get(i));
-                nbFollowing =1;
-//                nbFollowing = Math.max(1,listNbFollowing.get(i));
+//                nbFollowing =1;
+                nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
 //                sommeProba += nbFollower;
@@ -294,7 +294,8 @@ public class Database {
 //                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
 
 //                System.out.println(randVal + " => " +userB);
-                randVal = random.get().nextInt(users.size());
+
+                randVal = random.get().nextInt(nbLocalUser);
                 Key userB = users.get((int) randVal);
 //
 //                Key userB;
