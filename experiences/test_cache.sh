@@ -19,7 +19,7 @@ do
   #  Cleaning old file
   python3 rm_file.py $nbUsersInit "JUC" $completion_time
   python3 rm_file.py $nbUsersInit "Q_M_C" $completion_time
-#  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
+  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
