@@ -77,8 +77,8 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-//        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
-        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,FOLLOWERSHAPE);
+//        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
@@ -166,6 +166,7 @@ public class Database {
         long sommeProba = 0;
         int nbFollowing, nbFollower;
         double maxFollower, maxFollowing;
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1.3, SCALEUSAGE);
 
         if ((nbUsers*0.43)/100 <= 1)
             maxFollowing = 1;
@@ -196,8 +197,8 @@ public class Database {
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
-//                sommeProba += nbFollower;
-                sommeProba += 1;
+                sommeProba += powerLawArray.get(i);
+//                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
@@ -287,19 +288,11 @@ public class Database {
 
 //                System.out.println(i + " | " + nbFollow);
 
-//                randVal = random.get().nextLong();
-//                randVal = randVal < 0 ? (randVal * -1)  : randVal;
-//                randVal =  randVal % usersFollowProbabilityRange;
+                randVal = Math.abs(random.get().nextLong() % usersFollowProbabilityRange);
+                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
 
-//                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
-
-//                System.out.println(randVal + " => " +userB);
-
-                randVal = random.get().nextInt(nbLocalUser);
-                Key userB = users.get((int) randVal);
-//
-//                Key userB;
-//                userB = listAllUser.get(i%nbUsers);
+//                randVal = random.get().nextInt(nbLocalUser);
+//                Key userB = users.get((int) randVal);
 
                 assert userB != null : "User generated is null";
 
