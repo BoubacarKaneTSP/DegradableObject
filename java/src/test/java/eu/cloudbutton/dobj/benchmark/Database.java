@@ -456,11 +456,11 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
 
 //        System.out.println(set.size());
-        int i = 0;
+//        int i = 0;
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
 //
-//            timeline.add(msg);
+            timeline.add(msg);
 //            if (++i >= 1000)
 //                break;
         }
