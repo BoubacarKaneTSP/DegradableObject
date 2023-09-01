@@ -456,14 +456,14 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
 
 //        System.out.println(set.size());
-//        int i = 0;
-//        for (Key follower : set) {
+        int i = 0;
+        for (Key follower : set) {
 //            Timeline timeline = mapTimelines.get(follower);
 //
 //            timeline.add(msg);
 //            if (++i >= 1000)
 //                break;
-//        }
+        }
     }
 
     public void showTimeline(Key user) throws InterruptedException {
