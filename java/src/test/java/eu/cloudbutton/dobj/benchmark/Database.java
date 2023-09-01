@@ -458,7 +458,7 @@ public class Database {
 //        System.out.println(set.size());
         int i = 0;
         for (Key follower : set) {
-//            Timeline timeline = mapTimelines.get(follower);
+            Timeline timeline = mapTimelines.get(follower);
 //
 //            timeline.add(msg);
 //            if (++i >= 1000)
