@@ -187,8 +187,8 @@ public class Database {
 //        System.out.println("listNbFollower");
 
         for (int i = 0; i < nbUsers;) {
-//            if(i%nbUsers*0.05 == 0)
-//                System.out.println(i);
+            if(i%nbUsers*0.05 == 0)
+                System.out.println(i);
 
             Key user = generateUser();
             if (localSetUser.add(user)){
