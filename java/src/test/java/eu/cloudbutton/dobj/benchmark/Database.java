@@ -77,7 +77,7 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,0.5);
+        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,0.1);
 //        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();

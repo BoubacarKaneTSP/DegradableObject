@@ -8,41 +8,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Timeline<T> {
 
-    private final static int CAPACITY = 1000;
+    private final static int CAPACITY = 100;
 
     private final Queue<T> topk;
     @Getter
     private final Queue<T> timeline;
-    private AtomicBoolean flagSizeCapacity;
-    private AtomicInteger currentSize;
 
     public Timeline(Queue<T> timeline) {
         this.timeline = timeline;
         topk = new LinkedList<>();
-//        flagSizeCapacity = new AtomicBoolean(false);
-//        this.currentSize = new AtomicInteger();
     }
 
     public void add(T elt) throws InterruptedException {
 
 //        timeline.offer(elt);
-
    }
-//   public void add(T elt) throws InterruptedException {
-//
-//        if (!flagSizeCapacity.get()){
-//            if(currentSize.getAndIncrement() > CAPACITY){
-//                flagSizeCapacity.set(true);
-//                timeline.offer(elt);
-//                timeline.poll();
-//            }else{
-//                timeline.offer(elt);
-//            }
-//        }else{
-//            timeline.offer(elt);
-//            timeline.poll();
-//        }
-//   }
 
    public Queue<T> read() throws InterruptedException {
 
@@ -55,7 +35,6 @@ public class Timeline<T> {
 
         for (int i = 0; i < topkSize - CAPACITY; i++)
             topk.poll();
-
 
        return topk;
    }
