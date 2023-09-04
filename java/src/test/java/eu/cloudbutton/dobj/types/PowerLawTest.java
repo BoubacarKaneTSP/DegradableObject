@@ -14,7 +14,7 @@ public class PowerLawTest {
     @Test
     void add() {
 
-        double SCALE = 20000, SHAPE = 1.35;
+        double SCALE = 100000, SHAPE = 10;
         int numValues = 1000000;
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -40,7 +40,7 @@ public class PowerLawTest {
         double scaleFactor = desiredMaxValue / maxGeneratedValue;
 
         for (int i = 0; i < numValues; i++) {
-            double scaledValue = doubleValues.get(i) * scaleFactor;
+            double scaledValue = doubleValues.get(i) ;//* scaleFactor;
             values.add((int) Math.round(scaledValue));
         }
 
@@ -54,20 +54,21 @@ public class PowerLawTest {
         System.out.println("maxFollowers = " + maxFollower);
         System.out.println("maxFollowing = " + maxFollowing);
 
-        int i = 0, nbMax = 0, avg = 0;;
+        int i = 0, nbMax = 0;
+        long avg = 0;
         int j = 0;
 
         Map<Integer, Integer> countValues = new HashMap<>();
 
         for (int val: values){
-            if (val >= maxFollower) {
+            /*if (val >= maxFollower) {
                 nbMax++;
             }
             if (val>= 0.5*maxFollower)
                 j++;
             if (val < 0) {
                 values.set(i, 1);
-            }
+            }*/
 
             avg += values.get(i);
             i++;
@@ -80,7 +81,12 @@ public class PowerLawTest {
         }
 
         countValues = sortMapByValue(countValues);
-        System.out.println(countValues);
+//        System.out.println(countValues.values());
+
+        for (int v : countValues.values()){
+            if (v>1)
+                System.out.println(v);
+        }
 
         Collections.sort(values);
 
