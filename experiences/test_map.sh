@@ -11,12 +11,12 @@ benchmarkTime=30
 warmingUpTime=20
 
 #for type in "ConcurrentSkipListSet" "SegmentedSkipListSet" "SegmentedTreeSet" "ConcurrentHashSet" "SegmentedHashSet" "ConcurrentHashMap" "SegmentedHashMap" "ConcurrentLinkedQueue" "QueueMASP" "CounterJUC" "CounterIncrementOnly" "WrappedLongAdder"
-for type in "ConcurrentLinkedQueue" "QueueMASP"
+for type in "Map" "ExtendedSegmentedConcurrentHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedConcurrentSkipListMap"
 do
 
   python3 rm_file_microbenchmark.py $type
 
-  for nbThread in 2 4 8 16 32 48
+  for nbThread in 1 2 4 8 16 32 48
   #for nbThread in 1 16 48
   #for nbThread in 1
   do
