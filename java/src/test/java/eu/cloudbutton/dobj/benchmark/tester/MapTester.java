@@ -48,6 +48,9 @@ public class MapTester extends Tester<Map> {
                 endTime = System.nanoTime();
                 break;
             case READ:
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.put(list.get(i),i);
+                }
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.get(list.get(i));
