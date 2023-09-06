@@ -123,8 +123,8 @@ public class Microbenchmark {
             Object object = null;
             long startTime, endTime, benchmarkAvgTime = 0;
 
-            nbCurrentThread = nbThreads;
-//            nbCurrentThread = _asymmetric ? 2 : 1;
+//            nbCurrentThread = nbThreads;
+            nbCurrentThread = _asymmetric ? 2 : 1;
 
             if(_quickTest)
                 nbCurrentThread = nbThreads;
