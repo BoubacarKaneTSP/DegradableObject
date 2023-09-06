@@ -50,23 +50,23 @@ public class RetwisKeyGenerator implements KeyGenerator {
         return  new CollidingKey(
                 Thread.currentThread().getId(),
                 random.get().nextInt(Integer.MAX_VALUE),
-                list.get(random.get().nextInt(bound)),
+                list.get(random.get().nextInt(bound)%list.size()),
                 bound
         );
     }
 
-    private void fill(int nbUsers, double alpha){
+    private void fill(int nbHash, double alpha){
 
         double SCALE = 100000.0;
         double SHAPE = alpha;
-        int numValues = nbUsers;
+        int numValues = nbHash;
 
-        List<Double> doubleValues = new ArrayList<>();
+//        List<Double> doubleValues = new ArrayList<>();
 
         RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
         ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
 
-        double maxGeneratedValue = 0;
+//        double maxGeneratedValue = 0;
         for (int i = 0; i < numValues; i++) {
             double randomValue = distribution.sample();
             list.add(Math.round(randomValue));
@@ -86,30 +86,18 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     private void fill(){
 
-        double SCALE = 1.0;
-        double SHAPE = 1.35;
-        int numValues = 100;
-
-        List<Double> doubleValues = new ArrayList<>();
+        double SCALE = 100000.0;
+        double SHAPE = 10;
+        int numValues = bound;
 
         RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
         ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
 
-        double maxGeneratedValue = 0;
         for (int i = 0; i < numValues; i++) {
             double randomValue = distribution.sample();
-            doubleValues.add(randomValue);
-            if (randomValue > maxGeneratedValue) {
-                maxGeneratedValue = randomValue;
-            }
+            list.add(Math.round(randomValue));
         }
 
-        double scaleFactor = numValues / maxGeneratedValue;
-
-        for (int i = 0; i < numValues; i++) {
-            double scaledValue = doubleValues.get(i) * scaleFactor;
-            list.add(Math.round(scaledValue));
-        }
     }
 
     private static class CollidingKey extends ThreadLocalKey implements Comparable<ThreadLocalKey> {
