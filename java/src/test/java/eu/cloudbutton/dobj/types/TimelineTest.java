@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import org.javatuples.Pair;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -20,10 +21,14 @@ public class TimelineTest {
     @Test
     void append() throws ExecutionException, InterruptedException {
 
-        for (int i = 0; i < 1600000000; i++) {
-            someMethods();
-//            someOtherMethods();
-        }
+        Pair<Integer, Integer> pair1 = new Pair<>(1,2);
+        Pair<Integer, Integer> pair2 = new Pair<>(1,2);
+
+        System.out.println(pair1.equals(pair2));
+//        for (int i = 0; i < 1600000000; i++) {
+//            someMethods();
+////            someOtherMethods();
+//        }
 
         /*
         Class cls = Class.forName("ConcurrentLinkedQueue");

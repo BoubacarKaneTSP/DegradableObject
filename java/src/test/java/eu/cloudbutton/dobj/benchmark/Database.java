@@ -19,6 +19,7 @@ import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.RandomGeneratorFactory;
+import org.javatuples.Pair;
 
 @Getter
 public class Database {
@@ -393,6 +394,59 @@ public class Database {
         return map;
     }
 
+    public double computeAvgCoefficientCluster(){
+
+        double avg = 0;
+
+        List<Key> listUsers = (List<Key>) usersFollowProbability.values();
+        Set<Key> possibleNeighbors;
+
+        for (Key usr : listUsers){
+
+            possibleNeighbors = new HashSet<>(){
+                {
+                    addAll(mapFollowers.get(usr));
+                    addAll(mapFollowing.get(usr));
+                }
+            };
+
+            List<Key> neighbors = new ArrayList<>();
+
+            for (Key possibleNeighbor : possibleNeighbors){
+                if (hasEdge(usr, possibleNeighbor))
+                    neighbors.add(possibleNeighbor);
+            }
+
+            int numLinks = 0;
+            int neighborSize = neighbors.size();
+
+            if (neighborSize < 2)
+                continue;
+
+
+            for (int i = 0; i <neighborSize; i++) {
+                for (int j = i+1; j < neighborSize; j++) {
+                    if (hasEdge(neighbors.get(i), neighbors.get(j)))
+                        numLinks++;
+                }
+            }
+
+            double coefficient_cluster = (2.0 * numLinks) / (neighborSize * (neighborSize - 1));
+
+            avg += coefficient_cluster;
+        }
+
+        avg = avg / listUsers.size();
+
+        return avg;
+    }
+
+    private boolean hasEdge(Key usr1, Key usr2){
+        if (usr1.equals(usr2))
+            return false;
+
+        return mapFollowers.get(usr1).contains(usr2) && mapFollowers.get(usr2).contains(usr1);
+    }
     public void addOriginalUser(Key user) throws ClassNotFoundException {
 //        mapFollowers.put(user, new ConcurrentSkipListSet<>());
 //        mapFollowers.put(user, new HashSet<>());

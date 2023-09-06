@@ -25,7 +25,7 @@ public class MapTester extends Tester<Map> {
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        long startTime = 0L, endTime = 0L, nbFail = 0L;
+        long startTime = 0L, endTime = 0L;
         List list = new ArrayList<>();
 
         for (int i = 0; i < nbRepeat; i++) {
@@ -48,12 +48,9 @@ public class MapTester extends Tester<Map> {
                 endTime = System.nanoTime();
                 break;
             case READ:
-                Object returnValue;
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    returnValue = object.get(list.get(i));
-                    if (returnValue == null)
-                        nbFail++;
+                    object.get(list.get(i));
                 }
                 endTime = System.nanoTime();
                 break;
