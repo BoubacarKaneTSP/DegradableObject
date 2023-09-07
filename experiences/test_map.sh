@@ -11,8 +11,8 @@ benchmarkTime=30
 warmingUpTime=20
 
 #for type in "ConcurrentSkipListSet" "SegmentedSkipListSet" "SegmentedTreeSet" "ConcurrentHashSet" "SegmentedHashSet" "ConcurrentHashMap" "SegmentedHashMap" "ConcurrentLinkedQueue" "QueueMASP" "CounterJUC" "CounterIncrementOnly" "WrappedLongAdder"
-#for type in "ConcurrentHashMap" "ExtendedSegmentedConcurrentHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap"
-for type in "ExtendedSegmentedConcurrentHashMap"
+for type in "ConcurrentHashMap" "ExtendedSegmentedConcurrentHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap"
+#for type in "ExtendedSegmentedConcurrentHashMap"
 do
 
   python3 rm_file_microbenchmark.py $type
@@ -34,7 +34,7 @@ do
       then
         perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
       else
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q $type -t Microbenchmark -p -e -r "25 25 50" -w $benchmarkTime -u $warmingUpTime -i $initSize -d $range -g $nbThread -k
       fi
 
       python3 analyse_perf_microbenchmark.py perf.log "false" $type $nbThread
