@@ -1,7 +1,7 @@
-1 146718.38989876528
-2 299567.89597660745
-4 536043.6160936672
-8 805225.4136687681
-16 929550.2595483869
-32 1260790.8771195984
-48 1785316.9849444134
+1 nan nan nan nan nan
+2 nan nan nan nan nan
+4 nan nan nan nan nan
+8 nan nan nan nan nan
+16 nan nan nan nan nan
+32 nan nan nan nan nan
+48 nan nan nan nan nan
