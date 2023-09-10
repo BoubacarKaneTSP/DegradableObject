@@ -78,8 +78,8 @@ public class Database {
         localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
         localUsersUsageProbabilityRange = new ThreadLocal<>();
         nbUsers = nbUserInit;
-        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,10);
-//        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+//        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,10);
+        keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
@@ -134,8 +134,8 @@ public class Database {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-//            somme += 1; // Each user have the same probability to be chosen
+//            somme += powerLawArray.get(g++%powerLawArraySize)+1;
+            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -198,8 +198,8 @@ public class Database {
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
-                sommeProba += powerLawArray.get(i);
-//                sommeProba += 1;
+//                sommeProba += powerLawArray.get(i);
+                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
@@ -278,8 +278,6 @@ public class Database {
             Queue<Key> usersFollow = localUsersFollow.get(userA);
             int nbFollow = Math.min(mapUsersFollowing.get(threadID).get(userA), nbLocalUser);
 //	        System.out.println(nbFollow);
-
-            int nbFailFollow = 0;
 
 //            for (Long v : usersFollowProbability.keySet())
 //                System.out.println(v + " => " + usersFollowProbability.get(v));
