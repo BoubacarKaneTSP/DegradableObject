@@ -19,7 +19,6 @@ import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.RandomGeneratorFactory;
-import org.javatuples.Pair;
 
 @Getter
 public class Database {
@@ -134,8 +133,8 @@ public class Database {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-//            somme += 1; // Each user have the same probability to be chosen
+//            somme += powerLawArray.get(g++%powerLawArraySize)+1;
+            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
