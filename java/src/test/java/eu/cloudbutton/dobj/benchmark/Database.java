@@ -197,8 +197,8 @@ public class Database {
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
-                sommeProba += powerLawArray.get(i);
-//                sommeProba += 1;
+//                sommeProba += powerLawArray.get(i);
+                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
