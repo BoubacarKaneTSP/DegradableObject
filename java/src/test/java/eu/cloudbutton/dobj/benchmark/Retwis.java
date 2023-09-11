@@ -1018,6 +1018,7 @@ public class Retwis {
                     latchHistogram.await();
 
 //                    saveDistributionHistogram("Pre_Benchmark");
+                    System.out.println("Average coefficient cluster with biased : " + database.computeAvgCoefficientCluster());
 
 //                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
