@@ -133,8 +133,8 @@ public class Database {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-//            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-            somme += 1; // Each user have the same probability to be chosen
+            somme += powerLawArray.get(g++%powerLawArraySize)+1;
+//            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -197,8 +197,8 @@ public class Database {
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
-                sommeProba += powerLawArray.get(i);
-//                sommeProba += 1;
+//                sommeProba += powerLawArray.get(i);
+                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
