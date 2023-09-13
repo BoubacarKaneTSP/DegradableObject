@@ -14,7 +14,7 @@ public class PowerLawTest {
     @Test
     void add() {
 
-        double SCALE = 100000, SHAPE = 10;
+        double SCALE = 1, SHAPE = 5;
         int numValues = 1000000;
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -80,15 +80,16 @@ public class PowerLawTest {
             }
         }
 
-        countValues = sortMapByValue(countValues);
+//        countValues = sortMapByValue(countValues);
+        countValues = sortMapByKey(countValues);
 //        System.out.println(countValues.values());
 
-        for (int v : countValues.values()){
-            if (v>1)
-                System.out.println(v);
+        for (int k : countValues.keySet()){
+//            if (v>1)
+                System.out.println(k +": " + countValues.get(k));
         }
 
-        Collections.sort(values);
+//        Collections.sort(values);
 
 //            System.out.println(values);
         System.out.println("nb half max : " + j);
@@ -117,6 +118,22 @@ public class PowerLawTest {
 
         // Sort the entryList using a custom comparator based on values
         Collections.sort(entryList, Comparator.comparing(Map.Entry::getValue));
+
+        // Create a new LinkedHashMap to store the sorted entries
+        Map<Integer, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+    public static Map<Integer, Integer> sortMapByKey(Map<Integer, Integer> inputMap) {
+        // Convert the inputMap to a List of Map.Entry objects
+        List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
+
+        // Sort the entryList using a custom comparator based on values
+        Collections.sort(entryList, Map.Entry.comparingByKey());
 
         // Create a new LinkedHashMap to store the sorted entries
         Map<Integer, Integer> sortedMap = new LinkedHashMap<>();

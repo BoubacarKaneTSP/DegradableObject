@@ -46,7 +46,7 @@ public class Database {
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
     Map<Integer, List<Integer>> mapUsageDistribution;
-    private static final double SCALEUSAGE = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEUSAGE = 20; // Paramètre d'échelle de la loi de puissance
     private static final double SCALEFOLLOW = 1.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
@@ -86,7 +86,7 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 1.3, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 2, SCALEUSAGE);
 
 //        Collections.sort(powerLawArray);
 
@@ -133,8 +133,8 @@ public class Database {
 //            if (++g%nbUsers*0.05 == 0)
 //                System.out.println(g);
 
-//            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-            somme += 1; // Each user have the same probability to be chosen
+            somme += powerLawArray.get(g++%powerLawArraySize)+1;
+//            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
             localUsersFollow.put(user, new LinkedList<>());
@@ -197,8 +197,8 @@ public class Database {
                 nbFollowing = Math.max(1,listNbFollowing.get(i));
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
-//                sommeProba += powerLawArray.get(i);
-                sommeProba += 1;
+                sommeProba += powerLawArray.get(i);
+//                sommeProba += 1;
 
                 usersFollowProbability.put(sommeProba, user);
                 listLocalUser.get(i%nbThread).add(user);
