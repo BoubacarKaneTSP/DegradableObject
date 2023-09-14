@@ -14,7 +14,7 @@ public class PowerLawTest {
     @Test
     void add() {
 
-        double SCALE = 1, SHAPE = 5;
+        double SCALE = 20, SHAPE = 0.1;
         int numValues = 1000000;
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
