@@ -285,3 +285,4 @@ then
     fi
   fi
 fi
+ cp Duration_TWEET_Distribution_JUC_1000000_Users_${nb_thread}_Threads.txt Duration_TWEET_Distribution_JUC_1000000_Users_${nb_thread}_Threads_uniform_SimpleKey.txt
