@@ -47,7 +47,7 @@ public class Database {
     ThreadLocal<Integer> threadID;
     Map<Integer, List<Integer>> mapUsageDistribution;
     private static final double SCALEUSAGE = 20; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 1.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 1; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
 
@@ -86,7 +86,7 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 1, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 4, SCALEUSAGE);
 
 //        Collections.sort(powerLawArray);
 
@@ -178,10 +178,10 @@ public class Database {
         else
             maxFollower = (nbUsers*8.4)/100;
 
-        List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE, SCALEFOLLOW);
+        List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing*SCALEFOLLOW, FOLLOWINGSHAPE, SCALEFOLLOW);
 //        System.out.println(listNbFollowing);
 //        System.out.println("listNbFollowing");
-        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE, SCALEFOLLOW);
+        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower*SCALEFOLLOW, FOLLOWERSHAPE, SCALEFOLLOW);
 
 //        System.out.println(listNbFollower);
 //        System.out.println("listNbFollower");
@@ -192,9 +192,9 @@ public class Database {
 
             Key user = generateUser();
             if (localSetUser.add(user)){
-                nbFollower = Math.max(1,listNbFollower.get(i));
+                nbFollower = Math.min(Math.max(1,listNbFollower.get(i)), nbUsers);
 //                nbFollowing =1;
-                nbFollowing = Math.max(1,listNbFollowing.get(i));
+                nbFollowing = Math.min(Math.max(1,listNbFollowing.get(i)), nbUsers);
 //                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
 
                 sommeProba += powerLawArray.get(i);
@@ -271,7 +271,7 @@ public class Database {
         long randVal;
 
         for (Key userA: users){
-            if(++j%10000 == 0)
+            if(++j%(nbUsers*0.05) == 0)
                 System.out.println(j);
 
             Queue<Key> usersFollow = localUsersFollow.get(userA);
@@ -292,13 +292,44 @@ public class Database {
 //                randVal = random.get().nextInt(nbLocalUser);
 //                Key userB = users.get((int) randVal);
 
-                assert userB != null : "User generated is null";
+                assert userB != null : "UserB generated is null";
 
-                if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
-                    followUser(userA, userB);
-                    usersFollow.add(userB);
-                    i++;
+                if (mapFollowers.get(userA).contains(userB)){
+                    if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
+                        followUser(userA, userB);
+                        usersFollow.add(userB);
+                        i++;
+                    }
+                    if (!mapFollowers.get(userB).isEmpty()){
+//                        System.out.println("following a neighbor");
+                        int r = random.get().nextInt(mapFollowers.get(userB).size());
+                        int v = 0;
+                        Key userC = null;
+                        for (Key k : mapFollowers.get(userB)){
+                            if (v == r){
+                                userC = k;
+                            }
+                            v++;
+                        }
+                        assert userC != null : "UserC generated is null";
+
+                        if (!usersFollow.contains(userC) && mapNbFollowers.get(userC).getAndDecrement() > 0) {
+                            followUser(userA, userC);
+                            usersFollow.add(userC);
+                            i++;
+                        }
+                    }
+
+                }else{
+                    if (randVal%100 <10){
+                        if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
+                            followUser(userA, userB);
+                            usersFollow.add(userB);
+                            i++;
+                        }
+                    }
                 }
+
 //                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
 //                }else
 //                    nbFailFollow++;
@@ -393,12 +424,18 @@ public class Database {
 
     public double computeAvgCoefficientCluster(){
 
+        System.out.println("Computing AvgCoefficientCluster");
         double avg = 0;
 
-        List<Key> listUsers = (List<Key>) usersFollowProbability.values();
+        Set<Key> setUsers = mapFollowers.keySet();
         Set<Key> possibleNeighbors;
 
-        for (Key usr : listUsers){
+        int count = 0;
+
+        for (Key usr : setUsers){
+
+            if (++count%(nbUsers*0.05) == 0)
+                System.out.println("nb usr processed : " + count);
 
             possibleNeighbors = new HashSet<>(){
                 {
@@ -430,10 +467,12 @@ public class Database {
 
             double coefficient_cluster = (2.0 * numLinks) / (neighborSize * (neighborSize - 1));
 
+            if (coefficient_cluster>0)
+                System.out.println("CC : " + coefficient_cluster);
             avg += coefficient_cluster;
         }
 
-        avg = avg / listUsers.size();
+        avg = avg / setUsers.size();
 
         return avg;
     }
