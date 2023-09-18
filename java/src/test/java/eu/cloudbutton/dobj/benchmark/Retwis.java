@@ -409,8 +409,10 @@ public class Retwis {
                 if(_p)
                     System.out.println();
 
+                long timeBenchmarkAvg = (timeBenchmark.longValue()) / nbCurrThread;
+
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1000000)/_nbTest );
+                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000)/_nbTest );
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
@@ -429,7 +431,7 @@ public class Retwis {
                 if (strAlpha.length() >= 3)
                     strAlpha = strAlpha.substring(0,3);
 
-                long timeBenchmarkAvg = (timeBenchmark.longValue() / 1_000_000) / nbCurrThread;
+
 
                 if (_s){
 
@@ -774,7 +776,6 @@ public class Retwis {
                             cleanTimeline = num % (2 * _nbUserInit) == 0;
                         }
                     }
-
                 }
 
                 endTimeBenchmark = System.nanoTime();
@@ -1038,15 +1039,19 @@ public class Retwis {
                     latchFillDatabase.await();
                 }
 
-                if (_gcinfo)
-                    System.out.println("Start benchmark");
+
                 if (! _completionTime) {
                     if (_p) {
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
                     }
 //                    startMonitoring();
+                    if (_gcinfo)
+                        System.out.println("Start benchmark");
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
+
+                    if (_gcinfo)
+                        System.out.println("End benchmark");
 //                    stopMonitoring();
 //                    TimeUnit.SECONDS.sleep(2);
 //                    performHeapDump(_tag, "Post", (int) _nbUserInit);
@@ -1075,10 +1080,6 @@ public class Retwis {
 
                     completionTime += endTime - startTime;
                 }
-
-
-                if (_gcinfo)
-                    System.out.println("End benchmark");
 
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted", e);

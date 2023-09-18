@@ -24,7 +24,11 @@ if avg_flag == "true":
             sum = 0
             
             for line in file.readlines():
-                sum += float(line)
+                try:
+                    sum += float(line)
+                except ValueError:
+                    print(file.name)
+                    exit(0)
                 nb_line += 1
             
             file_avg.write(str(i) + " " + str(sum/nb_line) +"\n")
