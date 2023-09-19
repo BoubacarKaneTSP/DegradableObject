@@ -4,7 +4,6 @@ object_name = sys.argv[1]
 nb_test = int(sys.argv[2])
 nb_user = sys.argv[4]
 
-print(object_name, nb_test, nb_user)
 gcinfo_raw = open(object_name+"_gcinfo.log","r")
 gcinfo = open(object_name + "_" + nb_user + "_gc_usage.txt","a")
 dico_gc = dict()
@@ -12,7 +11,6 @@ dico_gc = dict()
 last_nb_thread = 0
 benchmarkAvgTime = 0
 flag_benchmark = False
-print("================================")
 for line in gcinfo_raw.readlines():
     if "Start benchmark" in line:
         flag_benchmark = True
@@ -37,10 +35,7 @@ for line in gcinfo_raw.readlines():
 
 for nb_thread, time_gc in dico_gc.items():
     gcinfo.write(str(nb_thread) +" "+ str(time_gc/nb_test)+"\n")
-    print(str(nb_thread) +" "+ str(time_gc/nb_test)+"\n")
-    print(gcinfo.name)
 
-print("================================")
 
 gcinfo.close()
 gcinfo_raw.close()
