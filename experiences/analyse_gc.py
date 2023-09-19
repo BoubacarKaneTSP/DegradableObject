@@ -25,7 +25,7 @@ for line in gcinfo_raw.readlines():
         continue
     elif "benchmarkAvgTime" in line:
         benchmarkAvgTime = int(line.split(" ")[-1])
-        dico_gc[last_nb_thread] = (dico_gc[last_nb_thread]/benchmarkAvgTime)*100
+        # dico_gc[last_nb_thread] = (dico_gc[last_nb_thread]/benchmarkAvgTime)*100
         continue
         
     if flag_benchmark:
