@@ -86,7 +86,7 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 1.5, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 600, SCALEUSAGE);
 
 //        Collections.sort(powerLawArray);
 
@@ -515,14 +515,13 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
 
 //        System.out.println(set.size());
-        int i = 0;
         for (Key follower : set) {
             Timeline timeline = mapTimelines.get(follower);
 //
             timeline.add(msg);
-            if (++i >= 1000)
-                break;
+            break;
         }
+
     }
 
     public void showTimeline(Key user) throws InterruptedException {
