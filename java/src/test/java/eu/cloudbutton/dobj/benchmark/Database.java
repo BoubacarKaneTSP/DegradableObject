@@ -86,7 +86,7 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 200, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 100, SCALEUSAGE);
 
 //        Collections.sort(powerLawArray);
 
