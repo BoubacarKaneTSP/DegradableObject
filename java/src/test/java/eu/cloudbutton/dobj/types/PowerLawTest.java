@@ -8,12 +8,19 @@ import org.apache.commons.math3.random.RandomGeneratorFactory;
 import org.testng.annotations.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PowerLawTest {
 
     @Test
     void add() {
 
+        String s = "1.0 2.0 3.0";
+        AtomicInteger a;
+
+        a = new AtomicInteger((int)Double.parseDouble(s.split(" ")[0]));
+
+        System.out.println(a);
         double SCALE = 20, SHAPE = 600;
         int numValues = 1000000;
         List<Double> doubleValues = new ArrayList<>();

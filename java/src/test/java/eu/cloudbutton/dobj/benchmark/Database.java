@@ -8,6 +8,10 @@ import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -29,6 +33,16 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
+    private final Map<Key, AtomicInteger> reciprocalDegree;
+    private final Map<Key, AtomicInteger> inDegree;
+    private final Map<Key, AtomicInteger> outDegree;
+    private int reciprocal = 0; // Number of nodes with a reciprocal degree bigger than 0
+    private int out = 0; // Number of nodes with an out degree bigger than 0
+    private int in = 0; //Number of nodes with an in degree bigger than 0
+    private int edges_r = 0; // Number of reciprocal edges
+    private int edges_d = 0; // Number of directed edges
+    private float diag_sum_r_dist;
+    private float diag_sum_d_dist;
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
     private final ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
@@ -82,6 +96,10 @@ public class Database {
         listAllUser = new ArrayList<>();
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
+
+        reciprocalDegree = new ConcurrentHashMap<>();
+        inDegree = new ConcurrentHashMap<>();
+        outDegree = new ConcurrentHashMap<>();
 
         List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 600, SCALEUSAGE);
 
@@ -147,7 +165,7 @@ public class Database {
 
 
 //        followingTest(threadID);
-        followingPhase(threadID.get(), localUsersFollow);
+//        followingPhase(threadID.get(), localUsersFollow);
 
         latchHistogram.countDown();
 
@@ -158,6 +176,82 @@ public class Database {
     }
 
     public void generateUsers() throws InterruptedException {
+
+        String cheminFichier = "nodes_info.txt";
+        Set<Key> localSetUser = new TreeSet<>();
+        int r_degree, o_degree, i_degree;
+
+        // Utilisez un bloc try-catch pour gérer les exceptions liées à la lecture de fichiers
+        try {
+            // Créez un objet File en utilisant le chemin du fichier
+            File fichier = new File(cheminFichier);
+
+            // Créez un FileReader pour lire le fichier
+            FileReader fileReader = new FileReader(fichier);
+
+            // Créez un BufferedReader pour lire le fichier de manière efficace
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            bufferedReader.readLine();
+
+            for (int i = 0; i < nbUsers;) {
+
+                Key user = generateUser();
+                if (localSetUser.add(user)) {
+                    if (i % nbUsers * 0.05 == 0) {
+                        System.out.println(i);
+                    }
+
+                    String[] degrees = bufferedReader.readLine().split(" ");
+
+                    r_degree = (int) Double.parseDouble(degrees[0]);
+                    i_degree = (int) Double.parseDouble(degrees[1]);
+                    o_degree = (int) Double.parseDouble(degrees[2]);
+                    reciprocalDegree.put(user, new AtomicInteger(r_degree));
+                    inDegree.put(user, new AtomicInteger(i_degree));
+                    outDegree.put(user, new AtomicInteger(o_degree));
+                    listLocalUser.get(i % nbThread).add(user);
+
+                    if (r_degree>0)
+                        reciprocal++;
+                    if (i_degree>0)
+                        in++;
+                    if (o_degree>0)
+                        out++;
+
+                    i++;
+                }
+            }
+
+            // Fermez le BufferedReader et le FileReader
+            bufferedReader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        edges_r = reciprocal*2;
+        edges_d = (in + out)/2;
+
+        int diag_sum_r = 0, diag_sum_d = 0, diag = 0;
+
+
+        for (Key user : localSetUser){
+            if (reciprocalDegree.get(user).get() != 0)
+                diag_sum_r += Math.pow(reciprocalDegree.get(user).get(),2)/edges_r;
+
+            if (inDegree.get(user).get() != 0 && outDegree.get(user).get() != 0){
+                diag_sum_d += (inDegree.get(user).get()*outDegree.get(user).get()) / edges_d;
+                diag += 1;
+            }
+
+        }
+
+        diag_sum_r_dist = diag_sum_r / ((reciprocal * (reciprocal - 1)) / 2);
+        diag_sum_d_dist = diag_sum_d/(out*in-diag);
+
+    }
+
+    /*   public void generateUsers() throws InterruptedException {
 
         Set<Key> localSetUser = new TreeSet<>();
         long sommeProba = 0;
@@ -201,9 +295,9 @@ public class Database {
                 listLocalUser.get(i%nbThread).add(user);
                 mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
                 mapNbFollowers.put(user, new AtomicInteger(nbFollower));
-                i++; 
+                i++;
             }
-	    
+
         }
 
 //        System.out.println(mapUsersFollowing.get(0).values());
@@ -213,6 +307,18 @@ public class Database {
 
         usersFollowProbabilityRange = sommeProba;
 //        System.out.println(usersFollowProbabilityRange);
+    }*/
+
+    public void loadUsers(){
+
+        int nbThreadTotal = Runtime.getRuntime().availableProcessors();
+        List<Callable<Void>> callables = new ArrayList<>();
+        ExecutorService executor = Executors.newFixedThreadPool(nbThreadTotal);
+
+
+        // Spécifiez le chemin du fichier que vous souhaitez lire
+
+
     }
 
     public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) throws InterruptedException {
@@ -259,6 +365,28 @@ public class Database {
         }
     }
 
+    public void followingReciprocalPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
+        System.out.println("start following phase thread : " + Thread.currentThread().getName());
+
+        List<Key> users = listLocalUser.get(threadID);
+        int nbLocalUser = users.size();
+        int j = 0;
+        long randVal;
+        Set<Key> usersProcessed = new HashSet<>();
+
+        for (Key userA: users){
+            if(++j%(nbUsers*0.05) == 0)
+                System.out.println(j);
+
+            for (Key userB: reciprocalDegree.keySet()){
+                usersProcessed.add(userA);
+            }
+        }
+
+        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+    }
+
+    /*
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
@@ -323,7 +451,7 @@ public class Database {
 
 //        TimeUnit.SECONDS.sleep(5);
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
-    }
+    }*/
 
     public String computeHistogram(int range, int max, String type){
 
@@ -449,6 +577,11 @@ public class Database {
 
         return mapFollowers.get(usr1).contains(usr2) && mapFollowers.get(usr2).contains(usr1);
     }
+
+    private void generateGraph(){
+
+    }
+
     public void addOriginalUser(Key user) throws ClassNotFoundException {
 //        mapFollowers.put(user, new ConcurrentSkipListSet<>());
 //        mapFollowers.put(user, new HashSet<>());
@@ -518,11 +651,18 @@ public class Database {
             timeline.add(msg);
             break;
         }
-
     }
 
     public void showTimeline(Key user) throws InterruptedException {
         mapTimelines.get(user).read();
     }
 
+    public class generateGraph implements Callable<Void> {
+
+        @Override
+        public Void call() throws Exception {
+
+            return null;
+        }
+    }
 }
