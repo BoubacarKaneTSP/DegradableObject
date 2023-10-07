@@ -378,8 +378,11 @@ public class Database {
             float pr;
             Key userA, userB;
 
+            if(i%(nbUsers*0.05) == 0)
+                System.out.println(i);
+
             // Sampling of reciprocal edges
-            for (int j = 0; j < nbUsers; j++) {
+            for (int j = i; j < nbUsers; j++) {
 
                 if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
                     pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
@@ -416,7 +419,7 @@ public class Database {
             int sampled_reciprocal = directed_sum/(out*in-diag-counter);
 
             // Sampling of directed edges
-            for (int j = 0; j < nbUsers; j++) {
+            for (int j = i; j < nbUsers; j++) {
                 if (inDegree[i] != 0 && outDegree[j] != 0){
                     pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
 
