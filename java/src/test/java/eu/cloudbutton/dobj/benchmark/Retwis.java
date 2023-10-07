@@ -721,7 +721,7 @@ public class Retwis {
                     timeLocalDurations.put(op, new ArrayList<>());
                 }
 
-                database.fill(latchFillDatabase, latchHistogramDatabase);
+//                database.fill(latchFillDatabase, latchHistogramDatabase);
 
                 latch.countDown();
                 latch.await();
