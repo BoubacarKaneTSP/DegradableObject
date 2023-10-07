@@ -369,8 +369,11 @@ public class Database {
     public void followingPhase() throws InterruptedException, ExecutionException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        int nbProcess = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
         List<Future<Void>> futures = new ArrayList<>();
+
+        System.out.println("nb process : " + nbProcess);
         
         MyCallableWithArgument myCallable = (Integer i) -> {
 
@@ -462,8 +465,9 @@ public class Database {
             int finalI = i;
             Callable<Void> callable = () -> myCallable.call(finalI);
             futures.add(executorService.submit(callable));
-
         }
+
+        System.out.println("launch futures");
 
         for (Future<Void> future :futures){
             future.get();
