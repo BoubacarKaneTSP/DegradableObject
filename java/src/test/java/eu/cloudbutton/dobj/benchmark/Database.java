@@ -379,7 +379,7 @@ public class Database {
             Key userA, userB;
 
             if(i%(nbUsers*0.05) == 0)
-                System.out.println(i);
+                System.out.println(i + " : " + Thread.currentThread().getName());
 
             // Sampling of reciprocal edges
             for (int j = i; j < nbUsers; j++) {
