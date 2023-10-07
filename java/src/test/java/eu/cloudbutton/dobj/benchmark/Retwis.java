@@ -723,8 +723,8 @@ public class Retwis {
 
 //                database.fill(latchFillDatabase, latchHistogramDatabase);
 
-                latch.countDown();
-                latch.await();
+//                latch.countDown();
+//                latch.await();
 
                 localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get();
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
@@ -1015,15 +1015,15 @@ public class Retwis {
                 System.out.println(flagWarmingUp.get());
                 if (flagWarmingUp.get()){
 
-                    latchHistogram.await();
+//                    latchHistogram.await();
 
 //                    saveDistributionHistogram("Pre_Benchmark");
 //                    System.out.println("Average coefficient cluster with biased : " + database.computeAvgCoefficientCluster());
 
 //                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
 
-                    latchFillDatabase.countDown();
-                    latchFillDatabase.await();
+//                    latchFillDatabase.countDown();
+//                    latchFillDatabase.await();
 
                     if (_p){
                         System.out.println(" ==> Warming up for " + _wTime + " seconds");
@@ -1034,8 +1034,8 @@ public class Retwis {
                     flagWarmingUp.set(false);
                 }
                 else{
-                    latchFillDatabase.countDown();
-                    latchFillDatabase.await();
+//                    latchFillDatabase.countDown();
+//                    latchFillDatabase.await();
                 }
 
 
