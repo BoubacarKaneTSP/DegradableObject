@@ -217,6 +217,7 @@ public class Retwis {
 
         List<Integer> powerLawArray = new DiscreteApproximate(1, 1.7).generate(NB_USERS);
 
+        System.out.println("nb coeur : " + Runtime.getRuntime().availableProcessors());
         int index = 0;
         for (int val: powerLawArray){
             if (val <= 0) {
