@@ -489,6 +489,8 @@ public class Database {
             user = mapUsersIndice.get(i);
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme.longValue(), user);
+            System.out.println(localUsersUsageProbability.get());
+            System.out.println(localUsersUsageProbabilityRange.get());
             localUsersUsageProbabilityRange.set(
                     localUsersUsageProbabilityRange.get()
                             + somme.longValue());
