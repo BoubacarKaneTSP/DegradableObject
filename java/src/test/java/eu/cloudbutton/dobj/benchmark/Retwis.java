@@ -148,7 +148,7 @@ public class Retwis {
 
     private long completionTime;
 
-    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException, ExecutionException {
 /*        Queue queue1 = new LinkedList();
         KeyGenerator keyGenerator = new RetwisKeyGenerator(1000000, 1000000, 1.39);
         Key retwisKey = keyGenerator.nextKey();
@@ -163,7 +163,7 @@ public class Retwis {
         new Retwis().doMain(args);
     }
 
-    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void doMain(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, OutOfMemoryError, ExecutionException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try{
@@ -680,7 +680,7 @@ public class Retwis {
         private final CountDownLatch latchFillDatabase;
         private final CountDownLatch latchHistogramDatabase;
         private final CountDownLatch latchFillCompletionTime;
-        private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
+//        private Map<Key, Queue<Key>> usersFollow; // Local map that associate to each user, the list of user that it follows
         private Long localUsersProbabilityRange;
         private Long usersFollowProbabilityRange;
         private int nbRepeat = 1000;
@@ -702,7 +702,7 @@ public class Retwis {
             this.latchFillDatabase = latchFillDatabase;
             this.latchHistogramDatabase = latchHistogramDatabase;
             this.latchFillCompletionTime = latchFillCompletionTime;
-            this.usersFollow = new HashMap<>();
+//            this.usersFollow = new HashMap<>();
         }
 
         @Override
@@ -721,7 +721,7 @@ public class Retwis {
                     timeLocalDurations.put(op, new ArrayList<>());
                 }
 
-                database.fill(latchFillDatabase, latchHistogramDatabase, usersFollow);
+                database.fill(latchFillDatabase, latchHistogramDatabase);
 
                 latch.countDown();
                 latch.await();
@@ -901,7 +901,7 @@ public class Retwis {
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get(num % nbLocalUsers);
                     }
 */
-                    Queue<Key> listFollow;
+                    Set<Key> listFollow;
 
                     switch (typeComputed){
                         case ADD:
@@ -911,8 +911,7 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-
-                            listFollow = usersFollow.get(userA);
+                            listFollow = database.getMapFollowers().get(userA);
 
 //                            int val2 = random.get().nextInt(nbLocalUsers);
 //                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
@@ -931,29 +930,29 @@ public class Retwis {
 
                             break;
                         case UNFOLLOW:
-                            listFollow = usersFollow.get(userA);
+                            listFollow = database.getMapFollowers().get(userA);
 
                             if (listFollow.size() == 0)
                                 continue restartOperation;
 
-//                            val = random.get().nextInt(listFollow.size());
-//                            int v = 0;
-//                            for (Key user : listFollow){
-//                                if (v==val) {
-//                                    userB = user;
-//                                    break;
-//                                }
-//                                v++;
-//                            }
+                            val = random.get().nextInt(listFollow.size());
+                            int v = 0;
+                            for (Key user : listFollow){
+                                if (v==val) {
+                                    userB = user;
+                                    break;
+                                }
+                                v++;
+                            }
 
-                            userB = listFollow.poll();
+//                            userB = listFollow.poll();
                             if (userB != null){ // Perform unfollow only if userA already follow someone
                                 startTime = System.nanoTime();
                                 database.unfollowUser(userA, userB);
                                 endTime = System.nanoTime();
 
                                 database.followUser(userA, userB);
-                                listFollow.offer(userB);
+                                listFollow.add(userB);
                             }else
                                 continue restartOperation;
                             break;

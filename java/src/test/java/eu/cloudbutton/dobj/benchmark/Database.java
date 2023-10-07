@@ -33,14 +33,16 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
-    private final Map<Key, AtomicInteger> reciprocalDegree;
-    private final Map<Key, AtomicInteger> inDegree;
-    private final Map<Key, AtomicInteger> outDegree;
+    private final Map<Integer, Key> mapUsersIndice;
+    private final int[] reciprocalDegree;
+    private final int[] inDegree;
+    private final int[] outDegree;
     private int reciprocal = 0; // Number of nodes with a reciprocal degree bigger than 0
     private int out = 0; // Number of nodes with an out degree bigger than 0
     private int in = 0; //Number of nodes with an in degree bigger than 0
     private int edges_r = 0; // Number of reciprocal edges
     private int edges_d = 0; // Number of directed edges
+    private int diag = 0;
     private float diag_sum_r_dist;
     private float diag_sum_d_dist;
     private final KeyGenerator keyGenerator;
@@ -64,7 +66,7 @@ public class Database {
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException {
+                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException {
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -97,9 +99,10 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        reciprocalDegree = new ConcurrentHashMap<>();
-        inDegree = new ConcurrentHashMap<>();
-        outDegree = new ConcurrentHashMap<>();
+        mapUsersIndice = new ConcurrentHashMap<>();
+        reciprocalDegree = new int[nbUsers];
+        inDegree = new int[nbUsers];
+        outDegree = new int[nbUsers];
 
         List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 600, SCALEUSAGE);
 
@@ -127,10 +130,15 @@ public class Database {
 //        System.out.println(mapUsageDistribution);
 
         System.out.println("generate user");
+
         generateUsers();
+
+        addingPhase();
+
+        followingPhase();
     }
 
-    public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram,  Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
+    public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
         System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
 
         threadID.set(count.getAndIncrement());
@@ -152,7 +160,6 @@ public class Database {
 //            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme, user);
-            localUsersFollow.put(user, new LinkedList<>());
         }
 //        System.out.println(localUsersUsageProbability.get().keySet());
 
@@ -180,16 +187,14 @@ public class Database {
         String cheminFichier = "nodes_info.txt";
         Set<Key> localSetUser = new TreeSet<>();
         int r_degree, o_degree, i_degree;
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
+        long somme = 0;
 
-        // Utilisez un bloc try-catch pour gérer les exceptions liées à la lecture de fichiers
         try {
-            // Créez un objet File en utilisant le chemin du fichier
             File fichier = new File(cheminFichier);
 
-            // Créez un FileReader pour lire le fichier
             FileReader fileReader = new FileReader(fichier);
 
-            // Créez un BufferedReader pour lire le fichier de manière efficace
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             bufferedReader.readLine();
 
@@ -206,10 +211,13 @@ public class Database {
                     r_degree = (int) Double.parseDouble(degrees[0]);
                     i_degree = (int) Double.parseDouble(degrees[1]);
                     o_degree = (int) Double.parseDouble(degrees[2]);
-                    reciprocalDegree.put(user, new AtomicInteger(r_degree));
-                    inDegree.put(user, new AtomicInteger(i_degree));
-                    outDegree.put(user, new AtomicInteger(o_degree));
-                    listLocalUser.get(i % nbThread).add(user);
+                    mapUsersIndice.put(i, user);
+                    reciprocalDegree[i] = r_degree;
+                    inDegree[i] = i_degree;
+                    outDegree[i] = o_degree;
+
+                    somme += powerLawArray.get(i);
+                    usersFollowProbability.put(somme, user);
 
                     if (r_degree>0)
                         reciprocal++;
@@ -222,7 +230,8 @@ public class Database {
                 }
             }
 
-            // Fermez le BufferedReader et le FileReader
+            usersFollowProbabilityRange = somme;
+
             bufferedReader.close();
             fileReader.close();
         } catch (IOException e) {
@@ -232,18 +241,17 @@ public class Database {
         edges_r = reciprocal*2;
         edges_d = (in + out)/2;
 
-        int diag_sum_r = 0, diag_sum_d = 0, diag = 0;
+        int diag_sum_r = 0, diag_sum_d = 0;
 
 
-        for (Key user : localSetUser){
-            if (reciprocalDegree.get(user).get() != 0)
-                diag_sum_r += Math.pow(reciprocalDegree.get(user).get(),2)/edges_r;
+        for (int i = 0; i < nbUsers; i++) {
+            if (reciprocalDegree[i] != 0)
+                diag_sum_r += Math.pow(reciprocalDegree[i],2)/edges_r;
 
-            if (inDegree.get(user).get() != 0 && outDegree.get(user).get() != 0){
-                diag_sum_d += (inDegree.get(user).get()*outDegree.get(user).get()) / edges_d;
+            if (inDegree[i] != 0 && outDegree[i] != 0){
+                diag_sum_d += (inDegree[i]*outDegree[i]) / edges_d;
                 diag += 1;
             }
-
         }
 
         diag_sum_r_dist = diag_sum_r / ((reciprocal * (reciprocal - 1)) / 2);
@@ -309,18 +317,6 @@ public class Database {
 //        System.out.println(usersFollowProbabilityRange);
     }*/
 
-    public void loadUsers(){
-
-        int nbThreadTotal = Runtime.getRuntime().availableProcessors();
-        List<Callable<Void>> callables = new ArrayList<>();
-        ExecutorService executor = Executors.newFixedThreadPool(nbThreadTotal);
-
-
-        // Spécifiez le chemin du fichier que vous souhaitez lire
-
-
-    }
-
     public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) throws InterruptedException {
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -365,27 +361,150 @@ public class Database {
         }
     }
 
-    public void followingReciprocalPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
+    @FunctionalInterface
+    interface MyCallableWithArgument {
+        Void call(Integer argument) throws Exception;
+    }
+
+    public void followingPhase() throws InterruptedException, ExecutionException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
-        List<Key> users = listLocalUser.get(threadID);
-        int nbLocalUser = users.size();
-        int j = 0;
-        long randVal;
-        Set<Key> usersProcessed = new HashSet<>();
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Future<Void>> futures = new ArrayList<>();
+        
+        MyCallableWithArgument myCallable = (Integer i) -> {
 
-        for (Key userA: users){
-            if(++j%(nbUsers*0.05) == 0)
-                System.out.println(j);
+            int a, counter = 0, directed_sum = 0;
+            float pr;
+            Key userA, userB;
 
-            for (Key userB: reciprocalDegree.keySet()){
-                usersProcessed.add(userA);
+            // Sampling of reciprocal edges
+            for (int j = 0; j < nbUsers; j++) {
+
+                if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
+                    pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
+
+                    if (pr>1)
+                        pr = 1;
+
+                    a = Math.random() < pr ? 1 : 0;
+
+                    if (a==1){
+
+                        userA = mapUsersIndice.get(i);
+                        userB = mapUsersIndice.get(j);
+
+                        followUser(userA,userB);
+//                        localUsersFollow.get(userA).add(userB);
+
+                        followUser(userB,userA);
+//                        localUsersFollow.get(userB).add(userA);
+
+                        if (inDegree[i] != 0 && outDegree[j] != 0){
+                            counter++;
+                            directed_sum += inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist;
+                        }
+
+                        if (inDegree[j] != 0 && outDegree[i] != 0){
+                            counter++;
+                            directed_sum += inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist;
+                        }
+                    }
+                }
             }
+
+            int sampled_reciprocal = directed_sum/(out*in-diag-counter);
+
+            // Sampling of directed edges
+            for (int j = 0; j < nbUsers; j++) {
+                if (inDegree[i] != 0 && outDegree[j] != 0){
+                    pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
+
+                    if (pr>1)
+                        pr = 1;
+
+                    a = Math.random() < pr ? 1 : 0;
+
+                    if (a==1){
+                        userA = mapUsersIndice.get(i);
+                        userB = mapUsersIndice.get(j);
+
+                        followUser(userB, userA);
+//                        localUsersFollow.get(userB).add(userA);
+                    }
+                }
+
+                if (inDegree[j] != 0 && outDegree[i] != 0){
+                    pr = inDegree[j]*outDegree[i]/edges_d + diag_sum_d_dist + sampled_reciprocal;
+
+                    if (pr>1)
+                        pr = 1;
+
+                    a = Math.random() < pr ? 1 : 0;
+
+                    if (a==1){
+                        userA = mapUsersIndice.get(i);
+                        userB = mapUsersIndice.get(j);
+
+                        followUser(userA, userB);
+//                        localUsersFollow.get(userA).add(userB);
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        for (int i = 0; i < nbUsers; i++) {
+            int finalI = i;
+            Callable<Void> callable = () -> myCallable.call(finalI);
+            futures.add(executorService.submit(callable));
+
+        }
+
+        for (Future<Void> future :futures){
+            future.get();
         }
 
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }
 
+    public void addingPhase() throws ExecutionException, InterruptedException {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Future<Void>> futures = new ArrayList<>();
+
+        AtomicInteger somme = new AtomicInteger();
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
+
+        Collections.sort(powerLawArray);
+
+        MyCallableWithArgument myCallable = (Integer i) -> {
+
+            Key user;
+
+            somme.addAndGet(powerLawArray.get(i));
+
+            user = mapUsersIndice.get(i);
+            addOriginalUser(user);
+            localUsersUsageProbability.get().put(somme.longValue(), user);
+            localUsersUsageProbabilityRange.set(localUsersUsageProbabilityRange.get() + somme.longValue());
+
+            listLocalUser.get(i%nbThread).add(user);
+            return null;
+        };
+
+        for (int i = 0; i < nbUsers; i++) {
+            int finalI = i;
+            Callable<Void> callable = () -> myCallable.call(finalI);
+            futures.add(executorService.submit(callable));
+
+        }
+
+        for (Future<Void> future :futures){
+            future.get();
+        }
+    }
     /*
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
