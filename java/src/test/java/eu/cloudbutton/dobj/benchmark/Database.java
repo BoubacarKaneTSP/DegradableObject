@@ -489,7 +489,9 @@ public class Database {
             user = mapUsersIndice.get(i);
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme.longValue(), user);
-            localUsersUsageProbabilityRange.set(localUsersUsageProbabilityRange.get() + somme.longValue());
+            localUsersUsageProbabilityRange.set(
+                    localUsersUsageProbabilityRange.get()
+                            + somme.longValue());
 
             listLocalUser.get(i%nbThread).add(user);
             return null;
