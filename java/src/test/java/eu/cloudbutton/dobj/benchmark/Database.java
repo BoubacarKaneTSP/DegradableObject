@@ -382,7 +382,7 @@ public class Database {
             float pr;
             Key userA, userB;
 
-            if(i%(nbUsers*0.001) == 0 || i<=nbProcess)
+//            if(i%(nbUsers*0.001) == 0 || i<=nbProcess)
                 System.out.println(i + " : " + Thread.currentThread().getName());
 
             // Sampling of reciprocal edges
