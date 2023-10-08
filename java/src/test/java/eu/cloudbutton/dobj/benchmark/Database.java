@@ -388,6 +388,9 @@ public class Database {
             // Sampling of reciprocal edges
             for (int j = i; j < nbUsers; j++) {
 
+                if(j%(nbUsers*0.05) == 0)
+                    System.out.println(j + " : " + Thread.currentThread().getName() + " | reciprocal");
+
                 if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
                     pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
 
@@ -424,6 +427,10 @@ public class Database {
 
             // Sampling of directed edges
             for (int j = i; j < nbUsers; j++) {
+
+                if(j%(nbUsers*0.05) == 0)
+                    System.out.println(j + " : " + Thread.currentThread().getName() + " | directed");
+
                 if (inDegree[i] != 0 && outDegree[j] != 0){
                     pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
 
