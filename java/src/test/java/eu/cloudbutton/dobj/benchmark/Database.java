@@ -369,7 +369,8 @@ public class Database {
     public void followingPhase() throws InterruptedException, ExecutionException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
-        int nbProcess = Runtime.getRuntime().availableProcessors();
+//        int nbProcess = Runtime.getRuntime().availableProcessors();
+        int nbProcess = 48;
         ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
         List<Future<Void>> futures = new ArrayList<>();
 
