@@ -8,10 +8,7 @@ import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -33,7 +30,8 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
-    private final Map<Integer, Key> mapUsersIndice;
+    private final Map<Integer, Key> mapIndiceToKey;
+    private final Map<Key, Integer> mapKeyToIndice;
     private final int[] reciprocalDegree;
     private final int[] inDegree;
     private final int[] outDegree;
@@ -99,7 +97,8 @@ public class Database {
         mapNbFollowers = new ConcurrentHashMap<>();
         threadID = new ThreadLocal<>();
 
-        mapUsersIndice = new ConcurrentHashMap<>();
+        mapIndiceToKey = new ConcurrentHashMap<>();
+        mapKeyToIndice = new ConcurrentHashMap<>();
         reciprocalDegree = new int[nbUsers];
         inDegree = new int[nbUsers];
         outDegree = new int[nbUsers];
@@ -136,6 +135,9 @@ public class Database {
         addingPhase();
 
         followingPhase();
+
+        saveGraph("graph_follower_retwis.txt", mapFollowers);
+        saveGraph("graph_following_retwis.txt", mapFollowing);
     }
 
     public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
@@ -211,7 +213,7 @@ public class Database {
                     r_degree = (int) Double.parseDouble(degrees[0]);
                     i_degree = (int) Double.parseDouble(degrees[1]);
                     o_degree = (int) Double.parseDouble(degrees[2]);
-                    mapUsersIndice.put(i, user);
+                    mapIndiceToKey.put(i, user);
                     reciprocalDegree[i] = r_degree;
                     inDegree[i] = i_degree;
                     outDegree[i] = o_degree;
@@ -401,8 +403,8 @@ public class Database {
 
                     if (a==1){
 
-                        userA = mapUsersIndice.get(i);
-                        userB = mapUsersIndice.get(j);
+                        userA = mapIndiceToKey.get(i);
+                        userB = mapIndiceToKey.get(j);
 
                         followUser(userA,userB);
 //                        localUsersFollow.get(userA).add(userB);
@@ -440,8 +442,8 @@ public class Database {
                     a = Math.random() < pr ? 1 : 0;
 
                     if (a==1){
-                        userA = mapUsersIndice.get(i);
-                        userB = mapUsersIndice.get(j);
+                        userA = mapIndiceToKey.get(i);
+                        userB = mapIndiceToKey.get(j);
 
                         followUser(userB, userA);
 //                        localUsersFollow.get(userB).add(userA);
@@ -457,8 +459,8 @@ public class Database {
                     a = Math.random() < pr ? 1 : 0;
 
                     if (a==1){
-                        userA = mapUsersIndice.get(i);
-                        userB = mapUsersIndice.get(j);
+                        userA = mapIndiceToKey.get(i);
+                        userB = mapIndiceToKey.get(j);
 
                         followUser(userA, userB);
 //                        localUsersFollow.get(userA).add(userB);
@@ -500,7 +502,7 @@ public class Database {
 
             somme.addAndGet(powerLawArray.get(i));
 
-            user = mapUsersIndice.get(i);
+            user = mapIndiceToKey.get(i);
             addOriginalUser(user);
             localUsersUsageProbability.get().put(somme.longValue(), user);
             localUsersUsageProbabilityRange.set(
@@ -522,6 +524,30 @@ public class Database {
             future.get();
         }
     }
+
+    private void saveGraph(String fileName, Map<Key,Set<Key>> map){
+
+        String line = "";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+
+            for (Key user : mapIndiceToKey.values()){
+                line += mapKeyToIndice.get(user).toString();
+
+                for (Key follower: map.get(user)){
+                    line += " " + mapKeyToIndice.get(follower);
+                }
+
+                line += "\n";
+            }
+
+            writer.write(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /*
     public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
