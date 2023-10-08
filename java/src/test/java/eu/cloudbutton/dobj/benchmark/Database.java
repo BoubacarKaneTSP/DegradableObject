@@ -369,8 +369,8 @@ public class Database {
     public void followingPhase() throws InterruptedException, ExecutionException {
         System.out.println("start following phase thread : " + Thread.currentThread().getName());
 
-//        int nbProcess = Runtime.getRuntime().availableProcessors();
-        int nbProcess = 48;
+        int nbProcess = Runtime.getRuntime().availableProcessors();
+//        int nbProcess = 48;
         ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
         List<Future<Void>> futures = new ArrayList<>();
 
@@ -382,7 +382,7 @@ public class Database {
             float pr;
             Key userA, userB;
 
-            if(i%(nbUsers*0.05) == 0)
+            if(i%(nbUsers*0.05) == 0 || i<=nbProcess)
                 System.out.println(i + " : " + Thread.currentThread().getName());
 
             // Sampling of reciprocal edges
