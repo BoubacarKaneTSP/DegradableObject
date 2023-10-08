@@ -382,13 +382,13 @@ public class Database {
             float pr;
             Key userA, userB;
 
-            if(i%(nbUsers*0.05) == 0 || i<=nbProcess)
+            if(i%(nbUsers*0.01) == 0 || i<=nbProcess)
                 System.out.println(i + " : " + Thread.currentThread().getName());
 
             // Sampling of reciprocal edges
             for (int j = i; j < nbUsers; j++) {
 
-                if(j%(nbUsers*0.05) == 0)
+                if(j%(nbUsers*0.25) == 0)
                     System.out.println(j + " : " + Thread.currentThread().getName() + " | reciprocal");
 
                 if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
@@ -428,7 +428,7 @@ public class Database {
             // Sampling of directed edges
             for (int j = i; j < nbUsers; j++) {
 
-                if(j%(nbUsers*0.05) == 0)
+                if(j%(nbUsers*0.25) == 0)
                     System.out.println(j + " : " + Thread.currentThread().getName() + " | directed");
 
                 if (inDegree[i] != 0 && outDegree[j] != 0){
