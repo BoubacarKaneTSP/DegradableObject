@@ -680,9 +680,15 @@ public class Database {
                 String[] values = line.split(" ");
                 int userIndice = Integer.parseInt(values[0]);
 
-                for (int j = 1; j < values.length; j++) {
-                    followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
-                    listLocalUsersFollow.get(j%nbThread).get(mapIndiceToKey.get(j)).add(mapIndiceToKey.get(userIndice));
+                if (values.length <= 1){
+                    val = random.get().nextInt(nbUsers);
+                    followUser(mapIndiceToKey.get(val), mapIndiceToKey.get(userIndice));
+                    listLocalUsersFollow.get(val%nbThread).get(mapIndiceToKey.get(val)).add(mapIndiceToKey.get(userIndice));
+                }else{
+                    for (int j = 1; j < values.length; j++) {
+                        followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
+                        listLocalUsersFollow.get(j%nbThread).get(mapIndiceToKey.get(j)).add(mapIndiceToKey.get(userIndice));
+                    }
                 }
 
                 line = bufferedReader.readLine();
