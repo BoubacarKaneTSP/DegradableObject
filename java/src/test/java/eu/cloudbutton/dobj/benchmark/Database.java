@@ -647,11 +647,11 @@ public class Database {
                 mapKeyToIndice.put(user,i);
 
                 val = powerLawArray.get(i);
-                sommeUsage.get(i%nbThread).getAndAdd(val);
+                sommeUsage.get(i%nbThread).addAndGet(val);
                 sommeFollow += val;
 
                 localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
-                localUsersUsageProbabilityRange.put(i%nbThread, localUsersUsageProbabilityRange.get(i%nbThread) + sommeUsage.get(i%nbThread).longValue());
+                localUsersUsageProbabilityRange.put(i%nbThread, sommeUsage.get(i%nbThread).longValue());
                 usersFollowProbability.put(sommeFollow, user);
 
                 i++;
