@@ -944,10 +944,7 @@ public class Retwis {
                                         .get(userA);
                             }catch (NullPointerException e){
                                 System.out.println("list local user follow : " + database
-                                        .getListLocalUsersFollow()
-                                        .get(database
-                                                .getMapKeyToIndice()
-                                                .get(userA)));
+                                        .getListLocalUsersFollow());
 
                                 System.out.println(e);
                                 System.exit(0);
