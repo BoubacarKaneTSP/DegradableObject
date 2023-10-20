@@ -940,11 +940,14 @@ public class Retwis {
                                         .getListLocalUsersFollow()
                                         .get(database
                                                 .getMapKeyToIndice()
-                                                .get(userA))
+                                                .get(userA)%_nbThreads)
                                         .get(userA);
                             }catch (NullPointerException e){
                                 System.out.println("list local user follow : " + database
-                                        .getListLocalUsersFollow());
+                                        .getListLocalUsersFollow()
+                                        .get(database
+                                                .getMapKeyToIndice()
+                                                .get(userA)));
 
                                 System.out.println(e);
                                 System.exit(0);
@@ -968,7 +971,7 @@ public class Retwis {
 
                             break;
                         case UNFOLLOW:
-                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)).get(userA);
+                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)%_nbThreads).get(userA);
 
                             if (listFollow.size() == 0) {
                                 continue restartOperation;
