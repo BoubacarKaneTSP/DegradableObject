@@ -970,7 +970,6 @@ public class Retwis {
                             }*/
 
                             userB = listFollow.poll();
-                            System.out.println(userB);
                             if (userB != null){ // Perform unfollow only if userA already follow someone
                                 startTime = System.nanoTime();
                                 database.unfollowUser(userA, userB);
