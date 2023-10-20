@@ -900,19 +900,13 @@ public class Retwis {
                                 .getValue();
                     }catch (NullPointerException e){
 
-                        System.out.println("range : " + database.getLocalUsersUsageProbabilityRange().get(myId));
-                        System.out.println("val : " + val);
-                        System.out.println("max val" + database
+                        System.out.println("range : " + database.getLocalUsersUsageProbabilityRange().get(myId) + "\n" +
+                                "val : " + val + "\n" +
+                                "max val : " + database
                                 .getLocalUsersUsageProbability()
                                 .get(myId)
-                                .lastKey()
-                        );
-                        System.out.println(database
-                                .getLocalUsersUsageProbability()
-                                .get(myId)
-                                .ceilingEntry(val)
-                        );
-
+                                .lastKey() + "\n"
+                                );
                         System.exit(0);
                     }
 
