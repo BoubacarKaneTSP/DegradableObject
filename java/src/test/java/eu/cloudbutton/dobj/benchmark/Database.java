@@ -107,6 +107,9 @@ public class Database {
 
 //        Collections.sort(powerLawArray);
 
+        for (int i = 0; i < nbThread; i++) {
+            
+        }
 
         mapUsageDistribution = new ConcurrentHashMap<>();
 
@@ -621,7 +624,7 @@ public class Database {
 
         Set<Key> localSetUser = new TreeSet<>();
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
-        Map<Integer, AtomicInteger> sommeUsage = new ConcurrentHashMap<>();
+        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
         int val;
 
@@ -637,6 +640,8 @@ public class Database {
                 if (i % nbUsers * 0.05 == 0) {
                     System.out.println(i);
                 }
+
+                System.out.println(sommeUsage);
 
                 addOriginalUser(user);
                 mapIndiceToKey.put(i, user);
