@@ -671,14 +671,15 @@ public class Database {
 
             for (int i = 0; i < nbUsers;) {
 
-                String[] values = bufferedReader.readLine().split(" ");
+                String line = bufferedReader.readLine();
+                System.out.println("line : " + line);
+                String[] values = line.split(" ");
                 int userIndice = Integer.parseInt(values[0]);
 
                 for (int j = 1; j < values.length; j++) {
                     followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
                 }
             }
-
 
             bufferedReader.close();
             fileReader.close();
