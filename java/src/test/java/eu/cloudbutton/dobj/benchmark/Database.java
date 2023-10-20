@@ -72,7 +72,7 @@ public class Database {
         this.typeQueue = typeQueue;
         this.typeCounter = typeCounter;
         this.nbThread = nbThread;
-        this.factoryIndice = new FactoryIndice(nbThread);
+        this.factoryIndice = new FactoryIndice(nbThread + 1); // +1 because a different thread add all users at first
         this.random = ThreadLocal.withInitial(() -> new Random(94));
 
         if (typeMap.contains("Extended")){
