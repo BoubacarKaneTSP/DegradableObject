@@ -901,7 +901,9 @@ public class Retwis {
                     }catch (NullPointerException e){
                         System.out.println(database
                                 .getLocalUsersUsageProbability()
-                                .get(myId));
+                                .get(myId)
+                                .ceilingEntry(val)
+                        );
 
                         System.exit(0);
                     }
