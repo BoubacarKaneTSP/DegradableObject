@@ -924,7 +924,7 @@ public class Retwis {
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get(num % nbLocalUsers);
                     }
 */
-                    Queue<Key> listFollow;
+                    Queue<Key> listFollow = null;
 
                     switch (typeComputed){
                         case ADD:
@@ -934,12 +934,25 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-                            listFollow = database
-                                    .getListLocalUsersFollow()
-                                    .get(database
-                                            .getMapKeyToIndice()
-                                    .get(userA))
-                                    .get(userA);
+                            
+                            try{
+                                listFollow = database
+                                        .getListLocalUsersFollow()
+                                        .get(database
+                                                .getMapKeyToIndice()
+                                                .get(userA))
+                                        .get(userA);
+                            }catch (NullPointerException e){
+                                System.out.println("list local user follow : " + database
+                                        .getListLocalUsersFollow()
+                                        .get(database
+                                                .getMapKeyToIndice()
+                                                .get(userA)));
+
+                                System.out.println(e);
+                                System.exit(0);
+                            }
+                            
 
 //                            int val2 = random.get().nextInt(nbLocalUsers);
 //                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
