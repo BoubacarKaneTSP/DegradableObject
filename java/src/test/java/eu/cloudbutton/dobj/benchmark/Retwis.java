@@ -892,11 +892,20 @@ public class Retwis {
 
 //                    TimeUnit.SECONDS.sleep(20);
 
-                    userA = database
-                            .getLocalUsersUsageProbability()
-                            .get(myId)
-                            .ceilingEntry(val)
-                            .getValue();
+                    try{
+                        userA = database
+                                .getLocalUsersUsageProbability()
+                                .get(myId)
+                                .ceilingEntry(val)
+                                .getValue();
+                    }catch (NullPointerException e){
+                        System.out.println(database
+                                .getLocalUsersUsageProbability()
+                                .get(myId));
+
+                        System.exit(0);
+                    }
+
 
                    /* if (val < nbLocalUsers)
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get((int) (val%(nbLocalUsers*0.1)));
