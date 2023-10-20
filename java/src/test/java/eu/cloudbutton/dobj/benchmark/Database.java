@@ -622,8 +622,13 @@ public class Database {
         Set<Key> localSetUser = new TreeSet<>();
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
         Map<Integer, AtomicInteger> sommeUsage = new ConcurrentHashMap<>();
-        Long sommeFollow = 0L;
+        long sommeFollow = 0L;
         int val;
+
+        for (int i = 0; i < nbThread; i++) {
+            sommeUsage.put(i, new AtomicInteger());
+        }
+
 
         for (int i = 0; i < nbUsers;) {
 
