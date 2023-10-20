@@ -955,7 +955,6 @@ public class Retwis {
                         case UNFOLLOW:
                             listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)%_nbThreads).get(userA);
 
-                            System.out.println("size : " + listFollow.size());
                             if (listFollow.size() == 0) {
                                 continue restartOperation;
                             }
@@ -971,6 +970,7 @@ public class Retwis {
                             }*/
 
                             userB = listFollow.poll();
+                            System.out.println(userB);
                             if (userB != null){ // Perform unfollow only if userA already follow someone
                                 startTime = System.nanoTime();
                                 database.unfollowUser(userA, userB);
