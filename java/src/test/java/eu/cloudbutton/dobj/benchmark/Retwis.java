@@ -955,8 +955,10 @@ public class Retwis {
                         case UNFOLLOW:
                             listFollow = database.getMapFollowers().get(userA);
 
-                            if (listFollow.size() == 0)
+                            if (listFollow.size() == 0) {
+                                System.out.println("restart");
                                 continue restartOperation;
+                            }
 
                             try{
 
