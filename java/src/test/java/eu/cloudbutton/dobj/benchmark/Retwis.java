@@ -934,7 +934,12 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)).get(userA);
+                            listFollow = database
+                                    .getListLocalUsersFollow()
+                                    .get(database
+                                            .getMapKeyToIndice()
+                                    .get(userA))
+                                    .get(userA);
 
 //                            int val2 = random.get().nextInt(nbLocalUsers);
 //                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
