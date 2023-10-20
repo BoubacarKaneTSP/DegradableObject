@@ -899,6 +899,14 @@ public class Retwis {
                                 .ceilingEntry(val)
                                 .getValue();
                     }catch (NullPointerException e){
+
+                        System.out.println("range : " + database.getLocalUsersUsageProbabilityRange().get(myId));
+                        System.out.println("val : " + val);
+                        System.out.println("max val" + database
+                                .getLocalUsersUsageProbability()
+                                .get(myId)
+                                .lastKey()
+                        );
                         System.out.println(database
                                 .getLocalUsersUsageProbability()
                                 .get(myId)
