@@ -20,6 +20,7 @@ import java.util.concurrent.*;
 import static org.kohsuke.args4j.OptionHandlerFilter.ALL;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -686,6 +687,8 @@ public class Retwis {
         private Long usersFollowProbabilityRange;
         private int nbRepeat = 1000;
         private final String msg = "new msg";
+        AtomicInteger counterID;
+        private int myId;
         int nbLocalUsers;
         int nbAttempt;
         Key userB, userA, dummyUser;
@@ -703,6 +706,7 @@ public class Retwis {
             this.latchFillDatabase = latchFillDatabase;
             this.latchHistogramDatabase = latchHistogramDatabase;
             this.latchFillCompletionTime = latchFillCompletionTime;
+            this.counterID = new AtomicInteger();
 //            this.usersFollow = new HashMap<>();
         }
 
@@ -711,6 +715,7 @@ public class Retwis {
 
             try{
                 int type;
+                myId = counterID.getAndIncrement();
 
                 nbLocalOperations = new HashMap<>();
                 timeLocalOperations = new HashMap<>();
@@ -727,9 +732,9 @@ public class Retwis {
 //                latch.countDown();
 //                latch.await();
 
-                localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get();
+                localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId);
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
-                nbLocalUsers = database.getLocalUsersUsageProbability().get().size();
+                nbLocalUsers = database.getLocalUsersUsageProbability().get(myId).size();
 
                 dummyUser = database.generateUser();
                 dummySet = new HashSet<>();
@@ -879,7 +884,7 @@ public class Retwis {
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
 
-                    long val = Math.abs(random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get());
+                    long val = Math.abs(random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get(myId));
 
 //                    int val = random.get().nextInt(Math.toIntExact(database.getLocalUsersUsageProbabilityRange().get()));
 
@@ -889,7 +894,7 @@ public class Retwis {
 
                     userA = database
                             .getLocalUsersUsageProbability()
-                            .get()
+                            .get(myId)
                             .ceilingEntry(val)
                             .getValue();
 
@@ -988,7 +993,7 @@ public class Retwis {
         }
 
         public void resetAllTimeline(){
-            for (Key usr: database.getLocalUsersUsageProbability().get().values()){
+            for (Key usr: database.getLocalUsersUsageProbability().get(myId).values()){
                 database.getMapTimelines().get(usr).clear();
             }
         }

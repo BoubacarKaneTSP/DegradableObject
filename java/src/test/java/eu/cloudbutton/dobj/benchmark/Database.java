@@ -45,8 +45,8 @@ public class Database {
     private float diag_sum_d_dist;
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
-    private final ThreadLocal<ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
-    private final ThreadLocal<Long> localUsersUsageProbabilityRange;
+    private final Map<Integer, ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
+    private final Map<Integer, Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final List<Map<Key,Integer>> mapUsersFollowing;
     private final Map<Key, AtomicInteger> mapNbFollowers;
@@ -85,8 +85,8 @@ public class Database {
         }
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
-        localUsersUsageProbability = ThreadLocal.withInitial(ConcurrentSkipListMap::new);
-        localUsersUsageProbabilityRange = ThreadLocal.withInitial(() -> 0L);
+        localUsersUsageProbability = new ConcurrentHashMap<>();
+        localUsersUsageProbabilityRange = new ConcurrentHashMap<>();
         nbUsers = nbUserInit;
 //        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,10);
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
@@ -128,16 +128,17 @@ public class Database {
 
 //        System.out.println(mapUsageDistribution);
 
-        System.out.println("generate user");
+//        System.out.println("generate user");
 
-        generateUsers();
+//        generateUsers();
 
-        addingPhase();
+//        addingPhase();
 
-        followingPhase();
+//        followingPhase();
 
-        saveGraph("graph_follower_retwis.txt", mapFollowers);
-        saveGraph("graph_following_retwis.txt", mapFollowing);
+//        saveGraph("graph_follower_retwis.txt", mapFollowers);
+//        saveGraph("graph_following_retwis.txt", mapFollowing);
+        loadGraph();
     }
 
     public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
@@ -161,11 +162,11 @@ public class Database {
             somme += powerLawArray.get(g++%powerLawArraySize)+1;
 //            somme += 1; // Each user have the same probability to be chosen
             addOriginalUser(user);
-            localUsersUsageProbability.get().put(somme, user);
+//            localUsersUsageProbability.get().put(somme, user);
         }
 //        System.out.println(localUsersUsageProbability.get().keySet());
 
-        localUsersUsageProbabilityRange.set(somme);
+//        localUsersUsageProbabilityRange.set(somme);
 
         System.out.println("Donne adding users");
 
@@ -478,8 +479,6 @@ public class Database {
             futures.add(executorService.submit(callable));
         }
 
-        System.out.println("launch futures");
-
         for (Future<Void> future :futures){
             future.get();
         }
@@ -492,7 +491,11 @@ public class Database {
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
-        AtomicInteger somme = new AtomicInteger();
+        Map<Integer, AtomicInteger> somme = new ConcurrentHashMap<>();
+
+        for (int i = 0; i < nbThread; i++)
+            somme.put(i, new AtomicInteger());
+
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
 
         Collections.sort(powerLawArray);
@@ -501,14 +504,12 @@ public class Database {
 
             Key user;
 
-            somme.addAndGet(powerLawArray.get(i));
+            somme.get(i%nbThread).addAndGet(powerLawArray.get(i));
 
             user = mapIndiceToKey.get(i);
             addOriginalUser(user);
-            localUsersUsageProbability.get().put(somme.longValue(), user);
-            localUsersUsageProbabilityRange.set(
-                    localUsersUsageProbabilityRange.get()
-                            + somme.longValue());
+            localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
+            localUsersUsageProbabilityRange.put(i%nbThread, localUsersUsageProbabilityRange.get(i%nbThread) + somme.get(i%nbThread).longValue());
 
             listLocalUser.get(i%nbThread).add(user);
             return null;
@@ -532,11 +533,11 @@ public class Database {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
 
-            for (Key user : mapIndiceToKey.values()){
-                line += mapKeyToIndice.get(user).toString();
+            for (Key userA : mapIndiceToKey.values()){
+                line += mapKeyToIndice.get(userA).toString();
 
-                for (Key follower: map.get(user)){
-                    line += " " + mapKeyToIndice.get(follower);
+                for (Key userB: map.get(userA)){
+                    line += " " + mapKeyToIndice.get(userB);
                 }
 
                 line += "\n";
@@ -615,6 +616,67 @@ public class Database {
 //        TimeUnit.SECONDS.sleep(5);
         System.out.println("end following phase thread : " + Thread.currentThread().getName());
     }*/
+
+    private void loadGraph() throws InterruptedException, ClassNotFoundException {
+
+        Set<Key> localSetUser = new TreeSet<>();
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
+        Map<Integer, AtomicInteger> sommeUsage = new ConcurrentHashMap<>();
+        Long sommeFollow = 0L;
+        int val;
+
+        for (int i = 0; i < nbUsers;) {
+
+            Key user = generateUser();
+            if (localSetUser.add(user)) {
+                if (i % nbUsers * 0.05 == 0) {
+                    System.out.println(i);
+                }
+
+                addOriginalUser(user);
+                mapIndiceToKey.put(i, user);
+                mapKeyToIndice.put(user,i);
+
+                val = powerLawArray.get(i);
+                sommeUsage.get(i%nbThread).addAndGet(val);
+                sommeFollow += val;
+
+                localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
+                localUsersUsageProbabilityRange.put(i%nbThread, localUsersUsageProbabilityRange.get(i%nbThread) + sommeUsage.get(i%nbThread).longValue());
+                usersFollowProbability.put(sommeFollow, user);
+
+                i++;
+            }
+        }
+
+        usersFollowProbabilityRange = sommeFollow;
+
+        String cheminFichier = "graph_follower_retwis.txt";
+
+        try {
+            File fichier = new File(cheminFichier);
+
+            FileReader fileReader = new FileReader(fichier);
+
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            for (int i = 0; i < nbUsers;) {
+
+                String[] values = bufferedReader.readLine().split(" ");
+                int userIndice = Integer.parseInt(values[0]);
+
+                for (int j = 1; j < values.length; j++) {
+                    followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
+                }
+            }
+
+
+            bufferedReader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public String computeHistogram(int range, int max, String type){
 
@@ -775,6 +837,7 @@ public class Database {
 
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
+    // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
         mapFollowers.get(userB)
