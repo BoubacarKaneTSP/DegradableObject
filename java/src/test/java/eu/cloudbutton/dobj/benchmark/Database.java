@@ -650,6 +650,7 @@ public class Database {
                 sommeUsage.get(i%nbThread).addAndGet(val);
                 sommeFollow += val;
 
+                listLocalUser.get(i%nbThread).add(user);
                 localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
                 localUsersUsageProbabilityRange.put(i%nbThread, sommeUsage.get(i%nbThread).longValue());
                 usersFollowProbability.put(sommeFollow, user);

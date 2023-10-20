@@ -734,7 +734,7 @@ public class Retwis {
 
                 localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId);
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
-                nbLocalUsers = database.getLocalUsersUsageProbability().get(myId).size();
+                nbLocalUsers = database.getListLocalUser().get(myId).size();
 
                 dummyUser = database.generateUser();
                 dummySet = new HashSet<>();
@@ -849,7 +849,7 @@ public class Retwis {
                 typeComputed = READ;
 
                 for (int i = 0; i < nbLocalUsers; i++) {
-                    userA = database.getListLocalUser().get(database.getThreadID().get()).get(i);
+                    userA = database.getListLocalUser().get(myId).get(i);
 
                     startTime = System.nanoTime();
                     database.showTimeline(userA);
