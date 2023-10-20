@@ -958,7 +958,13 @@ public class Retwis {
                             if (listFollow.size() == 0)
                                 continue restartOperation;
 
-                            val = random.get().nextInt(listFollow.size());
+                            try{
+
+                                val = random.get().nextInt(listFollow.size());
+                            }catch (IllegalArgumentException e){
+                                System.out.println("listfollow size : " + listFollow.size());
+                                System.exit(0);
+                            }
                             int v = 0;
                             for (Key user : listFollow){
                                 if (v==val) {
