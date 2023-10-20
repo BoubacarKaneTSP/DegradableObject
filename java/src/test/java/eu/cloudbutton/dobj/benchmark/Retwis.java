@@ -905,7 +905,11 @@ public class Retwis {
                                 "max val : " + database
                                 .getLocalUsersUsageProbability()
                                 .get(myId)
-                                .lastKey() + "\n"
+                                .lastKey() + "\n" +
+                                "value returned : " + database
+                                        .getLocalUsersUsageProbability()
+                                        .get(myId)
+                                        .ceilingEntry(val) + "\n"
                                 );
                         System.exit(0);
                     }
