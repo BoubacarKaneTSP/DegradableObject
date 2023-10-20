@@ -673,7 +673,7 @@ public class Database {
 
         usersFollowProbabilityRange = sommeFollow;
 
-        String cheminFichier = "graph_follower_retwis.txt";
+        String cheminFichier = "graph_following_retwis.txt";
 
         try {
             File fichier = new File(cheminFichier);
@@ -690,12 +690,12 @@ public class Database {
 
                 if (values.length <= 1){
                     val = random.get().nextInt(nbUsers);
-                    followUser(mapIndiceToKey.get(val), mapIndiceToKey.get(userIndice));
-                    listLocalUsersFollow.get(val%nbThread).get(mapIndiceToKey.get(val)).add(mapIndiceToKey.get(userIndice));
+                    followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
+                    listLocalUsersFollow.get(userIndice%nbThread).get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
                 }else{
                     for (int j = 1; j < values.length; j++) {
-                        followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
-                        listLocalUsersFollow.get(j%nbThread).get(mapIndiceToKey.get(j)).add(mapIndiceToKey.get(userIndice));
+                        followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(j));
+                        listLocalUsersFollow.get(userIndice%nbThread).get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
                     }
                 }
 
