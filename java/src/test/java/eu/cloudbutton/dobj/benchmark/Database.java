@@ -641,8 +641,6 @@ public class Database {
                     System.out.println(i);
                 }
 
-                System.out.println(sommeUsage);
-
                 addOriginalUser(user);
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
