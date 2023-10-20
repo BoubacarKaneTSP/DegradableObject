@@ -48,6 +48,7 @@ public class Database {
     private final Map<Integer, ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
     private final Map<Integer, Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
+    private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
     private final List<Map<Key,Integer>> mapUsersFollowing;
     private final Map<Key, AtomicInteger> mapNbFollowers;
     private final AtomicInteger count;
@@ -91,6 +92,7 @@ public class Database {
 //        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,10);
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
+        listLocalUsersFollow = new ConcurrentHashMap<>();
         mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
         listAllUser = new ArrayList<>();
@@ -110,6 +112,7 @@ public class Database {
         for (int i = 0; i < nbThread; i++) {
             localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
             localUsersUsageProbabilityRange.put(i, 0L);
+            listLocalUsersFollow.put(i%nbThread, new HashMap<>());
         }
 
         mapUsageDistribution = new ConcurrentHashMap<>();
@@ -650,6 +653,7 @@ public class Database {
                 sommeUsage.get(i%nbThread).addAndGet(val);
                 sommeFollow += val;
 
+                listLocalUsersFollow.get(i%nbThread).put(user, new LinkedList<>());
                 listLocalUser.get(i%nbThread).add(user);
                 localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
                 localUsersUsageProbabilityRange.put(i%nbThread, sommeUsage.get(i%nbThread).longValue());
@@ -676,8 +680,10 @@ public class Database {
                 String[] values = line.split(" ");
                 int userIndice = Integer.parseInt(values[0]);
 
-                for (int j = 1; j < values.length; j++)
+                for (int j = 1; j < values.length; j++) {
                     followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
+                    listLocalUsersFollow.get(j%nbThread).get(mapIndiceToKey.get(j)).add(mapIndiceToKey.get(userIndice));
+                }
 
                 line = bufferedReader.readLine();
             }

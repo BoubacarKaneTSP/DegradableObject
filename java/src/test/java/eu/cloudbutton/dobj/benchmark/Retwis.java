@@ -924,7 +924,7 @@ public class Retwis {
                         userA = database.getListLocalUser().get(database.getThreadID().get()).get(num % nbLocalUsers);
                     }
 */
-                    Set<Key> listFollow;
+                    Queue<Key> listFollow;
 
                     switch (typeComputed){
                         case ADD:
@@ -934,7 +934,7 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-                            listFollow = database.getMapFollowers().get(userA);
+                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)).get(userA);
 
 //                            int val2 = random.get().nextInt(nbLocalUsers);
 //                            userB = database.getListLocalUser().get(database.getThreadID().get()).get(val2);
@@ -953,18 +953,13 @@ public class Retwis {
 
                             break;
                         case UNFOLLOW:
-                            listFollow = database.getMapFollowers().get(userA);
+                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)).get(userA);
 
                             if (listFollow.size() == 0) {
                                 continue restartOperation;
                             }
 
-                            try{
-                                val = random.get().nextInt(listFollow.size());
-                            }catch (IllegalArgumentException e){
-                                System.out.println("listfollow size : " + listFollow.size());
-                                System.exit(0);
-                            }
+                         /*   val = random.get().nextInt(listFollow.size());
                             int v = 0;
                             for (Key user : listFollow){
                                 if (v==val) {
@@ -972,9 +967,9 @@ public class Retwis {
                                     break;
                                 }
                                 v++;
-                            }
+                            }*/
 
-//                            userB = listFollow.poll();
+                            userB = listFollow.poll();
                             if (userB != null){ // Perform unfollow only if userA already follow someone
                                 startTime = System.nanoTime();
                                 database.unfollowUser(userA, userB);
