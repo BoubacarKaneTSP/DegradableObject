@@ -108,7 +108,7 @@ public class Database {
 //        Collections.sort(powerLawArray);
 
         for (int i = 0; i < nbThread; i++) {
-            
+            localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
         }
 
         mapUsageDistribution = new ConcurrentHashMap<>();
