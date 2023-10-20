@@ -109,6 +109,7 @@ public class Database {
 
         for (int i = 0; i < nbThread; i++) {
             localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
+            localUsersUsageProbabilityRange.put(i, 0L);
         }
 
         mapUsageDistribution = new ConcurrentHashMap<>();
