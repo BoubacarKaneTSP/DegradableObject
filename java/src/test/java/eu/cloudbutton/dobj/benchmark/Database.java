@@ -668,17 +668,17 @@ public class Database {
             FileReader fileReader = new FileReader(fichier);
 
             BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
 
-            for (int i = 0; i < nbUsers;) {
+            while (line != null){
 
-                String line = bufferedReader.readLine();
-                System.out.println("line : " + line);
                 String[] values = line.split(" ");
                 int userIndice = Integer.parseInt(values[0]);
 
-                for (int j = 1; j < values.length; j++) {
+                for (int j = 1; j < values.length; j++)
                     followUser(mapIndiceToKey.get(j), mapIndiceToKey.get(userIndice));
-                }
+
+                line = bufferedReader.readLine();
             }
 
             bufferedReader.close();
