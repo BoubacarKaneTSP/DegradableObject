@@ -953,9 +953,9 @@ public class Retwis {
 
                             break;
                         case UNFOLLOW:
-                            System.out.println("unfollow");
                             listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)%_nbThreads).get(userA);
 
+                            System.out.println("size : " + listFollow.size());
                             if (listFollow.size() == 0) {
                                 continue restartOperation;
                             }
