@@ -956,12 +956,10 @@ public class Retwis {
                             listFollow = database.getMapFollowers().get(userA);
 
                             if (listFollow.size() == 0) {
-                                System.out.println("restart");
                                 continue restartOperation;
                             }
 
                             try{
-
                                 val = random.get().nextInt(listFollow.size());
                             }catch (IllegalArgumentException e){
                                 System.out.println("listfollow size : " + listFollow.size());
