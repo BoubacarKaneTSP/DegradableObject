@@ -649,9 +649,9 @@ public class Database {
 
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                if (i % nbUsers * 0.05 == 0) {
+                if (i % nbUsers * 0.05 == 0)
                     System.out.println(i);
-                }
+
 
                 addOriginalUser(user);
                 mapIndiceToKey.put(i, user);
@@ -689,9 +689,11 @@ public class Database {
                 int userIndice = Integer.parseInt(values[0]);
 
                 if (values.length <= 1){
-                    val = random.get().nextInt(nbUsers);
-                    followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
-                    listLocalUsersFollow.get(userIndice%nbThread).get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
+                    for (int i = 0; i < 5; i++) {
+                        val = random.get().nextInt(nbUsers);
+                        followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
+                        listLocalUsersFollow.get(userIndice%nbThread).get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
+                    }
                 }else{
                     for (int j = 1; j < values.length; j++) {
                         followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(j));
