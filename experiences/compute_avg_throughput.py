@@ -1,27 +1,20 @@
 import sys
+import numpy as np
+import scipy.stats as st
 
 def calculate_bounds(values_func):
     # Calcul de la moyenne, du max et du min
-    mean_func = sum(values_func) / len(values_func)
-    max_value_func = max(values_func)
-    min_value_func = min(values_func)
 
-    # Création des listes qui contiennent les valeurs supérieur ou inférieur à la moyenne
-    values_sup_mean = [value for value in values_func if value >= mean_func]
-    values_inf_mean = [value for value in values_func if value < mean_func]
+    confidence = 0.95
 
-    # Calcul de la borne supérieure et inférieure
-    if len(values_sup_mean) > 0:
-        upper_bound_func = sum(values_sup_mean) / len(values_sup_mean)
-    else:
-        upper_bound_func = mean_func
+    a = 1.0 * np.array(values_func)
+    n = len(a)
+    m, se = np.mean(a), st.sem(a)
+    h = se * st.t.ppf((1 + confidence) / 2., n-1)
+    max_val = np.max(a)
+    min_val = np.min(a)
 
-    if len(values_inf_mean) > 0:
-        lower_bound_func = sum(values_inf_mean) / len(values_inf_mean)
-    else:
-        lower_bound_func = mean_func
-
-    return mean_func, upper_bound_func, lower_bound_func, max_value_func, min_value_func
+    return m, m + h, m - h, max_val, min_val
 
 nb_user = sys.argv[1]
 type_obj = sys.argv[2]
