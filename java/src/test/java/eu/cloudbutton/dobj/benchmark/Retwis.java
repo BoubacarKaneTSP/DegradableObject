@@ -701,6 +701,7 @@ public class Retwis {
 
         public RetwisApp(CountDownLatch latch,CountDownLatch latchFillDatabase, CountDownLatch latchHistogramDatabase, CountDownLatch latchFillCompletionTime) {
             this.random = ThreadLocal.withInitial(() -> new Random(94));
+            this.myId = new ThreadLocal<>();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latch = latch;
             this.latchFillDatabase = latchFillDatabase;
