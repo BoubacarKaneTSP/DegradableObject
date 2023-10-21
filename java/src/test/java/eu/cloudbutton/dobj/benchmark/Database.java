@@ -147,13 +147,13 @@ public class Database {
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
         loadGraph();
 
-        int nb = 0;
-        for (Key user :
-                mapFollowing.keySet()) {
-            if (mapFollowing.get(user).size() == 0)
-                nb++;
-        }
-        System.out.println("nb user with no following : " + nb );
+//        int nb = 0;
+//        for (Key user :
+//                mapFollowing.keySet()) {
+//            if (mapFollowing.get(user).size() == 0)
+//                nb++;
+//        }
+//        System.out.println("nb user with no following : " + nb );
     }
 
     public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
