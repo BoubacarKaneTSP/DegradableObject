@@ -956,7 +956,7 @@ public class Retwis {
                             listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)%_nbThreads).get(userA);
 
                             if (listFollow.size() == 0) {
-                                System.out.println("pb");
+                                System.out.println("listFollow size : " + listFollow + "\n" + "user : " + userA +"\n");
                                 continue restartOperation;
                             }
 
