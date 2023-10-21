@@ -716,9 +716,9 @@ public class Retwis {
 
             try{
                 int type;
-                myId.set(counterID.getAndIncrement());
+                myId.set(database.getCount().getAndIncrement());
 
-                System.out.println("myID : " + myId.get() + " | Thread Name : " + Thread.currentThread().getName() + " counter : " +counterID.hashCode());
+                System.out.println("myID : " + myId.get() + " | Thread Name : " + Thread.currentThread().getName() + " counter : " +database.getCount().hashCode());
 
                 nbLocalOperations = new HashMap<>();
                 timeLocalOperations = new HashMap<>();
