@@ -688,7 +688,7 @@ public class Retwis {
         private int nbRepeat = 1000;
         private final String msg = "new msg";
         AtomicInteger counterID;
-        private int myId;
+        private ThreadLocal<Integer> myId;
         int nbLocalUsers;
         int nbAttempt;
         Key userB, userA, dummyUser;
@@ -715,9 +715,9 @@ public class Retwis {
 
             try{
                 int type;
-                myId = counterID.getAndIncrement();
+                myId.set(counterID.getAndIncrement());
 
-                System.out.println("myID : " + myId + " | Thread Name : " + Thread.currentThread().getName());
+                System.out.println("myID : " + myId.get() + " | Thread Name : " + Thread.currentThread().getName());
 
                 nbLocalOperations = new HashMap<>();
                 timeLocalOperations = new HashMap<>();
@@ -734,9 +734,9 @@ public class Retwis {
 //                latch.countDown();
 //                latch.await();
 
-                localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId);
+                localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
-                nbLocalUsers = database.getListLocalUser().get(myId).size();
+                nbLocalUsers = database.getListLocalUser().get(myId.get()).size();
 
                 dummyUser = database.generateUser();
                 dummySet = new HashSet<>();
@@ -851,7 +851,7 @@ public class Retwis {
                 typeComputed = READ;
 
                 for (int i = 0; i < nbLocalUsers; i++) {
-                    userA = database.getListLocalUser().get(myId).get(i);
+                    userA = database.getListLocalUser().get(myId.get()).get(i);
 
                     startTime = System.nanoTime();
                     database.showTimeline(userA);
@@ -886,7 +886,7 @@ public class Retwis {
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
 
-                    long val = Math.abs(random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get(myId));
+                    long val = Math.abs(random.get().nextLong() % database.getLocalUsersUsageProbabilityRange().get(myId.get()));
 
 //                    int val = random.get().nextInt(Math.toIntExact(database.getLocalUsersUsageProbabilityRange().get()));
 
@@ -897,20 +897,20 @@ public class Retwis {
                     try{
                         userA = database
                                 .getLocalUsersUsageProbability()
-                                .get(myId)
+                                .get(myId.get())
                                 .ceilingEntry(val)
                                 .getValue();
                     }catch (NullPointerException e){
 
-                        System.out.println("range : " + database.getLocalUsersUsageProbabilityRange().get(myId) + "\n" +
+                        System.out.println("range : " + database.getLocalUsersUsageProbabilityRange().get(myId.get()) + "\n" +
                                 "val : " + val + "\n" +
                                 "max val : " + database
                                 .getLocalUsersUsageProbability()
-                                .get(myId)
+                                .get(myId.get())
                                 .lastKey() + "\n" +
                                 "value returned : " + database
                                         .getLocalUsersUsageProbability()
-                                        .get(myId)
+                                        .get(myId.get())
                                         .ceilingEntry(val) + "\n"
                                 );
                         System.exit(0);
@@ -1014,7 +1014,7 @@ public class Retwis {
         }
 
         public void resetAllTimeline(){
-            for (Key usr: database.getLocalUsersUsageProbability().get(myId).values()){
+            for (Key usr: database.getLocalUsersUsageProbability().get(myId.get()).values()){
                 database.getMapTimelines().get(usr).clear();
             }
         }
