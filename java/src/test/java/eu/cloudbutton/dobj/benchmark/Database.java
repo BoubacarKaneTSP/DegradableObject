@@ -9,7 +9,6 @@ import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -107,8 +106,6 @@ public class Database {
 
         List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 600, SCALEUSAGE);
 
-//        Collections.sort(powerLawArray);
-
         for (int i = 0; i < nbThread; i++) {
             localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
             localUsersUsageProbabilityRange.put(i, 0L);
@@ -121,9 +118,6 @@ public class Database {
             mapUsageDistribution.put(i, new ArrayList<>());
         }
 
-//        System.out.println(powerLawArray);
-
-//        TimeUnit.SECONDS.sleep(5);
         for (int i = 0; i < nbUsers; i++) {
             mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i));
         }
@@ -146,53 +140,6 @@ public class Database {
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
         loadGraph();
-
-//        int nb = 0;
-//        for (Key user :
-//                mapFollowing.keySet()) {
-//            if (mapFollowing.get(user).size() == 0)
-//                nb++;
-//        }
-//        System.out.println("nb user with no following : " + nb );
-    }
-
-    public void fill(CountDownLatch latchAddUser, CountDownLatch latchHistogram) throws InterruptedException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, OutOfMemoryError {
-        System.out.println("start adding user phase thread : " + Thread.currentThread().getName());
-
-        threadID.set(count.getAndIncrement());
-        List<Key> users = listLocalUser.get(threadID.get());
-
-        //adding all users
-        List<Integer> powerLawArray = mapUsageDistribution.get(threadID.get());
-
-        int powerLawArraySize = powerLawArray.size();
-
-//        System.out.println(powerLawArray);
-        long somme = 0;
-        int g = 0;
-        for (Key user : users) {
-//            if (++g%nbUsers*0.05 == 0)
-//                System.out.println(g);
-
-            somme += powerLawArray.get(g++%powerLawArraySize)+1;
-//            somme += 1; // Each user have the same probability to be chosen
-            addOriginalUser(user);
-//            localUsersUsageProbability.get().put(somme, user);
-        }
-//        System.out.println(localUsersUsageProbability.get().keySet());
-
-//        localUsersUsageProbabilityRange.set(somme);
-
-        System.out.println("Donne adding users");
-
-        latchAddUser.countDown();
-        latchAddUser.await();
-
-
-//        followingTest(threadID);
-//        followingPhase(threadID.get(), localUsersFollow);
-
-        latchHistogram.countDown();
 
     }
 
@@ -278,63 +225,6 @@ public class Database {
 
     }
 
-    /*   public void generateUsers() throws InterruptedException {
-
-        Set<Key> localSetUser = new TreeSet<>();
-        long sommeProba = 0;
-        int nbFollowing, nbFollower;
-        double maxFollower, maxFollowing;
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1.3, SCALEUSAGE);
-
-        if ((nbUsers*0.43)/100 <= 1)
-            maxFollowing = 1;
-        else
-            maxFollowing = (nbUsers*0.43)/100;
-
-        if ((nbUsers*8.4)/100 <= 1)
-            maxFollower = 1;
-        else
-            maxFollower = (nbUsers*8.4)/100;
-
-        List<Integer> listNbFollowing = generateValues(nbUsers, maxFollowing, FOLLOWINGSHAPE, SCALEFOLLOW);
-//        System.out.println(listNbFollowing);
-//        System.out.println("listNbFollowing");
-        List<Integer> listNbFollower = generateValues(nbUsers, maxFollower, FOLLOWERSHAPE, SCALEFOLLOW);
-
-//        System.out.println(listNbFollower);
-//        System.out.println("listNbFollower");
-
-        for (int i = 0; i < nbUsers;) {
-            if(i%nbUsers*0.05 == 0)
-                System.out.println(i);
-
-            Key user = generateUser();
-            if (localSetUser.add(user)){
-                nbFollower = Math.max(1,listNbFollower.get(i));
-//                nbFollowing =1;
-                nbFollowing = Math.max(1,listNbFollowing.get(i));
-//                System.out.println("Follower : "+ nbFollower + " | Following : " + nbFollowing);
-
-                sommeProba += powerLawArray.get(i);
-//                sommeProba += 1;
-
-                usersFollowProbability.put(sommeProba, user);
-                listLocalUser.get(i%nbThread).add(user);
-                mapUsersFollowing.get(i%nbThread).put(user, nbFollowing);
-                mapNbFollowers.put(user, new AtomicInteger(nbFollower));
-                i++;
-            }
-
-        }
-
-//        System.out.println(mapUsersFollowing.get(0).values());
-
-        listAllUser.addAll(localSetUser);
-        System.out.println("Done generating users");
-
-        usersFollowProbabilityRange = sommeProba;
-//        System.out.println(usersFollowProbabilityRange);
-    }*/
 
     public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) throws InterruptedException {
         List<Double> doubleValues = new ArrayList<>();
@@ -401,14 +291,9 @@ public class Database {
             float pr;
             Key userA, userB;
 
-//            if(i%(nbUsers*0.001) == 0 || i<=nbProcess)
-                System.out.println(i + " : " + Thread.currentThread().getName());
 
             // Sampling of reciprocal edges
             for (int j = i; j < nbUsers; j++) {
-
-//                if(j%(nbUsers*0.25) == 0)
-//                    System.out.println(j + " : " + Thread.currentThread().getName() + " | reciprocal");
 
                 if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
                     pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
@@ -424,10 +309,8 @@ public class Database {
                         userB = mapIndiceToKey.get(j);
 
                         followUser(userA,userB);
-//                        localUsersFollow.get(userA).add(userB);
 
                         followUser(userB,userA);
-//                        localUsersFollow.get(userB).add(userA);
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
                             counter++;
@@ -447,9 +330,6 @@ public class Database {
             // Sampling of directed edges
             for (int j = i; j < nbUsers; j++) {
 
-//                if(j%(nbUsers*0.25) == 0)
-//                    System.out.println(j + " : " + Thread.currentThread().getName() + " | directed");
-
                 if (inDegree[i] != 0 && outDegree[j] != 0){
                     pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
 
@@ -463,7 +343,6 @@ public class Database {
                         userB = mapIndiceToKey.get(j);
 
                         followUser(userB, userA);
-//                        localUsersFollow.get(userB).add(userA);
                     }
                 }
 
@@ -480,7 +359,6 @@ public class Database {
                         userB = mapIndiceToKey.get(j);
 
                         followUser(userA, userB);
-//                        localUsersFollow.get(userA).add(userB);
                     }
                 }
             }
@@ -564,73 +442,6 @@ public class Database {
         }
 
     }
-
-    /*
-    public void followingPhase(int threadID, Map<Key, Queue<Key>> localUsersFollow) throws InterruptedException {
-        System.out.println("start following phase thread : " + Thread.currentThread().getName());
-
-        List<Key> users = listLocalUser.get(threadID);
-        int nbLocalUser = users.size();
-        int j = 0;
-        long randVal;
-
-        for (Key userA: users){
-            if(++j%(nbUsers*0.05) == 0)
-                System.out.println(j);
-
-            Queue<Key> usersFollow = localUsersFollow.get(userA);
-            int nbFollow = Math.min(mapUsersFollowing.get(threadID).get(userA), nbLocalUser);
-//	        System.out.println(nbFollow);
-
-//            for (Long v : usersFollowProbability.keySet())
-//                System.out.println(v + " => " + usersFollowProbability.get(v));
-//            System.out.println(usersFollowProbability);
-            for (long i = 0; i < nbFollow;) {
-
-
-//                System.out.println(i + " | " + nbFollow);
-
-                randVal = Math.abs(random.get().nextLong() % usersFollowProbabilityRange);
-                Key userB =  usersFollowProbability.ceilingEntry(randVal).getValue();
-
-//                randVal = random.get().nextInt(nbLocalUser);
-//                Key userB = users.get((int) randVal);
-
-                assert userB != null : "User generated is null";
-
-                if (!usersFollow.contains(userB) && mapNbFollowers.get(userB).getAndDecrement() > 0) {
-                    followUser(userA, userB);
-                    usersFollow.add(userB);
-                    i++;
-                }
-//                if (mapNbFollowers.get(userB).getAndDecrement() > 0) {
-//                }else
-//                    nbFailFollow++;
-//
-//                if (nbFailFollow >= nbUsers)
-//                    break;
-            }
-
-        }
-
-//        System.out.println();
-//        for (Key user: users){
-//            if (mapFollowers.get(user).size() > 500) {
-//                System.out.println(user + " size followers => " + mapFollowers.get(user).size());
-//                System.out.println();
-//            }
-
-//            if (mapFollowing.get(user).size() > 500) {
-//                System.out.println(user + "size following = >" + mapFollowing.get(user).size());
-//                System.out.println();
-//            }
-
-
-//        }
-
-//        TimeUnit.SECONDS.sleep(5);
-        System.out.println("end following phase thread : " + Thread.currentThread().getName());
-    }*/
 
     private void loadGraph() throws InterruptedException, ClassNotFoundException {
 
@@ -877,18 +688,6 @@ public class Database {
                 .add(userA);
         mapFollowing.get(userA)
                 .add(userB);
-
-//        System.out.println(Thread.currentThread().getName() + " is making " + userA + " follows " + userB + " and it has indice : " + ((SegmentAware)userB).getReference().get());
-
-//        TimeUnit.SECONDS.sleep(100000);
-
-//        if (set.add(userB)){
-////            System.out.println(Thread.currentThread().getName() + " add first " + userB + " to the set of following of " + userA);
-//        }else{
-////            System.out.println(Thread.currentThread().getName() + " add " + userB + " in the wrong set");
-//            System.exit(0);
-//        }
-
     }
 
     // Removing user_A to the followers of user_B
@@ -903,9 +702,8 @@ public class Database {
     public void tweet(Key user, String msg) throws InterruptedException {
         Set<Key> set = mapFollowers.get(user);
 
-//        System.out.println(set.size());
         for (Key follower : set) {
-            Timeline timeline = mapTimelines.get(follower);
+            Timeline<String> timeline = mapTimelines.get(follower);
 //
             timeline.add(msg);
             break;
@@ -914,14 +712,5 @@ public class Database {
 
     public void showTimeline(Key user) throws InterruptedException {
         mapTimelines.get(user).read();
-    }
-
-    public class generateGraph implements Callable<Void> {
-
-        @Override
-        public Void call() throws Exception {
-
-            return null;
-        }
     }
 }

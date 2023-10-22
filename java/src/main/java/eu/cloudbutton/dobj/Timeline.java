@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Timeline<T> {
 
-    private final static int CAPACITY = 100;
+    private final static int CAPACITY = 1000;
 
     private final Queue<T> topk;
     @Getter
@@ -21,7 +21,7 @@ public class Timeline<T> {
 
     public void add(T elt) throws InterruptedException {
 
-//        timeline.offer(elt);
+        timeline.offer(elt);
    }
 
    public Queue<T> read() throws InterruptedException {
