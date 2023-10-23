@@ -4,13 +4,13 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=3
+nbTest=30
 benchmarkTime=60
 warmingUpTime=20
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=50000000000
-ratio="5 15 30 50"
+ratio="10 10 30 50"
 completion_time="False"
 #ExtendedSegmentedConcurrentHash
 
