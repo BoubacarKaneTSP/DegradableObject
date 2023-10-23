@@ -56,7 +56,6 @@ public class Database {
     private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
     ThreadLocal<Integer> threadID;
-    Map<Integer, List<Integer>> mapUsageDistribution;
     private static final double SCALEUSAGE = 20; // Paramètre d'échelle de la loi de puissance
     private static final double SCALEFOLLOW = 1.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
@@ -104,30 +103,16 @@ public class Database {
         inDegree = new int[nbUsers];
         outDegree = new int[nbUsers];
 
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUserMax, 600, SCALEUSAGE);
-
         for (int i = 0; i < nbThread; i++) {
             localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
             localUsersUsageProbabilityRange.put(i, 0L);
             listLocalUsersFollow.put(i%nbThread, new HashMap<>());
         }
 
-        mapUsageDistribution = new ConcurrentHashMap<>();
-
-        for (int i = 0; i < nbThread; i++) {
-            mapUsageDistribution.put(i, new ArrayList<>());
-        }
-
-        for (int i = 0; i < nbUsers; i++) {
-            mapUsageDistribution.get(i%nbThread).add(powerLawArray.get(i));
-        }
-
         for (int i = 0; i < nbThread; i++) {
             listLocalUser.add(new ArrayList<>());
             mapUsersFollowing.add(new ConcurrentSkipListMap<>());
         }
-
-//        System.out.println(mapUsageDistribution);
 
 //        System.out.println("generate user");
 
@@ -140,8 +125,6 @@ public class Database {
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
         loadGraph();
-
-        System.exit(0);
 
     }
 
@@ -530,12 +513,9 @@ public class Database {
             sommeUsage.put(i, new AtomicInteger());
         }
 
-        int i, j = 0, k = 0;
+        int i, j = 0;
 
         for (Key user: mapNbLinkPerUser.keySet()){
-
-            if (k++<500)
-                System.out.println(user + " : " +mapNbLinkPerUser.get(user) + " => " + powerLawArray.get(j));
 
             i = mapKeyToIndice.get(user);
 
@@ -549,7 +529,6 @@ public class Database {
         }
 
         usersFollowProbabilityRange = sommeFollow;
-
     }
 
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
