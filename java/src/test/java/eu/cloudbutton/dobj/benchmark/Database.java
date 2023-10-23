@@ -141,6 +141,8 @@ public class Database {
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
         loadGraph();
 
+        System.exit(0);
+
     }
 
     public Key generateUser(){
@@ -447,14 +449,7 @@ public class Database {
 
         Set<Key> localSetUser = new TreeSet<>();
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
-        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
-        long sommeFollow = 0L;
         int val;
-
-        for (int i = 0; i < nbThread; i++) {
-            sommeUsage.put(i, new AtomicInteger());
-        }
-
 
         for (int i = 0; i < nbUsers;) {
 
@@ -468,21 +463,12 @@ public class Database {
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
-                val = powerLawArray.get(i);
-                sommeUsage.get(i%nbThread).addAndGet(val);
-                sommeFollow += val;
-
                 listLocalUsersFollow.get(i%nbThread).put(user, new LinkedList<>());
                 listLocalUser.get(i%nbThread).add(user);
-                localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
-                localUsersUsageProbabilityRange.put(i%nbThread, sommeUsage.get(i%nbThread).longValue());
-                usersFollowProbability.put(sommeFollow, user);
 
                 i++;
             }
         }
-
-        usersFollowProbabilityRange = sommeFollow;
 
         String cheminFichier = "graph_following_retwis.txt";
 
@@ -520,6 +506,65 @@ public class Database {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        int nbLink;
+        Map<Key, Integer> mapNbLinkPerUser = new HashMap<>();
+        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
+        long sommeFollow = 0L;
+
+        for (int i = 0; i < nbUsers; i++) {
+            nbLink = 0;
+
+            Key user = mapIndiceToKey.get(i);
+            nbLink += mapFollowers.get(user).size();
+            nbLink += mapFollowing.get(user).size();
+
+            mapNbLinkPerUser.put(user, nbLink);
+        }
+
+        mapNbLinkPerUser = sortMapByValue(mapNbLinkPerUser);
+        Collections.sort(powerLawArray);
+
+        for (int i = 0; i < nbThread; i++) {
+            sommeUsage.put(i, new AtomicInteger());
+        }
+
+        int i, j = 0, k = 0;
+
+        for (Key user: mapNbLinkPerUser.keySet()){
+
+            if (k++<50)
+                System.out.println(user + " : " +mapNbLinkPerUser.get(user) + " => " + powerLawArray.get(j));
+
+            i = mapKeyToIndice.get(user);
+
+            val = powerLawArray.get(j++);
+            sommeUsage.get(i%nbThread).addAndGet(val);
+            sommeFollow += val;
+
+            localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
+            localUsersUsageProbabilityRange.put(i%nbThread, sommeUsage.get(i%nbThread).longValue());
+            usersFollowProbability.put(sommeFollow, user);
+        }
+
+        usersFollowProbabilityRange = sommeFollow;
+
+    }
+
+    public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
+        // Convert the inputMap to a List of Map.Entry objects
+        List<Map.Entry<Key, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
+
+        // Sort the entryList using a custom comparator based on values
+        Collections.sort(entryList, Comparator.comparing(Map.Entry::getValue));
+
+        // Create a new LinkedHashMap to store the sorted entries
+        Map<Key, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Key, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
     }
 
     public String computeHistogram(int range, int max, String type){

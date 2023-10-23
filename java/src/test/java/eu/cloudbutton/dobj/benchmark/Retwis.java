@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.key.Key;
-import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -651,7 +650,7 @@ public class Retwis {
         private final ThreadLocal<Random> random;
         private final int[] ratiosArray;
         private final CountDownLatch latchFillCompletionTime;
-        private Long localUsersProbabilityRange;
+        private Long localUsersUsageProbabilityRange;
         private Long usersFollowProbabilityRange;
         private final String msg = "new msg";
         AtomicInteger counterID;
@@ -688,7 +687,7 @@ public class Retwis {
                     timeLocalDurations.put(op, new ArrayList<>());
                 }
 
-                localUsersProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
+                localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 nbLocalUsers = database.getListLocalUser().get(myId.get()).size();
 
@@ -839,7 +838,7 @@ public class Retwis {
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
 
-                    long val = Math.abs(random.get().nextLong() % localUsersProbabilityRange);
+                    long val = Math.abs(random.get().nextLong() % localUsersUsageProbabilityRange);
 
                     try{
                         userA = database
@@ -849,7 +848,7 @@ public class Retwis {
                                 .getValue();
                     }catch (NullPointerException e){
 
-                        System.out.println("range : " + localUsersProbabilityRange + "\n" +
+                        System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
                                 "val : " + val + "\n" +
                                 "max val : " + database
                                 .getLocalUsersUsageProbability()
