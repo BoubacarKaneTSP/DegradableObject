@@ -533,7 +533,7 @@ public class Database {
 
         for (Key user: mapNbLinkPerUser.keySet()){
 
-            if (k++<50)
+            if (k++<500)
                 System.out.println(user + " : " +mapNbLinkPerUser.get(user) + " => " + powerLawArray.get(j));
 
             i = mapKeyToIndice.get(user);
@@ -557,7 +557,7 @@ public class Database {
 
         // Sort the entryList using a custom comparator based on values
         Collections.sort(entryList, Comparator.comparing(Map.Entry::getValue));
-
+        Collections.reverse(entryList);
         // Create a new LinkedHashMap to store the sorted entries
         Map<Key, Integer> sortedMap = new LinkedHashMap<>();
         for (Map.Entry<Key, Integer> entry : entryList) {
