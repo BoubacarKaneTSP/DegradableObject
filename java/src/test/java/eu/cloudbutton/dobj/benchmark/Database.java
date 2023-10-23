@@ -448,7 +448,7 @@ public class Database {
     private void loadGraph() throws InterruptedException, ClassNotFoundException {
 
         Set<Key> localSetUser = new TreeSet<>();
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1.3, SCALEUSAGE);
         int val;
 
         for (int i = 0; i < nbUsers;) {
