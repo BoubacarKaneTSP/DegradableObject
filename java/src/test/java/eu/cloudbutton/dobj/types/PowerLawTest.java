@@ -15,14 +15,8 @@ public class PowerLawTest {
     @Test
     void add() {
 
-        String s = "1.0 2.0 3.0";
-        AtomicInteger a;
-
-        a = new AtomicInteger((int)Double.parseDouble(s.split(" ")[0]));
-
-        System.out.println(a);
-        double SCALE = 20, SHAPE = 600;
-        int numValues = 1000000;
+        double SCALE = 20, SHAPE = 1.3;
+        int numValues = 100000;
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
         double desiredMaxValue;
