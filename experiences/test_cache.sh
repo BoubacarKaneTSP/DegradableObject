@@ -3,8 +3,8 @@
 # kill all the children of the current process
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
-
-nbTest=30
+16800
+nbTest=7
 benchmarkTime=60
 warmingUpTime=20
 #nbUsersInit=1000

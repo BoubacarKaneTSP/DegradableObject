@@ -44,18 +44,14 @@ public class Database {
     private float diag_sum_d_dist;
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
+    private long usersFollowProbabilityRange;
     private final Map<Integer, ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
     private final Map<Integer, Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
-    private final List<Map<Key,Integer>> mapUsersFollowing;
-    private final Map<Key, AtomicInteger> mapNbFollowers;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
-    private long usersFollowProbabilityRange;
-    private List<Key> listAllUser;
     private final ThreadLocal<Random> random;
-    ThreadLocal<Integer> threadID;
     private static final double SCALEUSAGE = 20; // Paramètre d'échelle de la loi de puissance
     private static final double SCALEFOLLOW = 1.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
@@ -91,11 +87,7 @@ public class Database {
         keyGenerator = new SimpleKeyGenerator(nbUserMax);
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
-        mapUsersFollowing = new ArrayList<>();
         count = new AtomicInteger();
-        listAllUser = new ArrayList<>();
-        mapNbFollowers = new ConcurrentHashMap<>();
-        threadID = new ThreadLocal<>();
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
@@ -106,12 +98,8 @@ public class Database {
         for (int i = 0; i < nbThread; i++) {
             localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
             localUsersUsageProbabilityRange.put(i, 0L);
-            listLocalUsersFollow.put(i%nbThread, new HashMap<>());
-        }
-
-        for (int i = 0; i < nbThread; i++) {
+            listLocalUsersFollow.put(i, new HashMap<>());
             listLocalUser.add(new ArrayList<>());
-            mapUsersFollowing.add(new ConcurrentSkipListMap<>());
         }
 
 //        System.out.println("generate user");
@@ -430,25 +418,23 @@ public class Database {
 
     private void loadGraph() throws InterruptedException, ClassNotFoundException {
 
-        Set<Key> localSetUser = new TreeSet<>();
+        Set<Key> localSetUser = new HashSet<>();
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1.3, SCALEUSAGE);
+        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
+
         int val;
 
         for (int i = 0; i < nbUsers;) {
-
             Key user = generateUser();
             if (localSetUser.add(user)) {
                 if (i % nbUsers * 0.05 == 0)
                     System.out.println(i);
 
-
                 addOriginalUser(user);
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
-                listLocalUsersFollow.get(i%nbThread).put(user, new LinkedList<>());
-                listLocalUser.get(i%nbThread).add(user);
-
+                tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
             }
         }
@@ -472,12 +458,12 @@ public class Database {
                     for (int i = 0; i < 5; i++) {
                         val = random.get().nextInt(nbUsers);
                         followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
-                        listLocalUsersFollow.get(userIndice%nbThread).get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
+                        tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
                     }
                 }else{
                     for (int j = 1; j < values.length; j++) {
                         followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(j));
-                        listLocalUsersFollow.get(userIndice%nbThread).get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+                        tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
                     }
                 }
 
@@ -513,19 +499,20 @@ public class Database {
             sommeUsage.put(i, new AtomicInteger());
         }
 
-        int i, j = 0;
+        int j = 0;
 
         for (Key user: mapNbLinkPerUser.keySet()){
-
-            i = mapKeyToIndice.get(user);
-
-            val = powerLawArray.get(j++);
-            sommeUsage.get(i%nbThread).addAndGet(val);
+            val = powerLawArray.get(j);
+            sommeUsage.get(j%nbThread).addAndGet(val);
             sommeFollow += val;
 
-            localUsersUsageProbability.get(i%nbThread).put(sommeUsage.get(i%nbThread).longValue(), user);
-            localUsersUsageProbabilityRange.put(i%nbThread, sommeUsage.get(i%nbThread).longValue());
+            localUsersUsageProbability.get(j%nbThread).put(sommeUsage.get(j%nbThread).longValue(), user);
+            localUsersUsageProbabilityRange.put(j%nbThread, sommeUsage.get(j%nbThread).longValue());
             usersFollowProbability.put(sommeFollow, user);
+            listLocalUser.get(j%nbThread).add(user);
+            listLocalUsersFollow.get(j%nbThread).put(user, tmpListUsersFollow.get(user));
+
+            j++;
         }
 
         usersFollowProbabilityRange = sommeFollow;
