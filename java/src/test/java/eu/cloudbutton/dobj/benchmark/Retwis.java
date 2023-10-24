@@ -874,7 +874,7 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)%_nbThreads).get(userA);
+                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
                             long val2 = Math.abs(random.get().nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
                             userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
@@ -892,7 +892,7 @@ public class Retwis {
 
                             break;
                         case UNFOLLOW:
-                            listFollow = database.getListLocalUsersFollow().get(database.getMapKeyToIndice().get(userA)%_nbThreads).get(userA);
+                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
                             if (listFollow.size() == 0) {
                                 continue restartOperation;
