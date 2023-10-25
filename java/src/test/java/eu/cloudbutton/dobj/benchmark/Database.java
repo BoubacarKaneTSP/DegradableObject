@@ -749,6 +749,7 @@ public class Database {
 
         System.out.println("userA : " + userA);
         System.out.println("userB : " + userB);
+        System.out.println(mapIndiceToKey);
         mapFollowers.get(userB)
                 .add(userA);
         mapFollowing.get(userA)
