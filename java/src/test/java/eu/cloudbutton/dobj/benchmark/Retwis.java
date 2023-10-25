@@ -1,7 +1,9 @@
 package eu.cloudbutton.dobj.benchmark;
 
+import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.key.Key;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -120,7 +122,7 @@ public class Retwis {
 
     private AtomicBoolean flagComputing,flagWarmingUp;
 
-    private List<AtomicLong> nbOperations;
+    private List<Counter> nbOperations;
     private List<AtomicLong> timeOperations;
     private Map<Integer, List<Long>> timeDurations;
     private LongAdder timeBenchmark;
@@ -261,8 +263,9 @@ public class Retwis {
                 timeBenchmark = new LongAdder();
                 completionTime = 0;
 
+
                 for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOperations.add(op, new AtomicLong());
+                    nbOperations.add(op, Factory.createCounter(typeCounter));
                     timeOperations.add(op, new AtomicLong());
                     timeDurations.put(op, new CopyOnWriteArrayList<>());
                 }
@@ -392,7 +395,7 @@ public class Retwis {
                 int unit = nbCurrThread;
 
                 for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOpTotal += nbOperations.get(op).get();
+                    nbOpTotal += nbOperations.get(op).read();
                     timeTotalComputed += timeOperations.get(op).get();
                 }
 
@@ -446,7 +449,7 @@ public class Retwis {
                 if (! _completionTime){
                     for (int op: mapIntOptoStringOp.keySet()){
 
-                        nbOp = nbOperations.get(op).get();
+                        nbOp = nbOperations.get(op).read();
                         timeOp = timeOperations.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
@@ -509,8 +512,8 @@ public class Retwis {
                             int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
                             System.out.print("==> - " + mapIntOptoStringOp.get(op));
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(": Nb op : " + nbOperations.get(op).get()
-                                    + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%"
+                            System.out.println(": Nb op : " + nbOperations.get(op).read()
+                                    + ", proportion : " + (int) ((nbOperations.get(op).read() / (double) nbOpTotal) * 100) + "%"
                                     + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
                         }
 
@@ -753,7 +756,7 @@ public class Retwis {
                 timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
 
                 for (int op: mapIntOptoStringOp.keySet()){
-                    nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
+//                    nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
                     timeDurations.get(op).addAll(timeLocalDurations.get(op));
                 }
@@ -811,7 +814,8 @@ public class Retwis {
                     endTime = System.nanoTime();
 
                     if (!flagWarmingUp.get()) {
-                        nbOps.get(typeComputed).val += 1;
+//                        nbOps.get(typeComputed).val += 1;
+                        nbOperations.get(typeComputed).incrementAndGet();
                         timeOps.get(typeComputed).val += endTime - startTime;
                         timeLocalDurations.get(typeComputed).add(endTime - startTime);
                     }
@@ -926,7 +930,8 @@ public class Retwis {
                     }
 
                     if (!flagWarmingUp.get()) {
-                        nbOps.get(typeComputed).val += 1;
+//                        nbOps.get(typeComputed).val += 1;
+                        nbOperations.get(typeComputed).incrementAndGet();
                         timeOps.get(typeComputed).val+= endTime - startTime;
                         timeLocalDurations
                                 .get(typeComputed)
