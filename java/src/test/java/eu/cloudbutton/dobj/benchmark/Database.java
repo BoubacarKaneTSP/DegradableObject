@@ -112,8 +112,9 @@ public class Database {
 
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
-        loadGraph();
 
+//        loadGraph();
+        loadCompleteGraph();
     }
 
     public Key generateUser(){
@@ -518,6 +519,57 @@ public class Database {
         usersFollowProbabilityRange = sommeFollow;
     }
 
+    private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException {
+
+        Set<Key> setUser = new HashSet<>();
+        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
+
+        for (int i = 0; i < nbThread; i++) {
+            Key user = generateUser();
+            if (setUser.add(user)){
+                addOriginalUser(user);
+                mapIndiceToKey.put(i, user);
+                mapKeyToIndice.put(user,i);
+
+                tmpListUsersFollow.put(user, new LinkedList<>());
+                i++;
+            }
+        }
+
+        for (int i = 0; i < nbThread; i++) {
+            for (int j = 0; j < nbThread; j++) {
+
+                if (i != j){
+                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j));
+                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j));
+                }
+            }
+        }
+
+        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
+        long sommeFollow = 0L;
+        int j = 0;
+
+        for (int i = 0; i < nbThread; i++) {
+            sommeUsage.put(i, new AtomicInteger());
+        }
+
+        for (Key user: mapFollowing.keySet()){
+            sommeUsage.get(j%nbThread).addAndGet(1);
+            sommeFollow += 1;
+
+            localUsersUsageProbability.get(j%nbThread).put(sommeUsage.get(j%nbThread).longValue(), user);
+            localUsersUsageProbabilityRange.put(j%nbThread, sommeUsage.get(j%nbThread).longValue());
+            usersFollowProbability.put(sommeFollow, user);
+            listLocalUser.get(j%nbThread).add(user);
+            listLocalUsersFollow.get(j%nbThread).put(user, tmpListUsersFollow.get(user));
+
+            j++;
+        }
+
+        usersFollowProbabilityRange = sommeFollow;
+    }
+
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
         // Convert the inputMap to a List of Map.Entry objects
         List<Map.Entry<Key, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
@@ -631,7 +683,6 @@ public class Database {
 
             if (neighborSize < 2)
                 continue;
-
 
             for (int i = 0; i <neighborSize; i++) {
                 for (int j = i+1; j < neighborSize; j++) {
