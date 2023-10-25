@@ -524,7 +524,7 @@ public class Database {
         Set<Key> setUser = new HashSet<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
-        for (int i = 0; i < nbThread; i++) {
+        for (int i = 0; i < nbThread;) {
             Key user = generateUser();
             if (setUser.add(user)){
                 addOriginalUser(user);
@@ -747,9 +747,6 @@ public class Database {
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
-        System.out.println("userA : " + userA);
-        System.out.println("userB : " + userB);
-        System.out.println(mapIndiceToKey);
         mapFollowers.get(userB)
                 .add(userA);
         mapFollowing.get(userA)
