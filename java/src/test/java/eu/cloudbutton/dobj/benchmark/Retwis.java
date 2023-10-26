@@ -27,22 +27,14 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class Retwis {
 
-    enum opType{
-        ADD,
-        FOLLOW,
-        UNFOLLOW,
-        TWEET,
-        READ
-    }
-
-    private static final int ADD = 0, FOLLOW = 1, UNFOLLOW = 2, TWEET = 3, READ = 4;
-    private static final int NBOPDIFF = 5;
+    private static final int ADD = 0, FOLLOW = 1, UNFOLLOW = 2, TWEET = 3, READ = 4, COUNT = 5;
     private static final Map<Integer, String> mapIntOptoStringOp = new HashMap<>(){{
         put(ADD, "ADD");
         put(FOLLOW, "FOLLOW");
         put(UNFOLLOW, "UNFOLLOW");
         put(TWEET, "TWEET");
         put(READ, "READ");
+        put(COUNT, "COUNT");
     }};
 
     @Option(name="-set", required = true, usage = "type of Set")
@@ -127,10 +119,10 @@ public class Retwis {
     private Map<Integer, List<Long>> timeDurations;
     private LongAdder timeBenchmark;
     private Queue<String> userUsageDistribution;
-//    private LongAdder queueSizes;
+    private LongAdder queueSizes;
 //    private Long nbUserFinal;
 //    private Long nbTweetFinal;
-//    private List<Float> allAvgQueueSizes;
+    private List<Float> allAvgQueueSizes;
 //    private List<Float> allAvgFollower;
 //    private List<Float> allAvgFollowing;
 //    private List<Float> allProportionMaxFollower;
@@ -226,7 +218,7 @@ public class Retwis {
             FileWriter fileWriter;
             String nameFile;
 
-//            allAvgQueueSizes = new ArrayList();
+            allAvgQueueSizes = new ArrayList();
 //            allAvgFollower = new ArrayList();
 //            allAvgFollowing = new ArrayList();
 //            allProportionMaxFollower = new ArrayList();
@@ -257,7 +249,7 @@ public class Retwis {
                 timeOperations = new CopyOnWriteArrayList<>();
                 userUsageDistribution = new ConcurrentLinkedQueue<>();
                 timeDurations = new ConcurrentHashMap<>();
-//                queueSizes = new LongAdder();
+                queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
                 timeBenchmark = new LongAdder();
@@ -367,7 +359,7 @@ public class Retwis {
 //                                userWithoutFollowing++;
 //                        }
 
-//                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
+                        allAvgQueueSizes.add( (((float)queueSizes.intValue()/ NB_USERS)/nbCurrThread));
 //                        nbTweetFinal += queueSizes.longValue();
 //                        nbUserFinal += database.getMapTimelines().size();
 //                        allAvgFollower.add((float)nbFollowerTotal/NB_USERS);
@@ -495,7 +487,7 @@ public class Retwis {
                             sumProportionUserWithoutFollowing = 0;
 
                     for (int i = 0; i < _nbTest; i++) {
-//                        sumAvgQueueSizes += allAvgQueueSizes.get(i);
+                        sumAvgQueueSizes += allAvgQueueSizes.get(i);
 //                        sumAvgFollower += allAvgFollower.get(i);
 //                        sumAvgFollowing += allAvgFollowing.get(i);
 //                        sumProportionMaxFollower += allProportionMaxFollower.get(i);
@@ -704,7 +696,7 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                    compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
 
                     cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
@@ -719,7 +711,7 @@ public class Retwis {
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-                        compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                        compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
                         cleanTimeline = i % (2 * _nbUserInit) == 0;
 
                     }
@@ -734,13 +726,13 @@ public class Retwis {
                         if (_multipleOperation){
                             int nbRepeat = 1000;
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                                compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
                                 cleanTimeline = num++ % (2 * _nbUserInit) == 0;
 
                             }
                         }else{
 
-                            compute(type, nbLocalOperations, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                            compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
                             cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
@@ -792,7 +784,7 @@ public class Retwis {
             return type;
         }
 
-        public void compute(int type, Map<Integer, BoxedLong> nbOps, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             startTime = 0L;
             endTime= 0L;
@@ -818,6 +810,12 @@ public class Retwis {
                         nbOperations.get(typeComputed).incrementAndGet();
                         timeOps.get(typeComputed).val += endTime - startTime;
                         timeLocalDurations.get(typeComputed).add(endTime - startTime);
+
+                        startTime = System.nanoTime();
+                        nbOperations.get(typeComputed).incrementAndGet();
+                        endTime = System.nanoTime();
+                        timeOps.get(COUNT).val += endTime - startTime;
+                        timeLocalDurations.get(COUNT).add(endTime - startTime);
                     }
                 }
 
@@ -930,12 +928,17 @@ public class Retwis {
                     }
 
                     if (!flagWarmingUp.get()) {
-//                        nbOps.get(typeComputed).val += 1;
                         nbOperations.get(typeComputed).incrementAndGet();
                         timeOps.get(typeComputed).val+= endTime - startTime;
                         timeLocalDurations
                                 .get(typeComputed)
                                 .add(endTime - startTime);
+
+                        startTime = System.nanoTime();
+                        nbOperations.get(typeComputed).incrementAndGet();
+                        endTime = System.nanoTime();
+                        timeOps.get(COUNT).val += endTime - startTime;
+                        timeLocalDurations.get(COUNT).add(endTime - startTime);
                     }
 
                     break;
