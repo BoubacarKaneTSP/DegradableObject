@@ -27,11 +27,12 @@ if completion_time == "True":
     list_op = ["ALL"]
 else:
     list_op = ["ALL",
-                "ADD",
+               "ADD",
                "FOLLOW",
                "UNFOLLOW",
                "TWEET",
-               "READ"]#,
+               "READ",
+               "COUNT"]#,
                #"avg_queue_size",
                #"avg_Follower",
                #"avg_Following",
