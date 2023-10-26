@@ -510,9 +510,16 @@ public class Retwis {
                             int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
                             System.out.print("==> - " + mapIntOptoStringOp.get(op));
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(": Nb op : " + nbOperations.get(op).read()
-                                    + ", proportion : " + (int) ((nbOperations.get(op).read() / (double) nbOpTotal) * 100) + "%"
-                                    + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
+
+                            if (op == COUNT){
+                                System.out.println(": Nb op : " + nbOpTotal/2
+                                        + ", proportion : " + (int) ((nbOpTotal/2/ (double) nbOpTotal) * 100) + "%"
+                                        + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
+                            }else{
+                                System.out.println(": Nb op : " + nbOperations.get(op).read()
+                                        + ", proportion : " + (int) ((nbOperations.get(op).read() / (double) nbOpTotal) * 100) + "%"
+                                        + ", temps d'exécution : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " micro seconds");
+                            }
                         }
 
                         System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
