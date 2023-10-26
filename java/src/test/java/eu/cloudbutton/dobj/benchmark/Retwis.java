@@ -391,6 +391,8 @@ public class Retwis {
                     timeTotalComputed += timeOperations.get(op).get();
                 }
 
+                nbOpTotal *= 2; //time 2 cause we also count each increment with the counter
+
                 if (_p)
                     System.out.println(" ==> Results :");
 
@@ -441,7 +443,11 @@ public class Retwis {
                 if (! _completionTime){
                     for (int op: mapIntOptoStringOp.keySet()){
 
-                        nbOp = nbOperations.get(op).read();
+                        if (op == COUNT)
+                            nbOp = nbOpTotal/2; // Divide by 2 cause we only count the counter increment here
+                        else
+                            nbOp = nbOperations.get(op).read();
+
                         timeOp = timeOperations.get(op).get();
 
 //                    timeOperations.get(op).set( timeOperations.get(op).get()/nbCurrThread );  // Compute the avg time to get the global throughput
@@ -672,12 +678,10 @@ public class Retwis {
                 int type;
                 myId.set(database.getCount().getAndIncrement());
 
-                Map<Integer, BoxedLong> nbLocalOperations = new HashMap<>();
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
                 Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
 
                 for (int op: mapIntOptoStringOp.keySet()){
-                    nbLocalOperations.put(op, new BoxedLong());
                     timeLocalOperations.put(op, new BoxedLong());
                     timeLocalDurations.put(op, new ArrayList<>());
                 }
@@ -928,7 +932,6 @@ public class Retwis {
                     }
 
                     if (!flagWarmingUp.get()) {
-                        nbOperations.get(typeComputed).incrementAndGet();
                         timeOps.get(typeComputed).val+= endTime - startTime;
                         timeLocalDurations
                                 .get(typeComputed)
