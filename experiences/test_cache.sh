@@ -52,14 +52,14 @@ do
       #python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
     done
   done
-#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48" $completion_time
+  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "2 16 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 16 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 4 8" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1" $completion_time
 
-#  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48" $completion_time
+  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "2 16 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 16 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "48" $completion_time

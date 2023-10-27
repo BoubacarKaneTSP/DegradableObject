@@ -908,6 +908,7 @@ public class Retwis {
                             listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
                             if (listFollow.size() == 0) {
+                                System.out.println("restart");
                                 continue restartOperation;
                             }
 
@@ -920,8 +921,10 @@ public class Retwis {
 
                                 database.followUser(userA, userB);
                                 listFollow.add(userB);
-                            }else
+                            }else {
+                                System.out.println("user null");
                                 continue restartOperation;
+                            }
                             break;
                         case TWEET:
                             startTime = System.nanoTime();
