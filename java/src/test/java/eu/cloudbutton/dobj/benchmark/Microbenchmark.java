@@ -141,6 +141,9 @@ public class Microbenchmark {
                     System.out.println("Nb threads = " + nbCurrentThread);
                 }
 
+                String nameFile = "";
+                String nameSizeFile = "";
+
                 for (int _nbTest = 0; _nbTest < this._nbTest; _nbTest++) {
                     nbOperations = new CopyOnWriteArrayList<>();
                     timeOperations = new CopyOnWriteArrayList<>();
@@ -259,9 +262,6 @@ public class Microbenchmark {
                     }
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
-
-                    String nameFile = "";
-                    String nameSizeFile = "";
 
                     if (flagDelete){
                         nameFile = object.getClass().getSimpleName() + "_ALL.txt";
