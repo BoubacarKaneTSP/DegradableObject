@@ -130,6 +130,8 @@ public class Microbenchmark {
             if(_quickTest)
                 nbCurrentThread = nbThreads;
 
+            boolean flagDelete = true;
+
             while (nbCurrentThread <= nbThreads) {
                 if (_gcinfo)
                     System.out.println("nbThread : "+nbCurrentThread);
@@ -137,28 +139,6 @@ public class Microbenchmark {
                 if (_p) {
                     System.out.println();
                     System.out.println("Nb threads = " + nbCurrentThread);
-                }
-
-                String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
-                String nameSizeFile = type + "_size.txt";
-                List<String> listFileName = new ArrayList<>();
-
-                listFileName.add(nameFile);
-                listFileName.add(nameSizeFile);
-
-                for (opType op: opType.values())
-                    listFileName.add(object.getClass().getSimpleName() + "_" + op + ".txt");
-
-                for (String nameF : listFileName){
-                    File file = new File(nameF);
-
-                    if (file.exists()) {
-                        if (file.delete())
-                            System.out.println(nameF + " has been removed.");
-                        else
-                            System.out.println(nameF + " hasn't been removed.");
-                    } else
-                        System.out.println(nameF + " does not exist.");
                 }
 
                 for (int _nbTest = 0; _nbTest < this._nbTest; _nbTest++) {
@@ -279,6 +259,34 @@ public class Microbenchmark {
                     }
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
+
+                    String nameFile = "";
+                    String nameSizeFile = "";
+
+                    if (flagDelete){
+                        nameFile = object.getClass().getSimpleName() + "_ALL.txt";
+                        nameSizeFile = type + "_size.txt";
+                        List<String> listFileName = new ArrayList<>();
+
+                        listFileName.add(nameFile);
+                        listFileName.add(nameSizeFile);
+
+                        for (opType op: opType.values())
+                            listFileName.add(object.getClass().getSimpleName() + "_" + op + ".txt");
+
+                        for (String nameF : listFileName){
+                            File file = new File(nameF);
+
+                            if (file.exists()) {
+                                if (file.delete())
+                                    System.out.println(nameF + " has been removed.");
+                                else
+                                    System.out.println(nameF + " hasn't been removed.");
+                            } else
+                                System.out.println(nameF + " does not exist.");
+                        }
+                        flagDelete = false;
+                    }
 
                     if (_gcinfo) {
                         System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) + " in test : " + _nbTest);
