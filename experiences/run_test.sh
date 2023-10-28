@@ -6,7 +6,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=1
+nbTest=3
 benchmarkTime=5
 warmingUpTime=2
 

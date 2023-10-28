@@ -11,6 +11,7 @@ import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -138,17 +139,38 @@ public class Microbenchmark {
                     System.out.println("Nb threads = " + nbCurrentThread);
                 }
 
-                nbOperations = new CopyOnWriteArrayList<>();
-                timeOperations = new CopyOnWriteArrayList<>();
-                long size = 0;
-                benchmarkAvgTime = 0L;
+                String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
+                String nameSizeFile = type + "_size.txt";
+                List<String> listFileName = new ArrayList<>();
 
-                for (opType ignored : opType.values()) {
-                    nbOperations.add(new AtomicLong(0));
-                    timeOperations.add(new AtomicLong(0));
+                listFileName.add(nameFile);
+                listFileName.add(nameSizeFile);
+
+                for (opType op: opType.values())
+                    listFileName.add(object.getClass().getSimpleName() + "_" + op + ".txt");
+
+                for (String nameF : listFileName){
+                    File file = new File(nameF);
+
+                    if (file.exists()) {
+                        if (file.delete())
+                            System.out.println(nameF + " has been removed.");
+                        else
+                            System.out.println(nameF + " hasn't been removed.");
+                    } else
+                        System.out.println(nameF + " does not exist.");
                 }
 
                 for (int _nbTest = 0; _nbTest < this._nbTest; _nbTest++) {
+                    nbOperations = new CopyOnWriteArrayList<>();
+                    timeOperations = new CopyOnWriteArrayList<>();
+                    long size = 0;
+                    benchmarkAvgTime = 0L;
+
+                    for (opType ignored : opType.values()) {
+                        nbOperations.add(new AtomicLong(0));
+                        timeOperations.add(new AtomicLong(0));
+                    }
 
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
@@ -257,95 +279,84 @@ public class Microbenchmark {
                     }
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
-                }
 
-                if (_gcinfo) {
-                    System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) / _nbTest);
-                }
-                if (_p)
-                    System.out.println("End.");
+                    if (_gcinfo) {
+                        System.out.println("benchmarkAvgTime : " + (benchmarkAvgTime / 1_000_000) + " in test : " + _nbTest);
+                    }
+                    if (_p)
+                        System.out.println("End test num : " + _nbTest);
 
-                long timeTotal = 0L, nbOpTotal = 0L;
+                    long timeTotal = 0L, nbOpTotal = 0L;
 
-                int opNumber = 0;
+                    int opNumber = 0;
 
-                for (opType ignored : opType.values()){
-                    timeTotal += timeOperations.get(opNumber).get();
-                    nbOpTotal += nbOperations.get(opNumber).get();
-                    opNumber++;
-                }
+                    for (opType ignored : opType.values()){
+                        timeTotal += timeOperations.get(opNumber).get();
+                        nbOpTotal += nbOperations.get(opNumber).get();
+                        opNumber++;
+                    }
 
-                double throughputTotal;
+                    double throughputTotal;
 
-                throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
+                    throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
 
-                if (_s){
-                    String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
-
-                    fileWriter = new FileWriter(nameFile, true);
+                    if (_s){
+                        fileWriter = new FileWriter(nameFile, true);
 
 //                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
 //                        fileWriter = new FileWriter(nameFile, false);
 //                    else
 //                        fileWriter = new FileWriter(nameFile, true);
-                    printWriter = new PrintWriter(fileWriter);
-
-                    printWriter.println(nbCurrentThread + " " + throughputTotal);
-
-                    printWriter.close();
-                    fileWriter.close();
-                }
-
-                if (_p){
-                    for (int j = 0; j < 10; j++) System.out.print("-");
-                    System.out.print(" Throughput total (op/s) : ");
-                    System.out.printf("%.3E%n", throughputTotal);
-                }
-
-                long nbOp, timeOp;
-
-                opNumber = 0;
-                for (opType op: opType.values()) {
-                    String nameFile = object.getClass().getSimpleName() + "_" + op + ".txt";
-                    nbOp = nbOperations.get(opNumber).get();
-                    timeOp = timeOperations.get(opNumber).get();
-                    opNumber++;
-                    if (_s) {
-                        /*if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                            fileWriter = new FileWriter(nameFile, false);
-                        else
-                            fileWriter = new FileWriter(nameFile, true);*/
-
-                        fileWriter = new FileWriter(nameFile, true);
-
                         printWriter = new PrintWriter(fileWriter);
-                        printWriter.println(nbCurrentThread + " " + ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
+
+                        printWriter.println(nbCurrentThread + " " + throughputTotal);
+
                         printWriter.close();
                         fileWriter.close();
                     }
 
-                    if (_p) {
+                    if (_p){
                         for (int j = 0; j < 10; j++) System.out.print("-");
-                        System.out.print(" Throughput (op/s) for " + op + " : ");
-                        System.out.printf("%.3E%n", ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
+                        System.out.print(" Throughput total (op/s) : ");
+                        System.out.printf("%.3E%n", throughputTotal);
                     }
-                }
 
-                size /= _nbTest;
-                if (_p)
-                    System.out.print("Object's size at the end of benchmark : " + size);
-                if (_s){
-                    String nameFile = type + "_size.txt";
+                    long nbOp, timeOp;
 
-                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
-                        fileWriter = new FileWriter(nameFile, false);
-                    else
-                        fileWriter = new FileWriter(nameFile, true);
+                    opNumber = 0;
+                    for (opType op: opType.values()) {
 
-                    printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(nbCurrentThread + " " + size);
-                    printWriter.close();
-                    fileWriter.close();
+                        nbOp = nbOperations.get(opNumber).get();
+                        timeOp = timeOperations.get(opNumber).get();
+                        opNumber++;
+                        if (_s) {
+
+                            String nameOpFile = object.getClass().getSimpleName() + "_" + op + ".txt";
+                            fileWriter = new FileWriter(nameOpFile, true);
+
+                            printWriter = new PrintWriter(fileWriter);
+                            printWriter.println(nbCurrentThread + " " + ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
+                            printWriter.close();
+                            fileWriter.close();
+                        }
+
+                        if (_p) {
+                            for (int j = 0; j < 10; j++) System.out.print("-");
+                            System.out.print(" Throughput (op/s) for " + op + " : ");
+                            System.out.printf("%.3E%n", ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
+                        }
+                    }
+
+                    if (_p)
+                        System.out.print("Object's size at the end of benchmark : " + size);
+                    if (_s){
+                        fileWriter = new FileWriter(nameSizeFile, true);
+
+                        printWriter = new PrintWriter(fileWriter);
+                        printWriter.println(nbCurrentThread + " " + size);
+                        printWriter.close();
+                        fileWriter.close();
+                    }
                 }
 
                 nbCurrentThread *= 2;
