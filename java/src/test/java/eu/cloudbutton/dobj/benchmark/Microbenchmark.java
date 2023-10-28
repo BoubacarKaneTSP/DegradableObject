@@ -65,6 +65,8 @@ public class Microbenchmark {
     public boolean _quickTest = false;
     @Option(name = "-gcinfo", handler = ExplicitBooleanOptionHandler.class, usage = "Compute gc info")
     public boolean _gcinfo = false;
+    @Option(name = "-D", handler = ExplicitBooleanOptionHandler.class, usage = "delete old results")
+    private boolean _delte = false;
     public static Map<String, Integer> map = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchFieldException {
@@ -138,9 +140,6 @@ public class Microbenchmark {
                     System.out.println();
                     System.out.println("Nb threads = " + nbCurrentThread);
                 }
-
-                String nameFile = "";
-                String nameSizeFile = "";
 
                 for (int _nbTest = 0; _nbTest < this._nbTest; _nbTest++) {
                     nbOperations = new CopyOnWriteArrayList<>();
@@ -261,28 +260,12 @@ public class Microbenchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
 
-                    if (_nbTest == 0){
-                        nameFile = object.getClass().getSimpleName() + "_ALL.txt";
-                        nameSizeFile = type + "_size.txt";
-                        List<String> listFileName = new ArrayList<>();
+                    String directory = "microbenchmark_results";
 
-                        listFileName.add(nameFile);
-                        listFileName.add(nameSizeFile);
+                    File subdirectory = new File(directory);
 
-                        for (opType op: opType.values())
-                            listFileName.add(object.getClass().getSimpleName() + "_" + op + ".txt");
-
-                        for (String nameF : listFileName){
-                            File file = new File(nameF);
-
-                            if (file.exists()) {
-                                if (file.delete())
-                                    System.out.println(nameF + " has been removed.");
-                                else
-                                    System.out.println(nameF + " hasn't been removed.");
-                            } else
-                                System.out.println(nameF + " does not exist.");
-                        }
+                    if (!subdirectory.exists()) {
+                        subdirectory.mkdirs();
                     }
 
                     if (_gcinfo) {
@@ -306,7 +289,8 @@ public class Microbenchmark {
                     throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
 
                     if (_s){
-                        fileWriter = new FileWriter(nameFile, true);
+                        String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
+                        fileWriter = new FileWriter(directory + File.separator + nameFile, true);
 
 //                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
 //                        fileWriter = new FileWriter(nameFile, false);
@@ -337,7 +321,7 @@ public class Microbenchmark {
                         if (_s) {
 
                             String nameOpFile = object.getClass().getSimpleName() + "_" + op + ".txt";
-                            fileWriter = new FileWriter(nameOpFile, true);
+                            fileWriter = new FileWriter(directory + File.separator + nameOpFile, true);
 
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrentThread + " " + ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
@@ -355,7 +339,9 @@ public class Microbenchmark {
                     if (_p)
                         System.out.print("Object's size at the end of benchmark : " + size);
                     if (_s){
-                        fileWriter = new FileWriter(nameSizeFile, true);
+                        String nameSizeFile = type + "_size.txt";
+
+                        fileWriter = new FileWriter(directory + File.separator + nameSizeFile, true);
 
                         printWriter = new PrintWriter(fileWriter);
                         printWriter.println(nbCurrentThread + " " + size);
