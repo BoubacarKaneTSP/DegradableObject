@@ -130,8 +130,6 @@ public class Microbenchmark {
             if(_quickTest)
                 nbCurrentThread = nbThreads;
 
-            boolean flagDelete = true;
-
             while (nbCurrentThread <= nbThreads) {
                 if (_gcinfo)
                     System.out.println("nbThread : "+nbCurrentThread);
@@ -263,7 +261,7 @@ public class Microbenchmark {
                     executor.shutdownNow();
                     TimeUnit.SECONDS.sleep(1);
 
-                    if (flagDelete){
+                    if (_nbTest == 0){
                         nameFile = object.getClass().getSimpleName() + "_ALL.txt";
                         nameSizeFile = type + "_size.txt";
                         List<String> listFileName = new ArrayList<>();
@@ -285,7 +283,6 @@ public class Microbenchmark {
                             } else
                                 System.out.println(nameF + " does not exist.");
                         }
-                        flagDelete = false;
                     }
 
                     if (_gcinfo) {
