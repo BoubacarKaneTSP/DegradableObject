@@ -121,7 +121,7 @@ public class Microbenchmark {
             PrintWriter printWriter = null;
             FileWriter fileWriter = null;
             Object object = null;
-            long startTime, endTime, benchmarkAvgTime = 0;
+            long startTime, endTime, benchmarkAvgTime;
 
             nbCurrentThread = nbThreads;
 //            nbCurrentThread = _asymmetric ? 2 : 1;
@@ -153,7 +153,7 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
-                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread*2);
+                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread);
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
@@ -175,7 +175,6 @@ public class Microbenchmark {
 
                     if (!type.contains("Sequential"))
                         filler.fill();
-
                     else{
                         for (int i = 0; i < nbOps; i++) {
                             ((Queue)object).add(i);

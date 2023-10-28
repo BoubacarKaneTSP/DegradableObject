@@ -180,7 +180,7 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
       [-e] save,
       [-f] Print the ratio of operations that failed,
       [-g] nbThreads computed,
-      [-h] Tag associated with the name of the result file,
+      [-h] Tag associated with the name of the cpuIDs file,
       [-i] Number of object initially added,
       [-j] Compute time spent doing GC,
       [-k] Test the map with collision on key,
@@ -210,7 +210,7 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
       [-e] save,
       [-f] Print the ratio of operations that failed,
       [-g] nbThreads computed,
-      [-h] Tag associated with the name of the result file,
+      [-h] Tag associated with the name of the cpuIDs file,
       [-i] Number of object initially added,
       [-j] Compute time spent doing GC,
       [-k] Test the map with collision on key,
@@ -244,6 +244,18 @@ echo "The number of threads is : $nbThreads"
 echo "Status of collisionKey : $collisionKey"
 echo ""
 
+cpuIDs=""
+var=$(echo "$nbThreads" | grep -o '[0-9]\+')
+
+# shellcheck disable=SC2004
+for ((i=0; i<=$(($var)); i++)); do
+  if [ -n "$cpuIDs" ]; then
+    cpuIDs="$cpuIDs,$i"
+  else
+    cpuIDs="$i"
+  fi
+done
+
 if [[ $typeTest == "Microbenchmark" ]]
 then
   if [[ $computeGCInfo == true ]]
@@ -251,7 +263,7 @@ then
     CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
     python3 analyse_gc.py $type $nbTest "$nbUserInit"
   else
-    CLASSPATH=../java/target/*:../java/target/lib/* numactl -N 0 -m 0 java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
   fi
 elif [[ $typeTest == "Retwis" ]]
 then
