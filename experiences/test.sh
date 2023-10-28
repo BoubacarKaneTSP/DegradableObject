@@ -248,7 +248,7 @@ cpuIDs=""
 var=$(echo "$nbThreads" | grep -o '[0-9]\+')
 
 # shellcheck disable=SC2004
-for ((i=0; i<=$(($var)); i++)); do
+for ((i=0; i<$(($var)); i++)); do
   if [ -n "$cpuIDs" ]; then
     cpuIDs="$cpuIDs,$i"
   else
