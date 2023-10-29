@@ -155,7 +155,7 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
-                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread);
+                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread + 1); // +1 for the thread that fill the object
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
@@ -163,10 +163,10 @@ public class Microbenchmark {
                     if (type.contains("Extended"))
                         object = Factory.createObject(type, factoryIndice);
                     else
-                        object = Factory.createObject(type, nbCurrentThread);
+                        object = Factory.createObject(type, nbCurrentThread + 1); // +1 for the thread that fill the object
 
                     if (object instanceof FuzzyCounter)
-                        ((FuzzyCounter) object).setN(nbCurrentThread);
+                        ((FuzzyCounter) object).setN(nbCurrentThread + 1); // +1 for the thread that fill the object
 
                     FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey, _nbItems);
 
