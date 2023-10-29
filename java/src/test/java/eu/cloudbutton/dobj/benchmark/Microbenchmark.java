@@ -337,7 +337,7 @@ public class Microbenchmark {
                     }
 
                     if (_p)
-                        System.out.print("Object's size at the end of benchmark : " + size);
+                        System.out.println("Object's size at the end of benchmark : " + size);
                     if (_s){
                         String nameSizeFile = type + "_size.txt";
 
