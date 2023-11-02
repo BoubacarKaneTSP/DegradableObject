@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
@@ -29,6 +30,8 @@ public class Database {
     private final Map<Key, Set<Key>> mapFollowers;
     private final Map<Key, Set<Key>> mapFollowing;
     private final Map<Key, Timeline<String>> mapTimelines;
+    private final Map<Key, Profile> mapProfiles;
+    private final Set<Key> community;
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
     private final int[] reciprocalDegree;
@@ -73,10 +76,14 @@ public class Database {
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
+            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+            community = Factory.createSet(typeSet, factoryIndice);
         }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
+            mapProfiles = Factory.createMap(typeMap, nbThread);
+            community = Factory.createSet(typeSet, nbThread);
         }
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
@@ -231,17 +238,6 @@ public class Database {
 //        TimeUnit.SECONDS.sleep(5);
 //        System.out.println(Collections.max(values));
         return values;
-    }
-
-    public void followingTest(int threadID) throws InterruptedException { // Each user follow only one user at first
-        List<Key> users = listLocalUser.get(threadID);
-        ThreadLocal<Random> random = ThreadLocal.withInitial(Random::new);
-
-        for (Key userA: users){
-            long val = random.get().nextLong()%usersFollowProbabilityRange;
-            Key userB = usersFollowProbability.ceilingEntry(val).getValue();
-            followUser(userA, userB);
-        }
     }
 
     @FunctionalInterface
@@ -710,20 +706,15 @@ public class Database {
         return mapFollowers.get(usr1).contains(usr2) && mapFollowers.get(usr2).contains(usr1);
     }
 
-    private void generateGraph(){
-
-    }
-
     public void addOriginalUser(Key user) throws ClassNotFoundException {
-//        mapFollowers.put(user, new ConcurrentSkipListSet<>());
-//        mapFollowers.put(user, new HashSet<>());
         mapFollowing.put(user, new HashSet<>());
+        mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
+        mapProfiles.put(user, new Profile());
 
         if (typeSet.contains("Extended"))
             mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
         else
             mapFollowers.put(user, Factory.createSet(typeSet, nbThread));
-        mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
     }
 
     public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
@@ -775,5 +766,26 @@ public class Database {
 
     public void showTimeline(Key user) throws InterruptedException {
         mapTimelines.get(user).read();
+    }
+
+    public void updateProfile(Key user){
+        mapProfiles.compute(user, (usr, profile) -> {
+            if (profile != null) {
+                try{
+                    profile.doUpdate();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return profile;
+        });
+    }
+
+    public void joinCommunity(Key user){
+        community.add(user);
+    }
+
+    public void leaveCommunity(Key user){
+        community.remove(user);
     }
 }

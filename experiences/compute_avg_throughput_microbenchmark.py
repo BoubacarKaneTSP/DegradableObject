@@ -1,28 +1,25 @@
 import sys
+import numpy as np
+import scipy.stats as st
 
 def calculate_bounds(values_func):
     # Calcul de la moyenne, du max et du min
-    mean_func = sum(values_func) / len(values_func)
-    max_value_func = max(values_func)
-    min_value_func = min(values_func)
+    confidence = 0.95
 
-    # Création des listes qui contiennent les valeurs supérieur ou inférieur à la moyenne
-    values_sup_mean = [value for value in values_func if value >= mean_func]
-    values_inf_mean = [value for value in values_func if value < mean_func]
+    a = 1.0 * np.array(values_func)
+    n = len(a)
+    m, se = np.mean(a), st.sem(a)
+    h = se * st.t.ppf((1 + confidence) / 2., n-1)
+    try:
+        max_val = np.max(a)
+    except ValueError:
+        print(a)
+        exit(0)
+    min_val = np.min(a)
 
-    # Calcul de la borne supérieure et inférieure
-    if len(values_sup_mean) > 0:
-        upper_bound_func = sum(values_sup_mean) / len(values_sup_mean)
-    else:
-        upper_bound_func = mean_func
+    return m, m + h, m - h, max_val, min_val
 
-    if len(values_inf_mean) > 0:
-        lower_bound_func = sum(values_inf_mean) / len(values_inf_mean)
-    else:
-        lower_bound_func = mean_func
-
-    return mean_func, upper_bound_func, lower_bound_func, max_value_func, min_value_func
-
+print(sys.argv)
 type_obj = sys.argv[1]
 list_nb_thread = sys.argv[2]
 
@@ -34,7 +31,7 @@ list_op = ["ALL",
            "READ"]
 
 for op in list_op:
-    file = open(type_obj + "_" + op + ".txt","r")
+    file = open("microbenchmark_results/"+type_obj + "_" + op + ".txt","r")
 
     str_result_avg = ""
 
@@ -49,7 +46,11 @@ for op in list_op:
         values = []
 
         while line[0] == nb_thread:
-            val = float(line[1])
+            if line[1] == "NaN":
+                val = 0
+            else:
+                val = float(line[1])
+
             values.append(val)
             line = file.readline()
             line = line.strip().split(" ")

@@ -123,11 +123,14 @@ public class Microbenchmark {
 
             PrintWriter printWriter = null;
             FileWriter fileWriter = null;
-            Object object = null;
+            Object object;
             long startTime, endTime, benchmarkAvgTime;
 
             nbCurrentThread = nbThreads;
 //            nbCurrentThread = _asymmetric ? 2 : 1;
+
+            if (_asymmetric && nbThreads == 1)
+                System.exit(0);
 
             if(_quickTest)
                 nbCurrentThread = nbThreads;

@@ -123,6 +123,7 @@ public class Factory {
             case "FuzzyCounter":
                 return new FuzzyCounter();
             case "WrappedLongAdder":
+            case "LongAdder":
                 return new WrappedLongAdder();
             default:
                 throw new ClassNotFoundException();
