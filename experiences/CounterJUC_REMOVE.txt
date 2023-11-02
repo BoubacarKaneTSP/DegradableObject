@@ -1,7 +1,3 @@
-1 nan nan nan nan nan
-2 nan nan nan nan nan
-4 nan nan nan nan nan
-8 nan nan nan nan nan
-16 nan nan nan nan nan
-32 nan nan nan nan nan
-48 nan nan nan nan nan
+2 3.414481683670943E7
+2 3.928434142596929E7
+2 1.9782293765770502E7
