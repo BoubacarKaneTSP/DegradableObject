@@ -7,9 +7,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHashMap> implements Map<K,V> {
 
@@ -17,10 +15,113 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
         super(SWMRHashMap.class, factoryIndice);
     }
 
+    public static class KeyIterator<K,V> implements Iterator<K> {
+
+        Iterator<Map<K,V>> _inUnion;
+        Iterator<K> _inMap;
+        Collection<Map<K,V>> _elements;
+
+        public KeyIterator(Collection<Map<K,V>> elts) {
+
+            _elements = elts;
+
+            Iterator<Map<K,V>> itr = _elements.iterator();
+
+            if (itr.hasNext()){
+                _inUnion = _elements.iterator();
+                _inMap = _inUnion.next().keySet().iterator();
+            }
+        }
+
+        public boolean hasNext() {
+
+            if (_inUnion == null) return false;
+
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) return false;
+                    _inMap = _inUnion.next().keySet().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return true;
+        }
+
+        public K next() {
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) throw new NoSuchElementException();
+                    _inMap = _inUnion.next().keySet().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return _inMap.next();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    }
+
+    public static class ValueIterator<K,V> implements Iterator<V> {
+
+        Iterator<Map<K,V>> _inUnion;
+        Iterator<V> _inMap;
+        Collection<Map<K,V>> _elements;
+
+        public ValueIterator(Collection<Map<K,V>> elts) {
+
+            _elements = elts;
+
+
+            Iterator<Map<K,V>> itr = _elements.iterator();
+
+            if (itr.hasNext()){
+                _inUnion = _elements.iterator();
+                _inMap = _inUnion.next().values().iterator();
+            }
+        }
+
+        public boolean hasNext() {
+
+            if (_inUnion == null) return false;
+
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) return false;
+                    _inMap = _inUnion.next().values().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return true;
+        }
+
+        public V next() {
+            if (!_inMap.hasNext()) {
+                do {
+                    if (!_inUnion.hasNext()) throw new NoSuchElementException();
+                    _inMap = _inUnion.next().values().iterator();
+                } while (!_inMap.hasNext());
+            }
+            return _inMap.next();
+        }
+
+    }
+
+    public Iterator<K> iterator() {
+        return new KeyIterator(segments());
+    }
+    @Override
+    public String toString() {
+        String ret = "";
+        for(Map m: segments()){
+            ret += m.toString();
+        }
+        return ret;
+    }
+
     @Override
     public int size() { // FIXME prove this is actually linearizable
         int ret = 0;
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             ret += m.size();
         }
         return ret;
@@ -28,7 +129,7 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
 
     @Override
     public boolean isEmpty() {
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             if (!m.isEmpty()) return false;
         }
         return true;
@@ -36,7 +137,7 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
 
     @Override
     public boolean containsKey(Object o) {
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             if (m.containsKey(o)) return true;
         }
         return false;
@@ -44,7 +145,7 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
 
     @Override
     public boolean containsValue(Object o) {
-        for(SWMRHashMap m: segments()){
+        for(Map m: segments()){
             if (m.containsValue(o)) return true;
         }
         return false;
@@ -53,7 +154,7 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @SneakyThrows
     @Override
     public V get(Object o) {
-        SWMRHashMap map = segmentFor(o);
+        Map map = segmentFor(o);
 
         return (V) map.get(o);
     }
@@ -61,14 +162,7 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @Nullable
     @Override
     public V put(K k, V v) {
-        SWMRHashMap map = segmentFor(k);
-
-        for (Object s : map.values()){
-//            System.out.println(s + " => " + Thread.currentThread().getName());
-            assert s.equals(Thread.currentThread().getName()) : s + " != " + Thread.currentThread().getName();
-        }
-
-        return (V) map.put(k,v);
+        return (V) segmentFor(k).put(k,v);
     }
 
     @Override
@@ -89,18 +183,30 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @NotNull
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> ret = new HashSet<>();
+        for(Map m: segments()){
+            ret.addAll(m.keySet());
+        }
+        return ret;
     }
 
     @NotNull
     @Override
     public Collection<V> values() {
-        throw new UnsupportedOperationException();
+        List<V> ret = new ArrayList<>();
+        for(Map m: segments()){
+            ret.addAll(m.values());
+        }
+        return ret;
     }
 
     @NotNull
     @Override
     public Set<Entry<K, V>> entrySet() {
-        throw new UnsupportedOperationException();
+        Set<Entry<K, V>> ret = new HashSet<>();
+        for(Map m: segments()){
+            ret.addAll(m.entrySet());
+        }
+        return ret;
     }
 }
