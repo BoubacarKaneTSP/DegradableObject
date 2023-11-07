@@ -27,11 +27,11 @@ public class Database {
     private final String typeCounter;
     private final int nbThread;
     private final int nbUsers;
-    private final Map<Key, Set<Key>> mapFollowers;
-    private final Map<Key, Set<Key>> mapFollowing;
-    private final Map<Key, Timeline<String>> mapTimelines;
-    private final Map<Key, Profile> mapProfiles;
-    private final Set<Key> community;
+    private Map<Key, Set<Key>> mapFollowers;
+    private Map<Key, Set<Key>> mapFollowing;
+    private Map<Key, Timeline<String>> mapTimelines;
+    private Map<Key, Profile> mapProfiles;
+    private Set<Key> community;
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
     private final int[] reciprocalDegree;
@@ -77,8 +77,10 @@ public class Database {
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
             mapProfiles = Factory.createMap(typeMap, factoryIndice);
+        }else if(typeSet.contains("Extended")){
             community = Factory.createSet(typeSet, factoryIndice);
-        }else{
+        }
+        else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);

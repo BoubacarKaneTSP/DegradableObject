@@ -914,7 +914,7 @@ public class Retwis {
                             listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
                             if (listFollow.size() == 0) {
-                                System.out.println("restart");
+//                                System.out.println("restart");
                                 continue restartOperation;
                             }
 
