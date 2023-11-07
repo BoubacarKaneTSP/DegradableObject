@@ -72,7 +72,6 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
 
             _elements = elts;
 
-
             Iterator<Map<K,V>> itr = _elements.iterator();
 
             if (itr.hasNext()){

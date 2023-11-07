@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class Retwis {
 
-    private static final int ADD = 0, FOLLOW = 1, UNFOLLOW = 2, TWEET = 3, READ = 4, COUNT = 5;
+    private static final int ADD = 0, FOLLOW = 1, UNFOLLOW = 2, TWEET = 3, READ = 4, COUNT = 5, GROUPE = 6, PROFILE = 7;
     private static final Map<Integer, String> mapIntOptoStringOp = new HashMap<>(){{
         put(ADD, "ADD");
         put(FOLLOW, "FOLLOW");
@@ -35,6 +35,8 @@ public class Retwis {
         put(TWEET, "TWEET");
         put(READ, "READ");
         put(COUNT, "COUNT");
+        put(GROUPE, "GROUPE");
+        put(PROFILE, "PROFILE");
     }};
 
     @Option(name="-set", required = true, usage = "type of Set")
@@ -166,8 +168,8 @@ public class Retwis {
             if (args.length < 1)
                 throw new CmdLineException(parser, "No argument is given");
 
-            if (distribution.length != 4){
-                throw new java.lang.Error("Number of ratios must be 4 (% add, % follow or unfollow, % tweet, % read)");
+            if (distribution.length != 6){
+                throw new java.lang.Error("Number of ratios must be 4 (% add, % follow or unfollow, % tweet, % read, % join/leave groupe, % update profile)");
             }
 
             int total = 0;
@@ -788,8 +790,12 @@ public class Retwis {
                 }
             }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ //tweet
                 type = TWEET;
-            }else{ //read
+            }else if(val >= ratiosArray[0] + ratiosArray[1] + ratiosArray[2] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3]){
                 type = READ;
+            }else if(val >= ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3] + ratiosArray[4]){
+                type = GROUPE;
+            }else{
+                type = PROFILE;
             }
 
             return type;
@@ -934,6 +940,21 @@ public class Retwis {
                         case READ:
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
+                            endTime = System.nanoTime();
+                        case GROUPE:
+                            if (random.get().nextInt(2) == 0){
+
+                                startTime = System.nanoTime();
+                                database.joinCommunity(userA);
+                                endTime = System.nanoTime();
+                            }else{
+                                startTime = System.nanoTime();
+                                database.leaveCommunity(userA);
+                                endTime = System.nanoTime();
+                            }
+                        case PROFILE:
+                            startTime = System.nanoTime();
+                            database.updateProfile(userA);
                             endTime = System.nanoTime();
 
                             break;

@@ -642,7 +642,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
             tab[i] = newNode(hash, key, value, null);
-            UNSAFE.storeFence();
+            UNSAFE.fullFence();
         }
         else {
             Node<K,V> e; K k;
@@ -651,13 +651,12 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 e = p;
             else if (p instanceof TreeNode) {
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
-                UNSAFE.storeFence();
             }
             else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
-                        UNSAFE.storeFence();
+                        UNSAFE.fullFence();
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -727,8 +726,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 Node<K,V> e;
                 if ((e = oldTab[j]) != null) {
 //                    oldTab[j] = null;
-                    if (e.next == null)
+                    if (e.next == null) {
                         newTab[e.hash & (newCap - 1)] = e;
+                    }
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     else { // preserve order
@@ -764,6 +764,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
             }
         }
+        UNSAFE.storeFence();
         table = newTab;
         UNSAFE.fullFence();
         return newTab;
@@ -789,8 +790,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
                 tl = p;
             } while ((e = e.next) != null);
-            if ((tab[index] = hd) != null)
+            if ((tab[index] = hd) != null) {
+                UNSAFE.fullFence();
                 hd.treeify(tab);
+            }
         }
     }
 
@@ -884,8 +887,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         modCount++;
         if ((tab = table) != null && size > 0) {
             size = 0;
-            for (int i = 0; i < tab.length; ++i)
+            for (int i = 0; i < tab.length; ++i) {
                 tab[i] = null;
+                UNSAFE.fullFence();
+            }
         }
     }
 
@@ -1172,6 +1177,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             t.putTreeVal(this, tab, hash, key, v);
         else {
             tab[i] = newNode(hash, key, v, first);
+            UNSAFE.fullFence();
             if (binCount >= TREEIFY_THRESHOLD - 1)
                 treeifyBin(tab, hash);
         }
@@ -1269,6 +1275,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 t.putTreeVal(this, tab, hash, key, v);
             else {
                 tab[i] = newNode(hash, key, v, first);
+                UNSAFE.fullFence();
                 if (binCount >= TREEIFY_THRESHOLD - 1)
                     treeifyBin(tab, hash);
             }
@@ -2025,6 +2032,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
             }
             moveRootToFront(tab, root);
+            UNSAFE.fullFence();
         }
 
         /**
@@ -2058,8 +2066,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     dir = -1;
                 else if (ph < h)
                     dir = 1;
-                else if ((pk = p.key) == k || (k != null && k.equals(pk)))
+                else if ((pk = p.key) == k || (k != null && k.equals(pk))) {
+                    UNSAFE.fullFence();
                     return p;
+                }
                 else if ((kc == null &&
                         (kc = comparableClassFor(k)) == null) ||
                         (dir = compareComparables(kc, k, pk)) == 0) {
@@ -2069,8 +2079,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         if (((ch = p.left) != null &&
                                 (q = ch.find(h, k, kc)) != null) ||
                                 ((ch = p.right) != null &&
-                                        (q = ch.find(h, k, kc)) != null))
+                                        (q = ch.find(h, k, kc)) != null)) {
+                            UNSAFE.fullFence();
                             return q;
+                        }
                     }
                     dir = tieBreakOrder(k, pk);
                 }
@@ -2088,6 +2100,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     if (xpn != null)
                         ((TreeNode<K,V>)xpn).prev = x;
                     moveRootToFront(tab, balanceInsertion(root, x));
+                    UNSAFE.fullFence();
                     return null;
                 }
             }
