@@ -77,16 +77,19 @@ public class Database {
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
             mapProfiles = Factory.createMap(typeMap, factoryIndice);
-        }else if(typeSet.contains("Extended")){
-            community = Factory.createSet(typeSet, factoryIndice);
-        }
-        else{
+        }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
             mapProfiles = Factory.createMap(typeMap, nbThread);
+        }
+
+        if (typeSet.contains("Extended")){
+            community = Factory.createSet(typeSet, factoryIndice);
+        }else{
             community = Factory.createSet(typeSet, nbThread);
         }
+
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
