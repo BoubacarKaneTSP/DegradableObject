@@ -945,6 +945,12 @@ public class Retwis {
                             database.tweet(userA, msg);
                             endTime = System.nanoTime();
                             break;
+                        case PROFILE:
+                            startTime = System.nanoTime();
+                            database.updateProfile(userA);
+                            endTime = System.nanoTime();
+
+                            break;
                         case READ:
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
@@ -959,12 +965,7 @@ public class Retwis {
                                 database.leaveCommunity(userA);
                                 endTime = System.nanoTime();
                             }
-                        case PROFILE:
-                            startTime = System.nanoTime();
-                            database.updateProfile(userA);
-                            endTime = System.nanoTime();
 
-                            break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
                     }
