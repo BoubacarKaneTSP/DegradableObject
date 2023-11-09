@@ -234,11 +234,6 @@ public class Database {
 //            System.out.println((int) Math.round(doubleValues.get(i))+1);
         }
 
-//        Collections.sort(values);
-//        System.out.println(values);
-//        System.out.println("aaa");
-//        TimeUnit.SECONDS.sleep(5);
-//        System.out.println(Collections.max(values));
         return values;
     }
 
@@ -566,6 +561,12 @@ public class Database {
         }
 
         usersFollowProbabilityRange = sommeFollow;
+
+        for (Key user: mapFollowing.keySet()){
+            System.out.println("FOLLOWING");
+            System.out.println();
+            System.out.println(user + " => " + mapFollowing.get(user));
+        }
     }
 
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
