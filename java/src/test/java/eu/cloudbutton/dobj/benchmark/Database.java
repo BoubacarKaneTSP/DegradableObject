@@ -783,6 +783,13 @@ public class Database {
     }
 
     public void leaveCommunity(Key user){
-        community.remove(user);
+        try{
+
+            community.remove(user);
+        }catch (NullPointerException e){
+            System.out.println(community);
+            System.out.println(e);
+            System.exit(0);
+        }
     }
 }
