@@ -532,10 +532,10 @@ public class Database {
         for (int i = 0; i < nbThread; i++) {
             for (int j = 0; j < nbThread; j++) {
 
-                followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j));
-                tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j));
-//                if (i != j){
-//                }
+                if (i != j){
+                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j));
+                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j));
+                }
             }
         }
 
@@ -562,11 +562,6 @@ public class Database {
 
         usersFollowProbabilityRange = sommeFollow;
 
-        for (Key user: mapFollowing.keySet()){
-            System.out.println("FOLLOWING");
-            System.out.println();
-            System.out.println(user + " => " + mapFollowing.get(user));
-        }
     }
 
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
@@ -761,7 +756,6 @@ public class Database {
 
         for (Key follower : set) {
             Timeline<String> timeline = mapTimelines.get(follower);
-//
             timeline.add(msg);
             break;
         }
@@ -774,11 +768,11 @@ public class Database {
     public void updateProfile(Key user){
         mapProfiles.compute(user, (usr, profile) -> {
             if (profile != null) {
-                try{
-                    profile.doUpdate();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try{
+//                    profile.doUpdate();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
             return profile;
         });
