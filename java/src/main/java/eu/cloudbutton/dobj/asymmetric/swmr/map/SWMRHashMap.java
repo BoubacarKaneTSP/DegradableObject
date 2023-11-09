@@ -1525,8 +1525,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         final Node<K,V> nextNode() {
             Node<K,V>[] t;
             Node<K,V> e = next;
-            if (modCount != expectedModCount)
-                throw new ConcurrentModificationException();
+//            if (modCount != expectedModCount)
+//                throw new ConcurrentModificationException();
             if (e == null)
                 throw new NoSuchElementException();
             if ((next = (current = e).next) == null && (t = table) != null) {
