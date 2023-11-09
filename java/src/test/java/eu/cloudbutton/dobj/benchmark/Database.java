@@ -532,10 +532,10 @@ public class Database {
         for (int i = 0; i < nbThread; i++) {
             for (int j = 0; j < nbThread; j++) {
 
-                if (i != j){
-                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j));
-                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j));
-                }
+                followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j));
+                tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j));
+//                if (i != j){
+//                }
             }
         }
 
