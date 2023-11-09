@@ -794,16 +794,16 @@ public class Retwis {
                 type = READ;
                 int v1 = ratiosArray[0] + ratiosArray[1] + ratiosArray[2];
                 int v2 = ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3];
-                System.out.println("READ : " + v1 + " <= " + val + " < " + v2);
+//                System.out.println("READ : " + v1 + " <= " + val + " < " + v2);
             }else if(val >= ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3] + ratiosArray[4]){
                 type = GROUPE;
                 int v1 = ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3];
                 int v2 = ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3] + ratiosArray[4];
-                System.out.println("GROUPE : " + v1 + " <= " + val + " < " + v2);
+//                System.out.println("GROUPE : " + v1 + " <= " + val + " < " + v2);
             }else{
                 type = PROFILE;
                 int v1 = ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3] + ratiosArray[4];
-                System.out.println("PROFILE : " + v1 + " <= " + val + " < 100 " );
+//                System.out.println("PROFILE : " + v1 + " <= " + val + " < 100 " );
             }
 
             return type;
@@ -955,6 +955,7 @@ public class Retwis {
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
+                            break ;
                         case GROUPE:
                             if (random.get().nextInt(2) == 0){
                                 startTime = System.nanoTime();
@@ -965,7 +966,7 @@ public class Retwis {
                                 database.leaveCommunity(userA);
                                 endTime = System.nanoTime();
                             }
-
+                            break ;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
                     }
