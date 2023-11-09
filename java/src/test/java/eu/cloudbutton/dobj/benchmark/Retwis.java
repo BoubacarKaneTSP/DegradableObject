@@ -792,10 +792,13 @@ public class Retwis {
                 type = TWEET;
             }else if(val >= ratiosArray[0] + ratiosArray[1] + ratiosArray[2] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3]){
                 type = READ;
+                System.out.println("READ : " + ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + " <= " + val + " < " + ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3]);
             }else if(val >= ratiosArray[0] + ratiosArray[1] + ratiosArray[2] + ratiosArray[3] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3] + ratiosArray[4]){
                 type = GROUPE;
+                System.out.println("GROUPE : " + ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3] + " <= " + val + " < " + ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3] + ratiosArray[4]);
             }else{
                 type = PROFILE;
+                System.out.println("PROFILE : " + ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2] + ratiosArray[3] + ratiosArray[4] + " <= " + val + " < 100 " );
             }
 
             return type;
