@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;
@@ -670,6 +671,7 @@ public class Retwis {
         Key userB, userA, dummyUser;
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
+        Profile dummyProfile;
         long startTime, endTime;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime) {
@@ -703,6 +705,7 @@ public class Retwis {
                 dummyUser = database.generateUser();
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());
+                dummyProfile = new Profile();
 
                 int num = 0;
                 boolean cleanTimeline = false;
@@ -887,7 +890,7 @@ public class Retwis {
                         case ADD:
 
                             startTime = System.nanoTime();
-                            database.addUser(dummyUser,dummySet, dummyTimeline);
+                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
                             endTime = System.nanoTime();
 
                             database.removeUser(dummyUser);

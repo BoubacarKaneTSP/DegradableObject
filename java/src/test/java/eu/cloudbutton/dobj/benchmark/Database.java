@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
+import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
@@ -711,14 +712,14 @@ public class Database {
         mapFollowing.put(user, new HashSet<>());
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
         mapProfiles.put(user, new Profile());
-
-        if (typeSet.contains("Extended"))
-            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
-        else
-            mapFollowers.put(user, Factory.createSet(typeSet, nbThread));
+        mapFollowers.put(user, new ConcurrentHashSet<>());
+//        if (typeSet.contains("Extended"))
+//            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
+//        else
+//            mapFollowers.put(user, Factory.createSet(typeSet, nbThread));
     }
 
-    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
+    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline, Profile dummyProfile) {
 //        assert user != null : "User is null";
 //        assert dummySet != null : "Set is null";
 //        assert dummyTimeline != null : "Timeline is null";
@@ -726,6 +727,7 @@ public class Database {
         mapFollowers.put(user,dummySet);
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
+        mapProfiles.put(user, dummyProfile);
     }
 
     public void removeUser(Key user){
