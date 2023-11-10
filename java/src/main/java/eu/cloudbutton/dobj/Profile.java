@@ -7,6 +7,6 @@ public class Profile {
     public Profile(){}
 
     public void doUpdate() throws InterruptedException {
-        TimeUnit.NANOSECONDS.sleep(1);
+//        TimeUnit.NANOSECONDS.sleep(1);
     }
 }
