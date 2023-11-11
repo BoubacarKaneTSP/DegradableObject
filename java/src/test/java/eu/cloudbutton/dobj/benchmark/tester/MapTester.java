@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
@@ -17,7 +18,7 @@ public class MapTester extends Tester<Map> {
 
     private KeyGenerator keyGenerator;
 
-    public MapTester(Map object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
+    public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
     }
@@ -36,9 +37,11 @@ public class MapTester extends Tester<Map> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.put(list.get(i), i);
+                    int finalI = i;
+                    object.compute(list.get(i), (k, v) -> finalI);
                 }
                 endTime = System.nanoTime();
+//                object.put(list.get(i), i);
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
