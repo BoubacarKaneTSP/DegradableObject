@@ -772,13 +772,12 @@ public class Database {
 
     public void updateProfile(Key user){
         mapProfiles.compute(user, (usr, profile) -> {
-            if (profile != null) {
                 try{
                     profile.doUpdate();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
+
             return profile;
         });
     }
