@@ -31,7 +31,7 @@ public class Database {
     private Map<Key, Set<Key>> mapFollowers;
     private Map<Key, Set<Key>> mapFollowing;
     private Map<Key, Timeline<String>> mapTimelines;
-    private Map<Key, Profile> mapProfiles;
+    private Map<Key, Integer> mapProfiles;
     private Set<Key> community;
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
@@ -711,7 +711,7 @@ public class Database {
     public void addOriginalUser(Key user) throws ClassNotFoundException {
         mapFollowing.put(user, new HashSet<>());
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
-        mapProfiles.put(user, new Profile());
+        mapProfiles.put(user, 0);
         mapFollowers.put(user, new ConcurrentHashSet<>());
 //        if (typeSet.contains("Extended"))
 //            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
@@ -727,7 +727,7 @@ public class Database {
         mapFollowers.put(user,dummySet);
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
-        mapProfiles.put(user, dummyProfile);
+        mapProfiles.put(user, 0);
     }
 
     public void removeUser(Key user){
@@ -771,15 +771,7 @@ public class Database {
     }
 
     public void updateProfile(Key user){
-        mapProfiles.compute(user, (usr, profile) -> {
-                try{
-                    profile.doUpdate();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            return profile;
-        });
+        mapProfiles.compute(user, (usr, profile) -> ++profile);
     }
 
     public void joinCommunity(Key user){
