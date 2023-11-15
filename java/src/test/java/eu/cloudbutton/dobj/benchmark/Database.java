@@ -624,6 +624,7 @@ public class Database {
 
             if (j%10 == 0)
                 threadNum +=1;
+            System.out.println(threadNum);
             j++;
         }
 
