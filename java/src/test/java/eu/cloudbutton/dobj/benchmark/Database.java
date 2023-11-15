@@ -595,7 +595,6 @@ public class Database {
                     int v = j+(i*10);
                     int w = k+(i*10);
                     if (w != v){
-                        System.out.println(nbThread + " | follow : " + w + " ," + v);
                         followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
                         tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
                     }
@@ -624,10 +623,10 @@ public class Database {
 
             if (j%10 == 0)
                 threadNum +=1;
-            System.out.println(threadNum);
+//            System.out.println(threadNum);
             j++;
         }
-
+/*
         for (int i = 0; i < nbThread; i++) {
             System.out.println("Thread : " + i + " contains : ");
             for (Key user : listLocalUsersFollow.get(i).keySet()){
@@ -639,7 +638,7 @@ public class Database {
             }
             System.out.println();
             System.out.println();
-        }
+        }*/
         usersFollowProbabilityRange = sommeFollow;
     }
 
@@ -843,7 +842,16 @@ public class Database {
     }
 
     public void showTimeline(Key user) throws InterruptedException {
-        mapTimelines.get(user).read();
+        try{
+
+            mapTimelines.get(user).read();
+        }catch (NullPointerException e){
+            System.out.println(user);
+            System.out.println();
+            System.out.println(mapTimelines);
+            System.out.println(e);
+            System.exit(0);
+        }
     }
 
     public void updateProfile(Key user){
