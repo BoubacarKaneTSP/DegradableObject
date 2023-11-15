@@ -127,7 +127,8 @@ public class Database {
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
 //        loadGraph();
-        loadCompleteGraph();
+//        loadCompleteGraph();
+        loadDAPGraph();
     }
 
     public Key generateUser(){
@@ -568,6 +569,63 @@ public class Database {
 
     }
 
+
+    private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
+
+        Set<Key> setUser = new HashSet<>();
+        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
+
+        for (int i = 0; i < nbThread * 10;) {
+            Key user = generateUser();
+            if (setUser.add(user)){
+                addOriginalUser(user);
+                mapIndiceToKey.put(i, user);
+                mapKeyToIndice.put(user,i);
+
+                tmpListUsersFollow.put(user, new LinkedList<>());
+                i++;
+            }
+        }
+
+        for (int i = 0; i < nbThread*10; i++) {
+            for (int j = 0; j < nbThread; j++) {
+
+                if (i != j){
+                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j+i*10));
+                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j+i*10));
+                }
+            }
+        }
+
+        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
+        long sommeFollow = 0L;
+        int j = 0;
+
+        for (int i = 0; i < nbThread*10; i++) {
+            sommeUsage.put(i, new AtomicInteger());
+        }
+
+        for (Key user: mapFollowing.keySet()){
+            sommeUsage.get(j%nbThread).addAndGet(1);
+            sommeFollow += 1;
+
+            localUsersUsageProbability.get(j%nbThread).put(sommeUsage.get(j%nbThread).longValue(), user);
+            localUsersUsageProbabilityRange.put(j%nbThread, sommeUsage.get(j%nbThread).longValue());
+            usersFollowProbability.put(sommeFollow, user);
+            listLocalUser.get(j%nbThread).add(user);
+            listLocalUsersFollow.get(j%nbThread).put(user, tmpListUsersFollow.get(user));
+
+            j++;
+        }
+
+        for (int i = 0; i < nbThread; i++) {
+            System.out.println(listLocalUsersFollow.get(i));
+            System.out.println();
+        }
+        usersFollowProbabilityRange = sommeFollow;
+        System.exit(0);
+    }
+
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
         // Convert the inputMap to a List of Map.Entry objects
         List<Map.Entry<Key, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
@@ -734,6 +792,7 @@ public class Database {
         mapFollowers.remove(user);
         mapFollowing.remove(user);
         mapTimelines.remove(user);
+        mapProfiles.remove(user);
     }
 
     // Adding user_A to the followers of user_B
