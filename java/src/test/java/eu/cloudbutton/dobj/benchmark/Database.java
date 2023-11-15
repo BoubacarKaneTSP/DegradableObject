@@ -611,16 +611,19 @@ public class Database {
             sommeUsage.put(i, new AtomicInteger());
         }
 
+        int threadNum = 0;
         for (Key user: listUser){
-            sommeUsage.get(j%nbThread).addAndGet(1);
+            sommeUsage.get(threadNum).addAndGet(1);
             sommeFollow += 1;
 
-            localUsersUsageProbability.get(j%nbThread).put(sommeUsage.get(j%nbThread).longValue(), user);
-            localUsersUsageProbabilityRange.put(j%nbThread, sommeUsage.get(j%nbThread).longValue());
+            localUsersUsageProbability.get(threadNum).put(sommeUsage.get(threadNum).longValue(), user);
+            localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
             usersFollowProbability.put(sommeFollow, user);
-            listLocalUser.get(j%nbThread).add(user);
-            listLocalUsersFollow.get(j%nbThread).put(user, tmpListUsersFollow.get(user));
+            listLocalUser.get(threadNum).add(user);
+            listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
 
+            if (j%nbThread == 0)
+                threadNum +=1;
             j++;
         }
 
