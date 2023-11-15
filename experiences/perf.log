@@ -1,25 +1,29 @@
-# started on Tue Nov 14 21:47:02 2023
+# started on Wed Nov 15 15:48:47 2023
 
 
  Performance counter stats for './test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r 0 0 0 0 100 0 -p -e -w 60 -u 30 -h JUC -y 100000 -d 100000 -i 50000000000 -b -g 96':
 
-      200839021571      cache-references                                              (30.77%)
-       84332766230      cache-misses              #   41.990 % of all cache refs      (30.77%)
-      609725617259      branches                                                      (30.77%)
-        4549018903      branch-misses             #    0.75% of all branches          (30.77%)
-    36347917432466      cycles                                                        (30.77%)
-     3551887074891      instructions              #    0.10  insn per cycle           (38.46%)
-    32439807138094      l1d_pend_miss.pending_cycles_any                                     (38.46%)
-       72039067181      l2_rqsts.all_demand_miss                                      (38.46%)
-    33609553820224      cycle_activity.stalls_total                                     (38.46%)
-      882929516623      L1-dcache-loads                                               (38.46%)
-       93487902531      L1-dcache-load-misses     #   10.59% of all L1-dcache accesses  (30.77%)
-       67618949469      LLC-loads                                                     (30.77%)
-       21151299136      LLC-load-misses           #   31.28% of all LL-cache accesses  (30.77%)
+            611869      cache-references                                                      
+            141750      cache-misses                     #   23,167 % of all cache refs       
+           5817487      branches                                                              
+            100570      branch-misses                    #    1,73% of all branches           
+          15846508      cycles                                                                  (16,89%)
+          17441372      instructions                     #    1,10  insn per cycle              (18,19%)
+     <not counted>      l1d_pend_miss.pending_cycles_any                                        (0,00%)
+     <not counted>      l2_rqsts.all_demand_miss                                                (0,00%)
+     <not counted>      cycle_activity.stalls_total                                             (0,00%)
+     <not counted>      L1-dcache-loads                                                         (0,00%)
+     <not counted>      L1-dcache-load-misses                                                   (0,00%)
+     <not counted>      LLC-loads                                                               (0,00%)
+     <not counted>      LLC-load-misses                                                         (0,00%)
 
-     189.901283965 seconds time elapsed
+       0,005644637 seconds time elapsed
 
-   12430.971938000 seconds user
-     175.364510000 seconds sys
+       0,005960000 seconds user
+       0,000000000 seconds sys
 
 
+Some events weren't counted. Try disabling the NMI watchdog:
+	echo 0 > /proc/sys/kernel/nmi_watchdog
+	perf stat ...
+	echo 1 > /proc/sys/kernel/nmi_watchdog

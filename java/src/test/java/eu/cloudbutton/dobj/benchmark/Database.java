@@ -588,12 +588,15 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
-            for (int j = 0; j < 10; j++) {
-                int v = j+(i*10);
-                if (i != v){
-                    System.out.println(nbThread + " | follow : " + i + " ," + v);
-                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(v));
-                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(v));
+            for (int k = 0; k < 10; k++) {
+                for (int j = 0; j < 10; j++) {
+                    int v = j+(i*10);
+                    int w = k+(i*10);
+                    if (w != v){
+                        System.out.println(nbThread + " | follow : " + w + " ," + v);
+                        followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
+                        tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
+                    }
                 }
             }
         }
