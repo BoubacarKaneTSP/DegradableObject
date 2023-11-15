@@ -622,7 +622,7 @@ public class Database {
             listLocalUser.get(threadNum).add(user);
             listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
 
-            if (j%nbThread == 0)
+            if (j%10 == 0)
                 threadNum +=1;
             j++;
         }
