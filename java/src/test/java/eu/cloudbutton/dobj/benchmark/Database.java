@@ -587,7 +587,7 @@ public class Database {
             }
         }
 
-        for (int i = 0; i < nbThread*10; i++) {
+        for (int i = 0; i < nbThread; i++) {
             for (int j = 0; j < nbThread; j++) {
 
                 if (i != j){
