@@ -605,7 +605,7 @@ public class Database {
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
-        int j = 0;
+        int j = 1;
 
         for (int i = 0; i < nbThread*10; i++) {
             sommeUsage.put(i, new AtomicInteger());
