@@ -641,7 +641,6 @@ public class Database {
             System.out.println();
         }
         usersFollowProbabilityRange = sommeFollow;
-        System.exit(0);
     }
 
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
