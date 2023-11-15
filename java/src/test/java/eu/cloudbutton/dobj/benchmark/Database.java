@@ -590,10 +590,10 @@ public class Database {
         for (int i = 0; i < nbThread; i++) {
             for (int j = 0; j < 10; j++) {
 
-                if (i != j+i*10){
+                if (i != j+(i*10)){
                     System.out.println("follow : " + i + " ," + j+i*10);
-                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j+i*10));
-                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j+i*10));
+                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j+(i*10)));
+                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j+(i*10)));
                 }
             }
         }
