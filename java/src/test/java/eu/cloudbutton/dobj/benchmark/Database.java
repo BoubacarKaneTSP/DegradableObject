@@ -573,12 +573,14 @@ public class Database {
     private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
 
         Set<Key> setUser = new HashSet<>();
+        Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
         for (int i = 0; i < nbThread * 10;) {
             Key user = generateUser();
             if (setUser.add(user)){
                 addOriginalUser(user);
+                listUser.offer(user);
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
@@ -609,7 +611,7 @@ public class Database {
             sommeUsage.put(i, new AtomicInteger());
         }
 
-        for (Key user: mapFollowing.keySet()){
+        for (Key user: listUser){
             sommeUsage.get(j%nbThread).addAndGet(1);
             sommeFollow += 1;
 
