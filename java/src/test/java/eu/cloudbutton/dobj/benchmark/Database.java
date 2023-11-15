@@ -623,7 +623,15 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
-            System.out.println(listLocalUsersFollow.get(i));
+            System.out.println("Thread : " + i + " contains : ");
+            for (Key user : listLocalUsersFollow.get(i).keySet()){
+                System.out.print(mapKeyToIndice.get(user) + " : ");
+                for (Key user2 : listLocalUsersFollow.get(i).get(user)){
+                    System.out.print(mapKeyToIndice.get(user2) + ", ");
+                }
+                System.out.println();
+            }
+            System.out.println();
             System.out.println();
         }
         usersFollowProbabilityRange = sommeFollow;
