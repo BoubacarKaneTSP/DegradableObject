@@ -26,9 +26,9 @@ do
 
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
-#  for nbThread in 1 2 4 8 16 32 48
+  for nbThread in 1 2 4 8 16 32 48 64 70 86 96
 #  for nbThread in 2 16 48
-  for nbThread in 1 32 96
+#  for nbThread in 1 32 96
 #  for nbThread in 48
 #  for nbThread in 1 4 8
 #  for nbThread in 1
@@ -67,9 +67,10 @@ do
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 4 8" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1" $completion_time
 
+  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 16 48" $completion_time
- python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 32 96" $completion_time
+# python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 32 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_S_C" "1 2 4 8 16 32 48"
