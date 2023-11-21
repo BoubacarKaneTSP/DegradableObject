@@ -861,6 +861,7 @@ public class Retwis {
                         userUsageDistribution.add(userA.toString());
 
                     long val = Math.abs(random.get().nextLong() % localUsersUsageProbabilityRange);
+                    val = 0;
 
                     try{
                         userA = database
