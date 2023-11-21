@@ -658,7 +658,7 @@ public class Retwis {
 
     public class RetwisApp implements Callable<Void>{
 
-        private final ThreadLocal<Random> random;
+        private final ThreadLocalRandom random;
         private final int[] ratiosArray;
         private final CountDownLatch latchFillCompletionTime;
         private Long localUsersUsageProbabilityRange;
@@ -675,7 +675,7 @@ public class Retwis {
         long startTime, endTime;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime) {
-            this.random = ThreadLocal.withInitial(() -> new Random(94));
+            this.random = ThreadLocalRandom.current();
             this.myId = new ThreadLocal<>();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latchFillCompletionTime = latchFillCompletionTime;
@@ -782,7 +782,7 @@ public class Retwis {
         public int chooseOperation(){
             int type;
 
-            int val = random.get().nextInt(100)+1;
+            int val = random.nextInt(100)+1;
             if(val < ratiosArray[0]){ // add
                 type = ADD;
             }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
@@ -860,8 +860,8 @@ public class Retwis {
                     if (!flagWarmingUp.get())
                         userUsageDistribution.add(userA.toString());
 
-                    long val = Math.abs(random.get().nextLong() % localUsersUsageProbabilityRange);
-                    val = 0;
+//                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
+                    long val = 0;
 
                     try{
                         userA = database
@@ -899,7 +899,7 @@ public class Retwis {
                         case FOLLOW:
                             listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
-                            long val2 = Math.abs(random.get().nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
+                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
                             userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
@@ -953,7 +953,7 @@ public class Retwis {
                             endTime = System.nanoTime();
                             break ;
                         case GROUPE:
-                            if (random.get().nextInt(2) == 0){
+                            if (random.nextInt(2) == 0){
                                 startTime = System.nanoTime();
                                 database.joinCommunity(userA);
                                 endTime = System.nanoTime();
