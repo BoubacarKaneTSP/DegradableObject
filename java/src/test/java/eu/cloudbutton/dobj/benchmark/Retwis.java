@@ -542,7 +542,7 @@ public class Retwis {
                     }
 
                     if (_s){
-                        FileWriter queueSizeFile,
+                        FileWriter timeComputedFile,
                                 avgFollowerFile,
                                 avgFollowingFile,
                                 proportionMaxFollowerFile,
@@ -554,7 +554,7 @@ public class Retwis {
                                 nbUserFinalFile,
                                 nbTweetFinalFile;
 
-                        PrintWriter queueSizePrint,
+                        PrintWriter timeComputedPrint,
                                 avgFollowerPrint,
                                 avgFollowingPrint,
                                 proportionMaxFollowerPrint,
@@ -572,7 +572,7 @@ public class Retwis {
 //                        nameFile = _tag+"_"+strAlpha+"_"+_nbUserInit+".txt";
                         nameFile = _tag+"_"+_nbUserInit+".txt";
 
-                        queueSizeFile = new FileWriter("avg_queue_size_" + nameFile, append);
+                        timeComputedFile = new FileWriter("avg_time_computed_" + nameFile, append);
                         avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
                         avgFollowingFile = new FileWriter("avg_Following_" + nameFile, append);
                         proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
@@ -584,7 +584,7 @@ public class Retwis {
                         nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
                         nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
 
-                        queueSizePrint = new PrintWriter(queueSizeFile);
+                        timeComputedPrint = new PrintWriter(timeComputedFile);
                         avgFollowerPrint = new PrintWriter(avgFollowerFile);
                         avgFollowingPrint = new PrintWriter(avgFollowingFile);
                         proportionMaxFollowerPrint = new PrintWriter(proportionMaxFollowerFile);
@@ -596,7 +596,7 @@ public class Retwis {
                         nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
                         nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
 
-                        queueSizePrint.println(unit + " " + sumAvgQueueSizes/_nbTest);
+                        timeComputedPrint.println(unit + " " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest);
                         avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
                         avgFollowingPrint.println(unit + " " + sumAvgFollowing/_nbTest);
                         proportionMaxFollowerPrint.println(unit + " " + sumProportionMaxFollower/_nbTest);
@@ -608,7 +608,7 @@ public class Retwis {
 //                        nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
 //                        nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
 
-                        queueSizePrint.flush();
+                        timeComputedPrint.flush();
                         avgFollowerPrint.flush();
                         avgFollowingPrint.flush();
                         proportionMaxFollowerPrint.flush();
@@ -620,7 +620,7 @@ public class Retwis {
                         nbUserFinalPrint.flush();
                         nbTweetFinalPrint.flush();
 
-                        queueSizeFile.close();
+                        timeComputedFile.close();
                         avgFollowerFile.close();
                         avgFollowingFile.close();
                         proportionMaxFollowerFile.close();
