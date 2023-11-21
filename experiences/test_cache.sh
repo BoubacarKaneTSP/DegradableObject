@@ -55,7 +55,7 @@ python3 rm_file.py $nbUsersInit "SEQ" $completion_time
   done
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4 8 16 32 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "2 16 48" $completion_time
-  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 32 96" $completion_time
+#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 32 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 4 8" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1" $completion_time
@@ -70,7 +70,7 @@ python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 16 48" $completion_time
-# python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 32 96" $completion_time
+ python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 32 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_S_C" "1 2 4 8 16 32 48"
@@ -81,9 +81,9 @@ python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 #  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48" $completion_time
 #  python3 compute_avg_gc_usage.py $nbUsersInit "Q_M_C" "1 4 8" $completion_time
 
-  python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
+#  python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
 #  python3 analyse_perf.py perf.log "true" "Q_M_C" $nbThread $nbUsersInit
-#  python3 analyse_perf.py perf.log "true" "SEQ" $nbThread $nbUsersInit
+  python3 analyse_perf.py perf.log "true" "SEQ" $nbThread $nbUsersInit
   #python3 analyse_perf.py perf.log "true" "Q_M_S_C" $nbThread $nbUsersInit
 
 done

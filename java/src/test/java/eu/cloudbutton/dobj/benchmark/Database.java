@@ -564,9 +564,7 @@ public class Database {
 
             j++;
         }
-
         usersFollowProbabilityRange = sommeFollow;
-
     }
 
 
