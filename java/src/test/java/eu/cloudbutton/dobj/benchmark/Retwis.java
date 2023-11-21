@@ -810,7 +810,8 @@ public class Retwis {
             endTime= 0L;
             nbAttempt = -1;
 
-            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
+//            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
+            int nbAttemptMax = 10;
 
             int typeComputed = type;
 
@@ -897,44 +898,45 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
-                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
-                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+//                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
+//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
-                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
+                            startTime = System.nanoTime();
+                            database.followUser(userA, dummyUser);
+                            endTime = System.nanoTime();
 
-                                startTime = System.nanoTime();
-                                database.followUser(userA, userB);
-                                endTime = System.nanoTime();
-
-                                database.unfollowUser(userA,userB);
-
-                            }else
-                                continue restartOperation;
+                            database.unfollowUser(userA,dummyUser);
+//                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
+//
+//
+//                            }else
+//                                continue restartOperation;
 
                             break;
                         case UNFOLLOW:
-                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
-                            if (listFollow.size() == 0) {
-//                                System.out.println("restart");
-                                continue restartOperation;
-                            }
+//                            if (listFollow.size() == 0) {
+////                                System.out.println("restart");
+//                                continue restartOperation;
+//                            }
+//
+//                            userB = listFollow.poll();
 
-                            userB = listFollow.poll();
+                            database.followUser(userA, dummyUser);
+                            startTime = System.nanoTime();
+                            database.unfollowUser(userA, dummyUser);
+                            endTime = System.nanoTime();
 
-                            if (userB != null){ // Perform unfollow only if userA already follow someone
-                                startTime = System.nanoTime();
-                                database.unfollowUser(userA, userB);
-                                endTime = System.nanoTime();
-
-                                database.followUser(userA, userB);
-                                listFollow.add(userB);
-                            }else {
-                                System.out.println("user null");
-                                continue restartOperation;
-                            }
+//                            database.followUser(userA, userB);
+//                            if (userB != null){ // Perform unfollow only if userA already follow someone
+//                                listFollow.add(userB);
+//                            }else {
+//                                System.out.println("user null");
+//                                continue restartOperation;
+//                            }
                             break;
                         case TWEET:
                             startTime = System.nanoTime();
