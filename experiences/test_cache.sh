@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=30
+nbTest=2
 benchmarkTime=60
 warmingUpTime=30
 #nbUsersInit=1000
@@ -18,9 +18,9 @@ completion_time="False"
 for nbUsersInit in 100000
 do
   #  Cleaning old file
-#  python3 rm_file.py $nbUsersInit "JUC" $completion_time
+  python3 rm_file.py $nbUsersInit "JUC" $completion_time
 #  python3 rm_file.py $nbUsersInit "Q_M_C" $completion_time
-  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
+#  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 #  rm JUC_${nbUsersInit}_gc_usage.txt
 #  rm Q_M_C_${nbUsersInit}_gc_usage.txt
 
