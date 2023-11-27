@@ -819,20 +819,8 @@ public class Database {
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
-
-        try{
-            mapFollowers.get(userB)
-                    .add(userA);
-        }catch (NullPointerException e){
-            System.out.println("null pointer exception while following : user -> " + userA + " try to follow user -> " + userB);
-
-        }
-
-        System.out.println();
-        System.out.println(mapFollowers.keySet());
-        System.out.println();
-        System.out.println(mapFollowers.get(userB));
-        System.out.println();
+        mapFollowers.get(userB)
+                .add(userA);
 
         mapFollowing.get(userA)
                 .add(userB);
@@ -845,6 +833,14 @@ public class Database {
                 .remove(userA);
         mapFollowing.get(userA)
                 .remove(userB);
+    }
+
+    public void lightFollowUser(Key userA, Key userB){
+        mapFollowing.get(userA).add(userB);
+    }
+
+    public void lightUnfollowUser(Key userA, Key userB){
+        mapFollowing.get(userA).remove(userB);
     }
 
     public void tweet(Key user, String msg) throws InterruptedException {

@@ -161,11 +161,13 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @Nullable
     @Override
     public V put(K k, V v) {
+        System.out.println("the couple : ("+k+","+v+") is added" );
         return (V) segmentFor(k).put(k,v);
     }
 
     @Override
     public V remove(Object o) {
+        System.out.println("The key : " + o + " is removed");
         return (V) segmentFor(o).remove(o);
     }
 

@@ -877,8 +877,8 @@ public class Retwis {
                                 .get(myId.get()));
 
                         System.out.println();
-                        System.out.println(userA);
-                        System.out.println(dummyUser);
+                        System.out.println("userA : " + userA);
+                        System.out.println("dummyUser : " + dummyUser);
                     }catch (NullPointerException e){
 
                         System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
