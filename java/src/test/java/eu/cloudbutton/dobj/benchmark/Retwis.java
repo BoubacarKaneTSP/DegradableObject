@@ -715,7 +715,7 @@ public class Retwis {
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
-                    compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                    compute(type, timeLocalOperations, timeLocalDurations, false);
 
                     cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
@@ -730,7 +730,7 @@ public class Retwis {
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-                        compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                        compute(type, timeLocalOperations, timeLocalDurations, false);
                         cleanTimeline = i % (2 * _nbUserInit) == 0;
 
                     }
@@ -745,13 +745,13 @@ public class Retwis {
                         if (_multipleOperation){
                             int nbRepeat = 1000;
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                                compute(type, timeLocalOperations, timeLocalDurations, false);
                                 cleanTimeline = num++ % (2 * _nbUserInit) == 0;
 
                             }
                         }else{
 
-                            compute(type, timeLocalOperations, timeLocalDurations, cleanTimeline);
+                            compute(type, timeLocalOperations, timeLocalDurations, false);
                             cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
