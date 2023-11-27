@@ -818,7 +818,27 @@ public class Retwis {
 
             int typeComputed = type;
 
-            if (cleanTimeline){
+            startTime = System.nanoTime();
+            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
+            endTime = System.nanoTime();
+
+            database.removeUser(dummyUser);
+
+            if (!flagWarmingUp.get()) {
+                timeOps.get(typeComputed).val+= endTime - startTime;
+                timeLocalDurations
+                        .get(typeComputed)
+                        .add(endTime - startTime);
+
+                startTime = System.nanoTime();
+                nbOperations.get(typeComputed).incrementAndGet();
+                endTime = System.nanoTime();
+                timeOps.get(COUNT).val += endTime - startTime;
+                timeLocalDurations.get(COUNT).add(endTime - startTime);
+            }
+            return;
+
+            /*if (cleanTimeline){
 
                 typeComputed = READ;
 
@@ -845,13 +865,13 @@ public class Retwis {
 
             }
             else{
-                /*To avoid infinite loop if :
+                *//*To avoid infinite loop if :
                  * - When doing follow, all user handle by thread i already follow all users in usersProbability.
                  * - When doing unfollow, all user handle by thread i do not follow anyone.
                  *
                  * We use an int nbAttempt to change the operation after an amount of fail
                  * When probability of not doing an operation on userA is less than 1%.
-                 * */
+                 * *//*
                 restartOperation : for (;;){
                     if (nbLocalUsers == 0)
                         break ;
@@ -990,7 +1010,7 @@ public class Retwis {
                     break;
                 }
             }
-
+*/
         }
 
         public void resetAllTimeline(){
