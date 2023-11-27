@@ -877,6 +877,7 @@ public class Retwis {
 
                         System.out.println();
                         System.out.println(userA);
+                        System.out.println(dummyUser);
                     }catch (NullPointerException e){
 
                         System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
