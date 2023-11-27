@@ -821,11 +821,11 @@ public class Database {
         }catch (NullPointerException e){
             System.out.println("null pointer exception while following : user -> " + userA + " try to follow user -> " + userB);
             System.out.println();
-            System.out.println(mapFollowers);
+            System.out.println(mapFollowers.keySet());
             System.out.println();
             System.out.println(mapFollowers.get(userB));
-
-            System.out.println(e.getMessage());
+            System.out.println();
+            System.out.println(e);
             System.exit(0);
         }
 
