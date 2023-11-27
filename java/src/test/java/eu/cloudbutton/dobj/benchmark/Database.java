@@ -807,7 +807,6 @@ public class Database {
     }
 
     public void removeUser(Key user){
-        System.out.println("REMOVE");
         mapFollowers.remove(user);
         mapFollowing.remove(user);
         mapTimelines.remove(user);
