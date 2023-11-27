@@ -707,6 +707,7 @@ public class Retwis {
                 dummyTimeline = new Timeline<>(new LinkedList<>());
                 dummyProfile = new Profile();
 
+                database.addOriginalUser(dummyUser);
                 int num = 0;
                 boolean cleanTimeline = false;
 
