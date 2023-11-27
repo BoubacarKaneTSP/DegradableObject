@@ -816,8 +816,8 @@ public class Database {
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
         try{
-            mapFollowers.get(userB)
-                    .add(userA);
+            mapFollowers.get(userB);
+//                    .add(userA);
         }catch (NullPointerException e){
             System.out.println("null pointer exception while following : user -> " + userA + " try to follow user -> " + userB);
             System.out.println(e.getMessage());
