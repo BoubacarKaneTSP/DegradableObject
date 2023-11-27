@@ -819,10 +819,10 @@ public class Retwis {
             int typeComputed = type;
 
             startTime = System.nanoTime();
-            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
+            database.followUser(userA, dummyUserFollow);
             endTime = System.nanoTime();
 
-            database.removeUser(dummyUser);
+            database.unfollowUser(userA,dummyUserFollow);
 
             if (!flagWarmingUp.get()) {
                 timeOps.get(typeComputed).val+= endTime - startTime;
