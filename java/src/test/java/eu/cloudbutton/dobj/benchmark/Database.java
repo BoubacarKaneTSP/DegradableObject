@@ -803,6 +803,7 @@ public class Database {
     }
 
     public void removeUser(Key user){
+        System.out.println("REMOVE");
         mapFollowers.remove(user);
         mapFollowing.remove(user);
         mapTimelines.remove(user);
@@ -814,6 +815,7 @@ public class Database {
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
+        System.out.println();
         mapFollowers.get(userB)
                 .add(userA);
         mapFollowing.get(userA)

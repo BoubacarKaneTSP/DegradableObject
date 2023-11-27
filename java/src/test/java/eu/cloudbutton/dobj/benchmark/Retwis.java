@@ -898,6 +898,7 @@ public class Retwis {
 
                     switch (typeComputed){
                         case ADD:
+                            System.out.println("ADD");
 
                             startTime = System.nanoTime();
                             database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
@@ -906,6 +907,7 @@ public class Retwis {
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
+                            System.out.println("FOLLOW");
 //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
 //                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
@@ -924,6 +926,8 @@ public class Retwis {
 
                             break;
                         case UNFOLLOW:
+                            System.out.println("UNFOLLOW");
+
 //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
 //                            if (listFollow.size() == 0) {
@@ -947,22 +951,26 @@ public class Retwis {
 //                            }
                             break;
                         case TWEET:
+                            System.out.println("TWEET");
                             startTime = System.nanoTime();
                             database.tweet(userA, msg);
                             endTime = System.nanoTime();
                             break;
                         case PROFILE:
+                            System.out.println("PROFILE");
                             startTime = System.nanoTime();
                             database.updateProfile(userA);
                             endTime = System.nanoTime();
 
                             break;
                         case READ:
+                            System.out.println("READ");
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
                             break ;
                         case GROUPE:
+                            System.out.println("GROUPE");
                             if (random.nextInt(2) == 0){
                                 startTime = System.nanoTime();
                                 database.joinCommunity(userA);
