@@ -818,6 +818,13 @@ public class Retwis {
 
             int typeComputed = type;
 
+
+            userA = database
+                    .getLocalUsersUsageProbability()
+                    .get(myId.get())
+                    .ceilingEntry(0L)
+                    .getValue();
+
             startTime = System.nanoTime();
             database.followUser(userA, dummyUserFollow);
             endTime = System.nanoTime();
