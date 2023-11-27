@@ -870,6 +870,10 @@ public class Retwis {
                                 .get(myId.get())
                                 .ceilingEntry(val)
                                 .getValue();
+
+                        System.out.println(database
+                                .getLocalUsersUsageProbability()
+                                .get(myId.get()));
                     }catch (NullPointerException e){
 
                         System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
