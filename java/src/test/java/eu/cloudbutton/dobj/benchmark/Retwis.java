@@ -938,6 +938,7 @@ public class Retwis {
 //                            userB = listFollow.poll();
 
                             database.followUser(userA, dummyUser);
+                            System.out.println("followed");
                             startTime = System.nanoTime();
                             database.unfollowUser(userA, dummyUser);
                             endTime = System.nanoTime();
