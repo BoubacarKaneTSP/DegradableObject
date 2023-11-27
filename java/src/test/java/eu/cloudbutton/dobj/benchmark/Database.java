@@ -786,9 +786,6 @@ public class Database {
         mapProfiles.put(user, 0);
         mapFollowers.put(user, new ConcurrentHashSet<>());
 
-        System.out.println(user + " has been added");
-        System.out.println(mapFollowers.keySet());
-        System.out.println();
 //        if (typeSet.contains("Extended"))
 //            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
 //        else
