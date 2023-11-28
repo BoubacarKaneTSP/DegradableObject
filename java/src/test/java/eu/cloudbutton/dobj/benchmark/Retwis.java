@@ -796,7 +796,7 @@ public class Retwis {
         public int chooseOperation(){
             int type;
 
-            int val = random.nextInt(100)+1;
+            int val = random.nextInt(100);
             if(val < ratiosArray[0]){ // add
                 type = ADD;
             }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
