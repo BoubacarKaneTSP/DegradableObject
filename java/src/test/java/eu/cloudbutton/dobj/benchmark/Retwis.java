@@ -785,7 +785,7 @@ public class Retwis {
                     timeDurations.get(op).addAll(timeLocalDurations.get(op));
                 }
 
-                userUsageDistribution.addAll(localUserUsageDistribution);
+//                userUsageDistribution.addAll(localUserUsageDistribution);
 
             } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InstantiationException e) {
                 e.printStackTrace();
@@ -896,8 +896,8 @@ public class Retwis {
 //                    if (nbAttempt > nbAttemptMax)
 //                        typeComputed = chooseOperation();
 
-                    if (!flagWarmingUp.get())
-                        localUserUsageDistribution.add(userA.toString());
+//                    if (!flagWarmingUp.get())
+//                        localUserUsageDistribution.add(userA.toString());
 
 //                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
                     long val = 0;
