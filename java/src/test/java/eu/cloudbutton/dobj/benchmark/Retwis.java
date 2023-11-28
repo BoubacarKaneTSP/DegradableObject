@@ -663,6 +663,7 @@ public class Retwis {
         private final CountDownLatch latchFillCompletionTime;
         private Long localUsersUsageProbabilityRange;
         private Long usersFollowProbabilityRange;
+        private Queue<String> localUserUsageDistribution;
         private final String msg = "new msg";
         AtomicInteger counterID;
         private final ThreadLocal<Integer> myId;
@@ -703,6 +704,7 @@ public class Retwis {
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 nbLocalUsers = database.getListLocalUser().get(myId.get()).size();
+                localUserUsageDistribution = new LinkedList<>();
 
                 listOperationToDo = new ArrayList<>();
 
@@ -782,6 +784,8 @@ public class Retwis {
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
                     timeDurations.get(op).addAll(timeLocalDurations.get(op));
                 }
+
+                userUsageDistribution.addAll(localUserUsageDistribution);
 
             } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InstantiationException e) {
                 e.printStackTrace();
@@ -892,8 +896,8 @@ public class Retwis {
 //                    if (nbAttempt > nbAttemptMax)
 //                        typeComputed = chooseOperation();
 
-//                    if (!flagWarmingUp.get())
-//                        userUsageDistribution.add(userA.toString());
+                    if (!flagWarmingUp.get())
+                        localUserUsageDistribution.add(userA.toString());
 
 //                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
                     long val = 0;
