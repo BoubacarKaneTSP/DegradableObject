@@ -829,178 +829,198 @@ public class Retwis {
 
             int typeComputed = type;
 
-            if (cleanTimeline){
+            startTime = System.nanoTime();
+            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
+            endTime = System.nanoTime();
 
-                typeComputed = READ;
+            database.removeUser(dummyUser);
 
-                for (int i = 0; i < nbLocalUsers; i++) {
-                    userA = database.getListLocalUser().get(myId.get()).get(i);
+            if (!flagWarmingUp.get()) {
+                timeOps.get(typeComputed).val+= endTime - startTime;
+                timeLocalDurations
+                        .get(typeComputed)
+                        .add(endTime - startTime);
 
-                    startTime = System.nanoTime();
-                    database.showTimeline(userA);
-                    endTime = System.nanoTime();
-
-                    if (!flagWarmingUp.get()) {
-//                        nbOps.get(typeComputed).val += 1;
-                        nbOperations.get(typeComputed).incrementAndGet();
-                        timeOps.get(typeComputed).val += endTime - startTime;
-                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
-
-                        startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).incrementAndGet();
-                        endTime = System.nanoTime();
-                        timeOps.get(COUNT).val += endTime - startTime;
-                        timeLocalDurations.get(COUNT).add(endTime - startTime);
-                    }
-                }
-
+                startTime = System.nanoTime();
+                nbOperations.get(typeComputed).incrementAndGet();
+                endTime = System.nanoTime();
+                timeOps.get(COUNT).val += endTime - startTime;
+                timeLocalDurations.get(COUNT).add(endTime - startTime);
             }
-            else{
-                /*To avoid infinite loop if :
-                 * - When doing follow, all user handle by thread i already follow all users in usersProbability.
-                 * - When doing unfollow, all user handle by thread i do not follow anyone.
-                 *
-                 * We use an int nbAttempt to change the operation after an amount of fail
-                 * When probability of not doing an operation on userA is less than 1%.
-                 * */
-                restartOperation : for (;;){
-                    if (nbLocalUsers == 0)
-                        break ;
 
-                    nbAttempt ++;
-
-                    if (nbAttempt > nbAttemptMax)
-                        typeComputed = chooseOperation();
-
-                    if (!flagWarmingUp.get())
-                        userUsageDistribution.add(userA.toString());
-
-//                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
-                    long val = 0;
-
-                    try{
-                        userA = database
-                                .getLocalUsersUsageProbability()
-                                .get(myId.get())
-                                .ceilingEntry(val)
-                                .getValue();
-
-                    }catch (NullPointerException e){
-
-                        System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
-                                "val : " + val + "\n" +
-                                "max val : " + database
-                                .getLocalUsersUsageProbability()
-                                .get(myId.get())
-                                .lastKey() + "\n" +
-                                "value returned : " + database
-                                        .getLocalUsersUsageProbability()
-                                        .get(myId.get())
-                                        .ceilingEntry(val) + "\n"
-                                );
-                        System.exit(0);
-                    }
-
-                    Queue<Key> listFollow;
-
-                    switch (typeComputed){
-                        case ADD:
-
-                            startTime = System.nanoTime();
-                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
-                            endTime = System.nanoTime();
-
-                            database.removeUser(dummyUser);
-                            break;
-                        case FOLLOW:
-//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
-
-//                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
-//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
-
-                            startTime = System.nanoTime();
-                            database.followUser(userA, dummyUserFollow);
-                            endTime = System.nanoTime();
-
-                            database.unfollowUser(userA,dummyUserFollow);
-//                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
 //
+//            if (cleanTimeline){
 //
-//                            }else
-//                                continue restartOperation;
-
-                            break;
-                        case UNFOLLOW:
-
-//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
-
-//                            if (listFollow.size() == 0) {
-////                                System.out.println("restart");
-//                                continue restartOperation;
+//                typeComputed = READ;
+//
+//                for (int i = 0; i < nbLocalUsers; i++) {
+//                    userA = database.getListLocalUser().get(myId.get()).get(i);
+//
+//                    startTime = System.nanoTime();
+//                    database.showTimeline(userA);
+//                    endTime = System.nanoTime();
+//
+//                    if (!flagWarmingUp.get()) {
+////                        nbOps.get(typeComputed).val += 1;
+//                        nbOperations.get(typeComputed).incrementAndGet();
+//                        timeOps.get(typeComputed).val += endTime - startTime;
+//                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
+//
+//                        startTime = System.nanoTime();
+//                        nbOperations.get(typeComputed).incrementAndGet();
+//                        endTime = System.nanoTime();
+//                        timeOps.get(COUNT).val += endTime - startTime;
+//                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+//                    }
+//                }
+//
+//            }
+//            else{
+//                /*To avoid infinite loop if :
+//                 * - When doing follow, all user handle by thread i already follow all users in usersProbability.
+//                 * - When doing unfollow, all user handle by thread i do not follow anyone.
+//                 *
+//                 * We use an int nbAttempt to change the operation after an amount of fail
+//                 * When probability of not doing an operation on userA is less than 1%.
+//                 * */
+//                restartOperation : for (;;){
+//                    if (nbLocalUsers == 0)
+//                        break ;
+//
+//                    nbAttempt ++;
+//
+//                    if (nbAttempt > nbAttemptMax)
+//                        typeComputed = chooseOperation();
+//
+//                    if (!flagWarmingUp.get())
+//                        userUsageDistribution.add(userA.toString());
+//
+////                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
+//                    long val = 0;
+//
+//                    try{
+//                        userA = database
+//                                .getLocalUsersUsageProbability()
+//                                .get(myId.get())
+//                                .ceilingEntry(val)
+//                                .getValue();
+//
+//                    }catch (NullPointerException e){
+//
+//                        System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
+//                                "val : " + val + "\n" +
+//                                "max val : " + database
+//                                .getLocalUsersUsageProbability()
+//                                .get(myId.get())
+//                                .lastKey() + "\n" +
+//                                "value returned : " + database
+//                                        .getLocalUsersUsageProbability()
+//                                        .get(myId.get())
+//                                        .ceilingEntry(val) + "\n"
+//                                );
+//                        System.exit(0);
+//                    }
+//
+//                    Queue<Key> listFollow;
+//
+//                    switch (typeComputed){
+//                        case ADD:
+//
+//                            startTime = System.nanoTime();
+//                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
+//                            endTime = System.nanoTime();
+//
+//                            database.removeUser(dummyUser);
+//                            break;
+//                        case FOLLOW:
+////                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+//
+////                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
+////                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+//
+//                            startTime = System.nanoTime();
+//                            database.followUser(userA, dummyUserFollow);
+//                            endTime = System.nanoTime();
+//
+//                            database.unfollowUser(userA,dummyUserFollow);
+////                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
+////
+////
+////                            }else
+////                                continue restartOperation;
+//
+//                            break;
+//                        case UNFOLLOW:
+//
+////                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+//
+////                            if (listFollow.size() == 0) {
+//////                                System.out.println("restart");
+////                                continue restartOperation;
+////                            }
+////
+////                            userB = listFollow.poll();
+//
+//                            database.followUser(userA, dummyUserFollow);
+//                            startTime = System.nanoTime();
+//                            database.unfollowUser(userA, dummyUserFollow);
+//                            endTime = System.nanoTime();
+//
+////                            database.followUser(userA, userB);
+////                            if (userB != null){ // Perform unfollow only if userA already follow someone
+////                                listFollow.add(userB);
+////                            }else {
+////                                System.out.println("user null");
+////                                continue restartOperation;
+////                            }
+//                            break;
+//                        case TWEET:
+//                            startTime = System.nanoTime();
+//                            database.tweet(userA, msg);
+//                            endTime = System.nanoTime();
+//                            break;
+//                        case PROFILE:
+//                            startTime = System.nanoTime();
+//                            database.updateProfile(userA);
+//                            endTime = System.nanoTime();
+//
+//                            break;
+//                        case READ:
+//                            startTime = System.nanoTime();
+//                            database.showTimeline(userA);
+//                            endTime = System.nanoTime();
+//                            break ;
+//                        case GROUPE:
+//                            if (numOperation%2 == 0){
+//                                startTime = System.nanoTime();
+//                                database.joinCommunity(userA);
+//                                endTime = System.nanoTime();
+//                            }else{
+//                                startTime = System.nanoTime();
+//                                database.leaveCommunity(userA);
+//                                endTime = System.nanoTime();
 //                            }
+//                            break ;
+//                        default:
+//                            throw new IllegalStateException("Unexpected value: " + type);
+//                    }
 //
-//                            userB = listFollow.poll();
-
-                            database.followUser(userA, dummyUserFollow);
-                            startTime = System.nanoTime();
-                            database.unfollowUser(userA, dummyUserFollow);
-                            endTime = System.nanoTime();
-
-//                            database.followUser(userA, userB);
-//                            if (userB != null){ // Perform unfollow only if userA already follow someone
-//                                listFollow.add(userB);
-//                            }else {
-//                                System.out.println("user null");
-//                                continue restartOperation;
-//                            }
-                            break;
-                        case TWEET:
-                            startTime = System.nanoTime();
-                            database.tweet(userA, msg);
-                            endTime = System.nanoTime();
-                            break;
-                        case PROFILE:
-                            startTime = System.nanoTime();
-                            database.updateProfile(userA);
-                            endTime = System.nanoTime();
-
-                            break;
-                        case READ:
-                            startTime = System.nanoTime();
-                            database.showTimeline(userA);
-                            endTime = System.nanoTime();
-                            break ;
-                        case GROUPE:
-                            if (numOperation%2 == 0){
-                                startTime = System.nanoTime();
-                                database.joinCommunity(userA);
-                                endTime = System.nanoTime();
-                            }else{
-                                startTime = System.nanoTime();
-                                database.leaveCommunity(userA);
-                                endTime = System.nanoTime();
-                            }
-                            break ;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + type);
-                    }
-
-                    if (!flagWarmingUp.get()) {
-                        timeOps.get(typeComputed).val+= endTime - startTime;
-                        timeLocalDurations
-                                .get(typeComputed)
-                                .add(endTime - startTime);
-
-                        startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).incrementAndGet();
-                        endTime = System.nanoTime();
-                        timeOps.get(COUNT).val += endTime - startTime;
-                        timeLocalDurations.get(COUNT).add(endTime - startTime);
-                    }
-
-                    break;
-                }
-            }
+//                    if (!flagWarmingUp.get()) {
+//                        timeOps.get(typeComputed).val+= endTime - startTime;
+//                        timeLocalDurations
+//                                .get(typeComputed)
+//                                .add(endTime - startTime);
+//
+//                        startTime = System.nanoTime();
+//                        nbOperations.get(typeComputed).incrementAndGet();
+//                        endTime = System.nanoTime();
+//                        timeOps.get(COUNT).val += endTime - startTime;
+//                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+//                    }
+//
+//                    break;
+//                }
+//            }
 
         }
 
