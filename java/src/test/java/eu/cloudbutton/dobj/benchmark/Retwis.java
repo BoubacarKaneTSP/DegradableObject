@@ -673,6 +673,7 @@ public class Retwis {
         Timeline<String> dummyTimeline;
         Profile dummyProfile;
         long startTime, endTime;
+        List<Integer> listOperationToDo;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime) {
             this.random = ThreadLocalRandom.current();
@@ -687,6 +688,8 @@ public class Retwis {
 
             try{
                 int type;
+                int sizeOpToDo = 10_000;
+
                 myId.set(database.getCount().getAndIncrement());
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
@@ -701,6 +704,11 @@ public class Retwis {
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 nbLocalUsers = database.getListLocalUser().get(myId.get()).size();
 
+                listOperationToDo = new ArrayList<>();
+
+                for (int i = 0; i < sizeOpToDo; i++) {
+                    listOperationToDo.add(chooseOperation());
+                }
 
                 dummyUser = database.generateUser();
                 dummySet = new HashSet<>();
@@ -714,10 +722,11 @@ public class Retwis {
                 boolean cleanTimeline = false;
 
                 while (flagWarmingUp.get()) { // warm up
-                    type = chooseOperation();
-                    compute(type, timeLocalOperations, timeLocalDurations, false);
+//                    type = chooseOperation();
+                    type = listOperationToDo.get(num%sizeOpToDo);
+                    compute(type, timeLocalOperations, timeLocalDurations, false,num);
 
-                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+//                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
 
 
@@ -730,8 +739,8 @@ public class Retwis {
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-                        compute(type, timeLocalOperations, timeLocalDurations, false);
-                        cleanTimeline = i % (2 * _nbUserInit) == 0;
+                        compute(type, timeLocalOperations, timeLocalDurations, false, i);
+//                        cleanTimeline = i % (2 * _nbUserInit) == 0;
 
                     }
                 }else{
@@ -740,19 +749,21 @@ public class Retwis {
 
                     while (flagComputing.get()){
 
-                        type = chooseOperation();
+//                        type = chooseOperation();
+                        type = listOperationToDo.get(num%sizeOpToDo);
 
                         if (_multipleOperation){
                             int nbRepeat = 1000;
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, timeLocalOperations, timeLocalDurations, false);
-                                cleanTimeline = num++ % (2 * _nbUserInit) == 0;
-
+                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
+//                                cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+                                num++;
                             }
                         }else{
 
-                            compute(type, timeLocalOperations, timeLocalDurations, false);
-                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
+                            num++;
+//                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
                 }
@@ -807,7 +818,7 @@ public class Retwis {
             return type;
         }
 
-        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             startTime = 0L;
             endTime= 0L;
@@ -818,34 +829,7 @@ public class Retwis {
 
             int typeComputed = type;
 
-
-            userA = database
-                    .getLocalUsersUsageProbability()
-                    .get(myId.get())
-                    .ceilingEntry(0L)
-                    .getValue();
-
-            startTime = System.nanoTime();
-            database.followUser(userA, dummyUserFollow);
-            endTime = System.nanoTime();
-
-            database.unfollowUser(userA,dummyUserFollow);
-
-            if (!flagWarmingUp.get()) {
-                timeOps.get(typeComputed).val+= endTime - startTime;
-                timeLocalDurations
-                        .get(typeComputed)
-                        .add(endTime - startTime);
-
-                startTime = System.nanoTime();
-                nbOperations.get(typeComputed).incrementAndGet();
-                endTime = System.nanoTime();
-                timeOps.get(COUNT).val += endTime - startTime;
-                timeLocalDurations.get(COUNT).add(endTime - startTime);
-            }
-            return;
-
-            /*if (cleanTimeline){
+            if (cleanTimeline){
 
                 typeComputed = READ;
 
@@ -872,13 +856,13 @@ public class Retwis {
 
             }
             else{
-                *//*To avoid infinite loop if :
+                /*To avoid infinite loop if :
                  * - When doing follow, all user handle by thread i already follow all users in usersProbability.
                  * - When doing unfollow, all user handle by thread i do not follow anyone.
                  *
                  * We use an int nbAttempt to change the operation after an amount of fail
                  * When probability of not doing an operation on userA is less than 1%.
-                 * *//*
+                 * */
                 restartOperation : for (;;){
                     if (nbLocalUsers == 0)
                         break ;
@@ -987,7 +971,7 @@ public class Retwis {
                             endTime = System.nanoTime();
                             break ;
                         case GROUPE:
-                            if (random.nextInt(2) == 0){
+                            if (numOperation%2 == 0){
                                 startTime = System.nanoTime();
                                 database.joinCommunity(userA);
                                 endTime = System.nanoTime();
@@ -1017,7 +1001,7 @@ public class Retwis {
                     break;
                 }
             }
-*/
+
         }
 
         public void resetAllTimeline(){
