@@ -1084,10 +1084,10 @@ public class Retwis {
 
 //                    saveTimelineHistogram();
 
-                    saveUserUsageDistribution();
+//                    saveUserUsageDistribution();
 
 //                    saveDistributionHistogram("Post_Benchmark");
-                    saveOperationDistribution();
+//                    saveOperationDistribution();
                 }else{
 
                     long startTime, endTime;
