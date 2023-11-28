@@ -892,8 +892,8 @@ public class Retwis {
 //                    if (nbAttempt > nbAttemptMax)
 //                        typeComputed = chooseOperation();
 
-                    if (!flagWarmingUp.get())
-                        userUsageDistribution.add(userA.toString());
+//                    if (!flagWarmingUp.get())
+//                        userUsageDistribution.add(userA.toString());
 
 //                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
                     long val = 0;
