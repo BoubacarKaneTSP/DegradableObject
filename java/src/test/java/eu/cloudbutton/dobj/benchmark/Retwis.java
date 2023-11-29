@@ -852,7 +852,6 @@ public class Retwis {
                 timeLocalDurations.get(COUNT).add(endTime - startTime);
             }*/
 
-            System.out.println(timeLocalDurations.get(COUNT).size());
             if (cleanTimeline){
 
                 typeComputed = READ;
@@ -1021,6 +1020,8 @@ public class Retwis {
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
                         timeLocalDurations.get(COUNT).add(endTime - startTime);
+                        System.out.println(timeLocalDurations.get(COUNT).size());
+
                     }
 
                     break;
