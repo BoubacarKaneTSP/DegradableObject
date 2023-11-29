@@ -765,6 +765,10 @@ public class Retwis {
 
                             compute(type, timeLocalOperations, timeLocalDurations, false, num);
                             num++;
+
+                            if (num%100000 == 0)
+                                System.out.println(timeLocalDurations.get(COUNT).size());
+
 //                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
@@ -1020,7 +1024,7 @@ public class Retwis {
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
                         timeLocalDurations.get(COUNT).add(endTime - startTime);
-                        System.out.println(timeLocalDurations.get(COUNT).size());
+//                        System.out.println(timeLocalDurations.get(COUNT).size());
 
                     }
 
