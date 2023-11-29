@@ -801,6 +801,11 @@ public class Database {
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
         mapProfiles.put(user, 0);
+
+        System.out.println("mapFollower size " + mapFollowers.size());
+        System.out.println("mapFollowing size " + mapFollowing.size());
+        System.out.println("mapTimelines size " + mapTimelines.size());
+        System.out.println("mapProfiles size " + mapProfiles.size());
     }
 
     public void removeUser(Key user){
