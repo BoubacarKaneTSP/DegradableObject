@@ -251,7 +251,7 @@ public class Retwis {
                 nbOperations = new CopyOnWriteArrayList<>();
                 timeOperations = new CopyOnWriteArrayList<>();
                 userUsageDistribution = new ConcurrentLinkedQueue<>();
-                timeDurations = new ConcurrentHashMap<>();
+//                timeDurations = new ConcurrentHashMap<>();
                 queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
@@ -262,7 +262,7 @@ public class Retwis {
                 for (int op: mapIntOptoStringOp.keySet()) {
                     nbOperations.add(op, Factory.createCounter(typeCounter));
                     timeOperations.add(op, new AtomicLong());
-                    timeDurations.put(op, new CopyOnWriteArrayList<>());
+//                    timeDurations.put(op, new CopyOnWriteArrayList<>());
                 }
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
@@ -694,11 +694,11 @@ public class Retwis {
                 myId.set(database.getCount().getAndIncrement());
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
-                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
+//                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
 
                 for (int op: mapIntOptoStringOp.keySet()){
                     timeLocalOperations.put(op, new BoxedLong());
-                    timeLocalDurations.put(op, new ArrayList<>());
+//                    timeLocalDurations.put(op, new ArrayList<>());
                 }
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
@@ -726,7 +726,8 @@ public class Retwis {
                 while (flagWarmingUp.get()) { // warm up
 //                    type = chooseOperation();
                     type = listOperationToDo.get(num%sizeOpToDo);
-                    compute(type, timeLocalOperations, timeLocalDurations, false,num);
+//                    compute(type, timeLocalOperations, timeLocalDurations, false,num);
+                    compute(type, timeLocalOperations, false,num);
 
 //                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
@@ -741,7 +742,8 @@ public class Retwis {
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-                        compute(type, timeLocalOperations, timeLocalDurations, false, i);
+//                        compute(type, timeLocalOperations, timeLocalDurations, false, i);
+                        compute(type, timeLocalOperations, false, i);
 //                        cleanTimeline = i % (2 * _nbUserInit) == 0;
 
                     }
@@ -757,17 +759,16 @@ public class Retwis {
                         if (_multipleOperation){
                             int nbRepeat = 1000;
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
+                                compute(type, timeLocalOperations, false,num);
+//                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
 //                                cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                                 num++;
                             }
                         }else{
 
-                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
+                            compute(type, timeLocalOperations, false, num);
+//                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
                             num++;
-
-                            if (num%1000000 == 0)
-                                System.out.println(timeLocalDurations.get(COUNT).size());
 
 //                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
@@ -786,7 +787,7 @@ public class Retwis {
                 for (int op: mapIntOptoStringOp.keySet()){
 //                    nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
                     timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
-                    timeDurations.get(op).addAll(timeLocalDurations.get(op));
+//                    timeDurations.get(op).addAll(timeLocalDurations.get(op));
                 }
 
 //                userUsageDistribution.addAll(localUserUsageDistribution);
@@ -826,7 +827,8 @@ public class Retwis {
             return type;
         }
 
-        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+//        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
             startTime = 0L;
             endTime= 0L;
@@ -871,13 +873,13 @@ public class Retwis {
 //                        nbOps.get(typeComputed).val += 1;
                         nbOperations.get(typeComputed).incrementAndGet();
                         timeOps.get(typeComputed).val += endTime - startTime;
-                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
+//                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
 
                         startTime = System.nanoTime();
                         nbOperations.get(typeComputed).incrementAndGet();
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
-                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+//                        timeLocalDurations.get(COUNT).add(endTime - startTime);
 
                     }
                 }
@@ -1015,15 +1017,15 @@ public class Retwis {
 
                     if (!flagWarmingUp.get()) {
                         timeOps.get(typeComputed).val+= endTime - startTime;
-                        timeLocalDurations
-                                .get(typeComputed)
-                                .add(endTime - startTime);
+//                        timeLocalDurations
+//                                .get(typeComputed)
+//                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
                         nbOperations.get(typeComputed).incrementAndGet();
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
-                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+//                        timeLocalDurations.get(COUNT).add(endTime - startTime);
 //                        System.out.println(timeLocalDurations.get(COUNT).size());
 
                     }
