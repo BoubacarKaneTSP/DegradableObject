@@ -727,13 +727,13 @@ public class Retwis {
 //                    type = chooseOperation();
                     type = listOperationToDo.get(num%sizeOpToDo);
 //                    compute(type, timeLocalOperations, timeLocalDurations, false,num);
-                    compute(type, timeLocalOperations, false,num);
+                    compute(type, timeLocalOperations, cleanTimeline,num);
 
-//                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
 
 
-//                resetAllTimeline();
+                resetAllTimeline();
 
                 long startTimeBenchmark, endTimeBenchmark;
 
@@ -743,8 +743,8 @@ public class Retwis {
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
 //                        compute(type, timeLocalOperations, timeLocalDurations, false, i);
-                        compute(type, timeLocalOperations, false, i);
-//                        cleanTimeline = i % (2 * _nbUserInit) == 0;
+                        compute(type, timeLocalOperations, cleanTimeline, i);
+                        cleanTimeline = i % (2 * _nbUserInit) == 0;
 
                     }
                 }else{
@@ -759,18 +759,18 @@ public class Retwis {
                         if (_multipleOperation){
                             int nbRepeat = 1000;
                             for (int j = 0; j < nbRepeat; j++) {
-                                compute(type, timeLocalOperations, false,num);
+                                compute(type, timeLocalOperations, cleanTimeline,num);
 //                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
-//                                cleanTimeline = num++ % (2 * _nbUserInit) == 0;
-                                num++;
+                                cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+//                                num++;
                             }
                         }else{
 
-                            compute(type, timeLocalOperations, false, num);
+                            compute(type, timeLocalOperations, cleanTimeline, num);
 //                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
-                            num++;
+//                            num++;
 
-//                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
                 }
