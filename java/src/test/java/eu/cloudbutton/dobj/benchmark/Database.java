@@ -127,8 +127,8 @@ public class Database {
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
 //        loadGraph();
-        loadCompleteGraph();
-//        loadDAPGraph();
+//        loadCompleteGraph();
+        loadDAPGraph();
     }
 
     public Key generateUser(){

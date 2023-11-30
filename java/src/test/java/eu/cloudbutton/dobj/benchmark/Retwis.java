@@ -905,8 +905,8 @@ public class Retwis {
 //                    if (!flagWarmingUp.get())
 //                        localUserUsageDistribution.add(userA.toString());
 
-                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
-//                    long val = 0;
+//                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
+                    long val = 0;
 
                     try{
                         userA = database
