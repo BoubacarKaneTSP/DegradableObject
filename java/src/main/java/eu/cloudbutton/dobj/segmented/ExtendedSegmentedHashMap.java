@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHashMap> implements Map<K,V> {
 
@@ -164,6 +165,15 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
 //        System.out.println("the couple : ("+k+","+v+") is added" );
         return (V) segmentFor(k).put(k,v);
     }
+
+    @Override
+    public V compute(K key,
+                     BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+
+        return (V) segmentFor(key).compute(key, remappingFunction);
+    }
+
+
 
     @Override
     public V remove(Object o) {
