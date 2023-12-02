@@ -1,0 +1,24 @@
+nbThread : 96
+[0.330s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 256M->11M(5120M) 29.448ms
+[0.612s][info][gc] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 251M->23M(5120M) 19.968ms
+[0.822s][info][gc] GC(2) Pause Young (Normal) (G1 Evacuation Pause) 247M->30M(5120M) 20.571ms
+[1.083s][info][gc] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 286M->39M(5120M) 28.988ms
+[1.173s][info][gc] GC(4) Pause Young (Normal) (G1 Evacuation Pause) 311M->51M(10240M) 38.938ms
+[1.275s][info][gc] GC(5) Pause Young (Normal) (G1 Evacuation Pause) 531M->71M(10240M) 36.756ms
+[1.333s][info][gc] GC(6) Pause Young (Normal) (G1 Evacuation Pause) 535M->94M(10240M) 31.828ms
+[1.408s][info][gc] GC(7) Pause Young (Normal) (G1 Evacuation Pause) 574M->117M(10240M) 47.636ms
+[1.489s][info][gc] GC(8) Pause Young (Normal) (G1 Evacuation Pause) 613M->143M(26912M) 52.516ms
+[1.718s][info][gc] GC(9) Pause Young (Normal) (G1 Evacuation Pause) 1423M->170M(26912M) 45.050ms
+[1.825s][info][gc] GC(10) Pause Young (Normal) (G1 Evacuation Pause) 1434M->178M(26912M) 34.155ms
+[2.113s][info][gc] GC(11) Pause Young (Normal) (G1 Evacuation Pause) 4242M->181M(26912M) 40.995ms
+[3.106s][info][gc] GC(12) Pause Young (Normal) (G1 Evacuation Pause) 16229M->183M(54256M) 97.307ms
+[4.979s][info][gc] GC(13) Pause Young (Normal) (G1 Evacuation Pause) 32631M->177M(54256M) 32.343ms
+Start benchmark
+[7.114s][info][gc] GC(14) Pause Young (Normal) (G1 Evacuation Pause) 32625M->190M(54256M) 36.588ms
+[8.755s][info][gc] GC(15) Pause Young (Normal) (G1 Evacuation Pause) 32622M->184M(54256M) 37.883ms
+[10.402s][info][gc] GC(16) Pause Young (Normal) (G1 Evacuation Pause) 32632M->181M(54256M) 34.543ms
+[12.028s][info][gc] GC(17) Pause Young (Normal) (G1 Evacuation Pause) 32629M->180M(54256M) 36.708ms
+[13.663s][info][gc] GC(18) Pause Young (Normal) (G1 Evacuation Pause) 32628M->182M(54256M) 35.288ms
+[15.287s][info][gc] GC(19) Pause Young (Normal) (G1 Evacuation Pause) 32630M->188M(54256M) 30.650ms
+End benchmark
+benchmarkAvgTime : 9920
