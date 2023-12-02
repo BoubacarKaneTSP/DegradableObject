@@ -542,29 +542,29 @@ public class Retwis {
                     }
 
                     if (_s){
-                        FileWriter timeComputedFile,
-                                avgFollowerFile,
-                                avgFollowingFile,
-                                proportionMaxFollowerFile,
-                                proportionMaxFollowingFile,
-                                proportionUserWithMaxFollowerFile,
-                                proportionUserWithMaxFollowingFile,
-                                proportionUserWithoutFollowerFile,
-                                proportionUserWithoutFollowingFile,
-                                nbUserFinalFile,
-                                nbTweetFinalFile;
+                        FileWriter timeComputedFile;
+//                                avgFollowerFile,
+//                                avgFollowingFile,
+//                                proportionMaxFollowerFile,
+//                                proportionMaxFollowingFile,
+//                                proportionUserWithMaxFollowerFile,
+//                                proportionUserWithMaxFollowingFile,
+//                                proportionUserWithoutFollowerFile,
+//                                proportionUserWithoutFollowingFile,
+//                                nbUserFinalFile,
+//                                nbTweetFinalFile;
 
-                        PrintWriter timeComputedPrint,
-                                avgFollowerPrint,
-                                avgFollowingPrint,
-                                proportionMaxFollowerPrint,
-                                proportionMaxFollowingPrint,
-                                proportionUserWithMaxFollowerPrint,
-                                proportionUserWithMaxFollowingPrint,
-                                nbUserWithoutFollowerPrint,
-                                nbUserWithoutFollowingPrint,
-                                nbUserFinalPrint,
-                                nbTweetFinalPrint;
+                        PrintWriter timeComputedPrint;
+//                                avgFollowerPrint,
+//                                avgFollowingPrint,
+//                                proportionMaxFollowerPrint,
+//                                proportionMaxFollowingPrint,
+//                                proportionUserWithMaxFollowerPrint,
+//                                proportionUserWithMaxFollowingPrint,
+//                                nbUserWithoutFollowerPrint,
+//                                nbUserWithoutFollowingPrint,
+//                                nbUserFinalPrint,
+//                                nbTweetFinalPrint;
 
                         boolean append = true;
 //                        boolean append = flag_append != 0;
@@ -573,64 +573,64 @@ public class Retwis {
                         nameFile = _tag+"_"+_nbUserInit+".txt";
 
                         timeComputedFile = new FileWriter("avg_time_computed_" + nameFile, append);
-                        avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
-                        avgFollowingFile = new FileWriter("avg_Following_" + nameFile, append);
-                        proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
-                        proportionMaxFollowingFile = new FileWriter("proportion_Max_Following_" + nameFile, append);
-                        proportionUserWithMaxFollowerFile = new FileWriter("proportion_User_With_Max_Follower_" + nameFile,append);
-                        proportionUserWithMaxFollowingFile = new FileWriter("proportion_User_With_Max_Following_" + nameFile,append);
-                        proportionUserWithoutFollowerFile = new FileWriter("proportion_User_Without_Follower_" + nameFile, append);
-                        proportionUserWithoutFollowingFile = new FileWriter("proportion_User_Without_Following_" + nameFile, append);
-                        nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
-                        nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
+//                        avgFollowerFile = new FileWriter("avg_Follower_" + nameFile, append);
+//                        avgFollowingFile = new FileWriter("avg_Following_" + nameFile, append);
+//                        proportionMaxFollowerFile = new FileWriter("proportion_Max_Follower_" + nameFile, append);
+//                        proportionMaxFollowingFile = new FileWriter("proportion_Max_Following_" + nameFile, append);
+//                        proportionUserWithMaxFollowerFile = new FileWriter("proportion_User_With_Max_Follower_" + nameFile,append);
+//                        proportionUserWithMaxFollowingFile = new FileWriter("proportion_User_With_Max_Following_" + nameFile,append);
+//                        proportionUserWithoutFollowerFile = new FileWriter("proportion_User_Without_Follower_" + nameFile, append);
+//                        proportionUserWithoutFollowingFile = new FileWriter("proportion_User_Without_Following_" + nameFile, append);
+//                        nbUserFinalFile = new FileWriter("nb_user_final_" + nameFile, append);
+//                        nbTweetFinalFile = new FileWriter("nb_tweet_final_" + nameFile, append);
 
                         timeComputedPrint = new PrintWriter(timeComputedFile);
-                        avgFollowerPrint = new PrintWriter(avgFollowerFile);
-                        avgFollowingPrint = new PrintWriter(avgFollowingFile);
-                        proportionMaxFollowerPrint = new PrintWriter(proportionMaxFollowerFile);
-                        proportionMaxFollowingPrint = new PrintWriter(proportionMaxFollowingFile);
-                        proportionUserWithMaxFollowerPrint = new PrintWriter(proportionUserWithMaxFollowerFile);
-                        proportionUserWithMaxFollowingPrint = new PrintWriter(proportionUserWithMaxFollowingFile);
-                        nbUserWithoutFollowerPrint = new PrintWriter(proportionUserWithoutFollowerFile);
-                        nbUserWithoutFollowingPrint = new PrintWriter(proportionUserWithoutFollowingFile);
-                        nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
-                        nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
+//                        avgFollowerPrint = new PrintWriter(avgFollowerFile);
+//                        avgFollowingPrint = new PrintWriter(avgFollowingFile);
+//                        proportionMaxFollowerPrint = new PrintWriter(proportionMaxFollowerFile);
+//                        proportionMaxFollowingPrint = new PrintWriter(proportionMaxFollowingFile);
+//                        proportionUserWithMaxFollowerPrint = new PrintWriter(proportionUserWithMaxFollowerFile);
+//                        proportionUserWithMaxFollowingPrint = new PrintWriter(proportionUserWithMaxFollowingFile);
+//                        nbUserWithoutFollowerPrint = new PrintWriter(proportionUserWithoutFollowerFile);
+//                        nbUserWithoutFollowingPrint = new PrintWriter(proportionUserWithoutFollowingFile);
+//                        nbUserFinalPrint = new PrintWriter(nbUserFinalFile);
+//                        nbTweetFinalPrint = new PrintWriter(nbTweetFinalFile);
 
                         timeComputedPrint.println(unit + " " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest);
-                        avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
-                        avgFollowingPrint.println(unit + " " + sumAvgFollowing/_nbTest);
-                        proportionMaxFollowerPrint.println(unit + " " + sumProportionMaxFollower/_nbTest);
-                        proportionMaxFollowingPrint.println(unit + " " + sumProportionMaxFollowing/_nbTest);
-                        proportionUserWithMaxFollowerPrint.println(unit + " " + sumProportionUserWithMaxFollower/_nbTest);
-                        proportionUserWithMaxFollowingPrint.println(unit + " " + sumProportionUserWithMaxFollowing/_nbTest);
-                        nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
-                        nbUserWithoutFollowingPrint.println(unit + " " + sumProportionUserWithoutFollowing/_nbTest);
+//                        avgFollowerPrint.println(unit + " " + sumAvgFollower/_nbTest);
+//                        avgFollowingPrint.println(unit + " " + sumAvgFollowing/_nbTest);
+//                        proportionMaxFollowerPrint.println(unit + " " + sumProportionMaxFollower/_nbTest);
+//                        proportionMaxFollowingPrint.println(unit + " " + sumProportionMaxFollowing/_nbTest);
+//                        proportionUserWithMaxFollowerPrint.println(unit + " " + sumProportionUserWithMaxFollower/_nbTest);
+//                        proportionUserWithMaxFollowingPrint.println(unit + " " + sumProportionUserWithMaxFollowing/_nbTest);
+//                        nbUserWithoutFollowerPrint.println(unit + " " + sumProportionUserWithoutFollower/_nbTest);
+//                        nbUserWithoutFollowingPrint.println(unit + " " + sumProportionUserWithoutFollowing/_nbTest);
 //                        nbUserFinalPrint.println(unit + " " + nbUserFinal/_nbTest);
 //                        nbTweetFinalPrint.println(unit + " " + nbTweetFinal/_nbTest);
 
                         timeComputedPrint.flush();
-                        avgFollowerPrint.flush();
-                        avgFollowingPrint.flush();
-                        proportionMaxFollowerPrint.flush();
-                        proportionMaxFollowingPrint.flush();
-                        proportionUserWithMaxFollowerPrint.flush();
-                        proportionUserWithMaxFollowingPrint.flush();
-                        nbUserWithoutFollowerPrint.flush();
-                        nbUserWithoutFollowingPrint.flush();
-                        nbUserFinalPrint.flush();
-                        nbTweetFinalPrint.flush();
+//                        avgFollowerPrint.flush();
+//                        avgFollowingPrint.flush();
+//                        proportionMaxFollowerPrint.flush();
+//                        proportionMaxFollowingPrint.flush();
+//                        proportionUserWithMaxFollowerPrint.flush();
+//                        proportionUserWithMaxFollowingPrint.flush();
+//                        nbUserWithoutFollowerPrint.flush();
+//                        nbUserWithoutFollowingPrint.flush();
+//                        nbUserFinalPrint.flush();
+//                        nbTweetFinalPrint.flush();
 
                         timeComputedFile.close();
-                        avgFollowerFile.close();
-                        avgFollowingFile.close();
-                        proportionMaxFollowerFile.close();
-                        proportionMaxFollowingFile.close();
-                        proportionUserWithMaxFollowerFile.close();
-                        proportionUserWithMaxFollowingFile.close();
-                        proportionUserWithoutFollowerFile.close();
-                        proportionUserWithoutFollowingFile.close();
-                        nbUserFinalFile.close();
-                        nbTweetFinalFile.close();
+//                        avgFollowerFile.close();
+//                        avgFollowingFile.close();
+//                        proportionMaxFollowerFile.close();
+//                        proportionMaxFollowingFile.close();
+//                        proportionUserWithMaxFollowerFile.close();
+//                        proportionUserWithMaxFollowingFile.close();
+//                        proportionUserWithoutFollowerFile.close();
+//                        proportionUserWithoutFollowingFile.close();
+//                        nbUserFinalFile.close();
+//                        nbTweetFinalFile.close();
                     }
                 }
 
