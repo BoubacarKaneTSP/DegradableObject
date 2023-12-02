@@ -5,8 +5,8 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=2
-benchmarkTime=60
-warmingUpTime=30
+benchmarkTime=10
+warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=50000000000
@@ -21,8 +21,9 @@ do
   python3 rm_file.py $nbUsersInit "JUC" $completion_time
   python3 rm_file.py $nbUsersInit "Q_M_C" $completion_time
   python3 rm_file.py $nbUsersInit "SEQ" $completion_time
-#  rm JUC_${nbUsersInit}_gc_usage.txt
-#  rm Q_M_C_${nbUsersInit}_gc_usage.txt
+  rm JUC_${nbUsersInit}_gc_usage.txt
+  rm Q_M_C_${nbUsersInit}_gc_usage.txt
+  rm SEQ_${nbUsersInit}_gc_usage.txt
 
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
