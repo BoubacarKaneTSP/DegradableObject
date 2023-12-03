@@ -590,7 +590,7 @@ public class Database {
 
         for (int i = 0; i < nbThread; i++) {
             for (int k = 0; k < nbUserPerThread; k++) {
-                for (int j = 0; j < nbUsers; j++) {
+                for (int j = 0; j < nbUserPerThread; j++) {
                     int v = j+(i*nbUserPerThread);
                     int w = k+(i*nbUserPerThread);
                     if (w != v){
