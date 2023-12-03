@@ -573,7 +573,7 @@ public class Database {
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
-        int nbUserPerThread = 1000;
+        int nbUserPerThread = nbUsers;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
             Key user = generateUser();
