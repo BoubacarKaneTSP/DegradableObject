@@ -56,10 +56,10 @@ public class Database {
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
     private final ThreadLocal<Random> random;
-    private static final double SCALEUSAGE = 20; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 1.0; // Paramètre d'échelle de la loi de puissance
-    private static final double FOLLOWERSHAPE = 1.35; // Paramètre de forme de la loi de puissance
-    private static final double FOLLOWINGSHAPE = 1.28; // Paramètre de forme de la loi de puissance
+    private static final double SCALEUSAGE = 10.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
+    private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
+    private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -418,7 +418,7 @@ public class Database {
     private void loadGraph() throws InterruptedException, ClassNotFoundException {
 
         Set<Key> localSetUser = new HashSet<>();
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1.3, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
         int val;
@@ -573,8 +573,9 @@ public class Database {
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
+        int nbUserPerThread = 100;
 
-        for (int i = 0; i < nbThread * 10;) {
+        for (int i = 0; i < nbThread * nbUserPerThread;) {
             Key user = generateUser();
             if (setUser.add(user)){
                 addOriginalUser(user);
@@ -588,10 +589,10 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
-            for (int k = 0; k < 10; k++) {
-                for (int j = 0; j < 10; j++) {
-                    int v = j+(i*10);
-                    int w = k+(i*10);
+            for (int k = 0; k < nbUserPerThread; k++) {
+                for (int j = 0; j < nbUsers; j++) {
+                    int v = j+(i*nbUserPerThread);
+                    int w = k+(i*nbUserPerThread);
                     if (w != v){
                         followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
                         tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
@@ -604,7 +605,7 @@ public class Database {
         long sommeFollow = 0L;
         int j = 1;
 
-        for (int i = 0; i < nbThread*10; i++) {
+        for (int i = 0; i < nbThread*nbUserPerThread; i++) {
             sommeUsage.put(i, new AtomicInteger());
         }
 
@@ -619,7 +620,7 @@ public class Database {
             listLocalUser.get(threadNum).add(user);
             listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
 
-            if (j%10 == 0)
+            if (j%nbUserPerThread == 0)
                 threadNum +=1;
 //            System.out.println(threadNum);
             j++;
