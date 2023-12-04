@@ -575,6 +575,7 @@ public class Database {
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
         int nbUserPerThread = nbUsers;
+        int nbFollowPerThread = 100;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
             Key user = generateUser();
@@ -590,8 +591,8 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
-            for (int k = 0; k < nbUserPerThread; k++) {
-                for (int j = 0; j < nbUserPerThread; j++) {
+            for (int k = 0; k < nbFollowPerThread; k++) {
+                for (int j = 0; j < nbFollowPerThread; j++) {
                     int v = j+(i*nbUserPerThread);
                     int w = k+(i*nbUserPerThread);
                     if (w != v){
