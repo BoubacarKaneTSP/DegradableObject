@@ -579,6 +579,7 @@ public class Database {
         int nbUserFollowingPerThread = 10;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
+            System.out.println(i +"/"+ nbThread*nbUserPerThread);
             Key user = generateUser();
             if (setUser.add(user)){
                 addOriginalUser(user);
