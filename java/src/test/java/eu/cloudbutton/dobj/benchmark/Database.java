@@ -625,16 +625,17 @@ public class Database {
             listLocalUser.get(threadNum).add(user);
             listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
 
-            if (j%nbUserPerThread == 0)
-                threadNum +=1;
-//            System.out.println(threadNum);
+            if (j%nbUserPerThread == 0) {
+                threadNum += 1;
+                System.out.println(threadNum);
+            }
             j++;
         }
 
         System.out.println("mapFollowers \n");
         for (Key user : mapFollowers.keySet()){
             if (mapFollowers.get(user).size() != 0){
-                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Follower : " + mapFollowers.get(user).size());
+//                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Follower : " + mapFollowers.get(user).size());
             }
         }
         System.out.println();
@@ -643,7 +644,7 @@ public class Database {
 
         for (Key user : mapFollowing.keySet()){
             if (mapFollowing.get(user).size() != 0){
-                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Following : " + mapFollowing.get(user).size());
+//                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Following : " + mapFollowing.get(user).size());
             }
         }
 
