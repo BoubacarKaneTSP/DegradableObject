@@ -569,13 +569,14 @@ public class Database {
 
 
     private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
-        System.out.println("Loading DAP graph");
+//        System.out.println("Loading DAP graph");
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
         int nbUserPerThread = nbUsers;
-        int nbFollowPerThread = 100;
+        int nbUserFollowedPerUser = 100;
+        int nbUserFollowingPerThread = 100;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
             Key user = generateUser();
@@ -591,10 +592,10 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
-            for (int k = 0; k < nbFollowPerThread; k++) {
-                for (int j = 0; j < nbFollowPerThread; j++) {
+            for (int k = 0; k < nbUserFollowingPerThread; k++) {
+                int w = k+(i*nbUserPerThread);
+                for (int j = 0; j < nbUserFollowedPerUser; j++) {
                     int v = j+(i*nbUserPerThread);
-                    int w = k+(i*nbUserPerThread);
                     if (w != v){
                         followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
                         tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
@@ -612,6 +613,8 @@ public class Database {
         }
 
         int threadNum = 0;
+
+        System.out.println(listUser.size());
         for (Key user: listUser){
             sommeUsage.get(threadNum).incrementAndGet();
             sommeFollow += 1;
@@ -627,26 +630,26 @@ public class Database {
 
             if (j%nbUserPerThread == 0) {
                 threadNum += 1;
-                System.out.println(threadNum);
+//                System.out.println(threadNum);
             }
             j++;
         }
 
-        System.out.println("mapFollowers \n");
-        for (Key user : mapFollowers.keySet()){
-            if (mapFollowers.get(user).size() != 0){
-//                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Follower : " + mapFollowers.get(user).size());
-            }
-        }
-        System.out.println();
-        System.out.println();
-        System.out.println("mapFollowing \n");
-
-        for (Key user : mapFollowing.keySet()){
-            if (mapFollowing.get(user).size() != 0){
-//                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Following : " + mapFollowing.get(user).size());
-            }
-        }
+//        System.out.println("mapFollowers \n");
+//        for (Key user : mapFollowers.keySet()){
+//            if (mapFollowers.get(user).size() != 0){
+////                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Follower : " + mapFollowers.get(user).size());
+//            }
+//        }
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("mapFollowing \n");
+//
+//        for (Key user : mapFollowing.keySet()){
+//            if (mapFollowing.get(user).size() != 0){
+////                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Following : " + mapFollowing.get(user).size());
+//            }
+//        }
 
 
 /*
