@@ -613,10 +613,10 @@ public class Database {
 
         int threadNum = 0;
         for (Key user: listUser){
-            sommeUsage.get(threadNum).getAndAdd(1);
+            sommeUsage.get(threadNum).incrementAndGet();
             sommeFollow += 1;
 
-            if (sommeUsage.get(threadNum).longValue() == 0)
+            if (sommeUsage.get(threadNum).longValue() == 1)
                 System.out.println("user with longValue 0 : " + user);
 
             localUsersUsageProbability.get(threadNum).put(sommeUsage.get(threadNum).longValue(), user);
