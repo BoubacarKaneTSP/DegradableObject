@@ -569,6 +569,7 @@ public class Database {
 
 
     private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
+        System.out.println("Loading DAP graph");
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
