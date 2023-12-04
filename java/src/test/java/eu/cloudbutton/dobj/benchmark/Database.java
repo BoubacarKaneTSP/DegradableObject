@@ -569,7 +569,7 @@ public class Database {
 
 
     private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
-//        System.out.println("Loading DAP graph");
+        System.out.println("Loading DAP graph");
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
@@ -592,6 +592,7 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
+            System.out.println("thread num : " + i);
             for (int k = 0; k < nbUserFollowingPerThread; k++) {
                 int w = k+(i*nbUserPerThread);
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
