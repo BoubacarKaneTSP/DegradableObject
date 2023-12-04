@@ -627,6 +627,15 @@ public class Database {
 //            System.out.println(threadNum);
             j++;
         }
+
+        for (Key user : mapFollowers.keySet()){
+            System.out.println(mapFollowers.get(user).size());
+        }
+        for (Key user : mapFollowing.keySet()){
+            System.out.println(mapFollowing.get(user).size());
+        }
+
+
 /*
         for (int i = 0; i < nbThread; i++) {
             System.out.println("Thread : " + i + " contains : ");
