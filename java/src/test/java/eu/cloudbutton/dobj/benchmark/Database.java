@@ -616,6 +616,9 @@ public class Database {
             sommeUsage.get(threadNum).addAndGet(1);
             sommeFollow += 1;
 
+            if (sommeUsage.get(threadNum).longValue() == 0)
+                System.out.println("user with longValue 0 : " + user);
+
             localUsersUsageProbability.get(threadNum).put(sommeUsage.get(threadNum).longValue(), user);
             localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
             usersFollowProbability.put(sommeFollow, user);
@@ -628,11 +631,19 @@ public class Database {
             j++;
         }
 
+        System.out.println("mapFollowers \n");
         for (Key user : mapFollowers.keySet()){
-            System.out.println(mapFollowers.get(user).size());
+            if (mapFollowers.get(user).size() != 0){
+                System.out.println(user + " : " + mapFollowers.get(user).size());
+            }
         }
+        System.out.println();
+        System.out.println("mapFollowing \n");
+
         for (Key user : mapFollowing.keySet()){
-            System.out.println(mapFollowing.get(user).size());
+            if (mapFollowing.get(user).size() != 0){
+                System.out.println(user + " : " + mapFollowing.get(user).size());
+            }
         }
 
 
