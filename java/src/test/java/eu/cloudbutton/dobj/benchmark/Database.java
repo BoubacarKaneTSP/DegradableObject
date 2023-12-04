@@ -613,7 +613,7 @@ public class Database {
 
         int threadNum = 0;
         for (Key user: listUser){
-            sommeUsage.get(threadNum).addAndGet(1);
+            sommeUsage.get(threadNum).getAndAdd(1);
             sommeFollow += 1;
 
             if (sommeUsage.get(threadNum).longValue() == 0)
