@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
+import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
@@ -96,8 +97,8 @@ public class Database {
         localUsersUsageProbability = new ConcurrentHashMap<>();
         localUsersUsageProbabilityRange = new ConcurrentHashMap<>();
         nbUsers = nbUserInit;
-//        keyGenerator = new RetwisKeyGenerator(nbUserMax, nbUserMax,10);
-        keyGenerator = new SimpleKeyGenerator(nbUserMax);
+//        keyGenerator = new RetwisKeyGenerator(nbUserMax*nbThread, nbUserMax*nbThread,10);
+        keyGenerator = new SimpleKeyGenerator(nbUserMax * nbThread);
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
@@ -575,11 +576,11 @@ public class Database {
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
         int nbUserPerThread = nbUsers;
-        int nbUserFollowedPerUser = 10;
-        int nbUserFollowingPerThread = 10;
+        int nbUserFollowedPerUser = 100;
+        int nbUserFollowingPerThread = 100;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
-            System.out.println(i +"/"+ nbThread*nbUserPerThread);
+//            System.out.println(i +"/"+ nbThread*nbUserPerThread);
             Key user = generateUser();
             if (setUser.add(user)){
                 addOriginalUser(user);
@@ -593,7 +594,7 @@ public class Database {
         }
 
         for (int i = 0; i < nbThread; i++) {
-            System.out.println("thread num : " + i);
+//            System.out.println("thread num : " + i);
             for (int k = 0; k < nbUserFollowingPerThread; k++) {
                 int w = k+(i*nbUserPerThread);
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
@@ -621,8 +622,8 @@ public class Database {
             sommeUsage.get(threadNum).incrementAndGet();
             sommeFollow += 1;
 
-            if (sommeUsage.get(threadNum).longValue() == 1)
-                System.out.println("user with longValue 0 : " + user);
+//            if (sommeUsage.get(threadNum).longValue() == 1)
+//                System.out.println("user with longValue 0 : " + user);
 
             localUsersUsageProbability.get(threadNum).put(sommeUsage.get(threadNum).longValue(), user);
             localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
