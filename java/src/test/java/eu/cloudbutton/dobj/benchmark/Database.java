@@ -634,15 +634,16 @@ public class Database {
         System.out.println("mapFollowers \n");
         for (Key user : mapFollowers.keySet()){
             if (mapFollowers.get(user).size() != 0){
-                System.out.println(user + " : " + mapFollowers.get(user).size());
+                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Follower : " + mapFollowers.get(user).size());
             }
         }
+        System.out.println();
         System.out.println();
         System.out.println("mapFollowing \n");
 
         for (Key user : mapFollowing.keySet()){
             if (mapFollowing.get(user).size() != 0){
-                System.out.println(user + " : " + mapFollowing.get(user).size());
+                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Following : " + mapFollowing.get(user).size());
             }
         }
 
