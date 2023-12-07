@@ -21,7 +21,7 @@ if avg_flag == "true":
         file_avg = open("perf_"+event+"_"+object_name+"_"+nb_user+"_ExtConcMap.txt", "w")
 
         for i in list_nb_thread:
-            file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt", "r")
+            file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread_ExtConcMap.txt", "r")
             nb_line = 0
             sum = 0
             
@@ -35,7 +35,7 @@ if avg_flag == "true":
             
             file_avg.write(str(i) + " " + str(sum/nb_line) +"\n")
             file.close()
-            os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt")
+            os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread_ExtConcMap.txt")
         file_avg.close()
     
     ratio_cache_misses_avg = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+"_ExtConcMap.txt", "w")
@@ -75,9 +75,9 @@ if avg_flag == "true":
         ratio_branch_misses.close()
         instruction_per_cycle.close()
 
-        os.remove("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt")
-        os.remove("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt")
-        os.remove("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt")
+        os.remove("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread_ExtConcMap.txt")
+        os.remove("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread_ExtConcMap.txt")
+        os.remove("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread_ExtConcMap.txt")
     
     ratio_cache_misses_avg.close()
     ratio_branch_misses_avg.close()
@@ -94,11 +94,11 @@ else:
 
     for event in list_event:
         dico_stat_event[event] = None
-        dico_file_event[event] = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread.txt", append)
+        dico_file_event[event] = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread_ExtConcMap.txt", append)
 
-    ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread.txt", append)
-    ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread.txt", append)
-    instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread.txt", append)
+    ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread_ExtConcMap.txt", append)
+    ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread_ExtConcMap.txt", append)
+    instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + nb_thread+"_thread_ExtConcMap.txt", append)
 
     for line in perf_log_raw.readlines():
 
