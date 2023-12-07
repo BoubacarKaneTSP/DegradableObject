@@ -43,9 +43,9 @@ if avg_flag == "true":
     instruction_per_cycle_avg = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_ExtConcMap.txt", "w")
 
     for i in list_nb_thread:
-        ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
-        ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
-        instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
+        ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread_ExtConcMap.txt", "r")
+        ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread_ExtConcMap.txt", "r")
+        instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread_ExtConcMap.txt", "r")
 
         sum_cache_misses = 0
         sum_branch_misses = 0
