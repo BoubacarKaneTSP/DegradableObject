@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
@@ -96,7 +97,7 @@ public class Database {
 //        }
 
         community = new ExtendedShardedHashSet<>(factoryIndice);
-        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
+        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();

@@ -18,7 +18,7 @@ list_nb_thread = [1,32,96]
 if avg_flag == "true":
 
     for event in list_event:
-        file_avg = open("perf_"+event+"_"+object_name+"_"+nb_user+".txt", "w")
+        file_avg = open("perf_"+event+"_"+object_name+"_"+nb_user+"_ExtConcMap.txt", "w")
 
         for i in list_nb_thread:
             file = open("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt", "r")
@@ -38,9 +38,9 @@ if avg_flag == "true":
             os.remove("perf_"+event+"_"+object_name+"_"+nb_user+ "_" + str(i)+"_thread.txt")
         file_avg.close()
     
-    ratio_cache_misses_avg = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+".txt", "w")
-    ratio_branch_misses_avg = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ ".txt", "w")
-    instruction_per_cycle_avg = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ ".txt", "w")
+    ratio_cache_misses_avg = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+"_ExtConcMap.txt", "w")
+    ratio_branch_misses_avg = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user+ "_ExtConcMap.txt", "w")
+    instruction_per_cycle_avg = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user+ "_ExtConcMap.txt", "w")
 
     for i in list_nb_thread:
         ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user+ "_" + str(i) +"_thread.txt", "r")
