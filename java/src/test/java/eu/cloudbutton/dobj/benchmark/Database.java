@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.sharded.ExtendedShardedHashSet;
@@ -80,12 +81,12 @@ public class Database {
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
-            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+//            mapProfiles = Factory.createMap(typeMap, factoryIndice);
         }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
-            mapProfiles = Factory.createMap(typeMap, nbThread);
+//            mapProfiles = Factory.createMap(typeMap, nbThread);
         }
 
 //        if (typeSet.contains("Extended")){
@@ -95,6 +96,7 @@ public class Database {
 //        }
 
         community = new ExtendedShardedHashSet<>(factoryIndice);
+        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
