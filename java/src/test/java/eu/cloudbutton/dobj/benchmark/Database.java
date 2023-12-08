@@ -97,8 +97,8 @@ public class Database {
         }
 
 //        community = new ExtendedShardedHashSet<>(factoryIndice);
-//        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
-        mapProfiles = new ConcurrentHashMap<>();
+        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
+//        mapProfiles = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
