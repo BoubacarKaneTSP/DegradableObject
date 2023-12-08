@@ -23,6 +23,8 @@ completion_time = sys.argv[4]
 
 list_nb_thread = list_nb_thread.split(" ")
 
+tag_spe = "_ExtConcMap"
+
 if completion_time == "True":
     list_op = ["ALL"]
 else:
@@ -77,7 +79,7 @@ for op in list_op:
 
     file.close()
 
-    file = open(op+"_"+type_obj+"_"+nb_user+"_ExtConcMap.txt","w")
+    file = open(op+"_"+type_obj+"_"+nb_user+tag_spe+".txt","w")
 
     file.write(str_result_avg)
     file.close()
