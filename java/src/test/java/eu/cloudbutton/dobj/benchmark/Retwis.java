@@ -768,9 +768,9 @@ public class Retwis {
 
                             compute(type, timeLocalOperations, cleanTimeline, num);
 //                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
-                            num++;
-
-//                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+//                            num++;
+//
+                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
                 }
