@@ -858,34 +858,34 @@ public class Retwis {
                 timeLocalDurations.get(COUNT).add(endTime - startTime);
             }*/
 
-            if (cleanTimeline){
-
-                typeComputed = READ;
-
-                for (int i = 0; i < nbLocalUsers; i++) {
-                    userA = database.getListLocalUser().get(myId.get()).get(i);
-
-                    startTime = System.nanoTime();
-                    database.showTimeline(userA);
-                    endTime = System.nanoTime();
-
-                    if (!flagWarmingUp.get()) {
-//                        nbOps.get(typeComputed).val += 1;
-                        nbOperations.get(typeComputed).incrementAndGet();
-                        timeOps.get(typeComputed).val += endTime - startTime;
-//                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
-
-                        startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).incrementAndGet();
-                        endTime = System.nanoTime();
-                        timeOps.get(COUNT).val += endTime - startTime;
-//                        timeLocalDurations.get(COUNT).add(endTime - startTime);
-
-                    }
-                }
-
-            }
-            else{
+//            if (cleanTimeline){
+//
+//                typeComputed = READ;
+//
+//                for (int i = 0; i < nbLocalUsers; i++) {
+//                    userA = database.getListLocalUser().get(myId.get()).get(i);
+//
+//                    startTime = System.nanoTime();
+//                    database.showTimeline(userA);
+//                    endTime = System.nanoTime();
+//
+//                    if (!flagWarmingUp.get()) {
+////                        nbOps.get(typeComputed).val += 1;
+//                        nbOperations.get(typeComputed).incrementAndGet();
+//                        timeOps.get(typeComputed).val += endTime - startTime;
+////                        timeLocalDurations.get(typeComputed).add(endTime - startTime);
+//
+//                        startTime = System.nanoTime();
+//                        nbOperations.get(typeComputed).incrementAndGet();
+//                        endTime = System.nanoTime();
+//                        timeOps.get(COUNT).val += endTime - startTime;
+////                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+//
+//                    }
+//                }
+//
+//            }
+//            else{
                 /*To avoid infinite loop if :
                  * - When doing follow, all user handle by thread i already follow all users in usersProbability.
                  * - When doing unfollow, all user handle by thread i do not follow anyone.
@@ -997,7 +997,7 @@ public class Retwis {
                             startTime = System.nanoTime();
                             database.showTimeline(userA);
                             endTime = System.nanoTime();
-                            break ;
+                            break;
                         case GROUPE:
                             if (numOperation%2 == 0){
                                 startTime = System.nanoTime();
@@ -1029,7 +1029,7 @@ public class Retwis {
                     }
 
                     break;
-                }
+//                }
             }
 
         }
