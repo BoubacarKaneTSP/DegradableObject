@@ -4,13 +4,17 @@ object_name = sys.argv[1]
 nb_test = int(sys.argv[2])
 nb_user = sys.argv[4]
 
+tag_spe = "_ExtHashMapNoCleanTL"
+
 gcinfo_raw = open(object_name+"_gcinfo.log","r")
-gcinfo = open(object_name + "_" + nb_user + "_gc_usage.txt","a")
+gcinfo = open(object_name + "_" + nb_user + "_gc_usage"+tag_spe+".txt","a")
 dico_gc = dict()
 
 last_nb_thread = 0
 benchmarkAvgTime = 0
 flag_benchmark = False
+
+
 for line in gcinfo_raw.readlines():
     if "Start benchmark" in line:
         flag_benchmark = True
