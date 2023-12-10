@@ -902,7 +902,8 @@ public class Database {
     }
 
     public void updateProfile(Key user){
-        mapProfiles.compute(user, (usr, profile) -> ++profile);
+        mapProfiles.put(user, mapProfiles.get(user)+1);
+//        mapProfiles.compute(user, (usr, profile) -> ++profile);
     }
 
     public void joinCommunity(Key user){
