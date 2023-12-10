@@ -23,7 +23,7 @@ completion_time = sys.argv[4]
 
 list_nb_thread = list_nb_thread.split(" ")
 
-tag_spe = "_ConcHashMapNoCleanTLPut"
+tag_spe = "_ExtHashMapNoCleanTLPut"
 
 if completion_time == "True":
     list_op = ["ALL"]
