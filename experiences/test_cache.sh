@@ -82,9 +82,9 @@ do
 #  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
 #  python3 compute_avg_gc.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
 
-#  python3 compute_avg_gc.py $nbUsersInit "JUC" "1 2 4" $completion_time
-#  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 2 4" $completion_time
-#  python3 compute_avg_gc.py $nbUsersInit "SEQ" "1 2 4" $completion_time
+#  python3 compute_avg_gc.py $nbUsersInit "JUC" "1 32 96" $completion_time
+  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 32 96" $completion_time
+#  python3 compute_avg_gc.py $nbUsersInit "SEQ" "1 32 96" $completion_time
 #
 #  python3 compute_avg_gc.py $nbUsersInit "JUC" "1 32 96" $completion_time
   python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 32 96" $completion_time

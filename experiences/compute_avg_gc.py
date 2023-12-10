@@ -30,7 +30,9 @@ completion_time = sys.argv[4]
 
 list_nb_thread = list_nb_thread.split(" ")
 
-name_file=type_obj+"_"+nb_user+"_gc_usage.txt"
+tag_spe = "_ExtHashMapNoCleanTL"
+name_file=type_obj+"_"+nb_user+"_gc_usage"+tag_spe+".txt"
+
 file = open(name_file,"r")
 
 str_result_avg = ""
@@ -58,7 +60,7 @@ for nb_thread in list_nb_thread:
 
 file.close()
 
-file = open(type_obj+"_"+nb_user+"_gc_usage.txt","w")
+file = open(type_obj+"_"+nb_user+"_gc_usage"+tag_spe+".txt","w")
 
 file.write(str_result_avg)
 file.close()
