@@ -22,7 +22,7 @@ do
   python3 rm_file.py $nbUsersInit "Q_M_C" $completion_time
 #  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 #  rm JUC_${nbUsersInit}_gc_usage.txt
-  rm Q_M_C_${nbUsersInit}_gc_usage.txt
+  rm Q_M_C_${nbUsersInit}_gc_usage_ExtHashMapNoCleanTL.txt
 #  rm SEQ_${nbUsersInit}_gc_usage.txt
 
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
