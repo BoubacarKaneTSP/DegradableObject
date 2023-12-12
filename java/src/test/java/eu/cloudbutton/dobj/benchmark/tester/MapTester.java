@@ -33,8 +33,6 @@ public class MapTester extends Tester<Map> {
 //            list.add(keyGenerator.nextKey());
 //        }
 
-        System.out.println(Thread.currentThread().getName() + " =>" + user);
-
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
