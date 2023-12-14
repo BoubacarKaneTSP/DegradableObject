@@ -24,7 +24,7 @@ public abstract class Tester<T> implements Callable<Void> {
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
-        this.nbRepeat = 1;
+        this.nbRepeat = 1000;
     }
 
     @Override
@@ -88,9 +88,8 @@ public abstract class Tester<T> implements Callable<Void> {
                         break;
                 }
 
-                if (elapsedTime != 0)
-                    localOp.get(opNumber).val += nbRepeat;
-
+                // if (elapsedTime != 0)
+                localOp.get(opNumber).val += nbRepeat;
                 localTimeOp.get(opNumber).val += elapsedTime;
 
                 // simulate I/O
