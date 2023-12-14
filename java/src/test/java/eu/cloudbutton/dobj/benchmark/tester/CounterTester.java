@@ -40,8 +40,4 @@ public class CounterTester extends Tester<Counter> {
         return (endTime - startTime);
     }
 
-    @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return 0;
-    }
 }

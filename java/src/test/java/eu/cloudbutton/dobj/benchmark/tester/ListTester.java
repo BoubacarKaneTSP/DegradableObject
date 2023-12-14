@@ -46,8 +46,4 @@ public class ListTester extends Tester<AbstractList> {
         return (endTime - startTime)/nbRepeat;
     }
 
-    @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return 0;
-    }
 }

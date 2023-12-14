@@ -45,8 +45,4 @@ public class AtomicWriteOnceReferenceTester extends Tester<AtomicWriteOnceRefere
         return (endTime - startTime);
     }
 
-    @Override
-    protected long test(Microbenchmark.opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return 0;
-    }
 }

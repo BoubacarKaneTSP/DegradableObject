@@ -46,8 +46,4 @@ public class DequeTester extends Tester<Deque> {
         return endTime - startTime;
     }
 
-    @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return 0;
-    }
 }

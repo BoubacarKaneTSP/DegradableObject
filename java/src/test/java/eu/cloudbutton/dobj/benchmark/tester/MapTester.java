@@ -63,8 +63,4 @@ public class MapTester extends Tester<Map> {
         return (endTime - startTime);
     }
 
-    @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return 0;
-    }
 }

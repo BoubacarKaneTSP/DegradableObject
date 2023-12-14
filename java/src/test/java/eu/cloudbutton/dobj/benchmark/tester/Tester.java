@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 public abstract class Tester<T> implements Callable<Void> {
 
@@ -75,6 +74,8 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 elapsedTime = test(type);
 
+                assert elapsedTime !=0 ;
+
                 switch (type){
                     case ADD:
                         opNumber = 0;
@@ -113,5 +114,5 @@ public abstract class Tester<T> implements Callable<Void> {
     }
 
     protected abstract long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
-    protected abstract long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
+
 }

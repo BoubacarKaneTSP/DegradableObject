@@ -49,8 +49,4 @@ public class NoopTester extends Tester<Noop> {
         return (endTime - startTime)/val;
     }
 
-    @Override
-    protected long test(opType type, BoxedLong boxedLong) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return 0;
-    }
 }
