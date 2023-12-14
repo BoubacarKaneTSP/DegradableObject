@@ -97,8 +97,8 @@ public class Database {
         }
 
 //        community = new ExtendedShardedHashSet<>(factoryIndice);
-        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
-//        mapProfiles = new ConcurrentHashMap<>();
+//        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
+        mapProfiles = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
@@ -902,8 +902,8 @@ public class Database {
     }
 
     public void updateProfile(Key user){
-        mapProfiles.put(user, mapProfiles.get(user)+1);
-//        mapProfiles.compute(user, (usr, profile) -> ++profile);
+//        mapProfiles.put(user, mapProfiles.get(user)+1);
+        mapProfiles.compute(user, (usr, profile) -> ++profile);
     }
 
     public void joinCommunity(Key user){
