@@ -49,42 +49,4 @@ public class WaitFreeQueueTester extends Tester<WaitFreeQueue> {
         return (endTime - startTime);
     }
 
-    @Override
-    protected long test(opType type, BoxedLong boxedLong) {
-
-        long startTime = 0L, endTime = 0L;
-
-        int rand = random.nextInt(Integer.MAX_VALUE);
-
-        switch (type) {
-            case ADD:
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    boxedLong.val += 1;
-                    object.offer(rand);
-                }
-                endTime = System.nanoTime();
-                break;
-            case REMOVE:
-
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    boxedLong.val -= 1;
-                    object.poll();
-                }
-
-
-                endTime = System.nanoTime();
-                break;
-            case READ:
-                startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.contains(rand);
-                }
-                endTime = System.nanoTime();
-                break;
-        }
-
-        return (endTime - startTime);
-    }
 }
