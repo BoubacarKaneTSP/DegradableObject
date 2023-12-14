@@ -48,7 +48,7 @@ public class Microbenchmark {
     @Option(name = "-nbOps", usage = "Number of object initially added") // FIXME
     private long nbOps = 1_000;
     @Option(name = "-nbItems", usage = "Number of items max per thread")
-    private int _nbItems = 1_000;
+    private int _nbItems = 1_000_000;
     @Option(name = "-nbTest", usage = "Number of test")
     private int _nbTest = 1;
     @Option(name = "-s", handler = ExplicitBooleanOptionHandler.class, usage = "Save the result")
