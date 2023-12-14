@@ -29,20 +29,18 @@ public class MapTester extends Tester<Map> {
 
         long startTime = 0L, endTime = 0L;
         List list = new ArrayList<>();
-//        for (int i = 0; i < nbRepeat; i++) {
-//            list.add(keyGenerator.nextKey());
-//        }
+        for (int i = 0; i < nbRepeat; i++) {
+            list.add(keyGenerator.nextKey());
+        }
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     int finalI = i;
-//                    object.compute(list.get(0), (k, v) -> finalI);
-                    object.compute(user, (k, v) -> finalI);
+                    object.compute(list.get(0), (k, v) -> finalI);
                 }
                 endTime = System.nanoTime();
-//                object.put(list.get(i), i);
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
