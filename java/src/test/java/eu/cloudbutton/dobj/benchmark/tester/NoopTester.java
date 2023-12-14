@@ -25,21 +25,24 @@ public class NoopTester extends Tester<Noop> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < val; i++) {
-                    n = n + 1;
+                    if (n%42 == 0) n = n + 1;
+                    else n *= n;
                 }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
                 for (int i = 0; i < val; i++) {
-                    n = n - 1;
+                    if (n%42 == 0) n = n - 1;
+                    else n *= n;
                 }
                 endTime = System.nanoTime();
                 break;
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < val; i++) {
-                    n += 2;
+                    if (n%42 == 0) n += 2;
+                    else n *= n;
                 }
                 endTime = System.nanoTime();
 
