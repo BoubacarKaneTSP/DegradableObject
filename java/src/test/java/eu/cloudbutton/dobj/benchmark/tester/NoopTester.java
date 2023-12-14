@@ -27,6 +27,7 @@ public class NoopTester extends Tester<Noop> {
                 for (int i = 0; i < val; i++) {
                     if (n%42 == 0) n = n + 1;
                     else n *= n;
+                    n += n%42;
                 }
                 endTime = System.nanoTime();
                 break;
@@ -35,6 +36,7 @@ public class NoopTester extends Tester<Noop> {
                 for (int i = 0; i < val; i++) {
                     if (n%42 == 0) n = n - 1;
                     else n *= n;
+                    n += n%42;
                 }
                 endTime = System.nanoTime();
                 break;
@@ -43,6 +45,7 @@ public class NoopTester extends Tester<Noop> {
                 for (int i = 0; i < val; i++) {
                     if (n%42 == 0) n += 2;
                     else n *= n;
+                    n += n%42;
                 }
                 endTime = System.nanoTime();
 
