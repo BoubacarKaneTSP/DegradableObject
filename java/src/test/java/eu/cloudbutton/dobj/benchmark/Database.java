@@ -582,7 +582,7 @@ public class Database {
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
-        int nbUserPerThread = nbUsers;
+        int nbUserPerThread = nbUsers/nbThread;
         int nbUserFollowedPerUser = 100;
         int nbUserFollowingPerThread = 100;
 
@@ -618,13 +618,13 @@ public class Database {
         long sommeFollow = 0L;
         int j = 1;
 
-        for (int i = 0; i < nbThread*nbUserPerThread; i++) {
+        for (int i = 0; i < nbUsers; i++) {
             sommeUsage.put(i, new AtomicInteger());
         }
 
         int threadNum = 0;
 
-        System.out.println(listUser.size());
+//        System.out.println(listUser.size());
         for (Key user: listUser){
             sommeUsage.get(threadNum).incrementAndGet();
             sommeFollow += 1;
