@@ -645,6 +645,16 @@ public class Database {
             j++;
         }
 
+        for (int i = 0; i < threadNum; i++) {
+            System.out.println("\n =====> thread num : " + threadNum);
+            System.out.println("list local user size : " + listLocalUser.size());
+            System.out.println();
+            System.out.println(localUsersUsageProbability.get(threadNum));
+            System.out.println();
+            System.out.println();
+
+        }
+
 //        System.out.println("mapFollowers \n");
 //        for (Key user : mapFollowers.keySet()){
 //            if (mapFollowers.get(user).size() != 0){
