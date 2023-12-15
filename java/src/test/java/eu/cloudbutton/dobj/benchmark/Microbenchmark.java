@@ -162,8 +162,7 @@ public class Microbenchmark {
 
                     List<Callable<Void>> callables = new ArrayList<>();
                     // ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
-                    ThreadFactory factory = Thread.ofVirtual().factory();
-                    ExecutorService executor = Executors.newThreadPerTaskExecutor(factory);
+                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
                     if (type.contains("Extended"))
                         object = Factory.createObject(type, factoryIndice);
