@@ -646,10 +646,10 @@ public class Database {
         }
 
         for (int i = 0; i < threadNum; i++) {
-            System.out.println("\n =====> thread num : " + threadNum);
-            System.out.println("list local user size : " + listLocalUser.size());
+            System.out.println("\n =====> thread num : " + i);
+            System.out.println("list local user size : " + listLocalUser.get(i).size());
             System.out.println();
-            System.out.println(localUsersUsageProbability.get(threadNum));
+            System.out.println(localUsersUsageProbability.get(i));
             System.out.println();
             System.out.println();
 
