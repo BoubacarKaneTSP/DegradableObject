@@ -124,6 +124,7 @@
                     <target>21</target>
                     <compilerArgs>
                         <arg>--add-exports</arg><arg>java.base/jdk.internal.vm.annotation=ALL-UNNAMED</arg>
+                        <arg>--enable-preview</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

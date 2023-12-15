@@ -1,20 +1,35 @@
 package eu.cloudbutton.dobj.utils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 
-    protected final ThreadLocal<T> local;
+    public static Method currentCarrierThread;
+    static {
+        try {
+            currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
+            currentCarrierThread.setAccessible(true);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected final ScopedValue<T> segment = ScopedValue.newInstance();
+
     private final AtomicInteger next;
 
     private final List<T> segments;
 
+    private final int parallelism;
+
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.segments = new ArrayList<>(parallelism);
-        for(int i = 0; i<parallelism; i++ ){
+        this.parallelism = Runtime.getRuntime().availableProcessors();
+        for(int i = 0; i<this.parallelism; i++ ){
             try {
                 this.segments.add(clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -22,27 +37,25 @@ public class BaseSegmentation<T> implements Segmentation<T> {
             }
         }
         this.next = new AtomicInteger(0);
-        this.local = ThreadLocal.withInitial(() -> segments.get(next.getAndIncrement()%parallelism));
     }
 
     @Override
     public T segmentFor(Object x) {
-        T segment = null;
-        
-        try{
-            segment = local.get();
-        }catch (NullPointerException e){
-            e.printStackTrace();
-            System.out.println("Failed to get a segment for " + x);
-            System.exit(0);
-        }
-
-        return segment;
+        int index = carrierID()%parallelism;
+        return ScopedValue.where(segment, segments.get(index)).get(segment);
     }
 
     @Override
     public final List<T> segments(){
         return segments;
+    }
+
+    public static int carrierID() {
+        try {
+            return (int) ((Thread)currentCarrierThread.invoke(null)).getId();
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
