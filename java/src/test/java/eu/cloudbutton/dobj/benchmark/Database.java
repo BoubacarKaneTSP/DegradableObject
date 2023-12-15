@@ -645,15 +645,15 @@ public class Database {
             j++;
         }
 
-        for (int i = 0; i < threadNum; i++) {
-            System.out.println("\n =====> thread num : " + i);
-            System.out.println("list local user size : " + listLocalUser.get(i).size());
-            System.out.println();
-            System.out.println(localUsersUsageProbability.get(i));
-            System.out.println();
-            System.out.println();
-
-        }
+//        for (int i = 0; i < threadNum; i++) {
+//            System.out.println("\n =====> thread num : " + i);
+//            System.out.println("list local user size : " + listLocalUser.get(i).size());
+//            System.out.println();
+//            System.out.println(localUsersUsageProbability.get(i));
+//            System.out.println();
+//            System.out.println();
+//
+//        }
 
 //        System.out.println("mapFollowers \n");
 //        for (Key user : mapFollowers.keySet()){
