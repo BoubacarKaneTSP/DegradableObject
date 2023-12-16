@@ -259,8 +259,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-    static final int TREEIFY_THRESHOLD = 8;
-//    static final int TREEIFY_THRESHOLD = 10000000;
+//    static final int TREEIFY_THRESHOLD = 8;
+    static final int TREEIFY_THRESHOLD = 10000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -2464,35 +2464,35 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             TreeNode<K,V> tp = t.parent, tl = t.left, tr = t.right,
                     tb = t.prev, tn = (TreeNode<K,V>)t.next;
             if (tb != null && tb.next != t){
-                System.out.println(1);
+//                System.out.println(1);
                 return false;
             }
             if (tn != null && tn.prev != t) {
-                System.out.println(2);
+//                System.out.println(2);
                 return false;
             }
             if (tp != null && t != tp.left && t != tp.right) {
-                System.out.println(3);
+//                System.out.println(3);
                 return false;
             }
             if (tl != null && (tl.parent != t || tl.hash > t.hash)){
-                System.out.println(4);
+//                System.out.println(4);
                 return false;
             }
             if (tr != null && (tr.parent != t || tr.hash < t.hash)) {
-                System.out.println(5);
+//                System.out.println(5);
                 return false;
             }
             if (t.red && tl != null && tl.red && tr != null && tr.red){
-                System.out.println(6);
+//                System.out.println(6);
                 return false;
             }
             if (tl != null && !checkInvariants(tl)) {
-                System.out.println(7);
+//                System.out.println(7);
                 return false;
             }
             if (tr != null && !checkInvariants(tr)) {
-                System.out.println(8);
+//                System.out.println(8);
                 return false;
             }
             return true;
