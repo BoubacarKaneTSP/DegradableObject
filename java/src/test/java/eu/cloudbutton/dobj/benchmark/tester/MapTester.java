@@ -62,12 +62,13 @@ public class MapTester extends Tester<Map> {
 	    endTime = System.nanoTime();
 	    break;
 	case READ:
-	    startTime = System.nanoTime();
-	    for (int i = 0; i < nbRepeat; i++) {
-		object.get(list.get(i));
-	    }
-	    endTime = System.nanoTime();
-	    break;
+	    throw new RuntimeException();
+	    // startTime = System.nanoTime();
+	    // for (int i = 0; i < nbRepeat; i++) {
+	    // 	object.get(list.get(i));
+	    // }
+	    // endTime = System.nanoTime();
+	    // break;
 	}
         return (endTime - startTime);
     }
