@@ -645,15 +645,22 @@ public class Database {
             j++;
         }
 
-//        for (int i = 0; i < threadNum; i++) {
-//            System.out.println("\n =====> thread num : " + i);
-//            System.out.println("list local user size : " + listLocalUser.get(i).size());
-//            System.out.println();
+        Set<Key> distinctUser = new HashSet<>();
+
+        for (int i = 0; i < threadNum; i++) {
+            System.out.println("\n =====> thread num : " + i);
+            System.out.println("list local user size : " + listLocalUser.get(i).size());
+            System.out.println();
+
+            for (Key k : localUsersUsageProbability.get(i).values()){
+                if (distinctUser.add(k))
+                    System.out.println("A user is present two time");
+            }
 //            System.out.println(localUsersUsageProbability.get(i));
-//            System.out.println();
-//            System.out.println();
-//
-//        }
+            System.out.println();
+            System.out.println();
+
+        }
 
 //        System.out.println("mapFollowers \n");
 //        for (Key user : mapFollowers.keySet()){
