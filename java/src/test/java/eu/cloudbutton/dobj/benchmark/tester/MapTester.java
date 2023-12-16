@@ -38,13 +38,13 @@ public class MapTester extends Tester<Map> {
 	}
 	int val = 200_000;
 	int n = random.nextInt(ITEM_PER_THREAD);
-        switch (type) {
+        switch (type) {	    
             case ADD:
-                startTime = System.nanoTime();
-                for (int i = 0; i < val; i++) {
-                    if (n%42 == 0) n = n + 1;
-                    else n *= n;
-                    n += n%42;
+		startTime = System.nanoTime();
+                for (int i = 0; i < nbRepeat; i++) {
+		    object.put(list.get(i),i);
+                    // int finalI = i;
+                    // object.compute(list.get(0), (k, v) -> finalI);
                 }
                 endTime = System.nanoTime();
                 break;
