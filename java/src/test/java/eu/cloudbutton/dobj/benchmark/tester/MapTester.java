@@ -37,7 +37,7 @@ public class MapTester extends Tester<Map> {
 	    }
 	}
         int val = 200_000;
-	int n = random.nextInt(ITEM_PER_THREAD);
+	int n = random.nextInt(ITEM_PER_THREAD)+1;
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
