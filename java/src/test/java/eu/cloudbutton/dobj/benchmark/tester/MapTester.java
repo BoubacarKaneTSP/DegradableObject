@@ -31,11 +31,11 @@ public class MapTester extends Tester<Map> {
 	startTime = 0L;
 	endTime = 0L;
         // list.clear();
-	if (list.isEmpty()) {
-	    for (int i = 0; i < nbRepeat; i++) {
-		list.add(keyGenerator.nextKey());
-	    }
-	}
+	// if (list.isEmpty()) {
+	//     for (int i = 0; i < nbRepeat; i++) {
+	// 	list.add(keyGenerator.nextKey());
+	//     }
+	// }
 
 	int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {	    

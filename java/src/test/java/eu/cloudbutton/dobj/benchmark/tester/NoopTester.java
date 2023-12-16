@@ -51,7 +51,7 @@ public class NoopTester extends Tester<Noop> {
                 break;
         }
 
-        return (endTime - startTime)/nbRepeat;
+        return (endTime - startTime);
     }
 
 }
