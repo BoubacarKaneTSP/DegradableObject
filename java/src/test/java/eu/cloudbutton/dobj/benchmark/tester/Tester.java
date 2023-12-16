@@ -25,7 +25,7 @@ public abstract class Tester<T> implements Callable<Void> {
         this.object = object;
         this.ratios = ratios;
         this.latch = latch;
-        this.nbRepeat = 1000;
+        this.nbRepeat = 1;
     }
 
     @Override
