@@ -653,7 +653,7 @@ public class Database {
             System.out.println();
 
             for (Key k : localUsersUsageProbability.get(i).values()){
-                if (distinctUser.add(k))
+                if (!distinctUser.add(k))
                     System.out.println("A user is present two time");
             }
 //            System.out.println(localUsersUsageProbability.get(i));
