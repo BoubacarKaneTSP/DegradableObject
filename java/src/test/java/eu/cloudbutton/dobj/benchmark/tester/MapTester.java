@@ -41,8 +41,9 @@ public class MapTester extends Tester<Map> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    int finalI = i;
-                    object.compute(list.get(0), (k, v) -> finalI);
+		    object.put(list.get(i),i);
+                    // int finalI = i;
+                    // object.compute(list.get(0), (k, v) -> finalI);
                 }
                 endTime = System.nanoTime();
                 break;
