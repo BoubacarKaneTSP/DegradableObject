@@ -1930,6 +1930,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     root.prev = null;
                 }
                 assert checkInvariants(root);
+                assert false : "always false";
             }
         }
 
