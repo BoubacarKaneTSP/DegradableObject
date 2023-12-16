@@ -30,10 +30,12 @@ public class MapTester extends Tester<Map> {
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 	startTime = 0L;
 	endTime = 0L;
-        list.clear();
-        for (int i = 0; i < nbRepeat; i++) {
-            list.add(keyGenerator.nextKey());
-        }
+        // list.clear();
+	if (list.isEmpty()) {
+	    for (int i = 0; i < nbRepeat; i++) {
+		list.add(keyGenerator.nextKey());
+	    }
+	}
 
         switch (type) {
             case ADD:
