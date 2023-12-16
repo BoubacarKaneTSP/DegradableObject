@@ -77,7 +77,7 @@ public class MapTester extends Tester<Map> {
                 break;
         }
 
-        return (endTime - startTime);
+        return (endTime - startTime)/val;
     }
 
 }
