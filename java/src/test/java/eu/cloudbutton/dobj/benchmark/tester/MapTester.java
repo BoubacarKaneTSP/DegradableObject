@@ -24,51 +24,39 @@ public class MapTester extends Tester<Map> {
         super(object, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
 	list = new ArrayList<>();
+	for (int i = 0; i < nbRepeat; i++) {
+	    list.add(keyGenerator.nextKey());
+	}
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 	startTime = 0L;
 	endTime = 0L;
-        list.clear();
-	if (list.isEmpty()) {
-	    for (int i = 0; i < nbRepeat; i++) {
-		list.add(keyGenerator.nextKey());
-	    }
-	}
 
-	int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {	    
 	case ADD:
 	    startTime = System.nanoTime();
 	    for (int i = 0; i < nbRepeat; i++) {
-		if (n%42 == 0) n = n + 1;
-		else n *= n;
-		n += n%42;
-		// object.get(list.get(i));
-		// int finalI = i;
-		// object.compute(list.get(0), (k, v) -> finalI);
+		int finalI = i;
+		object.compute(list.get(0), (k, v) -> finalI);
 	    }
 	    endTime = System.nanoTime();
 	    break;
 	case REMOVE:
 	    startTime = System.nanoTime();
 	    for (int i = 0; i < nbRepeat; i++) {
-		if (n%42 == 0) n = n + 1;
-                    else n *= n;
-                    n += n%42;
-		    // object.get(list.get(i));
+		object.remove(list.get(i));
 	    }
 	    endTime = System.nanoTime();
 	    break;
 	case READ:
-	    throw new RuntimeException();
-	    // startTime = System.nanoTime();
-	    // for (int i = 0; i < nbRepeat; i++) {
-	    // 	object.get(list.get(i));
-	    // }
-	    // endTime = System.nanoTime();
-	    // break;
+	    startTime = System.nanoTime();
+	    for (int i = 0; i < nbRepeat; i++) {
+	    	object.get(list.get(i));
+	    }
+	    endTime = System.nanoTime();
+	    break;
 	}
         return (endTime - startTime);
     }
