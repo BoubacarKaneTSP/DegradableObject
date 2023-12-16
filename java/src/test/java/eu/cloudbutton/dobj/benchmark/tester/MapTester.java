@@ -36,13 +36,16 @@ public class MapTester extends Tester<Map> {
 		list.add(keyGenerator.nextKey());
 	    }
 	}
-	int val = 200_000;
+
 	int n = random.nextInt(ITEM_PER_THREAD);
         switch (type) {	    
 	case ADD:
 	    startTime = System.nanoTime();
 	    for (int i = 0; i < nbRepeat; i++) {
-		object.get(list.get(i));
+		if (n%42 == 0) n = n + 1;
+		else n *= n;
+		n += n%42;
+		// object.get(list.get(i));
 		// int finalI = i;
 		// object.compute(list.get(0), (k, v) -> finalI);
 	    }
