@@ -17,17 +17,20 @@ import java.util.concurrent.CountDownLatch;
 public class MapTester extends Tester<Map> {
 
     private KeyGenerator keyGenerator;
+    private List<Key> list;
+    private long startTime, endTime;
 
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
+	list = new ArrayList<>();
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
-        long startTime = 0L, endTime = 0L;
-        List list = new ArrayList<>();
+	startTime = 0L;
+	endTime = 0L;
+        list.clear();
         for (int i = 0; i < nbRepeat; i++) {
             list.add(keyGenerator.nextKey());
         }
