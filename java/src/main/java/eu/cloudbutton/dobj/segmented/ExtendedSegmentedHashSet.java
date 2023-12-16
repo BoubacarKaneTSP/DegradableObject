@@ -16,6 +16,7 @@ public class ExtendedSegmentedHashSet<E extends Comparable<E>> extends ExtendedS
 
     public ExtendedSegmentedHashSet(FactoryIndice factoryIndice){
         super(SWMRHashSet.class, factoryIndice);
+
     }
 
     @Override

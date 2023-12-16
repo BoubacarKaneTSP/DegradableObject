@@ -2463,22 +2463,38 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         static <K,V> boolean checkInvariants(TreeNode<K,V> t) {
             TreeNode<K,V> tp = t.parent, tl = t.left, tr = t.right,
                     tb = t.prev, tn = (TreeNode<K,V>)t.next;
-            if (tb != null && tb.next != t)
+            if (tb != null && tb.next != t){
+                System.out.println(1);
                 return false;
-            if (tn != null && tn.prev != t)
+            }
+            if (tn != null && tn.prev != t) {
+                System.out.println(2);
                 return false;
-            if (tp != null && t != tp.left && t != tp.right)
+            }
+            if (tp != null && t != tp.left && t != tp.right) {
+                System.out.println(3);
                 return false;
-            if (tl != null && (tl.parent != t || tl.hash > t.hash))
+            }
+            if (tl != null && (tl.parent != t || tl.hash > t.hash)){
+                System.out.println(4);
                 return false;
-            if (tr != null && (tr.parent != t || tr.hash < t.hash))
+            }
+            if (tr != null && (tr.parent != t || tr.hash < t.hash)) {
+                System.out.println(5);
                 return false;
-            if (t.red && tl != null && tl.red && tr != null && tr.red)
+            }
+            if (t.red && tl != null && tl.red && tr != null && tr.red){
+                System.out.println(6);
                 return false;
-            if (tl != null && !checkInvariants(tl))
+            }
+            if (tl != null && !checkInvariants(tl)) {
+                System.out.println(7);
                 return false;
-            if (tr != null && !checkInvariants(tr))
+            }
+            if (tr != null && !checkInvariants(tr)) {
+                System.out.println(8);
                 return false;
+            }
             return true;
         }
     }
