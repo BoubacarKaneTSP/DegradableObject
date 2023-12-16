@@ -54,7 +54,10 @@ public class MapTester extends Tester<Map> {
 	case REMOVE:
 	    startTime = System.nanoTime();
 	    for (int i = 0; i < nbRepeat; i++) {
-	        object.get(list.get(i));
+		if (n%42 == 0) n = n + 1;
+                    else n *= n;
+                    n += n%42;
+		    // object.get(list.get(i));
 	    }
 	    endTime = System.nanoTime();
 	    break;
