@@ -96,10 +96,10 @@ public class Database {
 //            community = Factory.createSet(typeSet, nbThread);
 //        }
 
-//        community = new ExtendedSegmentedHashSet(factoryIndice);
+        community = new ExtendedSegmentedHashSet(factoryIndice);
 //        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
-        community = new ConcurrentHashSet<>();
-        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
+//        community = new ConcurrentHashSet<>();
+        mapProfiles = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
