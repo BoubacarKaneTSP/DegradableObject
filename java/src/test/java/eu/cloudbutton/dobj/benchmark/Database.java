@@ -99,7 +99,7 @@ public class Database {
 //        community = new ExtendedSegmentedHashSet(factoryIndice);
 //        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
         community = new ConcurrentHashSet<>();
-        mapProfiles = new ConcurrentHashMap<>();
+        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
