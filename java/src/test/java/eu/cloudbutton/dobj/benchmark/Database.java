@@ -37,6 +37,7 @@ public class Database {
     private Map<Key, Set<Key>> mapFollowing;
     private Map<Key, Timeline<String>> mapTimelines;
     private Map<Key, Integer> mapProfiles;
+    private Map<Key, Integer> mapCommunityStatus;
     private Set<Key> community;
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
@@ -96,10 +97,11 @@ public class Database {
 //            community = Factory.createSet(typeSet, nbThread);
 //        }
 
-//        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
-        mapProfiles = new ConcurrentHashMap<>();
+        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
+//        mapProfiles = new ConcurrentHashMap<>();
 //        community = new ConcurrentHashSet<>();
         community = new ExtendedSegmentedHashSet(factoryIndice);
+        mapCommunityStatus = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
@@ -841,6 +843,7 @@ public class Database {
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
         mapProfiles.put(user, 0);
         mapFollowers.put(user, new ConcurrentHashSet<>());
+        mapCommunityStatus.put(user, 0);
 
 //        if (typeSet.contains("Extended"))
 //            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
@@ -857,6 +860,7 @@ public class Database {
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
         mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
 
     }
 
