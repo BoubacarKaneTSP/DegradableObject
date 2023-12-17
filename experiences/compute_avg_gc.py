@@ -30,7 +30,9 @@ completion_time = sys.argv[4]
 
 list_nb_thread = list_nb_thread.split(" ")
 
-tag_spe = "_ConcHashNoCleanTL"
+tag_spe = "_ExtHashNoCleanTL"
+# tag_spe = "_ConcHashNoCleanTL"
+
 name_file=type_obj+"_"+nb_user+"_gc_usage"+tag_spe+".txt"
 
 file = open(name_file,"r")
