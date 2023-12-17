@@ -96,8 +96,8 @@ public class Database {
 //            community = Factory.createSet(typeSet, nbThread);
 //        }
 
-//        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
-        mapProfiles = new ConcurrentHashMap<>();
+        mapProfiles = new ExtendedSegmentedHashMap<>(factoryIndice);
+//        mapProfiles = new ConcurrentHashMap<>();
         community = new ConcurrentHashSet<>();
 //        community = new ExtendedSegmentedHashSet(factoryIndice);
 
