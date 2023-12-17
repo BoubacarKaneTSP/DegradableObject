@@ -584,8 +584,8 @@ public class Database {
         Queue<Key> listUser = new LinkedList<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
         int nbUserPerThread = nbUsers/nbThread;
-        int nbUserFollowedPerUser = 100;
-        int nbUserFollowingPerThread = 100;
+        int nbUserFollowedPerUser = 10;
+        int nbUserFollowingPerThread = 10;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
 //            System.out.println(i +"/"+ nbThread*nbUserPerThread);
