@@ -999,7 +999,7 @@ public class Retwis {
                             endTime = System.nanoTime();
                             break;
                         case GROUPE:
-                            if (numOperation%2 == 0){
+                            if (random.nextInt()%2 == 0){
                                 startTime = System.nanoTime();
                                 database.joinCommunity(userA);
                                 endTime = System.nanoTime();
