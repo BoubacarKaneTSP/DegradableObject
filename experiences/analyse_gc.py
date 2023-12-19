@@ -4,8 +4,8 @@ object_name = sys.argv[1]
 nb_test = int(sys.argv[2])
 nb_user = sys.argv[4]
 
-# tag_spe = "_ExtHashNoCleanTL"
-tag_spe = "_ConcHashNoCleanTL"
+tag_spe = "_ExtHashNoCleanTL"
+# tag_spe = "_ConcHashNoCleanTL"
 
 gcinfo_raw = open(object_name+"_gcinfo.log","r")
 gcinfo = open(object_name + "_" + nb_user + "_gc_usage"+tag_spe+".txt","a")
