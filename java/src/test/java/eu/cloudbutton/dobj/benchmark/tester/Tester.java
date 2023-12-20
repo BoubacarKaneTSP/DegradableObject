@@ -35,14 +35,14 @@ public abstract class Tester<T> implements Callable<Void> {
         List<BoxedLong> localOp = new ArrayList<>();
         List<BoxedLong> localTimeOp = new ArrayList<>();
 
-        for (opType ignored : opType.values()){
+        for (opType ignored : opType.values()) {
             localOp.add(new BoxedLong());
             localTimeOp.add(new BoxedLong());
         }
 
-        try{
-	    // FIXME fill-up ?
-	    
+        try {
+            // FIXME fill-up ?
+
             // warm up
             opType type;
             while (Microbenchmark.flag.get()) {
@@ -51,9 +51,9 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 if (n < ratios[0]) {
                     type = opType.ADD;
-                }else if(n < ratios[0] + ratios[1]) {
+                } else if (n < ratios[0] + ratios[1]) {
                     type = opType.REMOVE;
-                }else {
+                } else {
                     type = opType.READ;
                 }
                 test(type);
@@ -68,17 +68,17 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 if (n < ratios[0]) {
                     type = opType.ADD;
-                }else if(n < ratios[0] + ratios[1]) {
+                } else if (n < ratios[0] + ratios[1]) {
                     type = opType.REMOVE;
-                }else {
+                } else {
                     type = opType.READ;
                 }
 
                 elapsedTime = test(type);
 
-                assert elapsedTime !=0 ;
+                assert elapsedTime != 0;
 
-                switch (type){
+                switch (type) {
                     case ADD:
                         opNumber = 0;
                         break;
@@ -105,7 +105,7 @@ public abstract class Tester<T> implements Callable<Void> {
 
         opNumber = 0;
 
-        for (opType ignored : opType.values()){
+        for (opType ignored : opType.values()) {
             Microbenchmark.nbOperations.get(opNumber).addAndGet(localOp.get(opNumber).getVal());
             Microbenchmark.timeOperations.get(opNumber).addAndGet(localTimeOp.get(opNumber).getVal());
             opNumber++;

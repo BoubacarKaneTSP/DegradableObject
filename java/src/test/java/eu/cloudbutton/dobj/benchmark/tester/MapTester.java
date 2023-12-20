@@ -40,7 +40,7 @@ public class MapTester extends Tester<Map> {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.put(i,i);
+                    object.put(list.get(i),i);
                 }
                 endTime = System.nanoTime();
                 break;
