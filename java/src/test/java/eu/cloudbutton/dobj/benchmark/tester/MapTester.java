@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static java.lang.Thread.*;
+
 public class MapTester extends Tester<Map> {
 
     private KeyGenerator keyGenerator;
@@ -39,8 +41,7 @@ public class MapTester extends Tester<Map> {
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.put(list.get(i),i);
+                for (int i = 0; i < nbRepeat; i++) {object.put(list.get(i),i);
                 }
                 endTime = System.nanoTime();
                 break;
@@ -56,7 +57,14 @@ public class MapTester extends Tester<Map> {
                 for (int i = 0; i < nbRepeat; i++) {
                     // object.get(list.get(i));
                     int finalI = i;
-                    object.compute(list.get(i), (k, v) -> finalI);
+                    object.compute(list.get(i), (k, v) -> {
+                        try {
+                            sleep(0,5000);
+                            return finalI;
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                 }
                 endTime = System.nanoTime();
                 break;
