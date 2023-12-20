@@ -283,17 +283,18 @@ public class Retwis {
                         flagWarmingUp.set(true);
                     }
 
-                    // Additional counts for the coordinator
                     CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
+                    CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
-                                latchCompletionTime
+                                latchCompletionTime,
+                                latchFillDatabase
                         );
                         callables.add(retwisApp);
                     }
 
-                    callables.add(new Coordinator(latchCompletionTime));
+                    callables.add(new Coordinator(latchCompletionTime, latchFillDatabase));
                     List<Future<Void>> futures;
 
                     futures = executor.invokeAll(callables);
@@ -662,6 +663,7 @@ public class Retwis {
         private final ThreadLocalRandom random;
         private final int[] ratiosArray;
         private final CountDownLatch latchFillCompletionTime;
+        private final CountDownLatch latchFillDatabase;
         private Long localUsersUsageProbabilityRange;
         private Long usersFollowProbabilityRange;
         private Queue<String> localUserUsageDistribution;
@@ -677,11 +679,12 @@ public class Retwis {
         long startTime, endTime;
         List<Integer> listOperationToDo;
 
-        public RetwisApp(CountDownLatch latchFillCompletionTime) {
+        public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase) {
             this.random = ThreadLocalRandom.current();
             this.myId = new ThreadLocal<>();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latchFillCompletionTime = latchFillCompletionTime;
+            this.latchFillDatabase = latchFillDatabase;
             this.counterID = new AtomicInteger();
         }
 
@@ -691,8 +694,37 @@ public class Retwis {
             try{
                 int type;
                 int sizeOpToDo = 10_000;
+                int nbUserPerThread = (int) (_nbUserInit/_nbThreads);
+                int nbUserFollowedPerUser = 10;
+                int nbUserFollowingPerThread = 10;
 
                 myId.set(database.getCount().getAndIncrement());
+
+                for (Key user : database.getMapUserToAdd().get(myId.get())){
+                    database.addOriginalUser(user);
+                }
+
+                latchFillDatabase.countDown();
+                latchFillDatabase.await();
+
+                for (int i = 0; i < _nbThreads; i++) {
+//            System.out.println("thread num : " + i);
+                    for (int k = 0; k < nbUserFollowingPerThread; k++) {
+                        int w = k+(i*nbUserPerThread);
+                        for (int j = 0; j < nbUserFollowedPerUser; j++) {
+                            int v = j+(i*nbUserPerThread);
+                            if (w != v){
+                                database.followUser(database.getMapIndiceToKey().get(w), database.getMapIndiceToKey().get(v));
+                                database.getMapListUserFollow().get(database.getMapIndiceToKey().get(w)).add(database.getMapIndiceToKey().get(v));
+                            }
+                        }
+                    }
+                }
+
+                for (Key user : database.getListLocalUser().get(myId.get())) {
+                    database.getListLocalUsersFollow().get(myId.get()).put(user, database.getMapListUserFollow().get(user));
+
+                }
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 //                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
@@ -1047,9 +1079,11 @@ public class Retwis {
     public class Coordinator implements Callable<Void> {
 
         private final CountDownLatch latchCompletionTime;
+        private final CountDownLatch latchFillDatabase;
 
-        public Coordinator(CountDownLatch latchCompletionTime) {
+        public Coordinator(CountDownLatch latchCompletionTime, CountDownLatch latchFillDatabase) {
             this.latchCompletionTime = latchCompletionTime;
+            this.latchFillDatabase = latchFillDatabase;
         }
 
         @Override
@@ -1058,6 +1092,8 @@ public class Retwis {
 
                 if (_p)
                     System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
+
+                latchFillDatabase.await();
 
                 if (flagWarmingUp.get()){
 
