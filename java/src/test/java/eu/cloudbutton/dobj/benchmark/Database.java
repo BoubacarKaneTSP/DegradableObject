@@ -33,10 +33,10 @@ public class Database {
     private final String typeCounter;
     private final int nbThread;
     private final int nbUsers;
+    private Map<Key, Integer> mapProfiles;
     private Map<Key, Set<Key>> mapFollowers;
     private Map<Key, Set<Key>> mapFollowing;
     private Map<Key, Timeline<String>> mapTimelines;
-    private Map<Key, Integer> mapProfiles;
     private Map<Key, Integer> mapCommunityStatus;
     private Set<Key> community;
     private final Map<Integer, Key> mapIndiceToKey;
