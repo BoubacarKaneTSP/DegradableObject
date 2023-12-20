@@ -50,7 +50,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         return segments;
     }
 
-    public static int carrierID() {
+    public static final int carrierID() {
         try {
             return (int) ((Thread)currentCarrierThread.invoke(null)).getId();
         } catch (IllegalAccessException | InvocationTargetException e) {
