@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import eu.cloudbutton.dobj.utils.ImmutableComposedSet;
 import lombok.SneakyThrows;
@@ -12,10 +13,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SegmentedHashMap<K,V> extends BaseSegmentation<ConcurrentHashMap> implements Map<K,V> {
+public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
     public SegmentedHashMap(int parallelism) {
-        super(ConcurrentHashMap.class, parallelism);
+        super(SWMRHashMap.class, parallelism);
     }
 
     @Override

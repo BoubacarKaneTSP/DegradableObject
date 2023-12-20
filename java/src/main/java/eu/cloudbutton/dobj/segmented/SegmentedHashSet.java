@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashSet;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRHashSet;
@@ -13,10 +14,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<ConcurrentHashSet> implements Set<E> {
+public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<SWMRHashSet> implements Set<E> {
     
     public SegmentedHashSet(int parallelism){
-        super(ConcurrentHashSet.class, parallelism);
+        super(SWMRHashSet.class, parallelism);
     }
 
 
