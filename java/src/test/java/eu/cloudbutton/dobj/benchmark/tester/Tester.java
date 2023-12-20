@@ -41,6 +41,8 @@ public abstract class Tester<T> implements Callable<Void> {
         }
 
         try{
+	    // FIXME fill-up ?
+	    
             // warm up
             opType type;
             while (Microbenchmark.flag.get()) {
