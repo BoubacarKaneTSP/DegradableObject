@@ -28,7 +28,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.segments = new ArrayList<>(parallelism);
-        this.parallelism = 1; // Runtime.getRuntime().availableProcessors();
+        this.parallelism = Runtime.getRuntime().availableProcessors();
         for(int i = 0; i<this.parallelism; i++ ){
             try {
                 this.segments.add(clazz.getDeclaredConstructor().newInstance());
