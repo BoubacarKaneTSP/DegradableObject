@@ -703,6 +703,9 @@ public class Retwis {
                     database.addOriginalUser(user);
                 }
 
+                latchFillDatabase.countDown();
+                latchFillDatabase.await();
+
                 for (int i = 0; i < _nbThreads; i++) {
 //            System.out.println("thread num : " + i);
                     for (int k = 0; k < nbUserFollowingPerThread; k++) {
