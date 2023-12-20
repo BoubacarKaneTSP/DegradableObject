@@ -8,7 +8,7 @@ public class ImmutableComposedSet<K> implements Set<K> {
 
     private Set<K>[] sets;
 
-    public ImmutableComposedSet(Object[] sets) {
+    public ImmutableComposedSet(Set<K>[] sets) {
         this.sets = sets;
     }
 

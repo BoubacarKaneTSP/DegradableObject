@@ -88,7 +88,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<ConcurrentHashMap> i
     @NotNull
     @Override
     public Set<K> keySet() {
-        return new ImmutableComposedSet<>(segments().toArray());
+        return new ImmutableComposedSet<>(segments().toArray(new Set[0]));
     }
 
     @NotNull
