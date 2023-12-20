@@ -17,6 +17,8 @@ public class SetTester extends Tester<Set> {
 
     private KeyGenerator keyGenerator;
 
+    List list = new ArrayList<>();
+
     public SetTester(Set set, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(set, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
@@ -27,9 +29,10 @@ public class SetTester extends Tester<Set> {
 
         long startTime = 0L, endTime = 0L;
 
-        List list = new ArrayList<>();
-        for (int i = 0; i < nbRepeat; i++) {
-            list.add(keyGenerator.nextKey());
+        if (list.isEmpty()) {
+            for (int i = 0; i < nbRepeat; i++) {
+                list.add(keyGenerator.nextKey());
+            }
         }
 
         switch (type) {
