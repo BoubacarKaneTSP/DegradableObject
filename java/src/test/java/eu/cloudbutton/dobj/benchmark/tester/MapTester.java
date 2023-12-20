@@ -58,12 +58,11 @@ public class MapTester extends Tester<Map> {
                     // object.get(list.get(i));
                     int finalI = i;
                     object.compute(list.get(i), (k, v) -> {
-                        try {
-                            sleep(0,5000);
+                            int p = 0;
+                            for(int j=0;j<=nbRepeat; j++) {
+                                p+=j;
+                            }
                             return finalI;
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
                     });
                 }
                 endTime = System.nanoTime();
