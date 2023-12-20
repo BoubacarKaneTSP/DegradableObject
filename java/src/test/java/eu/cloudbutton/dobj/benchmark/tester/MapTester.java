@@ -20,7 +20,7 @@ public class MapTester extends Tester<Map> {
 
     private final KeyGenerator keyGenerator;
     private final List<Key> list;
-    private long startTime, endTime;
+
 
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
@@ -33,8 +33,8 @@ public class MapTester extends Tester<Map> {
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        startTime = 0L;
-        endTime = 0L;
+        long startTime = 0L, endTime = 0L;
+        Key key;
 
         switch (type) {
             case ADD:
@@ -54,7 +54,8 @@ public class MapTester extends Tester<Map> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.get(list.get(i));
+                    key = list.get(i);
+                    object.get(key);
 //                    int finalI = i;
 //                    object.compute(list.get(i), (k, v) -> {
 //                            int p = 0;
