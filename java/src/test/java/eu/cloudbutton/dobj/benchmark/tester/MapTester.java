@@ -54,8 +54,8 @@ public class MapTester extends Tester<Map> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    key = list.get(i);
-                    object.get(key);
+                    // key = list.get(i);
+                    object.get(0);
 //                    int finalI = i;
 //                    object.compute(list.get(i), (k, v) -> {
 //                            int p = 0;
