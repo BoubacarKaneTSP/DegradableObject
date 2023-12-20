@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
@@ -33,7 +34,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.parallelism = Runtime.getRuntime().availableProcessors();
         this.clazz = clazz;
-        this.segments = new ArrayList<>();
+        this.segments = new CopyOnWriteArrayList<>();
         for (int i = 0; i < this.parallelism; i++) {
             try {
                 this.segments.add(clazz.getDeclaredConstructor().newInstance());
