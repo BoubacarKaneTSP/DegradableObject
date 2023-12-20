@@ -33,7 +33,7 @@ public class MapTester extends Tester<Map> {
         long startTime = 0L, endTime = 0L;
         Key key;
 
-        list.clear();
+        // list.clear();
         if (list.isEmpty()) {
             for (int i = 0; i < nbRepeat; i++) {
                 list.add(keyGenerator.nextKey());
