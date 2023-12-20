@@ -18,9 +18,10 @@ import static java.lang.Thread.*;
 
 public class MapTester extends Tester<Map> {
 
-    private KeyGenerator keyGenerator;
-    private List<Key> list;
+    private final KeyGenerator keyGenerator;
+    private final List<Key> list;
     private long startTime, endTime;
+    private Key key;
 
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
@@ -53,7 +54,8 @@ public class MapTester extends Tester<Map> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.get(0);
+                    key = list.get(i);
+                    object.get(key);
 //                    int finalI = i;
 //                    object.compute(list.get(i), (k, v) -> {
 //                            int p = 0;
