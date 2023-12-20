@@ -21,7 +21,7 @@ public class MapTester extends Tester<Map> {
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
-        user = keyGenerator.nextKey();
+//        user = keyGenerator.nextKey();
     }
 
     @Override
@@ -29,17 +29,17 @@ public class MapTester extends Tester<Map> {
 
         long startTime = 0L, endTime = 0L;
         List list = new ArrayList<>();
-//        for (int i = 0; i < nbRepeat; i++) {
-//            list.add(keyGenerator.nextKey());
-//        }
+        for (int i = 0; i < nbRepeat; i++) {
+            list.add(keyGenerator.nextKey());
+        }
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     int finalI = i;
-//                    object.compute(list.get(0), (k, v) -> finalI);
-                    object.compute(user, (k, v) -> finalI);
+                    object.compute(list.get(0), (k, v) -> finalI);
+//                    object.compute(user, (k, v) -> finalI);
                 }
                 endTime = System.nanoTime();
 //                object.put(list.get(i), i);
