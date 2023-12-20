@@ -40,7 +40,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     @Override
     public final T segmentFor(Object x) {
         int index = carrierID()%parallelism; // FIXME no collision?
-        System.out.println(this.parallelism);
+        System.out.println(this.parallelism + " : "+ this.segments.size());
         if ( segments.get(index) == null ) {
             try {
                 this.segments.set(index, clazz.getDeclaredConstructor().newInstance());
