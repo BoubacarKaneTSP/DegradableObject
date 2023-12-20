@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Tester<T> implements Callable<Void> {
 
-    protected static final int ITEM_PER_THREAD = 10;
+    protected static final int ITEM_PER_THREAD = 1_000;
     protected final ThreadLocalRandom random;
     protected final T object;
     protected final int[] ratios;
