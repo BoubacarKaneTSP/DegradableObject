@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
@@ -20,6 +21,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     protected final ScopedValue<T> segment = ScopedValue.newInstance();
 
+    private Class<T> clazz;
+
     private final AtomicInteger next;
 
     private final List<T> segments;
@@ -27,21 +30,23 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     private final int parallelism;
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
-        this.segments = new ArrayList<>(parallelism);
         this.parallelism = Runtime.getRuntime().availableProcessors();
-        for(int i = 0; i<this.parallelism; i++ ){
-            try {
-                this.segments.add(clazz.getDeclaredConstructor().newInstance());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
+        this.clazz = clazz;
+        this.segments = new ArrayList<>(this.parallelism);
         this.next = new AtomicInteger(0);
     }
 
     @Override
     public final T segmentFor(Object x) {
         int index = carrierID()%parallelism;
+        if ( segments.get(index) == null ) {
+            try {
+                this.segments.set(index, clazz.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return ScopedValue.where(segment, segments.get(index)).get(segment);
     }
 
