@@ -41,8 +41,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public T segmentFor(Object x) {
-        int index = carrierID()%parallelism;
-        return ScopedValue.where(segment, segments.get(index)).get(segment);
+        // int index = carrierID()%parallelism;
+        return ScopedValue.where(segment, segments.get(0)).get(segment);
     }
 
     @Override
