@@ -55,15 +55,15 @@ public class MapTester extends Tester<Map> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    // object.get(list.get(i));
-                    int finalI = i;
-                    object.compute(list.get(i), (k, v) -> {
-                            int p = 0;
-                            for(int j=0;j<=nbRepeat; j++) {
-                                p+=j;
-                            }
-                            return finalI;
-                    });
+                    object.get(list.get(i));
+//                    int finalI = i;
+//                    object.compute(list.get(i), (k, v) -> {
+//                            int p = 0;
+//                            for(int j=0;j<=nbRepeat; j++) {
+//                                p+=j;
+//                            }
+//                            return finalI;
+//                    });
                 }
                 endTime = System.nanoTime();
                 break;
