@@ -34,8 +34,10 @@ public class MapTester extends Tester<Map> {
         Key key;
 
         list.clear();
-        for (int i = 0; i < nbRepeat; i++) {
-            list.add(keyGenerator.nextKey());
+        if (list.isEmpty()) {
+            for (int i = 0; i < nbRepeat; i++) {
+                list.add(keyGenerator.nextKey());
+            }
         }
 
         switch (type) {
