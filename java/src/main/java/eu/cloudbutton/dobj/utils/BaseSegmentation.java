@@ -10,13 +10,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BaseSegmentation<T> implements Segmentation<T> {
 
     public static Method currentCarrierThread;
+
     static {
         try {
             currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
             currentCarrierThread.setAccessible(true);
-            } catch (Exception e) {
-                throw new Error(e);
-            }
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
     protected final ScopedValue<T> segment = ScopedValue.newInstance();
@@ -33,32 +34,31 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         this.parallelism = Runtime.getRuntime().availableProcessors();
         this.clazz = clazz;
         this.segments = new ArrayList<>();
-        for(int i=0; i< this.parallelism; i++) this.segments.add(null);
-        this.next = new AtomicInteger(0);
-    }
-
-    @Override
-    public final T segmentFor(Object x) {
-        int index = carrierID()%parallelism; // FIXME no collision?
-        if ( segments.get(index) == null ) {
+        for (int i = 0; i < this.parallelism; i++) {
             try {
-                this.segments.set(index, clazz.getDeclaredConstructor().newInstance());
+                this.segments.add(clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new Error(e);
             }
         }
+        this.next = new AtomicInteger(0);
+    }
+
+    @Override
+    public final T segmentFor(Object x) {
+        int index = carrierID() % parallelism; // FIXME no collision?
         return ScopedValue.where(segment, segments.get(index)).get(segment);
     }
 
     @Override
-    public final List<T> segments(){
+    public final List<T> segments() {
         return segments;
     }
 
     public static final int carrierID() {
         try {
-            return (int) ((Thread)currentCarrierThread.invoke(null)).getId();
+            return (int) ((Thread) currentCarrierThread.invoke(null)).getId();
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

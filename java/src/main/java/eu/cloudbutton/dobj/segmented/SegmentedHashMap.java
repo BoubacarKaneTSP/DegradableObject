@@ -89,7 +89,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<ConcurrentHashMap> i
     public Set<K> keySet() {
         Set<K> result = new HashSet<>();
         for(Map m: segments()) {
-            if (m!=null) result.addAll(m.keySet());
+            result.addAll(m.keySet());
         }
         return result;
     }
