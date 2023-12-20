@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,7 +87,11 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<ConcurrentHashMap> i
     @NotNull
     @Override
     public Set<K> keySet() {
-         throw new UnsupportedOperationException();
+        Set<K> result = new HashSet<>();
+        for(Map m: segments()) {
+            result.addAll(m.keySet());
+        }
+        return result;
     }
 
     @NotNull
