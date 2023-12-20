@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
+import eu.cloudbutton.dobj.utils.ImmutableComposedSet;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,11 +88,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<ConcurrentHashMap> i
     @NotNull
     @Override
     public Set<K> keySet() {
-        Set<K> result = new HashSet<>();
-        for(Map m: segments()) {
-            result.addAll(m.keySet());
-        }
-        return result;
+        return new ImmutableComposedSet<>(segments().toArray());
     }
 
     @NotNull
