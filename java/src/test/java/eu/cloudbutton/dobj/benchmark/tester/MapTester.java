@@ -23,41 +23,42 @@ public class MapTester extends Tester<Map> {
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
-	list = new ArrayList<>();
-	for (int i = 0; i < nbRepeat; i++) {
-	    list.add(keyGenerator.nextKey());
-	}
+        list = new ArrayList<>();
+        for (int i = 0; i < nbRepeat; i++) {
+            list.add(keyGenerator.nextKey());
+        }
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-	startTime = 0L;
-	endTime = 0L;
+        startTime = 0L;
+        endTime = 0L;
 
-        switch (type) {	    
-	case ADD:
-	    startTime = System.nanoTime();
-	    for (int i = 0; i < nbRepeat; i++) {
-		int finalI = i;
-		object.compute(list.get(0), (k, v) -> finalI);
-	    }
-	    endTime = System.nanoTime();
-	    break;
-	case REMOVE:
-	    startTime = System.nanoTime();
-	    for (int i = 0; i < nbRepeat; i++) {
-		object.remove(list.get(i));
-	    }
-	    endTime = System.nanoTime();
-	    break;
-	case READ:
-	    startTime = System.nanoTime();
-	    for (int i = 0; i < nbRepeat; i++) {
-	    	object.get(list.get(i));
-	    }
-	    endTime = System.nanoTime();
-	    break;
-	}
+        switch (type) {
+            case ADD:
+                startTime = System.nanoTime();
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.put(i,i);
+                }
+                endTime = System.nanoTime();
+                break;
+            case REMOVE:
+                startTime = System.nanoTime();
+                for (int i = 0; i < nbRepeat; i++) {
+                    object.remove(list.get(i));
+                }
+                endTime = System.nanoTime();
+                break;
+            case READ:
+                startTime = System.nanoTime();
+                for (int i = 0; i < nbRepeat; i++) {
+                    // object.get(list.get(i));
+                    int finalI = i;
+                    object.compute(list.get(i), (k, v) -> finalI);
+                }
+                endTime = System.nanoTime();
+                break;
+        }
         return (endTime - startTime);
     }
 
