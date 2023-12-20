@@ -135,7 +135,7 @@ public class Database {
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
         // loadGraph();
-        loadCompleteGraph();
+       loadCompleteGraph();
 ///        loadDAPGraph();
     }
 
@@ -260,8 +260,7 @@ public class Database {
 
         int nbProcess = Runtime.getRuntime().availableProcessors();
 //        int nbProcess = 48;
-        // ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
-        ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+        ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
         List<Future<Void>> futures = new ArrayList<>();
 
         System.out.println("nb process : " + nbProcess);
@@ -717,7 +716,7 @@ public class Database {
         for (Set<Key> s : computedMap.values()) {
             values += s.size() +" ";
 //            k = mapHistogram.ceilingKey(s.size());
-//            v =ex mapHistogram.get(k) + 1;
+//            v = mapHistogram.get(k) + 1;
 //            mapHistogram.put(k, v);
         }
 

@@ -267,7 +267,8 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread + 1); // Coordinator
+                    // ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread + 1); // Coordinator
+                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 //                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1);
 
                     flagComputing = new AtomicBoolean(true);
@@ -1027,6 +1028,8 @@ public class Retwis {
 //                        System.out.println(timeLocalDurations.get(COUNT).size());
 
                     }
+
+                    Thread.sleep(1);
 
                     break;
 //                }
