@@ -1,10 +1,10 @@
 package eu.cloudbutton.dobj.utils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
@@ -14,9 +14,9 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         try {
             currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
             currentCarrierThread.setAccessible(true);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+            } catch (Exception e) {
+                throw new Error(e);
+            }
     }
 
     protected final ScopedValue<T> segment = ScopedValue.newInstance();
@@ -44,7 +44,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
                 this.segments.set(index, clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
-                throw new RuntimeException(e);
+                throw new Error(e);
             }
         }
         return ScopedValue.where(segment, segments.get(index)).get(segment);
