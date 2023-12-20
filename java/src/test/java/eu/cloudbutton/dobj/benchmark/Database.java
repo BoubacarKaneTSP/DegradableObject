@@ -841,7 +841,7 @@ public class Database {
     public void addOriginalUser(Key user) throws ClassNotFoundException {
         mapFollowing.put(user, new HashSet<>());
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
-        // mapProfiles.put(user, 0);
+         mapProfiles.put(user, 0);
         mapFollowers.put(user, new ConcurrentHashSet<>());
         mapCommunityStatus.put(user, 0);
 
@@ -859,7 +859,7 @@ public class Database {
         mapFollowers.put(user,dummySet);
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
-        // mapProfiles.put(user, 0);
+         mapProfiles.put(user, 0);
         mapCommunityStatus.put(user, 0);
 
     }
