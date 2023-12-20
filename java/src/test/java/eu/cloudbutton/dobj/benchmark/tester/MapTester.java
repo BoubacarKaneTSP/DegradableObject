@@ -24,15 +24,17 @@ public class MapTester extends Tester<Map> {
         super(object, ratios, latch);
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
         list = new ArrayList<>();
-        for (int i = 0; i < nbRepeat; i++) {
-            list.add(keyGenerator.nextKey());
-        }
     }
 
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         startTime = 0L;
         endTime = 0L;
+
+        list.clear();
+        for (int i = 0; i < nbRepeat; i++) {
+            list.add(keyGenerator.nextKey());
+        }
 
         switch (type) {
             case ADD:
