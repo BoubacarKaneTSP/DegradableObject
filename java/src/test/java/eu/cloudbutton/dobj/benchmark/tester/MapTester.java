@@ -1,20 +1,16 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
-import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
-import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
-import static java.lang.Thread.*;
 
 public class MapTester extends Tester<Map> {
 
@@ -31,9 +27,8 @@ public class MapTester extends Tester<Map> {
     @Override
     protected long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         long startTime = 0L, endTime = 0L;
-        Key key;
 
-        list.clear();
+        // list.clear();
         if (list.isEmpty()) {
             for (int i = 0; i < nbRepeat; i++) {
                 list.add(keyGenerator.nextKey());
@@ -58,8 +53,7 @@ public class MapTester extends Tester<Map> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    key = list.get(i);
-                    object.get(key);
+                    object.get(list.get(i));
 //                    int finalI = i;
 //                    object.compute(list.get(i), (k, v) -> {
 //                            int p = 0;
