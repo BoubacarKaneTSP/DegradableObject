@@ -82,12 +82,12 @@ public class Database {
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
-//            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+            mapProfiles = Factory.createMap(typeMap, factoryIndice);
         }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
-//            mapProfiles = Factory.createMap(typeMap, nbThread);
+            mapProfiles = Factory.createMap(typeMap, nbThread);
         }
 
         if (typeSet.contains("Extended")){
@@ -97,7 +97,7 @@ public class Database {
         }
 
 //        community = new ExtendedShardedHashSet<>(factoryIndice);
-        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
+//        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
 //        mapProfiles = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
