@@ -825,8 +825,9 @@ public class Retwis {
 
 //                userUsageDistribution.addAll(localUserUsageDistribution);
 
-            } catch (InterruptedException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InstantiationException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                throw new Error(e);
             }
             return null;
         }
@@ -1151,8 +1152,9 @@ public class Retwis {
                     completionTime += endTime - startTime;
                 }
 
-            } catch (InterruptedException e) {
-                throw new Exception("Thread interrupted", e);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Error(e);
             }
             return null;
         }
