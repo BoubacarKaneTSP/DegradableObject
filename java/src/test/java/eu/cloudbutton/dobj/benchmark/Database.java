@@ -58,6 +58,8 @@ public class Database {
     private final Map<Integer, Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
+    private final Map<Integer, List<Key>> mapUserToAdd;
+    private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
     private final ThreadLocal<Random> random;
@@ -82,12 +84,12 @@ public class Database {
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
-//            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+            mapProfiles = Factory.createMap(typeMap, factoryIndice);
         }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
-//            mapProfiles = Factory.createMap(typeMap, nbThread);
+            mapProfiles = Factory.createMap(typeMap, nbThread);
         }
 
         if (typeSet.contains("Extended")){
@@ -97,7 +99,7 @@ public class Database {
         }
 
 //        community = new ExtendedShardedHashSet<>(factoryIndice);
-        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
+//        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
 //        mapProfiles = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
@@ -121,6 +123,13 @@ public class Database {
             localUsersUsageProbabilityRange.put(i, 0L);
             listLocalUsersFollow.put(i, new HashMap<>());
             listLocalUser.add(new ArrayList<>());
+        }
+
+        mapUserToAdd = new ConcurrentHashMap<>();
+        mapListUserFollow = new ConcurrentHashMap<>();
+
+        for (int i = 0; i < nbThread; i++) {
+            mapUserToAdd.put(i, new ArrayList<>());
         }
 
 //        System.out.println("generate user");
@@ -581,50 +590,34 @@ public class Database {
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
-        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
-        int nbUserPerThread = nbUsers;
-        int nbUserFollowedPerUser = 100;
-        int nbUserFollowingPerThread = 100;
+        int nbUserPerThread = nbUsers/nbThread;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
 //            System.out.println(i +"/"+ nbThread*nbUserPerThread);
             Key user = generateUser();
             if (setUser.add(user)){
-                addOriginalUser(user);
+                mapUserToAdd.get(i%nbThread).add(user);
+                mapListUserFollow.put(user, new LinkedList<>());
                 listUser.offer(user);
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
-                tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
             }
         }
 
-        for (int i = 0; i < nbThread; i++) {
-//            System.out.println("thread num : " + i);
-            for (int k = 0; k < nbUserFollowingPerThread; k++) {
-                int w = k+(i*nbUserPerThread);
-                for (int j = 0; j < nbUserFollowedPerUser; j++) {
-                    int v = j+(i*nbUserPerThread);
-                    if (w != v){
-                        followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
-                        tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
-                    }
-                }
-            }
-        }
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
         int j = 1;
 
-        for (int i = 0; i < nbThread*nbUserPerThread; i++) {
+        for (int i = 0; i < nbUsers; i++) {
             sommeUsage.put(i, new AtomicInteger());
         }
 
         int threadNum = 0;
 
-        System.out.println(listUser.size());
+//        System.out.println(listUser.size());
         for (Key user: listUser){
             sommeUsage.get(threadNum).incrementAndGet();
             sommeFollow += 1;
@@ -636,7 +629,8 @@ public class Database {
             localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
             usersFollowProbability.put(sommeFollow, user);
             listLocalUser.get(threadNum).add(user);
-            listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
+
+//            listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
 
             if (j%nbUserPerThread == 0) {
                 threadNum += 1;
@@ -644,6 +638,23 @@ public class Database {
             }
             j++;
         }
+
+//        Set<Key> distinctUser = new HashSet<>();
+
+//        for (int i = 0; i < threadNum; i++) {
+//            System.out.println("\n =====> thread num : " + i);
+//            System.out.println("list local user size : " + listLocalUser.get(i).size());
+//            System.out.println();
+//
+//            for (Key k : localUsersUsageProbability.get(i).values()){
+//                if (!distinctUser.add(k))
+//                    System.out.println("A user is present two time");
+//            }
+////            System.out.println(localUsersUsageProbability.get(i));
+//            System.out.println();
+//            System.out.println();
+//
+//        }
 
 //        System.out.println("mapFollowers \n");
 //        for (Key user : mapFollowers.keySet()){
@@ -902,8 +913,13 @@ public class Database {
     }
 
     public void updateProfile(Key user){
-        mapProfiles.put(user, mapProfiles.get(user)+1);
-//        mapProfiles.compute(user, (usr, profile) -> ++profile);
+        // mapProfiles.put(user, mapProfiles.get(user)+1);
+        mapProfiles.compute(user, (usr, profile) -> {
+            for (int j = 0; j <= 10000 ; j++) {
+                j += j % 42;
+            }
+            return ++profile;
+        });
     }
 
     public void joinCommunity(Key user){

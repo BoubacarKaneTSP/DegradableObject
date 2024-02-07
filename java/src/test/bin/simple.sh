@@ -8,10 +8,10 @@ nbThreads=$3
 nbOps=$4
 
 java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview \
-eu.cloudbutton.dobj.benchmark.Microbenchmark \
--type $type \
--nbThreads $nbThreads \
--time $time \
--nbOps $nbOps \
--quickTest \
--p
+     eu.cloudbutton.dobj.benchmark.Microbenchmark \
+     -type $type \
+     -nbThreads $nbThreads \
+     -time $time \
+     -nbOps $nbOps \
+     -quickTest \
+     -p
