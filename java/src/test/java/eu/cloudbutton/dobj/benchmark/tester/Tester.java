@@ -92,8 +92,8 @@ public abstract class Tester<T> implements Callable<Void> {
                 localOp.get(opNumber).val += nbRepeat;
                 localTimeOp.get(opNumber).val += elapsedTime;
 
-                // simulate I/O
-                // Thread.sleep(0,5000);
+//                 simulate I/O
+                 Thread.sleep(0,5000);
 
             }
 

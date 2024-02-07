@@ -41,7 +41,7 @@ import sun.misc.Unsafe;
 
 /**
  * Hash table based implementation of the {@code Map} interface.  This
- * implementation provides all of the optional map operations, and permits
+ * implementation provides all the optional map operations, and permits
  * {@code null} values and the {@code null} key.  (The {@code HashMap}
  * class is roughly equivalent to {@code Hashtable}, except that it is
  * unsynchronized and permits nulls.)  This class makes no guarantees as to
