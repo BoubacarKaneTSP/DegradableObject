@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+\begin{axis}[scatter/classes={U={mark=+,red}, NU={mark=x,blue}}, legend pos=outer north east,axis x line=bottom, axis y line=left, enlarge x limits=true, xlabel = {Classes}, ylabel = {Methods}, enlarge y limits=true, xtick = data, xticklabels = {,,},ytick=data, yticklabels={add,size,poll,clear,isEmpty}, title={Use of ConcurrentLinkedQueue in hadoop}]
+\addplot[scatter,only marks, scatter src=explicit symbolic]
+coordinates {
+(0,0) [NU]
+(0,1) [NU]
+(1,0) [NU]
+(1,1) [NU]
+(1,2) [NU]
+(2,0) [NU]
+(2,1) [NU]
+(3,0) [NU]
+(3,1) [NU]
+(3,2) [NU]
+(4,0) [NU]
+(4,2) [NU]
+(5,0) [NU]
+(5,1) [NU]
+(6,0) [NU]
+(6,1) [NU]
+(6,3) [NU]
+(6,2) [NU]
+(7,0) [NU]
+(7,4) [NU]
+};
+\end{axis}
+\end{tikzpicture}

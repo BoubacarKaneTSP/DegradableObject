@@ -1,0 +1,55 @@
+\begin{tikzpicture}
+\begin{axis}[ybar stacked, axis x line=bottom, axis y line=left, enlarge x limits=true, enlarge y limits=true, grid=minor, xlabel={Projects}, ylabel={Usage \%},legend columns=2, legend pos=outer north east, xtick=data, xticklabels={ignite,cassandra,hadoop}, title={AtomicLong}]
+\addplot[fill, color=BurntOrange] coordinates
+    { (0,8.64) (1,8.05) (2,3.55) };
+\addplot[fill, color=TealBlue] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=Brown] coordinates
+    { (0,20.16) (1,22.99) (2,19.86) };
+\addplot[fill, color=Dandelion] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=brown] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=cyan] coordinates
+    { (0,2.06) (1,1.15) (2,2.13) };
+\addplot[fill, color=darkgray] coordinates
+    { (0, 0.00) (1,1.15) (2, 0.00) };
+\addplot[fill, color=gray] coordinates
+    { (0,1.23) (1, 0.00) (2,0.71) };
+\addplot[fill, color=teal] coordinates
+    { (0,30.45) (1,27.59) (2,38.3) };
+\addplot[fill, color=lime] coordinates
+    { (0,3.29) (1,3.45) (2,1.42) };
+\addplot[fill, color=magenta] coordinates
+    { (0,2.88) (1,3.45) (2,0.71) };
+\addplot[fill, color=olive] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=orange] coordinates
+    { (0,0.41) (1,1.15) (2, 0.00) };
+\addplot[fill, color=pink] coordinates
+    { (0,11.52) (1,13.79) (2,13.48) };
+\addplot[fill, color=purple] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=violet] coordinates
+    { (0,0.82) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=yellow] coordinates
+    { (0, 0.00) (1,1.15) (2, 0.00) };
+\addplot[fill, color=Apricot] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=Bittersweet] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=BrickRed] coordinates
+    { (0,6.58) (1,6.9) (2,4.26) };
+\addplot[fill, color=Red] coordinates
+    { (0, 0.00) (1, 0.00) (2,0.71) };
+\addplot[fill, color=Tan] coordinates
+    { (0,8.64) (1,8.05) (2,13.48) };
+\addplot[fill, color=Sepia] coordinates
+    { (0, 0.00) (1, 0.00) (2,0.71) };
+\addplot[fill, color=Goldenrod] coordinates
+    { (0, 0.00) (1,1.15) (2,0.71) };
+\addplot[fill, color=GreenYellow] coordinates
+    { (0,0.41) (1, 0.00) (2, 0.00) };
+\legend{getAndIncrement, wait, incrementAndGet, notifyAll, increment, decrementAndGet, updateAndGet, longValue, get, getAndAdd, getAndSet, value, accumulateAndGet, set, sumThenReset, intValue, length, doubleValue, AtomicLong, compareAndSet, equals, addAndGet, toString, getAndUpdate, queue};
+\end{axis}
+\end{tikzpicture}

@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+\begin{axis}[ybar stacked, axis x line=bottom, axis y line=left, enlarge x limits=true, enlarge y limits=true, grid=minor, xlabel={Projects}, ylabel={Usage \%},legend columns=2, legend pos=outer north east, xtick=data, xticklabels={ignite,cassandra,hadoop}, title={ConcurrentSkipListSet}]
+\addplot[fill, color=BurntOrange] coordinates
+    { (0,36.36) (1,40.0) (2,25.0) };
+\addplot[fill, color=TealBlue] coordinates
+    { (0,9.09) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=Brown] coordinates
+    { (0,18.18) (1,20.0) (2, 0.00) };
+\addplot[fill, color=Dandelion] coordinates
+    { (0,9.09) (1, 0.00) (2,12.5) };
+\addplot[fill, color=brown] coordinates
+    { (0,9.09) (1, 0.00) (2, 0.00) };
+\addplot[fill, color=cyan] coordinates
+    { (0,9.09) (1,20.0) (2,25.0) };
+\addplot[fill, color=darkgray] coordinates
+    { (0, 0.00) (1, 0.00) (2,12.5) };
+\addplot[fill, color=gray] coordinates
+    { (0,9.09) (1,20.0) (2,12.5) };
+\addplot[fill, color=teal] coordinates
+    { (0, 0.00) (1, 0.00) (2,12.5) };
+\legend{add, contains, size, addAll, forEach, clear, isEmpty, remove, first};
+\end{axis}
+\end{tikzpicture}

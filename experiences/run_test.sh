@@ -32,9 +32,9 @@ do
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 done
 ##
-python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 32 96"
-python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 32 96"
-python3 compute_avg_throughput_microbenchmark.py "WrappedLongAdder" "1 32 96"
+python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 100 500 1000"
+python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 100 500 1000"
+python3 compute_avg_throughput_microbenchmark.py "WrappedLongAdder" "1 100 500 1000"
 
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 32 96"
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1 32 96"
