@@ -38,9 +38,21 @@ public class MapTester extends Tester<Map> {
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
+
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.put(list.get(i),i);
+                    int finalI = i;
+                    object.compute(list.get(i), (k, v) -> {
+                        int p = 0;
+                        for(int j=0;j<=nbRepeat; j++) {
+                            p+=j;
+                        }
+                        return finalI;
+                    });
                 }
+
+//                for (int i = 0; i < nbRepeat; i++) {
+//                    object.put(list.get(i),i);
+//                }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
@@ -54,14 +66,6 @@ public class MapTester extends Tester<Map> {
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.get(list.get(i));
-//                    int finalI = i;
-//                    object.compute(list.get(i), (k, v) -> {
-//                            int p = 0;
-//                            for(int j=0;j<=nbRepeat; j++) {
-//                                p+=j;
-//                            }
-//                            return finalI;
-//                    });
                 }
                 endTime = System.nanoTime();
                 break;
