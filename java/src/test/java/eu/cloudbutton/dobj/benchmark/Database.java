@@ -837,6 +837,7 @@ public class Database {
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
         mapProfiles.put(user, 0);
         mapFollowers.put(user, new ConcurrentHashSet<>());
+        mapCommunityStatus.put(user, 0);
 
 //        if (typeSet.contains("Extended"))
 //            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
@@ -853,6 +854,7 @@ public class Database {
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
         mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
 
     }
 
