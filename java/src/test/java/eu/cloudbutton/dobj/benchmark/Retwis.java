@@ -1033,15 +1033,18 @@ public class Retwis {
                             endTime = System.nanoTime();
                             break;
                         case GROUPE:
-                            if (numOperation%2 == 0){
+                            if (database.getMapCommunityStatus().get(userA) == 0){
+                                database.getMapCommunityStatus().put(userA, 1);
                                 startTime = System.nanoTime();
                                 database.joinCommunity(userA);
-                                endTime = System.nanoTime();
-                            }else{
+                            }
+                            else{
+                                database.getMapCommunityStatus().put(userA, 0);
                                 startTime = System.nanoTime();
                                 database.leaveCommunity(userA);
-                                endTime = System.nanoTime();
+
                             }
+                            endTime = System.nanoTime();
                             break ;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);

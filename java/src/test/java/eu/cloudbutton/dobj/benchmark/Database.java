@@ -33,10 +33,11 @@ public class Database {
     private final String typeCounter;
     private final int nbThread;
     private final int nbUsers;
+    private Map<Key, Integer> mapProfiles;
     private Map<Key, Set<Key>> mapFollowers;
     private Map<Key, Set<Key>> mapFollowing;
     private Map<Key, Timeline<String>> mapTimelines;
-    private Map<Key, Integer> mapProfiles;
+    private Map<Key, Integer> mapCommunityStatus;
     private Set<Key> community;
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
@@ -84,22 +85,21 @@ public class Database {
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
-            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+//            mapProfiles = Factory.createMap(typeMap, factoryIndice);
         }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
-            mapProfiles = Factory.createMap(typeMap, nbThread);
+//            mapProfiles = Factory.createMap(typeMap, nbThread);
         }
 
-        if (typeSet.contains("Extended")){
-            community = Factory.createSet(typeSet, factoryIndice);
-        }else{
-            community = Factory.createSet(typeSet, nbThread);
-        }
+//        if (typeSet.contains("Extended")){
+//            community = Factory.createSet(typeSet, factoryIndice);
+//        }else{
+//            community = Factory.createSet(typeSet, nbThread);
+//        }
 
-//        community = new ExtendedShardedHashSet<>(factoryIndice);
-//        mapProfiles = new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
+        mapProfiles = new ExtendedSegmentedHashMap<>( new FactoryIndice(nbThread + 1));
 //        mapProfiles = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
