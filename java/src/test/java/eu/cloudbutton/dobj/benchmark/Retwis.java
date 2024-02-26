@@ -715,6 +715,8 @@ public class Retwis {
                             System.out.println("error");
 
                             System.out.println(database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
+                            System.out.println(database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowing().get(userB));
+                            System.out.println(database.getMapKeyToIndice().get(userB) + " " + database.getMapTimelines().get(userB));
 
                             System.exit(1);
                         }
