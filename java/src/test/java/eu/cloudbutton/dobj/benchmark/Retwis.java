@@ -714,7 +714,7 @@ public class Retwis {
                         } catch (NullPointerException e) {
                             System.out.println("error");
 
-                            System.out.println(userB + " " + database.getMapFollowers().get(userB));
+                            System.out.println(database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
 
                             System.exit(1);
                         }
