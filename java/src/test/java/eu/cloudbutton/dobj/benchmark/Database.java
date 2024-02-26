@@ -593,7 +593,10 @@ public class Database {
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
+        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
         int nbUserPerThread = nbUsers/nbThread;
+        int nbUserFollowedPerUser = 10;
+        int nbUserFollowingPerThread = 10;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
 //            System.out.println(i +"/"+ nbThread*nbUserPerThread);
@@ -605,10 +608,24 @@ public class Database {
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
+                tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
             }
         }
 
+        for (int i = 0; i < nbThread; i++) {
+//            System.out.println("thread num : " + i);
+            for (int k = 0; k < nbUserFollowingPerThread; k++) {
+                int w = k+(i*nbUserPerThread);
+                for (int j = 0; j < nbUserFollowedPerUser; j++) {
+                    int v = j+(i*nbUserPerThread);
+                    if (w != v){
+                        followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
+                        tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
+                    }
+                }
+            }
+        }
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
