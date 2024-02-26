@@ -623,7 +623,15 @@ public class Database {
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
                     int v = j+(i*nbUserPerThread);
                     if (w != v){
-                        mapListUserFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
+                        try{
+
+                            mapListUserFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
+                        } catch (Exception e) {
+
+                            System.out.println(mapIndiceToKey.get(w));
+                            e.printStackTrace();
+                            System.exit(1);
+                        }
                     }
                 }
             }
