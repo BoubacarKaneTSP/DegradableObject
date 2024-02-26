@@ -709,7 +709,13 @@ public class Retwis {
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
                     for (Key userB : database.getMapListUserFollow().get(userA)){
-                        database.followUser(userA, userB);
+                        try{
+
+                            database.followUser(userA, userB);
+                        } catch (Exception e) {
+                            System.out.println(database.getMapFollowers());
+                            System.exit(1);
+                        }
                     }
                 }
 
