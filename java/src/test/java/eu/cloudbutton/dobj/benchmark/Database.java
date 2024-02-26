@@ -624,6 +624,8 @@ public class Database {
 //            System.out.println("thread num : " + i);
             for (int k = 0; k < nbUserFollowingPerThread; k++) {
                 int w = k+(i*nbUserPerThread);
+                if (w >= nbUsers)
+                    break;
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
                     int v = j+(i*nbUserPerThread);
                     if (w != v){
