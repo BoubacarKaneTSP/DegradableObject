@@ -880,7 +880,7 @@ public class Database {
         mapFollowers.remove(user);
         mapFollowing.remove(user);
         mapTimelines.remove(user);
-        // mapProfiles.remove(user);
+         mapProfiles.remove(user);
     }
 
     // Adding user_A to the followers of user_B
