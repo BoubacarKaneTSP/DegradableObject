@@ -715,7 +715,9 @@ public class Retwis {
                             database.followUser(userA, userB);
                         } catch (NullPointerException e) {
 
-                            System.out.println("error");
+                            System.out.println("userA : " + userA + " | userB : " + userB);
+
+                            e.printStackTrace();
 
                             System.out.println("is "+ database.getMapKeyToIndice().get(userB) +" one of my user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
                             System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
