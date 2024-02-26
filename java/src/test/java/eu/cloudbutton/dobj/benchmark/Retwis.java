@@ -717,8 +717,8 @@ public class Retwis {
 
                             System.out.println("error");
 
-                            System.out.println("is userB one of my user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
-                            System.out.println("Thread " + myId + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
+                            System.out.println("is "+ database.getMapKeyToIndice().get(userB) +" one of my user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
+                            System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
 
                             System.exit(1);
                         }
