@@ -620,7 +620,7 @@ public class Database {
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
                     int v = j+(i*nbUserPerThread);
                     if (w != v){
-                        followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
+//                        followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
                         tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
                     }
                 }
@@ -649,8 +649,7 @@ public class Database {
             localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
             usersFollowProbability.put(sommeFollow, user);
             listLocalUser.get(threadNum).add(user);
-
-//            listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
+            listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
 
             if (j%nbUserPerThread == 0) {
                 threadNum += 1;
@@ -879,7 +878,7 @@ public class Database {
         mapFollowers.remove(user);
         mapFollowing.remove(user);
         mapTimelines.remove(user);
-        mapProfiles.remove(user);
+        // mapProfiles.remove(user);
     }
 
     // Adding user_A to the followers of user_B
@@ -935,13 +934,8 @@ public class Database {
     }
 
     public void updateProfile(Key user){
-        // mapProfiles.put(user, mapProfiles.get(user)+1);
-        mapProfiles.compute(user, (usr, profile) -> {
-            for (int j = 0; j <= 10000 ; j++) {
-                j += j % 42;
-            }
-            return ++profile;
-        });
+//        mapProfiles.put(user, mapProfiles.get(user)+1);
+        mapProfiles.compute(user, (usr, profile) -> ++profile);
     }
 
     public void joinCommunity(Key user){
