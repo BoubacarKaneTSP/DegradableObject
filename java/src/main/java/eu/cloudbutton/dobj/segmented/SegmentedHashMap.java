@@ -92,6 +92,17 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
         return new ImmutableComposedSet<>(segments().toArray(new Set[0]));
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+
+        for(Map m: segments()){
+            s.append(m.toString());
+        }
+
+        return s.toString();
+    }
+
     @NotNull
     @Override
     public Collection<V> values() {
