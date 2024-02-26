@@ -628,7 +628,7 @@ public class Database {
                             mapListUserFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
                         } catch (Exception e) {
 
-                            System.out.println(mapIndiceToKey.get(w));
+                            System.out.println(w + " : " +mapIndiceToKey.get(w));
                             e.printStackTrace();
                             System.exit(1);
                         }
