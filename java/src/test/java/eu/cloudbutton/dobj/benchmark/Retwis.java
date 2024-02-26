@@ -707,23 +707,10 @@ public class Retwis {
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
-                for (int i = 0; i < _nbThreads; i++) {
-//            System.out.println("thread num : " + i);
-                    for (int k = 0; k < nbUserFollowingPerThread; k++) {
-                        int w = k+(i*nbUserPerThread);
-                        for (int j = 0; j < nbUserFollowedPerUser; j++) {
-                            int v = j+(i*nbUserPerThread);
-                            if (w != v){
-                                database.followUser(database.getMapIndiceToKey().get(w), database.getMapIndiceToKey().get(v));
-                                database.getMapListUserFollow().get(database.getMapIndiceToKey().get(w)).add(database.getMapIndiceToKey().get(v));
-                            }
-                        }
+                for (Key userA : database.getMapUserToAdd().get(myId.get())){
+                    for (Key userB : database.getMapListUserFollow().get(userA)){
+                        database.followUser(userA, userB);
                     }
-                }
-
-                for (Key user : database.getListLocalUser().get(myId.get())) {
-                    database.getListLocalUsersFollow().get(myId.get()).put(user, database.getMapListUserFollow().get(user));
-
                 }
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();

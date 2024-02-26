@@ -593,23 +593,26 @@ public class Database {
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
-        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
         int nbUserPerThread = nbUsers/nbThread;
         int nbUserFollowedPerUser = 10;
         int nbUserFollowingPerThread = 10;
+
+        int indice = 0;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
 //            System.out.println(i +"/"+ nbThread*nbUserPerThread);
             Key user = generateUser();
             if (setUser.add(user)){
-                mapUserToAdd.get(i%nbThread).add(user);
+                mapUserToAdd.get(indice).add(user);
                 mapListUserFollow.put(user, new LinkedList<>());
                 listUser.offer(user);
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
-                tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
+                if (i % nbUserPerThread == 0) {
+                    indice += 1;
+                }
             }
         }
 
@@ -620,8 +623,7 @@ public class Database {
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
                     int v = j+(i*nbUserPerThread);
                     if (w != v){
-//                        followUser(mapIndiceToKey.get(w), mapIndiceToKey.get(v));
-                        tmpListUsersFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
+                        mapListUserFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
                     }
                 }
             }
@@ -649,7 +651,7 @@ public class Database {
             localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
             usersFollowProbability.put(sommeFollow, user);
             listLocalUser.get(threadNum).add(user);
-            listLocalUsersFollow.get(threadNum).put(user, tmpListUsersFollow.get(user));
+            listLocalUsersFollow.get(threadNum).put(user, mapListUserFollow.get(user));
 
             if (j%nbUserPerThread == 0) {
                 threadNum += 1;
