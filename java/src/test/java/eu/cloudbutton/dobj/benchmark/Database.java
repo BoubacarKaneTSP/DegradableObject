@@ -629,6 +629,12 @@ public class Database {
                         } catch (Exception e) {
 
                             System.out.println(w + " : " +mapIndiceToKey.get(w));
+
+                            System.out.println();
+
+                            for (int val : mapIndiceToKey.keySet())
+                                System.out.println(val + " " + mapIndiceToKey.get(val));
+
                             e.printStackTrace();
                             System.exit(1);
                         }
