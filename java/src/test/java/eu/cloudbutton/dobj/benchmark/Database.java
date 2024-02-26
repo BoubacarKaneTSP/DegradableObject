@@ -616,6 +616,7 @@ public class Database {
             }
         }
 
+        System.out.println("nbThread : " + nbThread);
         for (int val : mapIndiceToKey.keySet())
             System.out.println(val + " " + mapIndiceToKey.get(val));
 
