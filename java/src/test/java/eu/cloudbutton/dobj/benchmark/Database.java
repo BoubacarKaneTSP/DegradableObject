@@ -616,6 +616,9 @@ public class Database {
             }
         }
 
+        for (int val : mapIndiceToKey.keySet())
+            System.out.println(val + " " + mapIndiceToKey.get(val));
+
         for (int i = 0; i < nbThread; i++) {
 //            System.out.println("thread num : " + i);
             for (int k = 0; k < nbUserFollowingPerThread; k++) {
@@ -631,9 +634,6 @@ public class Database {
                             System.out.println(w + " : " +mapIndiceToKey.get(w));
 
                             System.out.println();
-
-                            for (int val : mapIndiceToKey.keySet())
-                                System.out.println(val + " " + mapIndiceToKey.get(val));
 
                             e.printStackTrace();
                             System.exit(1);
