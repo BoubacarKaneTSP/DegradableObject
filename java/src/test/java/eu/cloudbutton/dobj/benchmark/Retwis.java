@@ -714,6 +714,9 @@ public class Retwis {
                             database.followUser(userA, userB);
                         } catch (Exception e) {
                             System.out.println(database.getMapFollowers());
+                            System.out.println("error");
+                            System.out.println(database.getMapFollowers().keySet());
+
                             System.exit(1);
                         }
                     }
