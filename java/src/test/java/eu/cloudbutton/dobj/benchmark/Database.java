@@ -634,6 +634,8 @@ public class Database {
                     break;
                 for (int j = 0; j < nbUserFollowedPerUser; j++) {
                     int v = j+(i*nbUserPerThread);
+                    if (v >= nbUsers)
+                        break;
                     if (w != v){
                         try{
 
