@@ -616,6 +616,9 @@ public class Database {
             }
         }
 
+        for (int o : mapUserToAdd.keySet())
+            System.out.println(o + " " + mapUserToAdd.get(o));
+
 
         for (int i = 0; i < nbThread; i++) {
 //            System.out.println("thread num : " + i);
