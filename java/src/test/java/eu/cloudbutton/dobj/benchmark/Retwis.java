@@ -713,7 +713,8 @@ public class Retwis {
                             database.followUser(userA, userB);
                         } catch (NullPointerException e) {
                             System.out.println("error");
-                            System.out.println(database.getMapFollowers());
+
+                            System.out.println(userB + " " + database.getMapFollowers().get(userB));
 
                             System.exit(1);
                         }
