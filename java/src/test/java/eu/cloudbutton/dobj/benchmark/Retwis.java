@@ -733,7 +733,6 @@ public class Retwis {
 //                    System.out.println();
                 }
 
-                System.exit(1);
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
 
