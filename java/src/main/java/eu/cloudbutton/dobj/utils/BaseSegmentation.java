@@ -38,6 +38,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     @Override
     public final T segmentFor(Object x) {
         int index = carrierID();
+
         if (!redirect.containsKey(index)) {
             try {
                 T ret = this.clazz.getDeclaredConstructor().newInstance();

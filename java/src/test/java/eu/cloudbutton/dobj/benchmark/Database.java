@@ -616,14 +616,14 @@ public class Database {
             }
         }
 
-//        for (int o : mapUserToAdd.keySet()) {
-//            System.out.print(o + " :");
-//            for (Key user : mapUserToAdd.get(o)) {
-//                System.out.print(" " + mapKeyToIndice.get(user) );
-//            }
-//            System.out.println();
-//            System.out.println();
-//        }
+        for (int o : mapUserToAdd.keySet()) {
+            System.out.print(o + " :");
+            for (Key user : mapUserToAdd.get(o)) {
+                System.out.print(" " + mapKeyToIndice.get(user) );
+            }
+            System.out.println();
+            System.out.println();
+        }
 
 
         for (int i = 0; i < nbThread; i++) {
