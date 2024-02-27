@@ -723,7 +723,7 @@ public class Retwis {
                             e.printStackTrace();
 
                             System.out.println("is "+ userB +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
-                            System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB) + " | groupe of user : " + database.getMapUserToAdd().get(myId.get()));
+                            System.out.println("Thread " + myId.get() + " | Map follower of user : " + userB + " " + database.getMapFollowers().get(userB) + " | groupe of user : " + database.getMapUserToAdd().get(myId.get()));
 
                             System.exit(1);
                         }
