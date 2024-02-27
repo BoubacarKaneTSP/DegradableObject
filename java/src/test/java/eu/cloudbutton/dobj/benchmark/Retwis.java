@@ -711,26 +711,26 @@ public class Retwis {
                 latchFillDatabase.await();
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
-                    System.out.print(userA + " follow : ");
+//                    System.out.print(userA + " follow : ");
                     for (Key userB : database.getMapListUserFollow().get(userA)){
-                        System.out.print(userB + ", ");
-//                        try{
-//
-////                            database.followUser(userA, userB);
-//                        } catch (NullPointerException e) {
-//
-////                            System.out.println("userA : " + userA + " | userB : " + userB);
-//
-//                            e.printStackTrace();
-//
-//                            System.out.println("is "+ userB +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
-//                            System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
-//
-//                            System.exit(1);
-//                        }
+//                        System.out.print(userB + ", ");
+                        try{
+
+                            database.followUser(userA, userB);
+                        } catch (NullPointerException e) {
+
+//                            System.out.println("userA : " + userA + " | userB : " + userB);
+
+                            e.printStackTrace();
+
+                            System.out.println("is "+ userB +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
+                            System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
+
+                            System.exit(1);
+                        }
                     }
-                    System.out.println();
-                    System.out.println();
+//                    System.out.println();
+//                    System.out.println();
                 }
 
                 System.exit(1);
