@@ -38,7 +38,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         this.segments = new CopyOnWriteArrayList<>();
         for (int i = 0; i < this.parallelism; i++) {
             try {
-                this.segments.add(clazz.getDeclaredConstructor().newInstance());
+                this.segments.add(this.clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new Error(e);
@@ -60,7 +60,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     public static final int carrierID() {
         try {
-            return (int) ((Thread) currentCarrierThread.invoke(null)).getId();
+            return (int) ((Thread) currentCarrierThread.invoke(null)).threadId();
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
