@@ -615,15 +615,15 @@ public class Database {
                 }
             }
         }
-
-        for (int o : mapUserToAdd.keySet()) {
-            System.out.print(o + " :");
-            for (Key user : mapUserToAdd.get(o)) {
-                System.out.print(" " + mapKeyToIndice.get(user) );
-            }
-            System.out.println();
-            System.out.println();
-        }
+//
+//        for (int o : mapUserToAdd.keySet()) {
+//            System.out.print(o + " :");
+//            for (Key user : mapUserToAdd.get(o)) {
+//                System.out.print(" " + mapKeyToIndice.get(user) );
+//            }
+//            System.out.println();
+//            System.out.println();
+//        }
 
 
         for (int i = 0; i < nbThread; i++) {
@@ -662,6 +662,8 @@ public class Database {
             System.out.println();
             System.out.println();
         }
+
+        Thread.sleep(10_000);
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
