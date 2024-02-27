@@ -616,15 +616,15 @@ public class Database {
             }
         }
 //
-        for (int o : mapUserToAdd.keySet()) {
-            System.out.print(o + " :");
-            for (Key user : mapUserToAdd.get(o)) {
-                System.out.print(" " + mapKeyToIndice.get(user) );
-            }
-            System.out.println();
-            System.out.println();
-        }
-
+//        for (int o : mapUserToAdd.keySet()) {
+//            System.out.print(o + " :");
+//            for (Key user : mapUserToAdd.get(o)) {
+//                System.out.print(" " + mapKeyToIndice.get(user) );
+//            }
+//            System.out.println();
+//            System.out.println();
+//        }
+//
 
         for (int i = 0; i < nbThread; i++) {
 //            System.out.println("thread num : " + i);
@@ -654,16 +654,16 @@ public class Database {
             }
         }
 
-        for(Key o : mapListUserFollow.keySet()){
-            System.out.print(mapKeyToIndice.get(o) + " :");
-            for (Key user : mapListUserFollow.get(o)) {
-                System.out.print(" " + mapKeyToIndice.get(user));
-            }
-            System.out.println();
-            System.out.println();
-        }
-
-        Thread.sleep(10_000);
+//        for(Key o : mapListUserFollow.keySet()){
+//            System.out.print(mapKeyToIndice.get(o) + " :");
+//            for (Key user : mapListUserFollow.get(o)) {
+//                System.out.print(" " + mapKeyToIndice.get(user));
+//            }
+//            System.out.println();
+//            System.out.println();
+//        }
+//
+//        Thread.sleep(10_000);
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
