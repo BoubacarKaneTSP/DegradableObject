@@ -11,8 +11,10 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import sun.misc.Unsafe;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.ArrayList;
@@ -682,6 +684,18 @@ public class Retwis {
         long startTime, endTime;
         List<Integer> listOperationToDo;
 
+        private static final sun.misc.Unsafe UNSAFE;
+
+        static {
+            try {
+                Field f = Unsafe.class.getDeclaredField("theUnsafe");
+                f.setAccessible(true);
+                UNSAFE = (Unsafe) f.get(null);
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase) {
             this.random = ThreadLocalRandom.current();
             this.myId = new ThreadLocal<>();
@@ -705,7 +719,7 @@ public class Retwis {
                     database.addOriginalUser(user);
                 }
 //                System.out.println("Thread num : " + myId.get() + " manage : " + database.getMapUserToAdd().get(myId.get()));
-
+                UNSAFE.fullFence();
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
