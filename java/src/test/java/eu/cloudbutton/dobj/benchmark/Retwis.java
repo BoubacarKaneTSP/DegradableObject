@@ -706,6 +706,8 @@ public class Retwis {
                 }
                 System.out.println("Thread num : " + myId.get() + " manage : " + database.getMapUserToAdd().get(myId.get()));
 
+                System.out.println();
+
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
@@ -728,6 +730,7 @@ public class Retwis {
                             System.exit(1);
                         }
                     }
+                    System.out.println();
                     System.out.println();
                 }
 
