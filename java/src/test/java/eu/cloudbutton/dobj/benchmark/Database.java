@@ -654,6 +654,13 @@ public class Database {
             }
         }
 
+        for(Key o : mapListUserFollow.keySet()){
+            System.out.print(o + " :");
+            for (Key user : mapListUserFollow.get(o)) {
+                System.out.print(" " + user);
+            }
+        }
+
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
         int j = 1;

@@ -699,14 +699,13 @@ public class Retwis {
                 int type;
                 int sizeOpToDo = 10_000;
 
+                System.out.println();
                 myId.set(database.getCount().getAndIncrement());
 
                 for (Key user : database.getMapUserToAdd().get(myId.get())){
                     database.addOriginalUser(user);
                 }
                 System.out.println("Thread num : " + myId.get() + " manage : " + database.getMapUserToAdd().get(myId.get()));
-
-                System.out.println();
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
@@ -715,20 +714,20 @@ public class Retwis {
                     System.out.print(userA + " follow : ");
                     for (Key userB : database.getMapListUserFollow().get(userA)){
                         System.out.print(userB + ", ");
-                        try{
-
-//                            database.followUser(userA, userB);
-                        } catch (NullPointerException e) {
-
-//                            System.out.println("userA : " + userA + " | userB : " + userB);
-
-                            e.printStackTrace();
-
-                            System.out.println("is "+ userB +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
-                            System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
-
-                            System.exit(1);
-                        }
+//                        try{
+//
+////                            database.followUser(userA, userB);
+//                        } catch (NullPointerException e) {
+//
+////                            System.out.println("userA : " + userA + " | userB : " + userB);
+//
+//                            e.printStackTrace();
+//
+//                            System.out.println("is "+ userB +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
+//                            System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
+//
+//                            System.exit(1);
+//                        }
                     }
                     System.out.println();
                     System.out.println();
