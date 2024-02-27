@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class ExtendedSegmentation<T> implements Segmentation<T>{
 

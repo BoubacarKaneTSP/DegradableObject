@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,36 +23,32 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         }
     }
 
-    protected final ScopedValue<T> segment = ScopedValue.newInstance();
-
     private Class<T> clazz;
-
-    private final AtomicInteger next;
 
     private final List<T> segments;
 
-    private final int parallelism;
+    private final Map<Integer,Integer> redirect;
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
-        this.parallelism = parallelism;
-//        this.parallelism = Runtime.getRuntime().availableProcessors();
         this.clazz = clazz;
         this.segments = new CopyOnWriteArrayList<>();
-        for (int i = 0; i < this.parallelism; i++) {
+        this.redirect = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public final T segmentFor(Object x) {
+        int index = carrierID();
+        if (!redirect.containsKey(index)) {
             try {
-                this.segments.add(this.clazz.getDeclaredConstructor().newInstance());
+                T ret = this.clazz.getDeclaredConstructor().newInstance();
+                this.segments.add(ret);
+                redirect.put(index, this.segments.indexOf(ret));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new Error(e);
             }
         }
-        this.next = new AtomicInteger(0);
-    }
-
-    @Override
-    public final T segmentFor(Object x) {
-        int index = carrierID() % parallelism; // FIXME no collision?
-        return ScopedValue.where(segment, segments.get(index)).get(segment);
+        return segments.get(redirect.get(index));
     }
 
     @Override
