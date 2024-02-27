@@ -710,10 +710,12 @@ public class Retwis {
                 latchFillDatabase.await();
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
+                    System.out.print(userA + " follow : ");
                     for (Key userB : database.getMapListUserFollow().get(userA)){
+                        System.out.print(userB + ", ");
                         try{
 
-                            database.followUser(userA, userB);
+//                            database.followUser(userA, userB);
                         } catch (NullPointerException e) {
 
 //                            System.out.println("userA : " + userA + " | userB : " + userB);
@@ -726,8 +728,10 @@ public class Retwis {
                             System.exit(1);
                         }
                     }
+                    System.out.println();
                 }
 
+                System.exit(1);
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
 
