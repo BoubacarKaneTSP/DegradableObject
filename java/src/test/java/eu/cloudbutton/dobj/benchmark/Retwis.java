@@ -704,6 +704,7 @@ public class Retwis {
                 for (Key user : database.getMapUserToAdd().get(myId.get())){
                     database.addOriginalUser(user);
                 }
+                System.out.println("Thread num : " + myId.get() + " manage : " + database.getMapUserToAdd().get(myId.get()));
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
@@ -719,7 +720,7 @@ public class Retwis {
 
                             e.printStackTrace();
 
-                            System.out.println("is "+ database.getMapKeyToIndice().get(userB) +" one of my user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
+                            System.out.println("is "+ database.getMapKeyToIndice().get(userB) +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
                             System.out.println("Thread " + myId.get() + " | Map follower of user number : " + database.getMapKeyToIndice().get(userB) + " " + database.getMapFollowers().get(userB));
 
                             System.exit(1);
