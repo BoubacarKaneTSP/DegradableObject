@@ -1,68 +1,48 @@
 package eu.cloudbutton.dobj.utils;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 
-    public static Method currentCarrierThread;
-
-    static {
-        try {
-            currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
-            currentCarrierThread.setAccessible(true);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-
-    private Class<T> clazz;
+    protected final ThreadLocal<T> local;
+    private final AtomicInteger next;
 
     private final List<T> segments;
 
-    private final Map<Integer,Integer> redirect;
-
     public BaseSegmentation(Class<T> clazz, int parallelism) {
-        this.clazz = clazz;
-        this.segments = new CopyOnWriteArrayList<>();
-        this.redirect = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public final T segmentFor(Object x) {
-        int index = carrierID();
-
-        if (!redirect.containsKey(index)) {
+        this.segments = new ArrayList<>(parallelism);
+        for(int i = 0; i<parallelism; i++ ){
             try {
-                T ret = this.clazz.getDeclaredConstructor().newInstance();
-                this.segments.add(ret);
-                redirect.put(index, this.segments.indexOf(ret));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new Error(e);
+                this.segments.add(clazz.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
             }
         }
-        return segments.get(redirect.get(index));
+        this.next = new AtomicInteger(0);
+        this.local = ThreadLocal.withInitial(() -> segments.get(next.getAndIncrement()%parallelism));
     }
 
     @Override
-    public final List<T> segments() {
-        return segments;
+    public T segmentFor(Object x) {
+        T segment = null;
+
+        try{
+            segment = local.get();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.println("Failed to get a segment for " + x);
+            System.exit(0);
+        }
+
+        return segment;
     }
 
-    public static final int carrierID() {
-        try {
-            return (int) ((Thread) currentCarrierThread.invoke(null)).threadId();
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public final List<T> segments(){
+        return segments;
     }
 
 }
