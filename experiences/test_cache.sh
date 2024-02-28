@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=1
+nbTest=2
 benchmarkTime=6
 warmingUpTime=3
 #nbUsersInit=1000
@@ -83,7 +83,7 @@ do
 #  python3 compute_avg_gc.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
 
 #  python3 compute_avg_gc.py $nbUsersInit "JUC" "1 32 96" $completion_time
-  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 100 500 1000" $completion_time
+#  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 100 500 1000" $completion_time
 #  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 32 96" $completion_time
 #  python3 compute_avg_gc.py $nbUsersInit "SEQ" "1 32 96" $completion_time
 
