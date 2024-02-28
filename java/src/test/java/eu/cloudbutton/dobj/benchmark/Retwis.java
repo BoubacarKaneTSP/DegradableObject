@@ -814,7 +814,6 @@ public class Retwis {
                         }else{
 
                             compute(type, timeLocalOperations, cleanTimeline, num);
-                            System.out.println("doing an operation");
 //                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
                             num++;
 //
