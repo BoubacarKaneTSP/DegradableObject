@@ -711,6 +711,8 @@ public class Retwis {
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
+                System.out.println("done filling");
+
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
 //                    System.out.print(userA + " follow : ");
                     for (Key userB : database.getMapListUserFollow().get(userA)){
@@ -736,6 +738,7 @@ public class Retwis {
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
+                System.out.println("done following");
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 //                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
