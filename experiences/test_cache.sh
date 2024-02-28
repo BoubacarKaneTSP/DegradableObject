@@ -18,7 +18,7 @@ completion_time="False"
 for nbUsersInit in 10000
 do
   #  Cleaning old file
-#  python3 rm_file.py $nbUsersInit "JUC" $completion_time
+  python3 rm_file.py $nbUsersInit "JUC" $completion_time
   python3 rm_file.py $nbUsersInit "Q_M_C" $completion_time
 #  python3 rm_file.py $nbUsersInit "SEQ" $completion_time
 #  rm JUC_${nbUsersInit}_gc_usage.txt
