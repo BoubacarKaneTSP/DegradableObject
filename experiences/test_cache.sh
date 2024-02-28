@@ -4,9 +4,9 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=2
-benchmarkTime=6
-warmingUpTime=3
+nbTest=3
+benchmarkTime=60
+warmingUpTime=30
 #nbUsersInit=1000
 nbHashCode=10000000
 nbOps=50000000000
@@ -48,8 +48,8 @@ do
       python3 analyse_perf.py perf.log "false" "Q_M_C" $nbThread $nbUsersInit
 #      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
 #
-#      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -j #-z $nbOps
-#      python3 analyse_perf.py perf.log "false" "JUC" $nbThread $nbUsersInit
+      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -j #-z $nbOps
+      python3 analyse_perf.py perf.log "false" "JUC" $nbThread $nbUsersInit
 
       #perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ExtendedConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_S_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
       #python3 analyse_perf.py perf.log "false" "Q_M_S_C" $nbThread $nbUsersInit
@@ -60,7 +60,7 @@ do
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "2 16 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 32 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "48" $completion_time
-#  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 2 4" $completion_time
+  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 100 500 1000" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
@@ -87,7 +87,7 @@ do
 #  python3 compute_avg_gc.py $nbUsersInit "Q_M_C" "1 32 96" $completion_time
 #  python3 compute_avg_gc.py $nbUsersInit "SEQ" "1 32 96" $completion_time
 
-#  python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
+  python3 analyse_perf.py perf.log "true" "JUC" $nbThread $nbUsersInit
   python3 analyse_perf.py perf.log "true" "Q_M_C" $nbThread $nbUsersInit
 #  python3 analyse_perf.py perf.log "true" "SEQ" $nbThread $nbUsersInit
 
