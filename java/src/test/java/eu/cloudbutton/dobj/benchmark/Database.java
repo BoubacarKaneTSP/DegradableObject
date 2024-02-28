@@ -594,8 +594,8 @@ public class Database {
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
         int nbUserPerThread = nbUsers/nbThread;
-        int nbUserFollowedPerUser = nbUserPerThread;
-        int nbUserFollowingPerThread = nbUserPerThread;
+        int nbUserFollowedPerUser = nbUserPerThread/2;
+        int nbUserFollowingPerThread = nbUserPerThread/2;
 
         int indice = 0;
 

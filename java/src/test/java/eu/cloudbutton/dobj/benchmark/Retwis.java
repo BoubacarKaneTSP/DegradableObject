@@ -298,7 +298,7 @@ public class Retwis {
                         callables.add(retwisApp);
                     }
 
-                    callables.add(new Coordinator(latchCompletionTime, latchFillDatabase));
+                    callables.add(new Coordinator(latchCompletionTime, latchFillDatabase, latchFillFollowingPhase));
                     List<Future<Void>> futures;
 
                     futures = executor.invokeAll(callables);
@@ -1099,10 +1099,12 @@ public class Retwis {
 
         private final CountDownLatch latchCompletionTime;
         private final CountDownLatch latchFillDatabase;
+        private final CountDownLatch latchFillFollowingPhase;
 
-        public Coordinator(CountDownLatch latchCompletionTime, CountDownLatch latchFillDatabase) {
+        public Coordinator(CountDownLatch latchCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFillFollowingPhase) {
             this.latchCompletionTime = latchCompletionTime;
             this.latchFillDatabase = latchFillDatabase;
+            this.latchFillFollowingPhase = latchFillFollowingPhase;
         }
 
         @Override
@@ -1113,6 +1115,7 @@ public class Retwis {
                     System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
                 latchFillDatabase.await();
+                latchFillFollowingPhase.await();
 
                 if (flagWarmingUp.get()){
 
