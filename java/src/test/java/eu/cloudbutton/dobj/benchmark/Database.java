@@ -593,7 +593,8 @@ public class Database {
 
         Set<Key> setUser = new HashSet<>();
         Queue<Key> listUser = new LinkedList<>();
-        int nbUserPerThread = nbUsers/nbThread;
+        int nbUserPerThread = 1;
+//        int nbUserPerThread = nbUsers/nbThread;
         int nbUserFollowedPerUser = nbUserPerThread;
         int nbUserFollowingPerThread = nbUserPerThread;
 
@@ -654,16 +655,16 @@ public class Database {
             }
         }
 
-//        for(Key o : mapListUserFollow.keySet()){
-//            System.out.print(mapKeyToIndice.get(o) + " :");
-//            for (Key user : mapListUserFollow.get(o)) {
-//                System.out.print(" " + mapKeyToIndice.get(user));
-//            }
-//            System.out.println();
-//            System.out.println();
-//        }
-//
-//        Thread.sleep(10_000);
+        for(Key o : mapListUserFollow.keySet()){
+            System.out.print(mapKeyToIndice.get(o) + " :");
+            for (Key user : mapListUserFollow.get(o)) {
+                System.out.print(" " + mapKeyToIndice.get(user));
+            }
+            System.out.println();
+            System.out.println();
+        }
+
+        Thread.sleep(10_000);
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
