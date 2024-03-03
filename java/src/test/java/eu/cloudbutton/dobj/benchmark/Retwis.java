@@ -983,6 +983,7 @@ public class Retwis {
                         case ADD:
 
                             startTime = System.nanoTime();
+                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
 //                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
                             endTime = System.nanoTime();
 

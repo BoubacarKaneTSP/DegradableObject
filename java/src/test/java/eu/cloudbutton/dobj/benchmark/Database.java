@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
+import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
@@ -69,6 +70,8 @@ public class Database {
     private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
     private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
 
+    private final Counter counter;
+
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException {
@@ -114,6 +117,7 @@ public class Database {
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
+        counter = Factory.createCounter(typeCounter);
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
@@ -905,11 +909,12 @@ public class Database {
 //        assert dummySet != null : "Set is null";
 //        assert dummyTimeline != null : "Timeline is null";
 
-        mapFollowers.put(user,dummySet);
-        mapFollowing.put(user, dummySet);
-        mapTimelines.put(user, dummyTimeline);
-        mapProfiles.put(user, 0);
-        mapCommunityStatus.put(user, 0);
+        counter.incrementAndGet();
+//        mapFollowers.put(user,dummySet);
+//        mapFollowing.put(user, dummySet);
+//        mapTimelines.put(user, dummyTimeline);
+//        mapProfiles.put(user, 0);
+//        mapCommunityStatus.put(user, 0);
 
     }
 
