@@ -1117,7 +1117,9 @@ public class Retwis {
                     System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
                 latchFillDatabase.await();
+                System.out.println("done filling the database");
                 latchFillFollowingPhase.await();
+                System.out.println("done following phase");
 
                 if (flagWarmingUp.get()){
 
