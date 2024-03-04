@@ -785,7 +785,6 @@ public class Retwis {
 
                 long startTimeBenchmark, endTimeBenchmark;
 
-                System.out.println("starting benchmark");
                 startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
@@ -1122,6 +1121,10 @@ public class Retwis {
 
                 latchFillDatabase.await();
                 System.out.println("done filling the database");
+
+                while (latchFillFollowingPhase.getCount() != 0){
+                    System.out.println(latchFillFollowingPhase.getCount());
+                }
                 latchFillFollowingPhase.await();
                 System.out.println("done following phase");
 
