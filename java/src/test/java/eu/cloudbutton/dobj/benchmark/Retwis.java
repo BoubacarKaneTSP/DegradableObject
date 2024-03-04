@@ -1072,7 +1072,9 @@ public class Retwis {
 //                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).addAndGet(1000);
+                        for (int i = 0; i < 1000; i++) {
+                            nbOperations.get(typeComputed).incrementAndGet();
+                        }
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
@@ -1080,7 +1082,7 @@ public class Retwis {
 
                     }
 
-                    Thread.sleep(1);
+//                    Thread.sleep(1);
 
                     break;
 //                }
