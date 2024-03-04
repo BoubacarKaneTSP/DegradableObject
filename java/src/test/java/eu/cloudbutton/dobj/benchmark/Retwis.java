@@ -785,6 +785,7 @@ public class Retwis {
 
                 long startTimeBenchmark, endTimeBenchmark;
 
+                System.out.println("starting benchmark");
                 startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
                     int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
