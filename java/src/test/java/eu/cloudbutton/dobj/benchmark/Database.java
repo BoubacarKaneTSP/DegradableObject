@@ -912,12 +912,12 @@ public class Database {
 //        assert dummySet != null : "Set is null";
 //        assert dummyTimeline != null : "Timeline is null";
 
-        counter.incrementAndGet();
-//        mapFollowers.put(user,dummySet);
-//        mapFollowing.put(user, dummySet);
-//        mapTimelines.put(user, dummyTimeline);
-//        mapProfiles.put(user, 0);
-//        mapCommunityStatus.put(user, 0);
+//        counter.incrementAndGet();
+        mapFollowers.put(user,dummySet);
+        mapFollowing.put(user, dummySet);
+        mapTimelines.put(user, dummyTimeline);
+        mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
 
     }
 
