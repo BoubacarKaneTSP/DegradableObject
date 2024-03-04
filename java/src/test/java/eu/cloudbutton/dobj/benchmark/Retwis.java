@@ -287,6 +287,7 @@ public class Retwis {
                     CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
                     CountDownLatch latchFillFollowingPhase = new CountDownLatch(nbCurrThread);
+                    System.out.println("Latch count : " + latchFillFollowingPhase.getCount());
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
@@ -729,13 +730,13 @@ public class Retwis {
 
                             System.exit(1);
                         }
-                        System.out.println("Thread : " + Thread.currentThread().threadId());
                     }
 //                    System.out.println();
 //                    System.out.println();
                 }
 
                 latchFillFollowingPhase.countDown();
+                System.out.println("Latch count after countdown : " + latchFillFollowingPhase.getCount());
                 latchFillFollowingPhase.await();
 //                System.out.println("done following");
 
