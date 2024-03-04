@@ -873,6 +873,7 @@ public class Retwis {
 //        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
         public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
+            System.out.println("doing operation");
             startTime = 0L;
             endTime= 0L;
 

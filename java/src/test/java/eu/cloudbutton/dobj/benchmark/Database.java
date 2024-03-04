@@ -658,6 +658,7 @@ public class Database {
                 }
             }
         }
+/*
 
         for(Key o : mapListUserFollow.keySet()){
             System.out.print(mapKeyToIndice.get(o) + " :");
@@ -667,8 +668,9 @@ public class Database {
             System.out.println();
             System.out.println();
         }
+*/
 
-        Thread.sleep(10_000);
+//        Thread.sleep(10_000);
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
