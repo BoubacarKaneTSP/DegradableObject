@@ -709,7 +709,7 @@ public class Retwis {
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
-                System.out.println("done filling");
+//                System.out.println("done filling");
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
 //                    System.out.print(userA + " follow : ");
@@ -736,7 +736,7 @@ public class Retwis {
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
-                System.out.println("done following");
+//                System.out.println("done following");
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 //                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
@@ -873,7 +873,6 @@ public class Retwis {
 //        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
         public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
 
-            System.out.println("doing operation");
             startTime = 0L;
             endTime= 0L;
 
