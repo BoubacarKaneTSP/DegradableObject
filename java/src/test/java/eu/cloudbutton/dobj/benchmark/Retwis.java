@@ -738,7 +738,7 @@ public class Retwis {
                 latchFillFollowingPhase.countDown();
                 System.out.println("Latch count after countdown : " + latchFillFollowingPhase.getCount());
                 latchFillFollowingPhase.await();
-                System.out.println("done waiting for following users");
+                System.out.println("done waiting for following users thread position : " + database.getCounter().incrementAndGet());
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 //                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
