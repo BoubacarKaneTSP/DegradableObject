@@ -729,11 +729,11 @@ public class Retwis {
 
                             System.exit(1);
                         }
+                        System.out.println("Thread : " + Thread.currentThread().threadId());
                     }
 //                    System.out.println();
 //                    System.out.println();
                 }
-                System.out.println("Thread : " + Thread.currentThread().threadId());
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
