@@ -117,7 +117,8 @@ public class Database {
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
-        counter = Factory.createCounter(typeCounter);
+//        counter = Factory.createCounter(typeCounter);
+        counter = Factory.createCounter("CounterJUC");
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
