@@ -262,7 +262,8 @@ public class Retwis {
 
 
                 for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOperations.add(op, Factory.createCounter(typeCounter));
+//                    nbOperations.add(op, Factory.createCounter(typeCounter));
+                    nbOperations.add(op, Factory.createCounter("CounterJUC"));
                     timeOperations.add(op, new AtomicLong());
 //                    timeDurations.put(op, new CopyOnWriteArrayList<>());
                 }
@@ -1000,7 +1001,9 @@ public class Retwis {
                     }*/
 
                     startTime = System.nanoTime();
-                    database.getCounter().incrementAndGet();
+                    for (int i = 0; i < 1000; i++) {
+                        database.getCounter().incrementAndGet();
+                    }
                     endTime = System.nanoTime();
 
                     if (!flagWarmingUp.get()) {
@@ -1010,7 +1013,7 @@ public class Retwis {
 //                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).incrementAndGet();
+                        nbOperations.get(typeComputed).addAndGet(1000);
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
