@@ -117,8 +117,7 @@ public class Database {
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
-//        counter = Factory.createCounter(typeCounter);
-        counter = Factory.createCounter("CounterJUC");
+        counter = Factory.createCounter(typeCounter);
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
@@ -671,7 +670,7 @@ public class Database {
         }
 */
 
-//        Thread.sleep(10_000);
+        Thread.sleep(10_000);
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;

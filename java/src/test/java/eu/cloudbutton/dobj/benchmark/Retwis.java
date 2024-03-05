@@ -260,8 +260,7 @@ public class Retwis {
 
 
                 for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOperations.add(op, Factory.createCounter("CounterJUC"));
-//                    nbOperations.add(op, Factory.createCounter(typeCounter));
+                    nbOperations.add(op, Factory.createCounter(typeCounter));
                     timeOperations.add(op, new AtomicLong());
 //                    timeDurations.put(op, new CopyOnWriteArrayList<>());
                 }
@@ -287,7 +286,6 @@ public class Retwis {
                     CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
                     CountDownLatch latchFillFollowingPhase = new CountDownLatch(nbCurrThread);
-                    System.out.println("Latch count : " + latchFillFollowingPhase.getCount());
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
@@ -736,10 +734,8 @@ public class Retwis {
                 }
 
                 latchFillFollowingPhase.countDown();
-//                System.out.println("Latch count after countdown : " + latchFillFollowingPhase.getCount());
                 latchFillFollowingPhase.await();
-
-//                System.out.println("done waiting for following users thread position : " + database.getCounter().incrementAndGet());
+//                System.out.println("done following");
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 //                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
@@ -1119,14 +1115,17 @@ public class Retwis {
                 if (_p)
                     System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
+                while(latchFillDatabase.getCount() != 0){
+                    System.out.println("following phase | latch num " + latchFillDatabase.getCount());
+                }
                 latchFillDatabase.await();
-                System.out.println("done filling the database");
+                System.out.println("done filling phase | latch num " + latchFillDatabase.getCount());
 
                 while (latchFillFollowingPhase.getCount() != 0){
-                    System.out.println(latchFillFollowingPhase.getCount());
+                    System.out.println("following phase | latch num " + latchFillFollowingPhase.getCount());
                 }
                 latchFillFollowingPhase.await();
-                System.out.println("done following phase");
+                System.out.println("done following phase | latch num " + latchFillFollowingPhase.getCount());
 
                 if (flagWarmingUp.get()){
 
