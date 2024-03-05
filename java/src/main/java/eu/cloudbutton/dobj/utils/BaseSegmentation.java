@@ -33,11 +33,12 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         try {
             int index = (int) Thread.currentThread().threadId();
             // int index = carrierID();
-            if (!segments.containsKey(index)) {
-                T segment = this.clazz.getDeclaredConstructor().newInstance();
-                segments.putIfAbsent(index, segment);
+            T segment = segments.get(index);
+            if (segment == null) {
+                segment = this.clazz.getDeclaredConstructor().newInstance();
+                segment = segments.putIfAbsent(index, segment);
             }
-            return segments.get(index);
+            return segment;
         } catch (Throwable e) {
             e.printStackTrace();
         }
