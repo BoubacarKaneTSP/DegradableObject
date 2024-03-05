@@ -34,8 +34,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public final T segmentFor(Object x) {
-        int index = (int) Thread.currentThread().threadId();
-//        int index = carrierID();
+//        int index = (int) Thread.currentThread().threadId();
+        int index = carrierID();
 
         if (!redirect.containsKey(index)) {
             System.out.println("Index: " + index);
@@ -56,12 +56,12 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         return segments;
     }
 
-/*    public static final int carrierID() {
+    public static final int carrierID() {
         try {
             return (int) ((Thread) currentCarrierThread.invoke(null)).threadId();
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }*/
+    }
 
 }
