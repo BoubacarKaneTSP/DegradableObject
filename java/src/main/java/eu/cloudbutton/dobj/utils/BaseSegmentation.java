@@ -50,7 +50,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public final Collection<T> segments() {
-        return (List<T>) segments.values();
+        return segments.values();
     }
 
     public static final int carrierID() {
