@@ -7,13 +7,16 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SegmentedHashMap<K,V> extends BaseSegmentation<HashMap> implements Map<K,V> {
+public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
     public SegmentedHashMap(int parallelism) {
-        super(HashMap.class, parallelism);
+        super(SWMRHashMap.class, parallelism);
     }
 
     @Override
@@ -65,6 +68,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<HashMap> implements 
     @Nullable
     @Override
     public V put(K k, V v) {
+
         return (V) segmentFor(k).put(k,v);
     }
 
