@@ -6,15 +6,15 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=2
-benchmarkTime=60
-warmingUpTime=30
+nbTest=1
+benchmarkTime=30
+warmingUpTime=10
 
 #for nbThread in 1 2 4 8 16 32 48 64 70 86 96
-for nbThread in 1 100 500 1000
+for nbThread in 100 500 1000
 do
-  perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-  perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+  #   perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+  # perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -c LongAdder -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 ##
 #  perf stat -B -e cache-references,cache-misses ./test.sh -s Set -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
@@ -28,11 +28,13 @@ do
 ##
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m Map -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedConcurrentHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-#  perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+    # perf stat -B -e cache-references,cache-misses
+    ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ConcurrentSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 done
+exit 0
 ##
 python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 100 500 1000"
 python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 100 500 1000"
