@@ -34,13 +34,11 @@ public class BaseSegmentation<T> implements Segmentation<T> {
         try {
             int index = carrierID();
             if (!segments.containsKey(index)) {
-                System.out.println("Index: " + index);
-                    T segment = this.clazz.getDeclaredConstructor().newInstance();
-                    T previous = segments.putIfAbsent(index, segment);
-                    assert previous == null;
-                    System.out.println(segments.size());
+                T segment = this.clazz.getDeclaredConstructor().newInstance();
+                T previous = segments.putIfAbsent(index, segment);
+                assert previous == null;
             }
-                return segments.get(index);
+            return segments.get(index);
         } catch (Throwable e) {
             e.printStackTrace();
         }
