@@ -38,6 +38,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 //        int index = carrierID();
 
         if (!redirect.containsKey(index)) {
+            System.out.println("Index: " + index);
             try {
                 T ret = this.clazz.getDeclaredConstructor().newInstance();
                 this.segments.add(ret);
