@@ -11,8 +11,10 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.ExplicitBooleanOptionHandler;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import sun.misc.Unsafe;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.ArrayList;
@@ -674,6 +676,7 @@ public class Retwis {
         AtomicInteger counterID;
         private final ThreadLocal<Integer> myId;
         int nbLocalUsers;
+        int nbAttempt;
         Key userB, userA, dummyUser, dummyUserFollow;
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
@@ -797,18 +800,21 @@ public class Retwis {
 
                     while (flagComputing.get()){
 
+//                        type = chooseOperation();
                         type = listOperationToDo.get(num%sizeOpToDo);
 
                         if (_multipleOperation){
                             int nbRepeat = 1000;
                             for (int j = 0; j < nbRepeat; j++) {
                                 compute(type, timeLocalOperations, cleanTimeline,num);
+//                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
                                 cleanTimeline = num++ % (2 * _nbUserInit) == 0;
 //                                num++;
                             }
                         }else{
 
                             compute(type, timeLocalOperations, cleanTimeline, num);
+//                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
                             num++;
 //
 //                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
@@ -874,6 +880,7 @@ public class Retwis {
 
             startTime = 0L;
             endTime= 0L;
+            nbAttempt = -1;
 
 //            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
 //            int nbAttemptMax = 10;
@@ -947,7 +954,7 @@ public class Retwis {
 //                        localUserUsageDistribution.add(userA.toString());
 
 //                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
-                    /*long val = 0;
+                    long val = 0;
 
                     try{
                         userA = database
@@ -1057,12 +1064,6 @@ public class Retwis {
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
                     }
-*/
-                    startTime = System.nanoTime();
-                    for (int i = 0; i < 1000; i++) {
-                        database.getCounter().incrementAndGet();
-                    }
-                    endTime = System.nanoTime();
 
                     if (!flagWarmingUp.get()) {
                         timeOps.get(typeComputed).val+= endTime - startTime;
@@ -1071,9 +1072,7 @@ public class Retwis {
 //                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
-                        for (int i = 0; i < 1000; i++) {
-                            nbOperations.get(typeComputed).incrementAndGet();
-                        }
+                        nbOperations.get(typeComputed).incrementAndGet();
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
@@ -1081,7 +1080,7 @@ public class Retwis {
 
                     }
 
-//                    Thread.sleep(1);
+                    Thread.sleep(1);
 
                     break;
 //                }
@@ -1115,17 +1114,8 @@ public class Retwis {
                 if (_p)
                     System.out.println(" ==> Filling the database with "+ NB_USERS +" users" );
 
-                while(latchFillDatabase.getCount() != 0){
-                    System.out.println("following phase | latch num " + latchFillDatabase.getCount());
-                }
                 latchFillDatabase.await();
-                System.out.println("done filling phase | latch num " + latchFillDatabase.getCount());
-
-                while (latchFillFollowingPhase.getCount() != 0){
-                    System.out.println("following phase | latch num " + latchFillFollowingPhase.getCount());
-                }
                 latchFillFollowingPhase.await();
-                System.out.println("done following phase | latch num " + latchFillFollowingPhase.getCount());
 
                 if (flagWarmingUp.get()){
 
@@ -1144,7 +1134,6 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(_wTime);
 
                     flagWarmingUp.set(false);
-                    System.out.println("done warming up for " + _wTime + " seconds");
                 }
 
                 if (! _completionTime) {
