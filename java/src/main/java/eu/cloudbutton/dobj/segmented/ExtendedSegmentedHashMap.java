@@ -10,10 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 
-public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHashMap> implements Map<K,V> {
+public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<HashMap> implements Map<K,V> {
 
     public ExtendedSegmentedHashMap(FactoryIndice factoryIndice) {
-        super(SWMRHashMap.class, factoryIndice);
+        super(HashMap.class, factoryIndice);
     }
 
     public static class KeyIterator<K,V> implements Iterator<K> {
