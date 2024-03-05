@@ -42,7 +42,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
             try {
                 T ret = this.clazz.getDeclaredConstructor().newInstance();
                 this.segments.add(ret);
-                redirect.put(index, this.segments.indexOf(ret));
+                Integer r = redirect.putIfAbsent(index, this.segments.indexOf(ret));
+                assert r == null;
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new Error(e);
