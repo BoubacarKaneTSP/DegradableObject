@@ -30,9 +30,9 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public final T segmentFor(Object x) {
-        // int index = (int) Thread.currentThread().threadId();
         try {
-            int index = carrierID();
+            int index = (int) Thread.currentThread().threadId();
+            // int index = carrierID();
             if (!segments.containsKey(index)) {
                 T segment = this.clazz.getDeclaredConstructor().newInstance();
                 segments.putIfAbsent(index, segment);
