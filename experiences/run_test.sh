@@ -6,12 +6,13 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=2
-benchmarkTime=60
-warmingUpTime=30
+nbTest=1
+benchmarkTime=20
+warmingUpTime=5
 
 #for nbThread in 1 2 4 8 16 32 48 64 70 86 96
-for nbThread in 1 100 500 1000
+#for nbThread in 1 100 500 1000
+for nbThread in 1 80
 do
   perf stat -B -e cache-references,cache-misses ./test.sh -c CounterJUC -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
   perf stat -B -e cache-references,cache-misses ./test.sh -c CounterIncrementOnly -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
@@ -34,8 +35,12 @@ do
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 done
 ##
-python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 100 500 1000"
-python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 100 500 1000"
+python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 80"
+python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 80"
+
+
+#python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 100 500 1000"
+#python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 100 500 1000"
 #python3 compute_avg_throughput_microbenchmark.py "WrappedLongAdder" "1 100 500 1000"
 
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 100 500 1000"
