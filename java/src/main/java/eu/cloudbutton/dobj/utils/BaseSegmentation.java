@@ -25,7 +25,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.clazz = clazz;
-        this.segments = new ConcurrentHashMap<>();
+        this.segments = new ConcurrentHashMap<>(Runtime.getRuntime().availableProcessors());
     }
 
     @Override
@@ -35,8 +35,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
             int index = carrierID();
             if (!segments.containsKey(index)) {
                 T segment = this.clazz.getDeclaredConstructor().newInstance();
-                T previous = segments.putIfAbsent(index, segment);
-                assert previous == null;
+                segments.putIfAbsent(index, segment);
             }
             return segments.get(index);
         } catch (Throwable e) {
