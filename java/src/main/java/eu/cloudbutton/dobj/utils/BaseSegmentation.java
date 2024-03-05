@@ -30,8 +30,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public final T segmentFor(Object x) {
-        int index = (int) Thread.currentThread().threadId();
-        // int index = carrierID();
+        // int index = (int) Thread.currentThread().threadId();
+        int index = carrierID();
 
         if (!segments.containsKey(index)) {
             System.out.println("Index: " + index);
