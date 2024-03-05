@@ -31,21 +31,20 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     @Override
     public final T segmentFor(Object x) {
         // int index = (int) Thread.currentThread().threadId();
-        int index = carrierID();
-
-        if (!segments.containsKey(index)) {
-            System.out.println("Index: " + index);
-            try {
-                T segment = this.clazz.getDeclaredConstructor().newInstance();
-                T previous = segments.putIfAbsent(index, segment);
-                assert previous == null;
-                System.out.println(segments.size());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new Error(e);
+        try {
+            int index = carrierID();
+            if (!segments.containsKey(index)) {
+                System.out.println("Index: " + index);
+                    T segment = this.clazz.getDeclaredConstructor().newInstance();
+                    T previous = segments.putIfAbsent(index, segment);
+                    assert previous == null;
+                    System.out.println(segments.size());
             }
+                return segments.get(index);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
-        return segments.get(index);
+        return null;
     }
 
     @Override
