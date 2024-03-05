@@ -1144,6 +1144,7 @@ public class Retwis {
                     TimeUnit.SECONDS.sleep(_wTime);
 
                     flagWarmingUp.set(false);
+                    System.out.println("done warming up for " + _wTime + " seconds");
                 }
 
                 if (! _completionTime) {
