@@ -24,7 +24,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     private final List<T> segments;
 
-    private final Map<Integer,Integer> redirect;
+    private final ConcurrentHashMap<Integer,Integer> redirect;
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.clazz = clazz;
@@ -44,6 +44,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
                 this.segments.add(ret);
                 Integer r = redirect.putIfAbsent(index, this.segments.indexOf(ret));
                 assert r == null;
+                System.out.println(redirect.size());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new Error(e);
