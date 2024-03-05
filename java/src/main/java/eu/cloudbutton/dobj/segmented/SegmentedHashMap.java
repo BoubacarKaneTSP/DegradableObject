@@ -65,10 +65,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<HashMap> implements 
     @Nullable
     @Override
     public V put(K k, V v) {
-
-        Map m = segmentFor(k);
-        return null;
-        // return (V) segmentFor(k).put(k,v);
+        return (V) segmentFor(k).put(k,v);
     }
 
     @Override
