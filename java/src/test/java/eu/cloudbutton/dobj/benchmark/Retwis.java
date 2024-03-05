@@ -1021,7 +1021,7 @@ public class Retwis {
 
                     }
 
-                    Thread.sleep(1);
+                    // Thread.sleep(1);
 
                     break;
 //                }
