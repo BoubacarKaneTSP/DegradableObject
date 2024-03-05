@@ -66,7 +66,8 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<HashMap> implements 
     @Override
     public V put(K k, V v) {
 
-        return (V) segmentFor(k).put(k,v);
+        // return (V) segmentFor(k).put(k,v);
+        return null;
     }
 
     @Override
