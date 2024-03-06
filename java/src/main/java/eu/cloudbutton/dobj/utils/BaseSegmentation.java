@@ -2,10 +2,9 @@ package eu.cloudbutton.dobj.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 
@@ -22,38 +21,34 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     private Class<T> clazz;
 
-    private final List<T> segments;
-
-    private final Map<Integer,Integer> redirect;
+    private final ConcurrentHashMap<Integer,T> segments;
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.clazz = clazz;
-        this.segments = new CopyOnWriteArrayList<>();
-        this.redirect = new ConcurrentHashMap<>();
+        this.segments = new ConcurrentHashMap<>(Runtime.getRuntime().availableProcessors());
     }
 
     @Override
     public final T segmentFor(Object x) {
-//        int index = (int) Thread.currentThread().threadId();
-        int index = carrierID();
-
-        if (!redirect.containsKey(index)) {
-            System.out.println("Index: " + index);
-            try {
-                T ret = this.clazz.getDeclaredConstructor().newInstance();
-                this.segments.add(ret);
-                redirect.put(index, this.segments.indexOf(ret));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new Error(e);
+        try {
+            // int index = (int) Thread.currentThread().threadId();
+            int index = carrierID();
+            T segment = segments.get(index);
+            if (segment == null) {
+                segment = this.clazz.getDeclaredConstructor().newInstance();
+                segments.putIfAbsent(index, segment);
+                segment = segments.get(index);
             }
+            return segment;
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
-        return segments.get(redirect.get(index));
+        return null;
     }
 
     @Override
-    public final List<T> segments() {
-        return segments;
+    public final Collection<T> segments() {
+        return segments.values();
     }
 
     public static final int carrierID() {
