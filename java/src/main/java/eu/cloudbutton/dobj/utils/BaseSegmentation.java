@@ -36,7 +36,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
             T segment = segments.get(index);
             if (segment == null) {
                 segment = this.clazz.getDeclaredConstructor().newInstance();
-                segments.putIfAbsent(index, segment);
+                T previous = segments.putIfAbsent(index, segment);
+                assert previous == null;
                 segment = segments.get(index);
             }
             return segment;
