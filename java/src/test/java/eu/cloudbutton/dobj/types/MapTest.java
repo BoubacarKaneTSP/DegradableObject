@@ -35,7 +35,7 @@ public class MapTest {
 //        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap");
 //        factory.setFactoryMap(cls);
 //        doAdd(factory.getMap());
-        testSWMR(Factory.createMap("SegmentedHashMap", factoryIndice));
+        testSWMR(Factory.createMap("SegmentedHashMap");
 //        testSWMR(factory.getMap());
 //        cls = Class.forName("eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap");
 //        factory.setFactoryMap(cls);
