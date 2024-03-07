@@ -52,7 +52,7 @@ public class MapTest {
     @Test
     void iterator() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        doAdd(Factory.createMap("ExtendedSegmentedConcurrentHashMap", Runtime.getRuntime().availableProcessors()));
+        doAdd(Factory.createMap("SegmentedHashMap", Runtime.getRuntime().availableProcessors()));
     }
 
     private void doAdd(Map map){
