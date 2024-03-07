@@ -45,9 +45,9 @@ public class KeyTest {
         for (Key key: set){
             size +=1;
         }
-        System.out.println("size function : " + set.size());
-        System.out.println("size computed : " + size);
-//        assertEquals(set.size()<=max_item_per_thread,true);
+//        System.out.println("size function : " + set.size());
+//        System.out.println("size computed : " + size);
+        assertEquals(set.size()<=max_item_per_thread,true);
 
     }
     @Test

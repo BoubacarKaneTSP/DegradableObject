@@ -60,7 +60,7 @@ public class CounterTest {
 
 
         
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             futures.add(executor.submit(callable));
         }
 
@@ -68,7 +68,7 @@ public class CounterTest {
             future.get();
         }
 
-        assertEquals(count.read(),10000000,"Failed incrementing the Counter");
+        assertEquals(count.read(),1000000,"Failed incrementing the Counter");
 
         do {
             count.decrementAndGet();

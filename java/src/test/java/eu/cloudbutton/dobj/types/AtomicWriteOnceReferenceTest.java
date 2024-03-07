@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -16,10 +15,11 @@ public class AtomicWriteOnceReferenceTest {
     private static Integer nbThread;
 
     @BeforeTest
-    void setUp() {
+    void setUp() throws ClassNotFoundException {
         factory = new Factory();
         nbThread = Runtime.getRuntime().availableProcessors();
-//        nbThread = 1;
+
+        setTest();
     }
 
     @Test
