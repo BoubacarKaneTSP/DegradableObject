@@ -51,9 +51,8 @@ public class MapTest {
 
     @Test
     void iterator() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class cls = Class.forName("eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap");
-        factory.setFactoryMap(cls);
-        doAdd(factory.getMap());
+
+        doAdd(Factory.createMap("ExtendedSegmentedConcurrentHashMap", Runtime.getRuntime().availableProcessors()));
     }
 
     private void doAdd(Map map){
