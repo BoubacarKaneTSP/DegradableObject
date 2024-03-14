@@ -262,7 +262,6 @@ public class Microbenchmark {
                         size+=((Counter) object).read();
                     }
                     executor.shutdownNow();
-                    TimeUnit.SECONDS.sleep(1);
 
                     String directory = "microbenchmark_results";
 

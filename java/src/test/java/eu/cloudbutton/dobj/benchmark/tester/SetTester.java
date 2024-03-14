@@ -40,7 +40,6 @@ public class SetTester extends Tester<Set> {
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.add(list.get(i));
-//                    object.add(i);
                 }
                 endTime = System.nanoTime();
                 break;
@@ -48,7 +47,6 @@ public class SetTester extends Tester<Set> {
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.remove(list.get(i));
-//                    object.remove(i);
                 }
                 endTime = System.nanoTime();
 
