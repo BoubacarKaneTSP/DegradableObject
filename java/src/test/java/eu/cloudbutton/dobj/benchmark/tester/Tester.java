@@ -74,8 +74,8 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-//                elapsedTime = test(type);
-                elapsedTime = noop();
+                elapsedTime = test(type);
+
                 assert elapsedTime != 0;
 
                 switch (type) {
