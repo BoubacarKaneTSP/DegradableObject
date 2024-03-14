@@ -23,19 +23,12 @@ public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<
 
     @Override
     public boolean add(E e) {
-        int hash = e.hashCode();
-
-        return hash == 1;
-//        return segmentFor(e).add(e);
+        return segmentFor(e).add(e);
     }
 
     @Override
     public boolean remove(Object o) {
-        int hash = o.hashCode();
-
-        return hash == 1;
-
-//        return segmentFor(o).remove(o);
+        return segmentFor(o).remove(o);
     }
 
     @NotNull

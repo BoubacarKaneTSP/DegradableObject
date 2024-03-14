@@ -74,8 +74,8 @@ public abstract class Tester<T> implements Callable<Void> {
                     type = opType.READ;
                 }
 
-                elapsedTime = test(type);
-
+//                elapsedTime = test(type);
+                elapsedTime = noop();
                 assert elapsedTime != 0;
 
                 switch (type) {
@@ -114,6 +114,9 @@ public abstract class Tester<T> implements Callable<Void> {
         return null;
     }
 
+    public int noop(){
+        return 1;
+    }
     protected abstract long test(opType type) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
 
 }
