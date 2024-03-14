@@ -10,14 +10,14 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     public static Method currentCarrierThread;
 
-//    static {
-//        try {
-//            currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
-//            currentCarrierThread.setAccessible(true);
-//        } catch (Exception e) {
-//            throw new Error(e);
-//        }
-//    }
+    static {
+        try {
+            currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
+            currentCarrierThread.setAccessible(true);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
 
     private Class<T> clazz;
 
