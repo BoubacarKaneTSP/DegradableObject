@@ -684,6 +684,7 @@ public class Retwis {
         Profile dummyProfile;
         long startTime, endTime;
         List<Integer> listOperationToDo;
+        List<Key> dummyKeys;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase) {
             this.random = ThreadLocalRandom.current();
@@ -1000,9 +1001,18 @@ public class Retwis {
                             throw new IllegalStateException("Unexpected value: " + type);
                     }*/
 
+                    if (dummyKeys.isEmpty()){
+                        for (int i = 0; i < 1000; i++) {
+                            dummyKeys.add(database.generateUser());
+                        }
+                    }
+
                     startTime = System.nanoTime();
                     for (int i = 0; i < 1000; i++) {
-                        database.getCounter().incrementAndGet();
+                        database.getSet().add(dummyKeys.get(i));
+                    }
+                    for (int i = 0; i < 1000; i++) {
+                        database.getSet().remove(dummyKeys.get(i));
                     }
                     endTime = System.nanoTime();
 
@@ -1013,7 +1023,7 @@ public class Retwis {
 //                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).addAndGet(1000);
+                        nbOperations.get(typeComputed).addAndGet(2000);
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);

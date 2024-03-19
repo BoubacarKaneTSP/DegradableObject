@@ -71,6 +71,7 @@ public class Database {
     private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
 
     private final Counter counter;
+    private final Set set;
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -118,6 +119,7 @@ public class Database {
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
         counter = Factory.createCounter(typeCounter);
+        set = Factory.createSet(typeSet, nbThread);
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
