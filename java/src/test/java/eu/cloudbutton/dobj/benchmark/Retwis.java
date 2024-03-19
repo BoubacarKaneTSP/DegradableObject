@@ -684,7 +684,7 @@ public class Retwis {
         Profile dummyProfile;
         long startTime, endTime;
         List<Integer> listOperationToDo;
-        List<Key> dummyKeys;
+        List<Key> dummyKeys = new ArrayList<>();
 
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase) {
             this.random = ThreadLocalRandom.current();
