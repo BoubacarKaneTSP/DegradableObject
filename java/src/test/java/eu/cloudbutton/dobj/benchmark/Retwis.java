@@ -679,7 +679,7 @@ public class Retwis {
         int nbLocalUsers;
         int nbAttempt;
         Key userB, userA, dummyUser, dummyUserFollow;
-        List<Key> dummyUsers;
+        List<Key> dummyUsers = new ArrayList<>();
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
         Profile dummyProfile;
