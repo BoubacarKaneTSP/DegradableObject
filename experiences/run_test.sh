@@ -10,7 +10,7 @@ nbTest=10
 benchmarkTime=60
 warmingUpTime=30
 
-for nbThread in 1000
+for nbThread in 80
 #for nbThread in 1 2 4 8 16 32 48 96 160
 #for nbThread in 1 100 500 1000
 #for nbThread in 1 80
@@ -47,8 +47,8 @@ done
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 100 500 1000"
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1 2 4 8 16 32 48 96 160"
 #python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "1 2 4 8 16 32 48 96 160"
-python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1000"
-python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "1000"
+python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "80"
+python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "80"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedHashSet" "1 100 500 1000"
 
 #python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 2 4 8 16 32 48 64 70 86 96"
