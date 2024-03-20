@@ -1,5 +1,1 @@
-80 NaN
-80 NaN
-80 NaN
-80 NaN
-80 NaN
+80 nan nan nan nan nan

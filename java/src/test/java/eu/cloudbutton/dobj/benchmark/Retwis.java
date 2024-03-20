@@ -678,8 +678,9 @@ public class Retwis {
         private final ThreadLocal<Integer> myId;
         int nbLocalUsers;
         int nbAttempt;
-        Key userB, userA, dummyUser, dummyUserFollow;
+        Key userB, userA;
         List<Key> dummyUsers = new ArrayList<>();
+        List<Key> dummyUsersFollow = new ArrayList<>();
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
         Profile dummyProfile;
@@ -762,17 +763,15 @@ public class Retwis {
                     listOperationToDo.add(chooseOperation());
                 }
 
-                dummyUser = database.generateUser();
                 for (int i = 0; i < 1000; i++) {
                     dummyUsers.add(database.generateUser());
+                    dummyUsersFollow.add(database.generateUser());
+                    database.addOriginalUser(dummyUsersFollow.get(i));
                 }
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());
                 dummyProfile = new Profile();
 
-                dummyUserFollow = database.generateUser();
-
-                database.addOriginalUser(dummyUserFollow);
                 int num = 0;
                 boolean cleanTimeline = false;
 
@@ -940,10 +939,14 @@ public class Retwis {
 //                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             startTime = System.nanoTime();
-                            database.followUser(userA, dummyUserFollow);
+                            for (int i = 0; i < 1000; i++)
+                                database.followUser(userA, dummyUsersFollow.get(i));
+
                             endTime = System.nanoTime();
 
-                            database.unfollowUser(userA,dummyUserFollow);
+                            for (int i = 0; i < 1000; i++)
+                                database.unfollowUser(userA,dummyUsersFollow.get(i));
+
 //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
 //
 //
@@ -962,9 +965,11 @@ public class Retwis {
 //
 //                            userB = listFollow.poll();
 
-                            database.followUser(userA, dummyUserFollow);
+                            for (int i = 0; i < 1000; i++)
+                                database.followUser(userA, dummyUsersFollow.get(i));
                             startTime = System.nanoTime();
-                            database.unfollowUser(userA, dummyUserFollow);
+                            for (int i = 0; i < 1000; i++)
+                                database.unfollowUser(userA, dummyUsersFollow.get(i));
                             endTime = System.nanoTime();
 
 //                            database.followUser(userA, userB);
