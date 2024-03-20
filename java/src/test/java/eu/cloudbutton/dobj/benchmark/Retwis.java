@@ -679,6 +679,7 @@ public class Retwis {
         int nbLocalUsers;
         int nbAttempt;
         Key userB, userA, dummyUser, dummyUserFollow;
+        List<Key> dummyUsers;
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
         Profile dummyProfile;
@@ -762,6 +763,9 @@ public class Retwis {
                 }
 
                 dummyUser = database.generateUser();
+                for (int i = 0; i < 1000; i++) {
+                    dummyUsers.add(database.generateUser());
+                }
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());
                 dummyProfile = new Profile();
@@ -919,10 +923,15 @@ public class Retwis {
                         case ADD:
 
                             startTime = System.nanoTime();
-                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
+                            for (int i = 0; i < 1000; i++) {
+                                database.addUser(dummyUsers.get(i), dummySet, dummyTimeline, dummyProfile);
+                            }
+//                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
                             endTime = System.nanoTime();
 
-                            database.removeUser(dummyUser);
+                            for (int i = 0; i < 1000; i++) {
+                                database.removeUser(dummyUsers.get(i));
+                            }
                             break;
                         case FOLLOW:
 //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
@@ -1022,8 +1031,8 @@ public class Retwis {
 //                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).incrementAndGet();
-//                        nbOperations.get(typeComputed).addAndGet(2000);
+//                        nbOperations.get(typeComputed).incrementAndGet();
+                        nbOperations.get(typeComputed).addAndGet(1000);
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
