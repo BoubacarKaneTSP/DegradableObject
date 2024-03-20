@@ -161,8 +161,8 @@ public class Microbenchmark {
                     FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread + 1); // +1 for the thread that fill the object
 
                     List<Callable<Void>> callables = new ArrayList<>();
-                    // ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
-                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
+//                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
                     if (type.contains("Extended"))
                         object = Factory.createObject(type, factoryIndice);

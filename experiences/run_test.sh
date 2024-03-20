@@ -28,9 +28,9 @@ do
 #  perf stat -B -e cache-references,cache-misses ./test.sh -q QueueMASP -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -a -d $range -g $nbThread
 
 ##
-  perf stat -B -e cache-references,cache-misses ./test.sh -m Map -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+#  perf stat -B -e cache-references,cache-misses ./test.sh -m Map -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedConcurrentHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-  perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+#  perf stat -B -e cache-references,cache-misses ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedHashMap -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ConcurrentSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  perf stat -B -e cache-references,cache-misses ./test.sh -m ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
@@ -40,13 +40,15 @@ done
 #python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 80"
 
 
-python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 2 4 8 16 32 48 96 160"
-python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 2 4 8 16 32 48 96 160"
-python3 compute_avg_throughput_microbenchmark.py "WrappedLongAdder" "1 2 4 8 16 32 48 96 160"
+#python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 2 4 8 16 32 48 96 160"
+#python3 compute_avg_throughput_microbenchmark.py "CounterIncrementOnly" "1 2 4 8 16 32 48 96 160"
+#python3 compute_avg_throughput_microbenchmark.py "WrappedLongAdder" "1 2 4 8 16 32 48 96 160"
 
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListSet" "1 100 500 1000"
-python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1 2 4 8 16 32 48 96 160"
-python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "1 2 4 8 16 32 48 96 160"
+#python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1 2 4 8 16 32 48 96 160"
+#python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "1 2 4 8 16 32 48 96 160"
+python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1000"
+python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "1000"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedHashSet" "1 100 500 1000"
 
 #python3 compute_avg_throughput_microbenchmark.py "CounterJUC" "1 2 4 8 16 32 48 64 70 86 96"
@@ -59,9 +61,9 @@ python3 compute_avg_throughput_microbenchmark.py "SegmentedHashSet" "1 2 4 8 16 
 
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentLinkedQueue" "2 4 8 16 32 48 64 70 86 96"
 #python3 compute_avg_throughput_microbenchmark.py "QueueMASP" "2 4 8 16 32 48 64 70 86 96"
-#
-python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashMap" "1 2 4 8 16 32 48 96 160"
-python3 compute_avg_throughput_microbenchmark.py "SegmentedHashMap" "1 2 4 8 16 32 48 96 160"
+##
+#python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashMap" "1 2 4 8 16 32 48 96 160"
+#python3 compute_avg_throughput_microbenchmark.py "SegmentedHashMap" "1 2 4 8 16 32 48 96 160"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedHashMap" "1 100 500 1000"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedConcurrentHashMap" "1 100 500 1000"
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListMap" "1 2 4 8 16 32 48 64 70 86 96"
