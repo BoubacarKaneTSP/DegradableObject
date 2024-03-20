@@ -270,8 +270,8 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    // ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread + 1); // Coordinator
-                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread + 1); // Coordinator
+//                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 //                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1);
 
                     flagComputing = new AtomicBoolean(true);
@@ -454,7 +454,7 @@ public class Retwis {
                     for (int op: mapIntOptoStringOp.keySet()){
 
                         if (op == COUNT)
-                            nbOp = nbOpTotal/2; // Divide by 2 cause we only count the counter increment here
+                            nbOp = nbOpTotal/2; // Divide by 2 because we only count the counter increment here
                         else
                             nbOp = nbOperations.get(op).read();
 
@@ -890,7 +890,7 @@ public class Retwis {
             int typeComputed = type;
 
                 for (;;){
-/*                    long val = 0;
+                    long val = 0;
 
                     try{
                         userA = database
@@ -920,10 +920,9 @@ public class Retwis {
 
                             startTime = System.nanoTime();
                             database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
-//                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
                             endTime = System.nanoTime();
 
-//                            database.removeUser(dummyUser);
+                            database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
 //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
@@ -999,9 +998,9 @@ public class Retwis {
                             break ;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
-                    }*/
+                    }
 
-                    if (dummyKeys.isEmpty()){
+/*                    if (dummyKeys.isEmpty()){
                         for (int i = 0; i < 1000; i++) {
                             dummyKeys.add(database.generateUser());
                         }
@@ -1014,16 +1013,17 @@ public class Retwis {
                     for (int i = 0; i < 1000; i++) {
                         database.getSet().remove(dummyKeys.get(i));
                     }
-                    endTime = System.nanoTime();
+                    endTime = System.nanoTime();*/
 
                     if (!flagWarmingUp.get()) {
-                        timeOps.get(typeComputed).val+= endTime - startTime;
+                        timeOps.get(typeComputed).val += endTime - startTime;
 //                        timeLocalDurations
 //                                .get(typeComputed)
 //                                .add(endTime - startTime);
 
                         startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).addAndGet(2000);
+                        nbOperations.get(typeComputed).incrementAndGet();
+//                        nbOperations.get(typeComputed).addAndGet(2000);
                         endTime = System.nanoTime();
                         timeOps.get(COUNT).val += endTime - startTime;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);

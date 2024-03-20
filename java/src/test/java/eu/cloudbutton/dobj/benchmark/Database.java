@@ -89,12 +89,12 @@ public class Database {
             mapFollowers = Factory.createMap(typeMap, factoryIndice);
             mapFollowing = Factory.createMap(typeMap, factoryIndice);
             mapTimelines = Factory.createMap(typeMap, factoryIndice);
-//            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+            mapProfiles = Factory.createMap(typeMap, factoryIndice);
         }else{
             mapFollowers = Factory.createMap(typeMap, nbThread);
             mapFollowing = Factory.createMap(typeMap, nbThread);
             mapTimelines = Factory.createMap(typeMap, nbThread);
-//            mapProfiles = Factory.createMap(typeMap, nbThread);
+            mapProfiles = Factory.createMap(typeMap, nbThread);
         }
 
 //        if (typeSet.contains("Extended")){
@@ -104,7 +104,7 @@ public class Database {
 //        }
 
 //        mapProfiles = new ExtendedSegmentedHashMap<>( new FactoryIndice(nbThread + 1));
-        mapProfiles = new ConcurrentHashMap<>();
+//        mapProfiles = new ConcurrentHashMap<>();
         community = new ConcurrentHashSet<>();
 //        community = new ExtendedSegmentedHashSet(factoryIndice);
         mapCommunityStatus = new ConcurrentHashMap<>();
@@ -926,7 +926,8 @@ public class Database {
         mapFollowers.remove(user);
         mapFollowing.remove(user);
         mapTimelines.remove(user);
-         mapProfiles.remove(user);
+        mapProfiles.remove(user);
+        mapCommunityStatus.remove(user);
     }
 
     // Adding user_A to the followers of user_B
