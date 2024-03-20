@@ -10,14 +10,14 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     public static Method currentCarrierThread;
 
-/*    static {
+    static {
         try {
             currentCarrierThread = Thread.class.getDeclaredMethod("currentCarrierThread");
             currentCarrierThread.setAccessible(true);
         } catch (Exception e) {
             throw new Error(e);
         }
-    }*/
+    }
 
     private Class<T> clazz;
 
@@ -31,8 +31,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     @Override
     public final T segmentFor(Object x) {
         try {
-             int index = (int) Thread.currentThread().threadId();
-//            int index = carrierID();
+//             int index = (int) Thread.currentThread().threadId();
+            int index = carrierID();
             T segment = segments.get(index);
             if (segment == null) {
                 segment = this.clazz.getDeclaredConstructor().newInstance();
