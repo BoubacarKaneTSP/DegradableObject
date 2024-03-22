@@ -17,7 +17,8 @@ list_nb_thread = [80]
 # list_nb_thread = [1,2,4]
 # list_nb_thread = [1]
 
-tag_spe = "_ExtConcHashMapNoCleanTLPut"
+tag_spe = ""
+# tag_spe = "_ExtConcHashMapNoCleanTLPut"
 
 if avg_flag == "true":
 
