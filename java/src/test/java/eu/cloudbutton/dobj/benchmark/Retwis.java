@@ -763,10 +763,14 @@ public class Retwis {
                     listOperationToDo.add(chooseOperation());
                 }
 
+                Key usr;
+
                 for (int i = 0; i < 1000; i++) {
-                    dummyUsers.add(database.generateUser());
-                    dummyUsersFollow.add(database.generateUser());
-                    database.addOriginalUser(dummyUsersFollow.get(i));
+                    usr = database.generateUser();
+                    dummyUsers.add(usr);
+                    usr = database.generateUser();
+                    dummyUsersFollow.add(usr);
+                    database.addOriginalUser(usr);
                 }
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());

@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.key;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SimpleKeyGenerator implements KeyGenerator {
@@ -14,7 +13,7 @@ public class SimpleKeyGenerator implements KeyGenerator {
     @Override
     public Key nextKey() {
         int nextInt = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
-        long id = nextInt < 0 ? 0 : nextInt;
+        long id = Math.max(nextInt, 0);
         return new ThreadLocalKey(Thread.currentThread().getId(), id, max_key_per_thread);
     }
 
