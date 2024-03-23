@@ -1039,7 +1039,7 @@ public class Retwis {
 //                        nbOperations.get(typeComputed).incrementAndGet();
                         nbOperations.get(typeComputed).addAndGet(1000);
                         endTime = System.nanoTime();
-                        timeOps.get(COUNT).val += endTime - startTime;
+                        timeOps.get(COUNT).val += (endTime - startTime)/1000;
 //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
 //                        System.out.println(timeLocalDurations.get(COUNT).size());
 
