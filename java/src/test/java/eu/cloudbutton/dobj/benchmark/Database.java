@@ -672,7 +672,7 @@ public class Database {
         }
 */
 
-        Thread.sleep(10_000);
+//        Thread.sleep(10_000);
 
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
