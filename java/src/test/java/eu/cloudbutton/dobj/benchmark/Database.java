@@ -593,7 +593,6 @@ public class Database {
         usersFollowProbabilityRange = sommeFollow;
     }
 
-
     private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
         System.out.println("Loading DAP graph");
 
@@ -915,19 +914,19 @@ public class Database {
 
 //        counter.incrementAndGet();
         mapFollowers.put(user,dummySet);
-//        mapFollowing.put(user, dummySet);
-//        mapTimelines.put(user, dummyTimeline);
-//        mapProfiles.put(user, 0);
-//        mapCommunityStatus.put(user, 0);
+        mapFollowing.put(user, dummySet);
+        mapTimelines.put(user, dummyTimeline);
+        mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
 
     }
 
     public void removeUser(Key user){
         mapFollowers.remove(user);
-//        mapFollowing.remove(user);
-//        mapTimelines.remove(user);
-//        mapProfiles.remove(user);
-//        mapCommunityStatus.remove(user);
+        mapFollowing.remove(user);
+        mapTimelines.remove(user);
+        mapProfiles.remove(user);
+        mapCommunityStatus.remove(user);
     }
 
     // Adding user_A to the followers of user_B
@@ -935,10 +934,16 @@ public class Database {
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
-        mapFollowers.get(userB)
-                .add(userA);
-        mapFollowing.get(userA)
-                .add(userB);
+        try{
+
+            mapFollowers.get(userB)
+                    .add(userA);
+            mapFollowing.get(userA)
+                    .add(userB);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     // Removing user_A to the followers of user_B
