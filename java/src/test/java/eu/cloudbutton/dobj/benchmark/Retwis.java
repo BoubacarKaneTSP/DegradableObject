@@ -899,7 +899,7 @@ public class Retwis {
             int typeComputed = type;
 
                 for (;;){
-                    long val = 0;
+/*                    long val = 0;
 
                     try{
                         userA = database
@@ -1018,22 +1018,18 @@ public class Retwis {
                             break ;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
-                    }
+                    }*/
 
 /*                    if (dummyKeys.isEmpty()){
                         for (int i = 0; i < 1000; i++) {
                             dummyKeys.add(database.generateUser());
                         }
-                    }
+                    }*/
 
                     startTime = System.nanoTime();
-                    for (int i = 0; i < 1000; i++) {
-                        database.getSet().add(dummyKeys.get(i));
-                    }
-                    for (int i = 0; i < 1000; i++) {
-                        database.getSet().remove(dummyKeys.get(i));
-                    }
-                    endTime = System.nanoTime();*/
+                    for (int i = 0; i < 1000; i++)
+                        database.followUser(userA, dummyUsersFollow.get(i));
+                    endTime = System.nanoTime();
 
                     if (!flagWarmingUp.get()) {
                         timeOps.get(typeComputed).val += endTime - startTime;
