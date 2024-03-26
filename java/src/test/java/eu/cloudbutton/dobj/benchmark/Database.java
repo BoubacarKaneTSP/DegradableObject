@@ -939,7 +939,7 @@ public class Database {
 
             mapFollowers.get(userB);
 //                    .add(userA);
-//            mapFollowing.get(userA);
+            mapFollowing.get(userA);
 //                    .add(userB);
         }catch (Exception e){
             e.printStackTrace();

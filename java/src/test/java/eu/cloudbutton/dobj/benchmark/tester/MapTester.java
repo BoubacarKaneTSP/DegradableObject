@@ -20,6 +20,7 @@ public class MapTester extends Tester<Map> {
 
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
+        max_item_per_thread = Integer.MAX_VALUE;
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
         list = new ArrayList<>();
     }
