@@ -950,8 +950,8 @@ public class Retwis {
 
                             endTime = System.nanoTime();
 
-                            for (int i = 0; i < 1000; i++)
-                                database.unfollowUser(userA,dummyUsersFollow.get(i));
+//                            for (int i = 0; i < 1000; i++)
+//                                database.unfollowUser(userA,dummyUsersFollow.get(i));
 
 //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
 //
@@ -970,9 +970,9 @@ public class Retwis {
 //                            }
 //
 //                            userB = listFollow.poll();
-
-                            for (int i = 0; i < 1000; i++)
-                                database.followUser(userA, dummyUsersFollow.get(i));
+//
+//                            for (int i = 0; i < 1000; i++)
+//                                database.followUser(userA, dummyUsersFollow.get(i));
                             startTime = System.nanoTime();
                             for (int i = 0; i < 1000; i++)
                                 database.unfollowUser(userA, dummyUsersFollow.get(i));
