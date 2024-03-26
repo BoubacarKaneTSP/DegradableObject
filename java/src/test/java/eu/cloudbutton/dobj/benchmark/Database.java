@@ -114,7 +114,7 @@ public class Database {
         localUsersUsageProbabilityRange = new ConcurrentHashMap<>();
         nbUsers = nbUserInit;
 //        keyGenerator = new RetwisKeyGenerator(nbUserMax*nbThread, nbUserMax*nbThread,10);
-        keyGenerator = new SimpleKeyGenerator(Integer.MAX_VALUE * nbThread);
+        keyGenerator = new SimpleKeyGenerator(Integer.MAX_VALUE);
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
