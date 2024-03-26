@@ -609,6 +609,7 @@ public class Database {
             if (i%1000 == 0)
                 System.out.println(i +"/"+ nbThread*nbUserPerThread);
             Key user = generateUser();
+            System.out.println(user.hashCode());
             if (setUser.add(user)){
                 mapUserToAdd.get(indice).add(user);
                 mapListUserFollow.put(user, new LinkedList<>());
