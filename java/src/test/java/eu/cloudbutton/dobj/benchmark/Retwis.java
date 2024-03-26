@@ -871,7 +871,7 @@ public class Retwis {
                 if (val%2 == 0){ //follow
                     type = FOLLOW;
                 }else{ //unfollow
-                    type = UNFOLLOW;
+                    type = FOLLOW;
                 }
             }else if (val >= ratiosArray[0]+ ratiosArray[1] && val < ratiosArray[0]+ ratiosArray[1]+ ratiosArray[2]){ //tweet
                 type = TWEET;
