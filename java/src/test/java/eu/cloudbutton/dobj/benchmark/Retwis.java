@@ -715,8 +715,8 @@ public class Retwis {
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
-                System.out.println(database.getMapFollowers().size() + " map followers");
-                System.out.println(database.getMapFollowing().size() + " map following");
+//                System.out.println(database.getMapFollowers().size() + " map followers");
+//                System.out.println(database.getMapFollowing().size() + " map following");
 //                System.out.println("done filling");
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
