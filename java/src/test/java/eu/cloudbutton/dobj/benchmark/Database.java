@@ -915,19 +915,19 @@ public class Database {
 
 //        counter.incrementAndGet();
         mapFollowers.put(user,dummySet);
-        mapFollowing.put(user, dummySet);
-        mapTimelines.put(user, dummyTimeline);
-        mapProfiles.put(user, 0);
-        mapCommunityStatus.put(user, 0);
+//        mapFollowing.put(user, dummySet);
+//        mapTimelines.put(user, dummyTimeline);
+//        mapProfiles.put(user, 0);
+//        mapCommunityStatus.put(user, 0);
 
     }
 
     public void removeUser(Key user){
         mapFollowers.remove(user);
-        mapFollowing.remove(user);
-        mapTimelines.remove(user);
-        mapProfiles.remove(user);
-        mapCommunityStatus.remove(user);
+//        mapFollowing.remove(user);
+//        mapTimelines.remove(user);
+//        mapProfiles.remove(user);
+//        mapCommunityStatus.remove(user);
     }
 
     // Adding user_A to the followers of user_B
