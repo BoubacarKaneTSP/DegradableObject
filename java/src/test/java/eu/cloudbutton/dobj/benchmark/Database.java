@@ -606,7 +606,8 @@ public class Database {
         int indice = 0;
 
         for (int i = 0; i < nbThread * nbUserPerThread;) {
-//            System.out.println(i +"/"+ nbThread*nbUserPerThread);
+            if (i%1000 == 0)
+                System.out.println(i +"/"+ nbThread*nbUserPerThread);
             Key user = generateUser();
             if (setUser.add(user)){
                 mapUserToAdd.get(indice).add(user);
