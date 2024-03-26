@@ -937,10 +937,10 @@ public class Database {
 
         try{
 
-            mapFollowers.get(userB)
-                    .add(userA);
-            mapFollowing.get(userA)
-                    .add(userB);
+            mapFollowers.get(userB);
+//                    .add(userA);
+            mapFollowing.get(userA);
+//                    .add(userB);
         }catch (Exception e){
             e.printStackTrace();
             System.exit(1);
@@ -950,10 +950,10 @@ public class Database {
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB)
-                .remove(userA);
-        mapFollowing.get(userA)
-                .remove(userB);
+        mapFollowers.get(userB);
+//                .remove(userA);
+        mapFollowing.get(userA);
+//                .remove(userB);
     }
 
     public void lightFollowUser(Key userA, Key userB){
