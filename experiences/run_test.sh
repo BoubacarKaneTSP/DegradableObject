@@ -6,9 +6,9 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=2
-benchmarkTime=10
-warmingUpTime=5
+nbTest=5
+benchmarkTime=60
+warmingUpTime=30
 
 #for nbThread in 80
 #for nbThread in 1 2 4 8 16 32 48 96 160
@@ -54,7 +54,7 @@ python3 compute_avg_throughput_microbenchmark.py "ConcurrentLinkedQueue" "2 40 8
 python3 compute_avg_throughput_microbenchmark.py "QueueMASP" "2 40 80 120 160"
 ##
 python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashMap" "1 40 80 120 160"
-python3 compute_avg_throughput_microbenchmark.py "SegmentedHashMap" "1 40 80 120 160"
+#python3 compute_avg_throughput_microbenchmark.py "SegmentedHashMap" "1 40 80 120 160"
 python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedHashMap" "1 40 80 120 160"
 python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListMap" "1 40 80 120 160"
 python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedSkipListMap" "1 40 80 120 160"

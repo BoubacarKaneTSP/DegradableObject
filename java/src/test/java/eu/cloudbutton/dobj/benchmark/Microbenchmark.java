@@ -126,11 +126,10 @@ public class Microbenchmark {
             Object object;
             long startTime, endTime, benchmarkAvgTime;
 
-            nbCurrentThread = nbThreads;
-//            nbCurrentThread = _asymmetric ? 2 : 1;
-
             if (_asymmetric && nbThreads == 1)
-                System.exit(0);
+                nbThreads = 2;
+
+            nbCurrentThread = nbThreads;
 
             if(_quickTest)
                 nbCurrentThread = nbThreads;
