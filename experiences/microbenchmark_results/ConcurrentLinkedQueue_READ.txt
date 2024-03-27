@@ -1,0 +1,8 @@
+40 NaN
+40 NaN
+80 NaN
+80 NaN
+120 NaN
+120 NaN
+160 NaN
+160 NaN
