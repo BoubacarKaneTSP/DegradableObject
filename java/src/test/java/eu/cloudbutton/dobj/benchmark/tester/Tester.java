@@ -41,8 +41,6 @@ public abstract class Tester<T> implements Callable<Void> {
         }
 
         try {
-            // FIXME fill-up ?
-
             // warm up
             opType type;
             while (Microbenchmark.flag.get()) {
@@ -93,9 +91,6 @@ public abstract class Tester<T> implements Callable<Void> {
                 // if (elapsedTime != 0)
                 localOp.get(opNumber).val += nbRepeat;
                 localTimeOp.get(opNumber).val += elapsedTime;
-
-                // simulate I/O
-                // Thread.sleep(1);
 
             }
 

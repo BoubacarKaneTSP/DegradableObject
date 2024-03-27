@@ -20,7 +20,6 @@ public class MapTester extends Tester<Map> {
 
     public MapTester(Map<Key, Integer> object, int[] ratios, CountDownLatch latch, boolean useCollisionKey, int max_item_per_thread) {
         super(object, ratios, latch);
-        max_item_per_thread = Integer.MAX_VALUE;
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
         list = new ArrayList<>();
     }
@@ -31,38 +30,18 @@ public class MapTester extends Tester<Map> {
 
         // list.clear();
         if (list.isEmpty()) {
-            for (int i = 0; i < nbRepeat; i++) {
+            for (int i = 0; i < nbRepeat; i++)
                 list.add(keyGenerator.nextKey());
-            }
         }
 
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-
-//                for (int i = 0; i < nbRepeat; i++) {
-//                    int finalI = i;
-//                    object.compute(list.get(i), (k, v) -> {
-//                        int p = 0;
-//                        for(int j=0;j<=nbRepeat; j++) {
-//                            p+=j;
-//                        }
-//                        return finalI;
-//                    });
-//                }
-
-                for (int i = 0; i < nbRepeat; i++) {
+                for (int i = 0; i < nbRepeat; i++)
                     object.put(list.get(i),i);
-                }
                 endTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.remove(list.get(i));
-                }
                 break;
             case REMOVE:
-                for (int i = 0; i < nbRepeat; i++) {
-                    object.put(list.get(i),i);
-                }
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.remove(list.get(i));
@@ -70,17 +49,11 @@ public class MapTester extends Tester<Map> {
                 endTime = System.nanoTime();
                 break;
             case READ:
-//                for (int i = 0; i < nbRepeat; i++) {
-//                    object.put(list.get(i),i);
-//                }
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
                     object.get(list.get(i));
                 }
                 endTime = System.nanoTime();
-//                for (int i = 0; i < nbRepeat; i++) {
-//                    object.remove(list.get(i));
-//                }
                 break;
         }
         return (endTime - startTime);

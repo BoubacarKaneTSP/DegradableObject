@@ -11,10 +11,12 @@ public abstract class Filler<T> {
 
     protected final T object;
     protected final long nbOp;
-    protected final KeyGenerator generator; 
+    protected final KeyGenerator generator;
+    protected final int nbThreads;
 
-    public Filler(T object, KeyGenerator generator, long nbOp) {
+    public Filler(T object, int nbThreads, KeyGenerator generator, long nbOp) {
         this.object = object;
+        this.nbThreads = nbThreads;
         this.nbOp = nbOp;
         this.generator = generator;
     }

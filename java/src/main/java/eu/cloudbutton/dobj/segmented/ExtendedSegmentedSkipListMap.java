@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRSkipListMap;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import lombok.SneakyThrows;
@@ -9,10 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-public class ExtendedSegmentedSkipListMap<K,V> extends ExtendedSegmentation<ConcurrentSkipListMap>  implements Map<K,V> {
+public class ExtendedSegmentedSkipListMap<K,V> extends ExtendedSegmentation<SWMRSkipListMap>  implements Map<K,V> {
 
     public ExtendedSegmentedSkipListMap(FactoryIndice factoryIndice) {
-        super(ConcurrentSkipListMap.class, factoryIndice);
+        super(SWMRSkipListMap.class, factoryIndice);
     }
 
     public static class KeyIterator<K,V> implements Iterator<K> {

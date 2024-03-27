@@ -172,7 +172,7 @@ public class Microbenchmark {
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread + 1); // +1 for the thread that fill the object
 
-                    FactoryFiller factoryFiller = new FactoryFiller(object, nbOps, _collisionKey, _nbItems);
+                    FactoryFiller factoryFiller = new FactoryFiller(object,nbCurrentThread, nbOps, _collisionKey, _nbItems);
 
                     Filler filler = factoryFiller.createFiller();
 

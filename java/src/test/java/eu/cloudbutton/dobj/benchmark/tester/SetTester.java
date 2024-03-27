@@ -38,16 +38,14 @@ public class SetTester extends Tester<Set> {
         switch (type) {
             case ADD:
                 startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
+                for (int i = 0; i < nbRepeat; i++)
                     object.add(list.get(i));
-                }
                 endTime = System.nanoTime();
                 break;
             case REMOVE:
                 startTime = System.nanoTime();
-                for (int i = 0; i < nbRepeat; i++) {
+                for (int i = 0; i < nbRepeat; i++)
                     object.remove(list.get(i));
-                }
                 endTime = System.nanoTime();
 
                 break;

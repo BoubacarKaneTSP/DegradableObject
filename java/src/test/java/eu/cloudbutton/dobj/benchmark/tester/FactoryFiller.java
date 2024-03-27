@@ -17,9 +17,11 @@ public class FactoryFiller {
     private final Object object;
     private final long nbOps;
     private KeyGenerator keyGenerator;
+    private final Integer nbWorker;
 
-    public FactoryFiller(Object object, long nbOps, boolean useCollisionKey, int max_item_per_thread) {
+    public FactoryFiller(Object object, int nbWorker, long nbOps, boolean useCollisionKey, int max_item_per_thread) {
         this.object = object;
+        this.nbWorker = nbWorker;
         this.nbOps = nbOps;
         keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
     }
@@ -27,21 +29,21 @@ public class FactoryFiller {
     public Filler createFiller() throws ClassNotFoundException {
 
         if (object instanceof Map)
-            return new Filler<>((Map) object, keyGenerator, nbOps) {
+            return new Filler<>((Map) object, nbWorker, keyGenerator, nbOps) {
                 @Override
                 public void doFill(Key key) {
                     object.put(key,key);
                 }
             };
         else if (object instanceof Set)
-            return new Filler<>((Set) object, keyGenerator, nbOps) {
+            return new Filler<>((Set) object, nbWorker, keyGenerator, nbOps) {
                 @Override
                 public void doFill(Key key) {
                     object.add(key);
                 }
             };
         else if (object instanceof WaitFreeQueue)
-            return new Filler<>((WaitFreeQueue) object, keyGenerator, nbOps) {
+            return new Filler<>((WaitFreeQueue) object, nbWorker, keyGenerator, nbOps) {
                 WaitFreeQueue.Handle<Integer> h = object.register();
                 @Override
                 public void doFill(Key key) {
@@ -49,28 +51,28 @@ public class FactoryFiller {
                 }
             };
         else if (object instanceof Queue)
-            return new Filler<>((Queue) object, keyGenerator, nbOps) {
+            return new Filler<>((Queue) object, nbWorker, keyGenerator, nbOps) {
                 @Override
                 public void doFill(Key key) {
                     object.offer(key);
                 }
             };
         else if (object instanceof Counter)
-            return new Filler<>((Counter) object, keyGenerator, nbOps) {
+            return new Filler<>((Counter) object, nbWorker, keyGenerator, nbOps) {
                 @Override
                 public void doFill(Key key) {
                     object.incrementAndGet();
                 }
             };
         else if (object instanceof Noop)
-            return new Filler<>(object, keyGenerator, nbOps) {
+            return new Filler<>(object, nbWorker, keyGenerator, nbOps) {
                 @Override
                 public void doFill(Key key) {
                     // no-op
                 }
             };
         else if (object instanceof AtomicWriteOnceReference){
-            return new Filler<>((AtomicWriteOnceReference) object, keyGenerator, 1) {
+            return new Filler<>((AtomicWriteOnceReference) object, nbWorker, keyGenerator, 1) {
                 @Override
                 public void doFill(Key key) {
                     object.set(1);
@@ -78,7 +80,7 @@ public class FactoryFiller {
             };
         }
         else if (object instanceof AtomicReference){
-            return new Filler<>((AtomicReference) object, keyGenerator, 1) {
+            return new Filler<>((AtomicReference) object, nbWorker, keyGenerator, 1) {
                 @Override
                 public void doFill(Key key) {
                     object.set(1);

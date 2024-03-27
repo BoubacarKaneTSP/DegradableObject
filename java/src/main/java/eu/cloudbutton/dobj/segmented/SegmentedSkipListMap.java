@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRSkipListMap;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.swsr.SWSRSkipListMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
@@ -13,10 +14,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 
-public class SegmentedSkipListMap<K,V> extends BaseSegmentation<ConcurrentSkipListMap> implements Map<K,V> {
+public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWMRSkipListMap> implements Map<K,V> {
 
     public SegmentedSkipListMap(int parallelism) {
-        super(ConcurrentSkipListMap.class, parallelism);
+        super(SWMRSkipListMap.class, parallelism);
     }
     
     @Override

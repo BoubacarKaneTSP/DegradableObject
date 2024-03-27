@@ -244,28 +244,39 @@ echo "The number of threads is : $nbThreads"
 echo "Status of collisionKey : $collisionKey"
 echo ""
 
-cpuIDs=""
-var=$(echo "$nbThreads" | grep -o '[0-9]\+')
+#cpuIDs=""
+#var=$(echo "$nbThreads" | grep -o '[0-9]\+')
+#
+## shellcheck disable=SC2004
+#for ((i=0; i<$(($var)); i++)); do
+#  if [ -n "$cpuIDs" ]; then
+#    cpuIDs="$cpuIDs,$i"
+#  else
+#    cpuIDs="$i"
+#  fi
+#done
 
-# shellcheck disable=SC2004
-for ((i=0; i<$(($var)); i++)); do
-  if [ -n "$cpuIDs" ]; then
-    cpuIDs="$cpuIDs,$i"
-  else
-    cpuIDs="$i"
-  fi
+cpuIDs=""
+ranges=("0-19" "80-99" "20-39" "100-119" "40-59" "120-139" "60-79" "140-159")
+
+for range in "${ranges[@]}"; do
+    start=$(echo "$range" | cut -d'-' -f1)
+    end=$(echo "$range" | cut -d'-' -f2)
+    for ((i=start; i<=end; i++)); do
+        cpuIDs="$cpuIDs,$i"
+    done
 done
 
 if [[ $typeTest == "Microbenchmark" ]]
 then
   if [[ $computeGCInfo == true ]]
   then
-    CLASSPATH=../java/target/*:../java/target/lib/* java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
-#    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
+#    CLASSPATH=../java/target/*:../java/target/lib/* java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
     python3 analyse_gc.py $type $nbTest "$nbUserInit"
   else
-    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
-#    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
+#    CLASSPATH=../java/target/*:../java/target/lib/* java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
   fi
 elif [[ $typeTest == "Retwis" ]]
 then
