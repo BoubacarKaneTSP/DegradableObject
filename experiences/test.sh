@@ -263,7 +263,11 @@ for range in "${ranges[@]}"; do
     start=$(echo "$range" | cut -d'-' -f1)
     end=$(echo "$range" | cut -d'-' -f2)
     for ((i=start; i<=end; i++)); do
+      if [ -n "$cpuIDs" ]; then
         cpuIDs="$cpuIDs,$i"
+      else
+        cpuIDs="$i"
+      fi
     done
 done
 
