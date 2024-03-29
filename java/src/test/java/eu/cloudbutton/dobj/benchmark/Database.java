@@ -3,12 +3,7 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
-import eu.cloudbutton.dobj.sharded.ExtendedShardedHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
@@ -140,19 +135,19 @@ public class Database {
         }
 
 //        System.out.println("generate user");
-
+//
 //        generateUsers();
-
+//
 //        addingPhase();
-
+//
 //        followingPhase();
-
+//
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
-//        loadGraph();
-//        loadCompleteGraph();
-        loadDAPGraph();
+        // loadGraph();
+        loadClique();
+        // loadDAPGraph();
     }
 
     public Key generateUser(){
@@ -541,7 +536,7 @@ public class Database {
         usersFollowProbabilityRange = sommeFollow;
     }
 
-    private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException {
+    private void loadClique() throws ClassNotFoundException, InterruptedException {
 
         Set<Key> setUser = new HashSet<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
@@ -555,6 +550,8 @@ public class Database {
 
                 tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
+            } else {
+                assert false;
             }
         }
 
@@ -990,5 +987,14 @@ public class Database {
 
     public void leaveCommunity(Key user){
         community.remove(user);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for(Key user: mapFollowers.keySet()) {
+            builder.append(user+"->"+mapFollowers.get(user)+"\n");
+        }
+        return builder.toString();
     }
 }

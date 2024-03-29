@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # kill all the children of the current process
-trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+# trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
+# trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 typeCounter=""
 typeSet=""
