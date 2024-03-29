@@ -12,8 +12,8 @@ nbHashCode=10000000
 nbOps=1000000000
 ratio="0 0 0 0 0 100"
 ratio="0 0 99 1 0 0"
-ratio="10 20 30 20 10 10"
-# ratio="0 0 60 40 0 0"
+ratio="10 20 0 0 30 40"
+ratio="5 5 30 40 10 10"
 
 #ExtendedSegmentedConcurrentHash
 
