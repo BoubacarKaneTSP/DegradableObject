@@ -5,15 +5,15 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=1
-benchmarkTime=10
+benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000000
+nbOps=1000000000
 ratio="0 0 0 0 0 100"
 ratio="0 0 99 1 0 0"
-ratio="10 20 20 30 10 10"
-ratio="0 0 60 40 0 0"
+# ratio="10 20 30 20 10 10"
+# ratio="0 0 60 40 0 0"
 
 #ExtendedSegmentedConcurrentHash
 
@@ -41,9 +41,9 @@ do
       do
         echo " "
         echo " =============== > test number : $c"
-        # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha
   #       python3 analyse_perf.py perf.log "false" "JUC_$str_alpha" $nbThread $nbUsersInit
-
+	
         perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c CounterIncrementOnly -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha
   # #      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
   #       python3 analyse_perf.py perf.log "false" "Q_M_C_$str_alpha" $nbThread $nbUsersInit

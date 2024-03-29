@@ -95,7 +95,7 @@ public class Retwis {
     public boolean _quickTest = false;
 
     @Option(name = "-completionTime", handler = ExplicitBooleanOptionHandler.class, usage = "Computing the completion time")
-    public boolean _completionTime = true;
+    public boolean _completionTime = false;
 
     @Option(name = "-multipleOperation", handler = ExplicitBooleanOptionHandler.class, usage = "Computing operation multiples times")
     public boolean _multipleOperation = false;
@@ -279,7 +279,7 @@ public class Retwis {
                             _nbItems
                     );
 
-                    // System.out.println(database);
+                    System.out.println(database);
 
                     if (nbCurrTest == 1){
                         flagWarmingUp.set(true);
@@ -288,12 +288,14 @@ public class Retwis {
                     CountDownLatch latchCompletionTime = new CountDownLatch(nbCurrThread+1);// Additional counts for the coordinator
                     CountDownLatch latchFillDatabase = new CountDownLatch(nbCurrThread);
                     CountDownLatch latchFillFollowingPhase = new CountDownLatch(nbCurrThread);
+                    CountDownLatch computePhase = new CountDownLatch(nbCurrThread);
 
                     for (int j = 0; j < nbCurrThread; j++) {
                         RetwisApp retwisApp = new RetwisApp(
                                 latchCompletionTime,
                                 latchFillDatabase,
-                                latchFillFollowingPhase
+                                latchFillFollowingPhase,
+                                computePhase
                         );
                         callables.add(retwisApp);
                     }
@@ -307,7 +309,7 @@ public class Retwis {
                         for (Future<Void> future : futures) {
                             future.get();
                         }
-                    } catch (OutOfMemoryError | CancellationException | ExecutionException e) {
+                    } catch (Throwable e) {
                         e.printStackTrace();
                         System.exit(0);
                     }
@@ -470,12 +472,12 @@ public class Retwis {
                             printWriter.println(unit +" "+  ((nbOp / (double) timeOp) * nbCurrThread) * 1_000_000_000);
                         }
 
-                        if (_p && nbOp > 0){
-                            for (int j = 0; j < nbSign; j++) System.out.print("-");
-                            System.out.print(" ==> Latency (ns) for "+mapIntOptoStringOp.get(op)+" : ");
-                            System.out.println(timeOp/(double)nbOp);
-                            System.out.println();
-                        }
+//                        if (_p && nbOp > 0){
+//                            for (int j = 0; j < nbSign; j++) System.out.print("-");
+//                            System.out.print(" ==> Latency (ns) for "+mapIntOptoStringOp.get(op)+" : ");
+//                            System.out.println(timeOp/(double)nbOp);
+//                            System.out.println();
+//                        }
 
                         if (_s)
                             printWriter.flush();
@@ -528,7 +530,9 @@ public class Retwis {
 //                            }
                         }
 
-                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
+                        System.out.println("[Total (op): " + nbOpTotal);
+                        System.out.printf("[Throughput (op/s): %.3E]", + nbOpTotal/(timeBenchmarkAvg/(double)1000000000));
+//                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
 //                        System.out.println(" ==> nb original users : " + NB_USERS);
 //                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
 //                        System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
@@ -666,6 +670,7 @@ public class Retwis {
         private final CountDownLatch latchFillCompletionTime;
         private final CountDownLatch latchFillDatabase;
         private final CountDownLatch latchFillFollowingPhase;
+        private final CountDownLatch computePhase;
         private Long localUsersUsageProbabilityRange;
         private Long usersFollowProbabilityRange;
         private Queue<String> localUserUsageDistribution;
@@ -681,13 +686,14 @@ public class Retwis {
         long startTime, endTime;
         List<Integer> listOperationToDo;
 
-        public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase) {
+        public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) {
             this.random = ThreadLocalRandom.current();
             this.myId = new ThreadLocal<>();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
             this.latchFillCompletionTime = latchFillCompletionTime;
             this.latchFillDatabase = latchFillDatabase;
             this.latchFillFollowingPhase = latchFollowingPhase;
+            this.computePhase = computePhase;
             this.counterID = new AtomicInteger();
         }
 
@@ -735,7 +741,7 @@ public class Retwis {
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
-//                System.out.println("done following");
+                // System.out.println(Thread.currentThread().getName()+ " done following");
 
                 Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
 //                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
@@ -775,21 +781,22 @@ public class Retwis {
 
                     cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
-
+                // System.out.println(Thread.currentThread().getName()+ " done warm-up");
 
                 resetAllTimeline();
+
+                computePhase.countDown();
+                computePhase.await();
 
                 long startTimeBenchmark, endTimeBenchmark;
 
                 startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
-                    int nbOperationToDo = (int) (_nbOps/ database.getNbThread());
+                    int nbOperationToDo = (int) (_nbOps / database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
                         type = chooseOperation();
-//                        compute(type, timeLocalOperations, timeLocalDurations, false, i);
                         compute(type, timeLocalOperations, cleanTimeline, i);
                         cleanTimeline = i % (2 * _nbUserInit) == 0;
-
                     }
                 }else{
 
@@ -836,7 +843,7 @@ public class Retwis {
 
 //                userUsageDistribution.addAll(localUserUsageDistribution);
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 throw new Error(e);
             }
@@ -873,28 +880,30 @@ public class Retwis {
         }
 
 //        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
-        public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+        public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, int numOperation) {
 
-            // startTime = 0L;
-            // endTime= 0L;
-            nbAttempt = -1;
+            try {
 
-//            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
-//            int nbAttemptMax = 10;
+                // startTime = 0L;
+                // endTime= 0L;
+                nbAttempt = -1;
 
-            int typeComputed = type;
+                //            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
+                //            int nbAttemptMax = 10;
 
-                for (;;){
+                int typeComputed = type;
+
+                for (; ; ) {
                     long val = 0;
 
-                    try{
+                    try {
                         user = database
                                 .getLocalUsersUsageProbability()
                                 .get(myId.get())
                                 .ceilingEntry(val)
                                 .getValue();
 
-                    }catch (NullPointerException e){
+                    } catch (NullPointerException e) {
 
                         System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
                                 "val : " + val + "\n" +
@@ -903,61 +912,61 @@ public class Retwis {
                                 .get(myId.get())
                                 .lastKey() + "\n" +
                                 "value returned : " + database
-                                        .getLocalUsersUsageProbability()
-                                        .get(myId.get())
-                                        .ceilingEntry(val) + "\n"
-                                );
+                                .getLocalUsersUsageProbability()
+                                .get(myId.get())
+                                .ceilingEntry(val) + "\n"
+                        );
                         System.exit(0);
                     }
 
-                    switch (typeComputed){
+                    switch (typeComputed) {
                         case ADD:
                             // startTime = System.nanoTime();
-                            database.addUser(dummyUser,dummySet, dummyTimeline, dummyProfile);
+                            database.addUser(dummyUser, dummySet, dummyTimeline, dummyProfile);
                             // endTime = System.nanoTime();
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
-//                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
-//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+                            //                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
+                            //                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             // startTime = System.nanoTime();
                             database.followUser(user, dummyUserFollow);
                             // endTime = System.nanoTime();
 
-                            database.unfollowUser(user,dummyUserFollow);
-//                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
-//
-//
-//                            }else
-//                                continue restartOperation;
+                            database.unfollowUser(user, dummyUserFollow);
+                            //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
+                            //
+                            //
+                            //                            }else
+                            //                                continue restartOperation;
 
                             break;
                         case UNFOLLOW:
 
-//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
 
-//                            if (listFollow.size() == 0) {
-////                                System.out.println("restart");
-//                                continue restartOperation;
-//                            }
-//
-//                            userB = listFollow.poll();
+                            //                            if (listFollow.size() == 0) {
+                            ////                                System.out.println("restart");
+                            //                                continue restartOperation;
+                            //                            }
+                            //
+                            //                            userB = listFollow.poll();
 
                             database.followUser(user, dummyUserFollow);
                             // startTime = System.nanoTime();
                             database.unfollowUser(user, dummyUserFollow);
                             // endTime = System.nanoTime();
 
-//                            database.followUser(userA, userB);
-//                            if (userB != null){ // Perform unfollow only if userA already follow someone
-//                                listFollow.add(userB);
-//                            }else {
-//                                System.out.println("user null");
-//                                continue restartOperation;
-//                            }
+                            //                            database.followUser(userA, userB);
+                            //                            if (userB != null){ // Perform unfollow only if userA already follow someone
+                            //                                listFollow.add(userB);
+                            //                            }else {
+                            //                                System.out.println("user null");
+                            //                                continue restartOperation;
+                            //                            }
                             break;
                         case TWEET:
                             // startTime = System.nanoTime();
@@ -975,50 +984,55 @@ public class Retwis {
                             // endTime = System.nanoTime();
                             break;
                         case GROUP:
-                            if (database.getMapCommunityStatus().get(user) == 0){
+                            if (database.getMapCommunityStatus().get(user) == 0) {
                                 database.getMapCommunityStatus().put(user, 1);
                                 // startTime = System.nanoTime();
                                 database.joinCommunity(user);
-                            }
-                            else{
+                            } else {
                                 database.getMapCommunityStatus().put(user, 0);
                                 // startTime = System.nanoTime();
                                 database.leaveCommunity(user);
 
                             }
                             // endTime = System.nanoTime();
-                            break ;
+                            break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
                     }
 
-//                    startTime = System.nanoTime();
-//                    typeComputed = COUNT;
-//                    for (int i = 0; i < 1000; i++) {
-//                        // System.out.println("here w."+Thread.currentThread().getName());
-//                        database.getCounter().incrementAndGet();
-//                    }
-//                    endTime = System.nanoTime();
+                    //                    startTime = System.nanoTime();
+                    //                    typeComputed = COUNT;
+                    //                    for (int i = 0; i < 1000; i++) {
+                    //                        // System.out.println("here w."+Thread.currentThread().getName());
+                    //                        database.getCounter().incrementAndGet();
+                    //                    }
+                    //                    endTime = System.nanoTime();
 
                     if (!flagWarmingUp.get()) {
                         // timeOps.get(typeComputed).val+= endTime - startTime;
-//                        timeLocalDurations
-//                                .get(typeComputed)
-//                                .add(endTime - startTime);
+                        //                        timeLocalDurations
+                        //                                .get(typeComputed)
+                        //                                .add(endTime - startTime);
 
                         // startTime = System.nanoTime();
                         nbOperations.get(typeComputed).addAndGet(1);
-//                        endTime = System.nanoTime();
-//                        timeOps.get(COUNT).val += endTime - startTime;
-//                        timeLocalDurations.get(COUNT).add(endTime - startTime);
-//                        System.out.println(timeLocalDurations.get(COUNT).size());
+                        //                        endTime = System.nanoTime();
+                        //                        timeOps.get(COUNT).val += endTime - startTime;
+                        //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+                        //                        System.out.println(timeLocalDurations.get(COUNT).size());
 
                     }
 
                     // Thread.sleep(1);
 
                     break;
-//                }
+                    //                }
+                }
+
+            }catch (Throwable e) {
+                e.printStackTrace();
+                System.err.println(Thread.currentThread()+": "+user);
+                throw new RuntimeException();
             }
 
         }
@@ -1108,7 +1122,7 @@ public class Retwis {
                     completionTime += endTime - startTime;
                 }
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 throw new Error(e);
             }
