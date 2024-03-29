@@ -9,7 +9,7 @@ benchmarkTime=10
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000000
+nbOps=10000000
 ratio="10 20 20 30 10 10"
 # ratio="0 0 0 0 0 100"
 
@@ -32,7 +32,7 @@ do
 
     # for nbThread in 1 2 4 8 16 32 48
   #  for nbThread in 1 16 48
-      for nbThread in 12
+      for nbThread in 1 12
       # for nbThread in 1 2 4 6 8 10 12
     do
       for (( c=1; c<=nbTest; c++ ))
