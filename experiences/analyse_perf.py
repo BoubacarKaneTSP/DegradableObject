@@ -51,9 +51,9 @@ if avg_flag == "true":
     instruction_per_cycle_avg = open("perf_instruction_per_cycle_"+object_name+nb_user+tag_spe+".txt", "w")
 
     for i in list_nb_thread:
-        ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+nb_user + str(i) +"_thread"+tag_spe+".txt", "r")
-        ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+nb_user + str(i) +"_thread"+tag_spe+".txt", "r")
-        instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+nb_user + str(i) +"_thread"+tag_spe+".txt", "r")
+        ratio_cache_misses = open("perf_ratio_cache_misses_"+object_name+"_"+nb_user + str(i) +"_thread"+tag_spe+".txt", "r")
+        ratio_branch_misses = open("perf_ratio_branch_misses_"+object_name+"_"+nb_user + str(i) +"_thread"+tag_spe+".txt", "r")
+        instruction_per_cycle = open("perf_instruction_per_cycle_"+object_name+"_"+nb_user + str(i) +"_thread"+tag_spe+".txt", "r")
 
         sum_cache_misses = 0
         sum_branch_misses = 0
@@ -83,9 +83,9 @@ if avg_flag == "true":
         ratio_branch_misses.close()
         instruction_per_cycle.close()
 
-        os.remove("perf_ratio_cache_misses_"+object_name+nb_user + str(i) +"_thread"+tag_spe+".txt")
-        os.remove("perf_ratio_branch_misses_"+object_name+nb_user + str(i) +"_thread"+tag_spe+".txt")
-        os.remove("perf_instruction_per_cycle_"+object_name+nb_user + str(i) +"_thread"+tag_spe+".txt")
+        os.remove("perf_ratio_cache_misses_"+object_name+"_"+nb_user + str(i) +"_thread"+tag_spe+".txt")
+        os.remove("perf_ratio_branch_misses_"+object_name+"_"+nb_user + str(i) +"_thread"+tag_spe+".txt")
+        os.remove("perf_instruction_per_cycle_"+object_name+"_"+nb_user + str(i) +"_thread"+tag_spe+".txt")
     
     ratio_cache_misses_avg.close()
     ratio_branch_misses_avg.close()
