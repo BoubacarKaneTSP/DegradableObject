@@ -415,7 +415,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }*/
 
     public E poll() {
-
         restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
