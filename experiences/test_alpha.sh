@@ -13,7 +13,8 @@ nbOps=1000000000
 ratio="0 0 0 0 0 100"
 ratio="0 0 99 1 0 0"
 ratio="10 20 0 0 30 40"
-ratio="5 5 30 40 10 10"
+ratio="15 15 30 40 0 0"
+ratio="15 15 20 30 10 10"
 
 #ExtendedSegmentedConcurrentHash
 

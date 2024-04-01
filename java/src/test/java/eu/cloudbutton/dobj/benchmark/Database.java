@@ -146,8 +146,8 @@ public class Database {
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
         // loadGraph();
-        // loadClique();
-        loadDAPGraph();
+        loadClique();
+        // loadDAPGraph();
     }
 
     public Key generateUser(){
