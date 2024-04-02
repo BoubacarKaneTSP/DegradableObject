@@ -95,7 +95,7 @@ public class Retwis {
     public boolean _quickTest = false;
 
     @Option(name = "-completionTime", handler = ExplicitBooleanOptionHandler.class, usage = "Computing the completion time")
-    public boolean _completionTime = false;
+    public boolean _completionTime = true;
 
     @Option(name = "-multipleOperation", handler = ExplicitBooleanOptionHandler.class, usage = "Computing operation multiples times")
     public boolean _multipleOperation = false;
