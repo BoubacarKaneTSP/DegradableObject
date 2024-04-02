@@ -1,25 +1,25 @@
-# started on Tue Apr  2 08:05:26 2024
+# started on Tue Apr  2 10:05:17 2024
 
 
  Performance counter stats for './test.sh -q QueueMASP -t Microbenchmark -p -e -r 100 0 0 -w 60 -u 30 -n 5 -i 16384 -a -d 32768 -g 160':
 
-      105782500279      cache-references                                                     (30.77%)
-       29647775204      cache-misses                     #   28.027 % of all cache refs      (30.77%)
-      257117829853      branches                                                             (30.77%)
-       21068855740      branch-misses                    #    8.19% of all branches          (30.77%)
-   200787047851596      cycles                                                               (30.77%)
-     1237134474594      instructions                     #    0.01  insn per cycle           (38.47%)
-   186074387569256      l1d_pend_miss.pending_cycles_any                                     (38.47%)
-       66007217295      l2_rqsts.all_demand_miss                                             (38.47%)
-   198070609437492      cycle_activity.stalls_total                                          (38.47%)
-      320249330191      L1-dcache-loads                                                      (38.47%)
-       85915818089      L1-dcache-load-misses            #   26.83% of all L1-dcache accesses  (30.77%)
-       59037282842      LLC-loads                                                            (30.77%)
-        9744915560      LLC-load-misses                  #   16.51% of all LL-cache accesses  (30.77%)
+      104723043417      cache-references                                                     (30.77%)
+       28423606123      cache-misses                     #   27.142 % of all cache refs      (30.77%)
+      262361836830      branches                                                             (30.77%)
+       19937777300      branch-misses                    #    7.60% of all branches          (30.77%)
+   200762320834826      cycles                                                               (30.77%)
+     1257462060487      instructions                     #    0.01  insn per cycle           (38.46%)
+   186383369180469      l1d_pend_miss.pending_cycles_any                                     (38.46%)
+       66060766823      l2_rqsts.all_demand_miss                                             (38.46%)
+   198093611301794      cycle_activity.stalls_total                                          (38.46%)
+      326025621805      L1-dcache-loads                                                      (38.47%)
+       85465378468      L1-dcache-load-misses            #   26.21% of all L1-dcache accesses  (30.77%)
+       59123446530      LLC-loads                                                            (30.77%)
+        9441157088      LLC-load-misses                  #   15.97% of all LL-cache accesses  (30.77%)
 
-     451.447333971 seconds time elapsed
+     451.355068877 seconds time elapsed
 
-   71971.123323000 seconds user
-      18.080420000 seconds sys
+   71962.536754000 seconds user
+      16.860950000 seconds sys
 
 
