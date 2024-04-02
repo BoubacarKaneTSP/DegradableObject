@@ -43,8 +43,8 @@ do
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -s ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  python3 analyse_perf.py perf.log "false" "ExtendedSegmentedHashSet" $nbThread ""
 
-  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q Queue -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -a -d $range -g $nbThread
-  python3 analyse_perf.py perf.log "false" "ConcurrentLinkedQueue" $nbThread ""
+#  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q Queue -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -a -d $range -g $nbThread
+#  python3 analyse_perf.py perf.log "false" "ConcurrentLinkedQueue" $nbThread ""
 
   perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -q QueueMASP -t Microbenchmark -p -e -r "100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -a -d $range -g $nbThread
   python3 analyse_perf.py perf.log "false" "QueueMASP" $nbThread ""
@@ -75,7 +75,7 @@ done
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashSet" "1 40 80 120 160"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedHashSet" "1 40 80 120 160"
 #
-python3 compute_avg_throughput_microbenchmark.py "ConcurrentLinkedQueue" "2 40 80 120 160"
+#python3 compute_avg_throughput_microbenchmark.py "ConcurrentLinkedQueue" "2 40 80 120 160"
 python3 compute_avg_throughput_microbenchmark.py "QueueMASP" "2 40 80 120 160"
 ##
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentHashMap" "40"
@@ -92,7 +92,7 @@ python3 compute_avg_throughput_microbenchmark.py "QueueMASP" "2 40 80 120 160"
 #python3 analyse_perf.py perf.log "true" "CounterIncrementOnly" 0 ""
 #python3 analyse_perf.py perf.log "true" "LongAdder" 0 ""
 #
-python3 analyse_perf.py perf.log "true" "ConcurrentLinkedQueue" 0 ""
+#python3 analyse_perf.py perf.log "true" "ConcurrentLinkedQueue" 0 ""
 python3 analyse_perf.py perf.log "true" "QueueMASP" 0 ""
 
 #python3 analyse_perf.py perf.log "true" "ConcurrentHashMap" 0 ""

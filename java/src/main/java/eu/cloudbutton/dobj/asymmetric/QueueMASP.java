@@ -416,7 +416,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public E poll() {
 
-        restartFromHead: for (;;) {
+        /*restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null) {
@@ -435,27 +435,19 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 else if (p == q)
                     continue restartFromHead;
             }
+        }*/
+
+        if (head != tail){
+
+            E item = head.next.item;
+            head = head.next;
+            queueSize.decrementAndGet();
+//            queueSize.decrement();
+//            head.item = null;
+            return item;
         }
 
-        /*restartFromHead: for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
-                final E item;
-                if ((item = p.item) != null && p.casItem(item, null)) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-                    if (p != h) // hop two nodes at a time
-                        updateHead(h, ((q = p.next) != null) ? q : p);
-//                    queueSize.decrement();
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    updateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-            }
-        }*/
+        return null;
     }
 
     public E peek() {
