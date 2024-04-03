@@ -264,6 +264,8 @@ public class Factory {
                 return new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
             case "ExtendedSegmentedSkipListMap":
                 return new ExtendedSegmentedSkipListMap<>(factoryIndice);
+            case "ExtendedSegmentedTreeMap":
+                return new ExtendedSegmentedTreeMap<>(factoryIndice);
             default:
                 throw new ClassNotFoundException();
         }

@@ -61,6 +61,10 @@ do
 #
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m ExtendedSegmentedSkipListMap -t Microbenchmark -p -e -r " 38 37 25" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  python3 analyse_perf.py perf.log "false" "ExtendedSegmentedSkipListMap" $nbThread ""
+#
+  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m ExtendedSegmentedTreeMap -t Microbenchmark -p -e -r " 100 0 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+  python3 analyse_perf.py perf.log "false" "ExtendedSegmentedTreeMap" $nbThread ""
+
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "0 0 100" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 done
 #
@@ -83,6 +87,7 @@ python3 compute_avg_throughput_microbenchmark.py "QueueMASP" "2 40 80 120 160"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedHashMap" "40"
 #python3 compute_avg_throughput_microbenchmark.py "ConcurrentSkipListMap" "40"
 #python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedSkipListMap" "40"
+python3 compute_avg_throughput_microbenchmark.py "ExtendedSegmentedTreeMap" "1 40 80 120 160"
 
 #python3 analyse_perf.py perf.log "true" "AtomicReference" 0 ""
 #python3 analyse_perf.py perf.log "true" "AtomicWriteOnceReference" 0 ""
@@ -99,6 +104,7 @@ python3 analyse_perf.py perf.log "true" "QueueMASP" 0 ""
 #python3 analyse_perf.py perf.log "true" "ExtendedSegmentedHashMap" 0 ""
 #python3 analyse_perf.py perf.log "true" "ConcurrentSkipListMap" 0 ""
 #python3 analyse_perf.py perf.log "true" "ExtendedSegmentedSkipListMap" 0 ""
+python3 analyse_perf.py perf.log "true" "ExtendedSegmentedTreeMap" 0 ""
 
 #perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -s SegmentedSkipListSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
 #perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -s ExtendedShardedHashSet -t Microbenchmark -p -e -r "50 50 0" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range
