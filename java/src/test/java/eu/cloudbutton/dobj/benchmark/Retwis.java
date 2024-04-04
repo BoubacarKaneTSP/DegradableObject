@@ -268,8 +268,8 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
-                    // ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+                    // ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
+                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
@@ -531,7 +531,7 @@ public class Retwis {
                         }
 
                         System.out.println("[Total (op): " + nbOpTotal);
-                        System.out.printf("[Throughput (op/s): %.3E]", + nbOpTotal/(timeBenchmarkAvg/(double)1000000000));
+                        System.out.printf("[Throughput (op/s): %.3E]", + nbOpTotal/(completionTime/(double)1000000000));
 //                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
 //                        System.out.println(" ==> nb original users : " + NB_USERS);
 //                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
@@ -1023,7 +1023,7 @@ public class Retwis {
 
                     }
 
-                    // Thread.sleep(1);
+                    // Thread.sleep(0,1); // simulate I/O
 
                     break;
                     //                }
@@ -1058,6 +1058,7 @@ public class Retwis {
 
         @Override
         public Void call() throws Exception {
+            long startTime, endTime;
             try {
 
                 if (_p)
@@ -1085,42 +1086,36 @@ public class Retwis {
                     flagWarmingUp.set(false);
                 }
 
+                if (_gcinfo)
+                    System.out.println("Start benchmark");
+
                 if (! _completionTime) {
+
                     if (_p) {
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
                     }
-                    if (_gcinfo)
-                        System.out.println("Start benchmark");
+
+                    startTime = System.nanoTime();
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
+                    endTime = System.nanoTime();
+                    completionTime += endTime - startTime;
 
-                    if (_gcinfo)
-                        System.out.println("End benchmark");
-//                    performHeapDump(_tag, "Post", (int) _nbUserInit);
-
-//                    saveTimelineHistogram();
-
-//                    saveUserUsageDistribution();
-
-//                    saveDistributionHistogram("Post_Benchmark");
-//                    saveOperationDistribution();
                 }else{
-
-                    long startTime, endTime;
 
                     if (_p) {
                         System.out.println(" ==> Computing the completion time for " + _nbOps + " operations");
                     }
 
                     startTime = System.nanoTime();
-
                     latchCompletionTime.countDown();
                     latchCompletionTime.await();
-
                     endTime = System.nanoTime();
-
                     completionTime += endTime - startTime;
                 }
+
+                if (_gcinfo)
+                    System.out.println("End benchmark");
 
             } catch (Throwable e) {
                 e.printStackTrace();

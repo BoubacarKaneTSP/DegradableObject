@@ -169,8 +169,8 @@ public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentation<SWMRHash
     @Override
     public V compute(K key,
                      BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
-
-        return (V) segmentFor(key).compute(key, remappingFunction);
+        return null;
+        // return (V) segmentFor(key).compute(key, remappingFunction);
     }
 
 
