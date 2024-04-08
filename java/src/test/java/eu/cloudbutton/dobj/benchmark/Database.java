@@ -3,12 +3,7 @@ package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.key.RetwisKeyGenerator;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedConcurrentHashMap;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
-import eu.cloudbutton.dobj.sharded.ExtendedShardedHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
@@ -71,7 +66,6 @@ public class Database {
     private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
 
     private final Counter counter;
-    private final Set set;
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
@@ -119,7 +113,6 @@ public class Database {
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
         counter = Factory.createCounter(typeCounter);
-        set = Factory.createSet(typeSet, nbThread);
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
@@ -915,19 +908,18 @@ public class Database {
 
 //        counter.incrementAndGet();
         mapFollowers.put(user,dummySet);
-//        mapFollowing.put(user, dummySet);
-//        mapTimelines.put(user, dummyTimeline);
-//        mapProfiles.put(user, 0);
-//        mapCommunityStatus.put(user, 0);
+        mapFollowing.put(user, dummySet);
+        mapTimelines.put(user, dummyTimeline);
+        mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
 
     }
 
     public void removeUser(Key user){
         mapFollowers.remove(user);
-//        mapFollowing.remove(user);
-//        mapTimelines.remove(user);
-//        mapProfiles.remove(user);
-//        mapCommunityStatus.remove(user);
+        mapFollowing.remove(user);
+        mapTimelines.remove(user);
+        mapProfiles.remove(user);
     }
 
     // Adding user_A to the followers of user_B
@@ -935,25 +927,20 @@ public class Database {
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
-        try{
+        mapFollowers.get(userB)
+                .add(userA);
 
-            mapFollowers.get(userB);
-//                    .add(userA);
-//            mapFollowing.get(userA);
-//                    .add(userB);
-        }catch (Exception e){
-            e.printStackTrace();
-            System.exit(1);
-        }
+        mapFollowing.get(userA)
+                .add(userB);
     }
 
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB);
-//                .remove(userA);
-        mapFollowing.get(userA);
-//                .remove(userB);
+        mapFollowers.get(userB)
+                .remove(userA);
+        mapFollowing.get(userA)
+                .remove(userB);
     }
 
     public void lightFollowUser(Key userA, Key userB){

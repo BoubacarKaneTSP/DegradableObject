@@ -4,13 +4,18 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=3
-benchmarkTime=30
-warmingUpTime=30
+nbTest=1
+benchmarkTime=20
+warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000
-ratio="5 15 30 50"
+nbOps=100000000
+ratio="0 0 0 0 0 100"
+ratio="0 0 99 1 0 0"
+ratio="10 20 0 0 30 40"
+ratio="15 15 30 40 0 0"
+ratio="15 15 20 30 10 10"
+ratio="0 0 0 0 100 0"
 
 #ExtendedSegmentedConcurrentHash
 
@@ -21,7 +26,7 @@ do
   str_alpha=$(echo "$alpha" | tr '.' '-')
   echo "$str_alpha"
   echo "$alpha"
-  for nbUsersInit in 100
+  for nbUsersInit in 100000
   do
     # Cleaning old file
     python3 rm_file.py $nbUsersInit "JUC_$str_alpha"

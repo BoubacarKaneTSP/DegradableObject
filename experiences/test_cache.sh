@@ -5,15 +5,15 @@ trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 nbTest=2
-benchmarkTime=60
-warmingUpTime=30
+benchmarkTime=20
+warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=50000000000
+nbOps=80000000
 #ratio="50 50 0 0 0 0"
-ratio="0 100 0 0 0 0"
+ratio="15 15 20 30 10 10"
 #ratio="5 10 20 35 15 15"
-completion_time="False"
+completion_time="True"
 #ExtendedSegmentedConcurrentHash
 
 for nbUsersInit in 16000
@@ -45,11 +45,11 @@ do
 #      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterIncrementOnly -s HashSet -q SequentialQueue -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "SEQ" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -j #-z $nbOps
 #      python3 analyse_perf.py perf.log "false" "SEQ" $nbThread $nbUsersInit
 
-      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q Queue -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread #-j #-z $nbOps
+      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q Queue -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -z $nbOps
       python3 analyse_perf.py perf.log "false" "Q_M_C" $nbThread $nbUsersInit
 #      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
 #
-      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread #-j #-z $nbOps
+      perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -z $nbOps
       python3 analyse_perf.py perf.log "false" "JUC" $nbThread $nbUsersInit
 
       #perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh -c Counter -s ExtendedConcurrentHashSet -q QueueMASP -m ExtendedSegmentedConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_S_C" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread
