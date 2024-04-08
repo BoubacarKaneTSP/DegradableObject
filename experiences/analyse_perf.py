@@ -4,7 +4,7 @@ import os
 perf_file_name = sys.argv[1]
 avg_flag = sys.argv[2]
 object_name = sys.argv[3]
-nb_thread = "_"+sys.argv[4]
+nb_thread = sys.argv[4]
 nb_user = sys.argv[5]
 
 if len(nb_user)>0:
