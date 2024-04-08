@@ -387,7 +387,7 @@ public class Retwis {
                 if(_p)
                     System.out.println();
 
-                long timeBenchmarkAvg = ((timeBenchmark.longValue()) / nbCurrThread) / 1_000_000;
+                long timeBenchmarkAvg = (timeBenchmark.longValue()) / (nbCurrThread*1_000_000);
 
                 if (_gcinfo || _p)
                     System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1_000_000)/_nbTest + "ms" );
@@ -684,7 +684,6 @@ public class Retwis {
         List<Key> dummyUsersFollow = new ArrayList<>();
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
-        Profile dummyProfile;
         long startTime, endTime;
         List<Integer> listOperationToDo;
         List<Key> dummyKeys = new ArrayList<>();
@@ -778,7 +777,6 @@ public class Retwis {
                 }
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());
-                dummyProfile = new Profile();
 
                 int num = 0;
                 boolean cleanTimeline = false;
@@ -934,7 +932,7 @@ public class Retwis {
                     switch (typeComputed) {
                         case ADD:
                             // startTime = System.nanoTime();
-                            database.addUser(dummyUsers.get(numOperation%1000), dummySet, dummyTimeline, dummyProfile);
+                            database.addUser(dummyUsers.get(numOperation%1000), dummySet, dummyTimeline);
                             // endTime = System.nanoTime();
                             database.removeUser(dummyUsers.get(numOperation%1000));
                             break;

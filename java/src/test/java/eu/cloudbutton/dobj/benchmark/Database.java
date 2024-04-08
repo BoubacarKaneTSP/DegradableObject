@@ -901,7 +901,7 @@ public class Database {
 //            mapFollowers.put(user, Factory.createSet(typeSet, nbThread));
     }
 
-    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline, Profile dummyProfile) {
+    public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
 //        assert user != null : "User is null";
 //        assert dummySet != null : "Set is null";
 //        assert dummyTimeline != null : "Timeline is null";
@@ -927,11 +927,18 @@ public class Database {
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
 
-        mapFollowers.get(userB)
-                .add(userA);
+        try{
 
-        mapFollowing.get(userA)
-                .add(userB);
+            mapFollowers.get(userB)
+                    .add(userA);
+            mapFollowing.get(userA)
+                    .add(userB);
+        }catch (Exception e){
+            System.out.println("userB : " + userB + ", in mapFollowers :" + mapFollowers.containsKey(userB));
+            System.out.println("userB : " + userB + ", in mapFollowing :" + mapFollowing.containsKey(userB));
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     // Removing user_A to the followers of user_B
