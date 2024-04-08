@@ -9,7 +9,7 @@ benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=160000000
+nbOps=80000000
 #ratio="50 50 0 0 0 0"
 ratio="15 15 20 30 10 10"
 #ratio="5 10 20 35 15 15"
@@ -61,7 +61,7 @@ do
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "2 16 48" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1 32 96" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "48" $completion_time
-  python3 compute_avg_throughput.py $nbUsersInit "JUC" "80" $completion_time
+  python3 compute_avg_throughput.py $nbUsersInit "JUC" "40" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "JUC" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 2 4 8 16 32 48 64 70 86 96" $completion_time
@@ -69,7 +69,7 @@ do
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "2 16 48" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1 32 96" $completion_time
 # python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "48" $completion_time
- python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "80" $completion_time
+ python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "40" $completion_time
 #  python3 compute_avg_throughput.py $nbUsersInit "Q_M_C" "1" $completion_time
 
 #  python3 compute_avg_throughput.py $nbUsersInit "SEQ" "1 2 4 8 16 32 48 64 70 86 96" $completion_time

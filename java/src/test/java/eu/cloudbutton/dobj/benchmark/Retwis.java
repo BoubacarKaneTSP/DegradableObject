@@ -387,10 +387,10 @@ public class Retwis {
                 if(_p)
                     System.out.println();
 
-                long timeBenchmarkAvg = (timeBenchmark.longValue()) / (nbCurrThread*1_000_000);
+                long timeBenchmarkAvg = (timeBenchmark.longValue()) / (nbCurrThread*1000000);
 
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1_000_000)/_nbTest + "ms" );
+                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000.0)/_nbTest + "ms" );
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
