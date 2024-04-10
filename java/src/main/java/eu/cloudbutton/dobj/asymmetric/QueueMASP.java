@@ -418,24 +418,47 @@ public class QueueMASP<E> extends AbstractQueue<E>
         restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
-                if ((item = p.item) != null) {
+                if ((item = p.item) != null && p.casItem(item, null)) {
                     // Successful CAS is the linearization point
                     // for item to be removed from this queue.
-                    p.item = null;
                     if (p != h) // hop two nodes at a time
-                        sequentialUpdateHead(h, ((q = p.next) != null) ? q : p);
+                        updateHead(h, ((q = p.next) != null) ? q : p);
                     queueSize.decrementAndGet();
                     return item;
                 }
                 else if ((q = p.next) == null) {
-                    sequentialUpdateHead(h, p);
+                    updateHead(h, p);
                     assert queueSize.intValue() == 0;
                     return null;
                 }
-//                else if (p == q) // cannot happen
-//                    continue restartFromHead;
+                else if (p == q)
+                    continue restartFromHead;
             }
         }
+//    }
+//
+//    public E poll() {
+//        restartFromHead: for (;;) {
+//            for (Node<E> h = head, p = h, q;; p = q) {
+//                final E item;
+//                if ((item = p.item) != null) {
+//                    // Successful CAS is the linearization point
+//                    // for item to be removed from this queue.
+//                    p.item = null;
+//                    if (p != h) // hop two nodes at a time
+//                        sequentialUpdateHead(h, ((q = p.next) != null) ? q : p);
+//                    queueSize.decrementAndGet();
+//                    return item;
+//                }
+//                else if ((q = p.next) == null) {
+//                    sequentialUpdateHead(h, p);
+//                    assert queueSize.intValue() == 0;
+//                    return null;
+//                }
+////                else if (p == q) // cannot happen
+////                    continue restartFromHead;
+//            }
+//        }
 
         /*restartFromHead: for (;;) {
             for (Node<E> h = head, p = h, q;; p = q) {
