@@ -92,6 +92,9 @@ public class Retwis {
     @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
     private boolean _p = false;
 
+    @Option(name = "-d", handler = ExplicitBooleanOptionHandler.class, usage = "Debug")
+    private boolean _d = false;
+
     @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Testing only one and max nbThreads")
     public boolean _quickTest = false;
 
@@ -280,7 +283,7 @@ public class Retwis {
                             _nbItems
                     );
 
-                    if (_p){
+                    if (_d){
                         System.out.println(database);
                     }
 
