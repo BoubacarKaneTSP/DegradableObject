@@ -20,6 +20,7 @@ public class Timeline<T> {
     }
 
     public void add(T elt) throws InterruptedException {
+        assert elt != null;
         timeline.offer(elt);
    }
 
