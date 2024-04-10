@@ -925,86 +925,86 @@ public class Retwis {
                         System.exit(0);
                     }
 
-//                    switch (typeComputed) {
-//                        case ADD:
-//                            // startTime = System.nanoTime();
-//                            database.addUser(dummyUser, dummySet, dummyTimeline, dummyProfile);
-//                            // endTime = System.nanoTime();
-//                            database.removeUser(dummyUser);
-//                            break;
-//                        case FOLLOW:
-//                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
-//
-//                            //                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
-//                            //                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
-//
-//                            // startTime = System.nanoTime();
-//                            database.followUser(user, dummyUserFollow);
-//                            // endTime = System.nanoTime();
-//
-//                            database.unfollowUser(user, dummyUserFollow);
-//                            //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
-//                            //
-//                            //
-//                            //                            }else
-//                            //                                continue restartOperation;
-//
-//                            break;
-//                        case UNFOLLOW:
-//
-//                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
-//
-//                            //                            if (listFollow.size() == 0) {
-//                            ////                                System.out.println("restart");
-//                            //                                continue restartOperation;
-//                            //                            }
-//                            //
-//                            //                            userB = listFollow.poll();
-//
-//                            database.followUser(user, dummyUserFollow);
-//                            // startTime = System.nanoTime();
-//                            database.unfollowUser(user, dummyUserFollow);
-//                            // endTime = System.nanoTime();
-//
-//                            //                            database.followUser(userA, userB);
-//                            //                            if (userB != null){ // Perform unfollow only if userA already follow someone
-//                            //                                listFollow.add(userB);
-//                            //                            }else {
-//                            //                                System.out.println("user null");
-//                            //                                continue restartOperation;
-//                            //                            }
-//                            break;
-//                        case TWEET:
-//                            // startTime = System.nanoTime();
-//                            database.tweet(user, msg);
-//                            // endTime = System.nanoTime();
-//                            break;
-//                        case PROFILE:
-//                            // startTime = System.nanoTime();
-//                            database.updateProfile(user);
-//                            // endTime = System.nanoTime();
-//                            break;
-//                        case READ:
-//                            // startTime = System.nanoTime();
-//                            database.showTimeline(user);
-//                            // endTime = System.nanoTime();
-//                            break;
-//                        case GROUP:
-//                            if (database.getMapCommunityStatus().get(user) == 0) {
-//                                database.getMapCommunityStatus().put(user, 1);
-//                                // startTime = System.nanoTime();
-//                                database.joinCommunity(user);
-//                            } else {
-//                                database.getMapCommunityStatus().put(user, 0);
-//                                // startTime = System.nanoTime();
-//                                database.leaveCommunity(user);
-//
-//                            }
-//                            // endTime = System.nanoTime();
-//                            break;
-//                        default:
-//                            throw new IllegalStateException("Unexpected value: " + type);
-//                    }
+                    switch (typeComputed) {
+                        case ADD:
+                            // startTime = System.nanoTime();
+                            database.addUser(dummyUser, dummySet, dummyTimeline, dummyProfile);
+                            // endTime = System.nanoTime();
+                            database.removeUser(dummyUser);
+                            break;
+                        case FOLLOW:
+                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+
+                            //                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
+                            //                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
+
+                            // startTime = System.nanoTime();
+                            database.followUser(user, dummyUserFollow);
+                            // endTime = System.nanoTime();
+
+                            database.unfollowUser(user, dummyUserFollow);
+                            //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
+                            //
+                            //
+                            //                            }else
+                            //                                continue restartOperation;
+
+                            break;
+                        case UNFOLLOW:
+
+                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
+
+                            //                            if (listFollow.size() == 0) {
+                            ////                                System.out.println("restart");
+                            //                                continue restartOperation;
+                            //                            }
+                            //
+                            //                            userB = listFollow.poll();
+
+                            database.followUser(user, dummyUserFollow);
+                            // startTime = System.nanoTime();
+                            database.unfollowUser(user, dummyUserFollow);
+                            // endTime = System.nanoTime();
+
+                            //                            database.followUser(userA, userB);
+                            //                            if (userB != null){ // Perform unfollow only if userA already follow someone
+                            //                                listFollow.add(userB);
+                            //                            }else {
+                            //                                System.out.println("user null");
+                            //                                continue restartOperation;
+                            //                            }
+                            break;
+                        case TWEET:
+                            // startTime = System.nanoTime();
+                            database.tweet(user, msg);
+                            // endTime = System.nanoTime();
+                            break;
+                        case PROFILE:
+                            // startTime = System.nanoTime();
+                            database.updateProfile(user);
+                            // endTime = System.nanoTime();
+                            break;
+                        case READ:
+                            // startTime = System.nanoTime();
+                            database.showTimeline(user);
+                            // endTime = System.nanoTime();
+                            break;
+                        case GROUP:
+                            if (database.getMapCommunityStatus().get(user) == 0) {
+                                database.getMapCommunityStatus().put(user, 1);
+                                // startTime = System.nanoTime();
+                                database.joinCommunity(user);
+                            } else {
+                                database.getMapCommunityStatus().put(user, 0);
+                                // startTime = System.nanoTime();
+                                database.leaveCommunity(user);
+
+                            }
+                            // endTime = System.nanoTime();
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + type);
+                    }
 
 //                    startTime = System.nanoTime();
 //                    typeComputed = COUNT;
