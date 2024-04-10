@@ -372,6 +372,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @throws NullPointerException if the specified element is null
      */
     public boolean offer(@NotNull  E e) {
+        assert e!=null;
         final Node<E> newNode = new Node<E>(Objects.requireNonNull(e));
 
         for (Node<E> t = tail, p = t;;) {
