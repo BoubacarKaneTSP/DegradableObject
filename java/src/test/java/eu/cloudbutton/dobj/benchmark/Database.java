@@ -134,19 +134,19 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-//        System.out.println("generate user");
-//
-//        generateUsers();
-//
-//        addingPhase();
-//
-//        followingPhase();
-//
-//        saveGraph("graph_follower_retwis.txt", mapFollowers);
-//        saveGraph("graph_following_retwis.txt", mapFollowing);
+        System.out.println("generate user");
 
-        // loadGraph();
-        loadClique();
+        generateUsers();
+
+        addingPhase();
+
+        followingPhase();
+
+        saveGraph("graph_follower_retwis.txt", mapFollowers);
+        saveGraph("graph_following_retwis.txt", mapFollowing);
+
+        loadGraph();
+        // loadClique();
         // loadDAPGraph();
     }
 
@@ -586,9 +586,9 @@ public class Database {
             j++;
         }
 
-        for (int i = 0; i < nbThread; i++) {
-            System.out.println(localUsersUsageProbability.get(i));
-        }
+//        for (int i = 0; i < nbThread; i++) {
+//            System.out.println(localUsersUsageProbability.get(i));
+//        }
 
         usersFollowProbabilityRange = sommeFollow;
     }
