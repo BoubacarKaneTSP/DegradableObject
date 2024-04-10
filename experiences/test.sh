@@ -278,7 +278,7 @@ then
     python3 analyse_gc.py $tag $nbTest $nbUserInit
   else
       # CLASSPATH=../java/target/*:../java/target/lib/* java -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
-      cmd="CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs --membind=0 java -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended --add-opens java.base/java.lang=ALL-UNNAMED eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag"
+      cmd="CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs --membind=0 java -ea -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended --add-opens java.base/java.lang=ALL-UNNAMED eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag"
       echo ${cmd}
       eval ${cmd}
   fi
