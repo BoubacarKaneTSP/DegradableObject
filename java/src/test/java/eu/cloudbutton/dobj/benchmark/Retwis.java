@@ -268,8 +268,8 @@ public class Retwis {
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
                     List<Callable<Void>> callables = new ArrayList<>();
-                    // ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
-                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
+                    //ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
@@ -1023,7 +1023,7 @@ public class Retwis {
 
                     }
 
-                    // Thread.sleep(0,1); // simulate I/O
+                    Thread.sleep(0,1); // simulate I/O
 
                     break;
                     //                }
