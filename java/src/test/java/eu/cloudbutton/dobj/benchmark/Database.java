@@ -585,6 +585,11 @@ public class Database {
 
             j++;
         }
+
+        for (int i = 0; i < nbThread; i++) {
+            System.out.println(localUsersUsageProbability.get(i));
+        }
+
         usersFollowProbabilityRange = sommeFollow;
     }
 
