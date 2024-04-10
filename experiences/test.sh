@@ -235,18 +235,18 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
 done
 
 cpuIDs=""
-ranges=("0-19" "80-99" "20-39" "100-119" "40-59" "120-139" "60-79" "140-159")
-
-for range in "${ranges[@]}"; do
-    start=$(echo "$range" | cut -d'-' -f1)
-    end=$(echo "$range" | cut -d'-' -f2)
-    for ((i=start; i<=end; i++)); do
-      if [ -n "$cpuIDs" ]; then
-        cpuIDs="$cpuIDs,$i"
-      else
-        cpuIDs="$i"
-      fi
-    done
+nthreads=$(echo "$nbThreads" | grep -o '[0-9]\+')
+echo ${nthreads}
+nhwthreads=$(cat /proc/cpuinfo  | grep processor | tail -n 1 | awk '{print ($3)+1}')
+echo ${nhwthreads}
+min=$(echo -e ${nthreads}"\n"${nhwthreads} | sort -n | head -n 1)
+echo ${max}
+for (( i=0; i<=$((min-1)); i++ )); do
+  if [ -n "$cpuIDs" ]; then
+    cpuIDs="$cpuIDs,$i"
+  else
+    cpuIDs="$i"
+  fi
 done
 
 echo "The test launched is : $typeTest"
