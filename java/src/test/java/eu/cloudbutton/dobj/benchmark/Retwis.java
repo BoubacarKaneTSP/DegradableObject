@@ -280,7 +280,9 @@ public class Retwis {
                             _nbItems
                     );
 
-                    System.out.println(database);
+                    if (_p){
+                        System.out.println(database);
+                    }
 
                     if (nbCurrTest == 1){
                         flagWarmingUp.set(true);
