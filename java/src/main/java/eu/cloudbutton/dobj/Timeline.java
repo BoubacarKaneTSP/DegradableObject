@@ -25,22 +25,12 @@ public class Timeline<T> {
 
    public Queue<T> read() throws InterruptedException {
        long queueSize = timeline.size();
-       for (int i = 0; i < queueSize; i++)
-           topk.add(timeline.poll());
-       if (queueSize>10_000) {
-           System.out.println(queueSize);
-           assert queueSize == topk.size();
+       for (int i = 0; i < queueSize; i++) {
+           T t=timeline.poll();
+           if ( t != null) topk.add(t);
        }
-       topk.clear();
-//       int topkSize = topk.size();
-//       if (topkSize>10_000) {
-//           System.out.println(topkSize);
-//       }
-//        for (int i = 0; i < topkSize - CAPACITY; i++)
-//            topk.poll();
-//       if (topkSize>10_000) {
-//           System.out.println("OUT");
-//       }
+       for (int i = 0; i < topk.size() - CAPACITY; i++)
+           topk.poll();
        return topk;
    }
 
