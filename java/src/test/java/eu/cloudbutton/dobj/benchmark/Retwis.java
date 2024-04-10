@@ -1023,7 +1023,7 @@ public class Retwis {
 
                     }
 
-                    Thread.sleep(0,1); // simulate I/O
+                    // Thread.sleep(0,1); // simulate I/O
 
                     break;
                     //                }
