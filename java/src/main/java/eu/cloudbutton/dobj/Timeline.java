@@ -27,13 +27,13 @@ public class Timeline<T> {
 
        long queueSize = timeline.size();
        // System.out.println(queueSize);
-       for (int i = 0; i < queueSize; i++)
-           topk.add(timeline.poll());
-
-       int topkSize = topk.size();
-
-        for (int i = 0; i < topkSize - CAPACITY; i++)
-            topk.poll();
+//       for (int i = 0; i < queueSize; i++)
+//           topk.add(timeline.poll());
+//
+//       int topkSize = topk.size();
+//
+//        for (int i = 0; i < topkSize - CAPACITY; i++)
+//            topk.poll();
 
        return topk;
    }
