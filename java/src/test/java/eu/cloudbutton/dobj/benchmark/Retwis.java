@@ -91,7 +91,7 @@ public class Retwis {
     @Option(name = "-p", handler = ExplicitBooleanOptionHandler.class, usage = "Print the result")
     private boolean _p = false;
 
-    @Option(name = "-d", handler = ExplicitBooleanOptionHandler.class, usage = "Debug")
+    @Option(name = "-debug", handler = ExplicitBooleanOptionHandler.class, usage = "Debug")
     private boolean _d = false;
 
     @Option(name = "-quickTest", handler = ExplicitBooleanOptionHandler.class, usage = "Testing only one and max nbThreads")
@@ -899,7 +899,7 @@ public class Retwis {
                 int typeComputed = type;
 
                 for (; ; ) {
-                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
+                    long val = Math.abs(random.nextLong() % (localUsersUsageProbabilityRange+1) );
 
                     try {
                         user = database
@@ -909,7 +909,6 @@ public class Retwis {
                                 .getValue();
 
                     } catch (NullPointerException e) {
-
                         System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
                                 "val : " + val + "\n" +
                                 "max val : " + database

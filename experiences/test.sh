@@ -235,10 +235,13 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
 done
 
 cpuIDs=""
-var=$(echo "$nbThreads" | grep -o '[0-9]\+')
-
-# shellcheck disable=SC2004
-for ((i=0; i<$(($var)); i++)); do
+nthreads=$(echo "$nbThreads" | grep -o '[0-9]\+')
+echo ${nthreads}
+nhwthreads=$(cat /proc/cpuinfo  | grep processor | tail -n 1 | awk '{print ($3)+1}')
+echo ${nhwthreads}
+min=$(echo -e ${nthreads}"\n"${nhwthreads} | sort -n | head -n 1)
+echo ${max}
+for (( i=0; i<=$((min-1)); i++ )); do    
   if [ -n "$cpuIDs" ]; then
     cpuIDs="$cpuIDs,$i"
   else

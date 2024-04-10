@@ -134,19 +134,16 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-//        System.out.println("generate user");
-//
-//        generateUsers();
-//
-//        addingPhase();
-//
-//        followingPhase();
+        generateUsers();
+        addingPhase();
+        followingPhase();
+
 //
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
-//        loadGraph();
-         loadClique();
+        // loadGraph();
+        // loadClique();
         // loadDAPGraph();
     }
 
@@ -267,15 +264,11 @@ public class Database {
     }
 
     public void followingPhase() throws InterruptedException, ExecutionException {
-        System.out.println("start following phase thread : " + Thread.currentThread().getName());
-
+        System.out.println("Start following phase");
         int nbProcess = Runtime.getRuntime().availableProcessors();
-//        int nbProcess = 48;
         ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
         List<Future<Void>> futures = new ArrayList<>();
 
-        System.out.println("nb process : " + nbProcess);
-        
         MyCallableWithArgument myCallable = (Integer i) -> {
 
             int a, counter = 0, directed_sum = 0;
@@ -367,7 +360,7 @@ public class Database {
             future.get();
         }
 
-        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+        System.out.println("End following phase");
     }
 
     public void addingPhase() throws ExecutionException, InterruptedException {
@@ -393,8 +386,7 @@ public class Database {
             user = mapIndiceToKey.get(i);
             addOriginalUser(user);
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
-            localUsersUsageProbabilityRange.put(i%nbThread, localUsersUsageProbabilityRange.get(i%nbThread) + somme.get(i%nbThread).longValue());
-
+            localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
             listLocalUser.get(i%nbThread).add(user);
             return null;
         };
@@ -996,9 +988,15 @@ public class Database {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+        builder.append("Followers:=\n");
         for(Key user: mapFollowers.keySet()) {
             builder.append(user+"->"+mapFollowers.get(user)+"\n");
         }
+        builder.append("Pr[user]:=");
+        builder.append(localUsersUsageProbability);
+        builder.append("\n");
+        builder.append("Range:=");
+        builder.append(localUsersUsageProbabilityRange);
         return builder.toString();
     }
 }
