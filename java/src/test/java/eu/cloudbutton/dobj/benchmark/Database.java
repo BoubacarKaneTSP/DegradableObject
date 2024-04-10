@@ -134,19 +134,19 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-        System.out.println("generate user");
+//        System.out.println("generate user");
+//
+//        generateUsers();
+//
+//        addingPhase();
+//
+//        followingPhase();
+//
+//        saveGraph("graph_follower_retwis.txt", mapFollowers);
+//        saveGraph("graph_following_retwis.txt", mapFollowing);
 
-        generateUsers();
-
-        addingPhase();
-
-        followingPhase();
-
-        saveGraph("graph_follower_retwis.txt", mapFollowers);
-        saveGraph("graph_following_retwis.txt", mapFollowing);
-
-        loadGraph();
-        // loadClique();
+//        loadGraph();
+         loadClique();
         // loadDAPGraph();
     }
 
