@@ -29,10 +29,10 @@ do
 #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
 #  for nbThread in 1 2 4 8 16 32 48 64 70 86 96
-  for nbThread in 40
+#  for nbThread in 40
 #  for nbThread in 2 16 48
 #  for nbThread in 1 32 96
-#  for nbThread in 96
+  for nbThread in 40
 #  for nbThread in 1 4 8
 #  for nbThread in 1
   do

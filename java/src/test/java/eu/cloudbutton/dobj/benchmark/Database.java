@@ -12,9 +12,12 @@ import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -69,7 +72,7 @@ public class Database {
 
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException {
+                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -156,14 +159,14 @@ public class Database {
 
     public void generateUsers() throws InterruptedException {
 
-        String cheminFichier = "nodes_info.txt";
+        String fileName = "nodes_info.txt";
         Set<Key> localSetUser = new TreeSet<>();
         int r_degree, o_degree, i_degree;
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
         long somme = 0;
 
         try {
-            File fichier = new File(cheminFichier);
+            File fichier = new File(fileName);
 
             FileReader fileReader = new FileReader(fichier);
 
@@ -433,18 +436,27 @@ public class Database {
 
     }
 
-    private void loadGraph() throws InterruptedException, ClassNotFoundException {
+    private void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
+
+        int numberOfUsersInFile;
+        String fileName = "graph_following_retwis.txt";
+
+        try (Stream<String> fileStream = Files.lines(Paths.get(fileName))) {
+            //Lines count
+            numberOfUsersInFile = (int) fileStream.count();
+        }
 
         Set<Key> localSetUser = new HashSet<>();
-        List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(numberOfUsersInFile, numberOfUsersInFile, 1, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
-        int val, indiceThread = 0, nbUserPerThread = nbUsers/nbThread;
+        int val, indiceThread = 0, nbUserPerThread = numberOfUsersInFile/nbThread;
 
-        for (int i = 0; i < nbUsers;) {
+
+        for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                if (i % nbUsers * 0.05 == 0)
+                if (i % numberOfUsersInFile * 0.05 == 0)
                     System.out.println(i);
 
                 mapUserToAdd.get(indiceThread).add(user);
@@ -460,11 +472,9 @@ public class Database {
                 }
             }
         }
-
-        String cheminFichier = "graph_following_retwis.txt";
-
+        
         try {
-            File fichier = new File(cheminFichier);
+            File fichier = new File(fileName);
 
             FileReader fileReader = new FileReader(fichier);
 
@@ -485,7 +495,12 @@ public class Database {
                     }*/
                 }else{
                     for (int j = 1; j < values.length; j++) {
-                        mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+                        try{
+
+                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+                        }catch (NullPointerException e){
+                            System.out.println("key from " + userIndice + " is suposed to be null : " +  mapIndiceToKey.get(userIndice));
+                        }
                     }
                 }
 
@@ -505,12 +520,11 @@ public class Database {
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
 
-        for (int i = 0; i < nbUsers; i++) {
+        for (int i = 0; i < numberOfUsersInFile; i++) {
             nbLink = 0;
 
             Key user = mapIndiceToKey.get(i);
-            nbLink += mapFollowers.get(user).size();
-            nbLink += mapFollowing.get(user).size();
+            nbLink += mapListUserFollow.get(user).size();
 
             mapNbLinkPerUser.put(user, nbLink);
         }
