@@ -431,7 +431,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 }
                 else if ((q = p.next) == null) {
                     updateHead(h, p);
-                    assert s == 0;
+                    assert s <= 0 : size();
                     return null;
                 }
                 else if (p == q)
