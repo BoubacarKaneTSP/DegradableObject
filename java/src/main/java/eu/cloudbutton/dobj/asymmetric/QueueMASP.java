@@ -371,8 +371,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return {@code true} (as specified by {@link Queue#offer})
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offer(@NotNull  E e) {
-        assert e!=null;
+    public boolean offer(E e) {
         final Node<E> newNode = new Node<E>(Objects.requireNonNull(e));
 
         for (Node<E> t = tail, p = t;;) {
@@ -418,7 +417,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public E poll() {
         restartFromHead: for (;;) {
-            int s = size();
+           // int s = size();
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
