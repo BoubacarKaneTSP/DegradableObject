@@ -38,6 +38,9 @@ public class Timeline<T> {
 
         for (int i = 0; i < topkSize - CAPACITY; i++)
             topk.poll();
+       if (topkSize>1_000_000) {
+           System.out.println("OUT");
+       }
        return topk;
    }
 
