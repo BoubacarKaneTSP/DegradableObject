@@ -964,17 +964,15 @@ public class Database {
     }
 
     public void showTimeline(Key user) throws InterruptedException {
-        return;
-//        try{
-//
-//            mapTimelines.get(user).read();
-//        }catch (NullPointerException e){
-//            System.out.println(user);
-//            System.out.println();
-//            System.out.println(mapTimelines);
-//            System.out.println(e);
-//            System.exit(0);
-//        }
+        try{
+            mapTimelines.get(user).read();
+        }catch (NullPointerException e){
+            System.out.println(user);
+            System.out.println();
+            System.out.println(mapTimelines);
+            System.out.println(e);
+            System.exit(0);
+        }
     }
 
     public void updateProfile(Key user){

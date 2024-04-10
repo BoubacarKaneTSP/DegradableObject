@@ -1008,20 +1008,20 @@ public class Retwis {
 //                    }
 //                    endTime = System.nanoTime();
 
-                    if (!flagWarmingUp.get()) {
-                        // timeOps.get(typeComputed).val+= endTime - startTime;
-                        //                        timeLocalDurations
-                        //                                .get(typeComputed)
-                        //                                .add(endTime - startTime);
-
-                        // startTime = System.nanoTime();
-                        nbOperations.get(typeComputed).addAndGet(1);
-                        //                        endTime = System.nanoTime();
-                        //                        timeOps.get(COUNT).val += endTime - startTime;
-                        //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
-                        //                        System.out.println(timeLocalDurations.get(COUNT).size());
-
-                    }
+//                    if (!flagWarmingUp.get()) {
+//                        // timeOps.get(typeComputed).val+= endTime - startTime;
+//                        //                        timeLocalDurations
+//                        //                                .get(typeComputed)
+//                        //                                .add(endTime - startTime);
+//
+//                        // startTime = System.nanoTime();
+//                        nbOperations.get(typeComputed).addAndGet(1);
+//                        //                        endTime = System.nanoTime();
+//                        //                        timeOps.get(COUNT).val += endTime - startTime;
+//                        //                        timeLocalDurations.get(COUNT).add(endTime - startTime);
+//                        //                        System.out.println(timeLocalDurations.get(COUNT).size());
+//
+//                    }
 
                     // Thread.sleep(0,1); // simulate I/O
 
