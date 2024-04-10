@@ -234,28 +234,6 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
   esac
 done
 
-echo "The test launched is : $typeTest"
-echo "The ratio of write is : $ratio"
-echo "The workload time is : $workloadTime"
-echo "The warming up time is : $warmingUpTime"
-echo "The number of test is : $nbTest"
-echo "Number of object initially added : $nbInitialAdd"
-echo "The number of threads is : $nbThreads"
-echo "Status of collisionKey : $collisionKey"
-echo ""
-
-#cpuIDs=""
-#var=$(echo "$nbThreads" | grep -o '[0-9]\+')
-#
-## shellcheck disable=SC2004
-#for ((i=0; i<$(($var)); i++)); do
-#  if [ -n "$cpuIDs" ]; then
-#    cpuIDs="$cpuIDs,$i"
-#  else
-#    cpuIDs="$i"
-#  fi
-#done
-
 cpuIDs=""
 ranges=("0-19" "80-99" "20-39" "100-119" "40-59" "120-139" "60-79" "140-159")
 
@@ -270,6 +248,29 @@ for range in "${ranges[@]}"; do
       fi
     done
 done
+
+echo "The test launched is : $typeTest"
+echo "The ratio of write is : $ratio (ADD,FOLLOW/UNFOLLOW,TWEET,READ,GROUP,PROFILE)"
+echo "The workload time is : $workloadTime"
+echo "The warming up time is : $warmingUpTime"
+echo "The number of test is : $nbTest"
+echo "Number of object initially added : $nbInitialAdd"
+echo "The number of threads is : $nbThreads"
+echo "Status of collisionKey : $collisionKey"
+echo "cpuIDs: $cpuIDs"
+echo ""
+
+#cpuIDs=""
+#var=$(echo "$nbThreads" | grep -o '[0-9]\+')
+#
+## shellcheck disable=SC2004
+#for ((i=0; i<$(($var)); i++)); do
+#  if [ -n "$cpuIDs" ]; then
+#    cpuIDs="$cpuIDs,$i"
+#  else
+#    cpuIDs="$i"
+#  fi
+#done
 
 if [[ $typeTest == "Microbenchmark" ]]
 then
@@ -286,11 +287,13 @@ elif [[ $typeTest == "Retwis" ]]
 then
   if [[ $computeGCInfo == true ]]
   then
-    CLASSPATH=../java/target/*:../java/target/lib/* java -Xlog:gc -Xms5g -Xmx100g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
-#    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -Xlog:gc -Xms5g -Xmx100g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
+    # CLASSPATH=../java/target/*:../java/target/lib/* java -Xlog:gc -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
+    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -Xlog:gc -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
     python3 analyse_gc.py $tag $nbTest $nbUserInit
   else
-    CLASSPATH=../java/target/*:../java/target/lib/* java -Xms5g -Xmx100g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
-#    CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs java -Xms5g -Xmx100g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
+      # CLASSPATH=../java/target/*:../java/target/lib/* java -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview -ea eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag
+      cmd="CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs --membind=0 java -ea -Xms5g -Xmx32g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended --add-opens java.base/java.lang=ALL-UNNAMED eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag"
+      echo ${cmd}
+      eval ${cmd}
   fi
 fi

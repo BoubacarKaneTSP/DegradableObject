@@ -12,8 +12,7 @@ public class SimpleKeyGenerator implements KeyGenerator {
 
     @Override
     public Key nextKey() {
-        int nextInt = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
-        long id = Math.max(nextInt, 0);
+        long id = Math.abs(ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
         return new ThreadLocalKey(Thread.currentThread().getId(), id, max_key_per_thread);
     }
 

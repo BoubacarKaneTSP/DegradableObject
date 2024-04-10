@@ -31,13 +31,12 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     @Override
     public final T segmentFor(Object x) {
         try {
-//             int index = (int) Thread.currentThread().threadId();
+            // int index = (int) Thread.currentThread().threadId();
             int index = carrierID();
             T segment = segments.get(index);
             if (segment == null) {
                 segment = this.clazz.getDeclaredConstructor().newInstance();
-                T previous = segments.putIfAbsent(index, segment);
-                assert previous == null;
+                segments.putIfAbsent(index, segment);
                 segment = segments.get(index);
             }
             return segment;

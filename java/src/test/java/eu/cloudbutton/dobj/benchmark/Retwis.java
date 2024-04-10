@@ -1,10 +1,10 @@
 package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import eu.cloudbutton.dobj.key.Key;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -261,7 +261,7 @@ public class Retwis {
 
                 for (int op: mapIntOptoStringOp.keySet()) {
 //                    nbOperations.add(op, Factory.createCounter(typeCounter));
-                    nbOperations.add(op, Factory.createCounter("CounterJUC"));
+                    nbOperations.add(op, new CounterIncrementOnly());
                     timeOperations.add(op, new AtomicLong());
 //                    timeDurations.put(op, new CopyOnWriteArrayList<>());
                 }
@@ -387,10 +387,10 @@ public class Retwis {
                 if(_p)
                     System.out.println();
 
-                long timeBenchmarkAvg = (timeBenchmark.longValue()) / (nbCurrThread*1000000);
+                long timeBenchmarkAvg = (timeBenchmark.longValue()) / nbCurrThread;
 
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000.0)/_nbTest + "ms" );
+                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000)/_nbTest );
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
@@ -424,7 +424,7 @@ public class Retwis {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(unit +" "+ (completionTime/_nbTest) / 1_000_000);
+                        printWriter.println(unit +" "+ completionTime/_nbTest);
                     else
                         printWriter.println(unit +" "+ ((nbOpTotal / (double) timeTotalComputed) * nbCurrThread) * 1_000_000_000);
 
@@ -435,7 +435,7 @@ public class Retwis {
 
                     if (_completionTime) {
                         System.out.print(" ==> Completion time for " + _nbOps + " operations : ");
-                        System.out.println(completionTime/1_000_000 + " ms");
+                        System.out.println(completionTime/1000000 + " milli secondes");
 
                     }
                     else {
@@ -716,8 +716,6 @@ public class Retwis {
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
-//                System.out.println(database.getMapFollowers().size() + " map followers");
-//                System.out.println(database.getMapFollowing().size() + " map following");
 //                System.out.println("done filling");
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
@@ -904,7 +902,7 @@ public class Retwis {
                 int typeComputed = type;
 
                 for (; ; ) {
-                    long val = 0;
+                    long val = Math.abs(random.nextLong() % (localUsersUsageProbabilityRange+1) );
 
                     try{
                         userA = database
@@ -914,7 +912,6 @@ public class Retwis {
                                 .getValue();
 
                     } catch (NullPointerException e) {
-
                         System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
                                 "val : " + val + "\n" +
                                 "max val : " + database
@@ -1117,12 +1114,9 @@ public class Retwis {
                     }
 
                     startTime = System.nanoTime();
-
                     latchCompletionTime.countDown();
                     latchCompletionTime.await();
-
                     endTime = System.nanoTime();
-
                     completionTime += endTime - startTime;
                 }
 

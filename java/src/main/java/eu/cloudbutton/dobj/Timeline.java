@@ -20,21 +20,19 @@ public class Timeline<T> {
     }
 
     public void add(T elt) throws InterruptedException {
+        assert elt != null;
         timeline.offer(elt);
    }
 
    public Queue<T> read() throws InterruptedException {
-
        long queueSize = timeline.size();
-//       System.out.println(queueSize);
-       for (int i = 0; i < queueSize; i++)
-           topk.add(timeline.poll());
-
-       int topkSize = topk.size();
-
-        for (int i = 0; i < topkSize - CAPACITY; i++)
-            topk.poll();
-
+       for (int i = 0; i < queueSize; i++) {
+           T t=timeline.poll();
+           assert t !=  null;
+           topk.add(t);
+       }
+       for (int i = 0; i < topk.size() - CAPACITY; i++)
+           topk.poll();
        return topk;
    }
 

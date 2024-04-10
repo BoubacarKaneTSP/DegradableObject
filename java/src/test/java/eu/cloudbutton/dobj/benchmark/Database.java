@@ -1009,4 +1009,19 @@ public class Database {
     public void leaveCommunity(Key user){
         community.remove(user);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Followers:=\n");
+        for(Key user: mapFollowers.keySet()) {
+            builder.append(user+"->"+mapFollowers.get(user)+"\n");
+        }
+        builder.append("Pr[user]:=");
+        builder.append(localUsersUsageProbability);
+        builder.append("\n");
+        builder.append("Range:=");
+        builder.append(localUsersUsageProbabilityRange);
+        return builder.toString();
+    }
 }
