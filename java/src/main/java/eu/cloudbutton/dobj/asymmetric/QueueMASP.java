@@ -246,14 +246,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
 //    @Contended
     private transient volatile Node<E> tail;
 
-    private LongAdder queueSize;
+    private CounterIncrementOnly queueSize;
 
     /**
      * Creates a {@code QueueMASP} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
-        queueSize = new LongAdder();
+        queueSize = new CounterIncrementOnly();
     }
 
     /**
@@ -520,18 +520,18 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-        // return queueSize.intValue();
-       restartFromHead: for (;;) {
-            int count = 0;
-            for (Node<E> p = first(); p != null;) {
-                if (p.item != null)
-                    if (++count == Integer.MAX_VALUE)
-                        break;  // @see Collection.size()
-                if (p == (p = p.next))
-                    continue restartFromHead;
-            }
-            return count;
-        }
+        return (int) queueSize.read();
+//       restartFromHead: for (;;) {
+//            int count = 0;
+//            for (Node<E> p = first(); p != null;) {
+//                if (p.item != null)
+//                    if (++count == Integer.MAX_VALUE)
+//                        break;  // @see Collection.size()
+//                if (p == (p = p.next))
+//                    continue restartFromHead;
+//            }
+//            return count;
+//        }
     }
 
     /**
