@@ -393,8 +393,7 @@ public class Database {
             user = mapIndiceToKey.get(i);
             addOriginalUser(user);
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
-            localUsersUsageProbabilityRange.put(i%nbThread, localUsersUsageProbabilityRange.get(i%nbThread) + somme.get(i%nbThread).longValue());
-
+            localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
             listLocalUser.get(i%nbThread).add(user);
             return null;
         };
@@ -558,6 +557,8 @@ public class Database {
 
                 tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
+            } else {
+                assert false;
             }
         }
 
