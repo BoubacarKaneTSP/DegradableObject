@@ -33,7 +33,7 @@ public class Timeline<T> {
 
         for (int i = 0; i < topkSize - CAPACITY; i++)
             topk.poll();
-
+       timeline.clear();
        return topk;
    }
 
