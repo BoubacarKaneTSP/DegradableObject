@@ -429,6 +429,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 }
                 else if ((q = p.next) == null) {
                     sequentialUpdateHead(h, p);
+                    assert queueSize.intValue() == 0;
                     return null;
                 }
 //                else if (p == q) // cannot happen
