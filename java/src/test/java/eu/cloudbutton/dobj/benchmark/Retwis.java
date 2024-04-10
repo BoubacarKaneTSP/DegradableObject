@@ -1002,7 +1002,7 @@ public class Retwis {
 //
                                         startTime = System.nanoTime();
                                         typeComputed = COUNT;
-                                        for (int i = 0; i < 1000; i++) {
+                                        for (int i = 0; i < 10; i++) {
                                             // System.out.println("here w."+Thread.currentThread().getName());
                                             database.getCounter().incrementAndGet();
                                         }
