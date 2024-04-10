@@ -537,6 +537,7 @@ public class Database {
     }
 
     private void loadClique() throws ClassNotFoundException, InterruptedException {
+        System.out.println("Loading clique (w. 1 user per thread)");
 
         Set<Key> setUser = new HashSet<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
@@ -592,7 +593,6 @@ public class Database {
 
         usersFollowProbabilityRange = sommeFollow;
     }
-
 
     private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
         System.out.println("Loading DAP graph");
