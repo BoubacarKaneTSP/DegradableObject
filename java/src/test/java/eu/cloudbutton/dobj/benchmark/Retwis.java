@@ -270,18 +270,16 @@ public class Retwis {
                 }
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
-                    List<Callable<Void>> callables = new ArrayList<>();
-                    ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread);
-                    //ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
+                    List<Callable<Void>> callables = new ArrayList<>();
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
+
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter,
                             nbCurrThread,
                             (int) _nbUserInit,
                             _nbItems
                     );
-
                     if (_d){
                         System.out.println(database);
                     }
@@ -308,7 +306,7 @@ public class Retwis {
                     List<Future<Void>> futures = new ArrayList<>();
                     futures.add(Executors.newFixedThreadPool(1).submit(
                             new Coordinator(latchCompletionTime, latchFillDatabase, latchFillFollowingPhase)));
-                    futures.addAll(executor.invokeAll(callables));
+                    futures.addAll(database.getExecutorService().invokeAll(callables));
 
                     try{
                         for (Future<Void> future : futures) {
@@ -387,7 +385,7 @@ public class Retwis {
 //                        allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
 //                        allProportionUserWithoutFollowing.add((float) ((double)userWithoutFollowing/NB_USERS)*100);
                     }
-                    executor.shutdown();
+                    database.shutdown();
                 }
 
                 if(_p)

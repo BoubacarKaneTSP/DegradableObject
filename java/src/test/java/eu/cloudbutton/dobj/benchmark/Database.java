@@ -23,6 +23,11 @@ import org.apache.commons.math3.random.RandomGeneratorFactory;
 @Getter
 public class Database {
 
+    private static final double SCALEUSAGE = 10.0; // Paramètre d'échelle de la loi de puissance
+    private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
+    private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
+    private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
+
     private final String typeMap;
     private final String typeSet;
     private final String typeQueue;
@@ -60,13 +65,8 @@ public class Database {
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
     private final ThreadLocal<Random> random;
-    private static final double SCALEUSAGE = 10.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
-    private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
-    private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
-
     private final Counter counter;
-
+    private final ExecutorService executorService;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException {
@@ -134,11 +134,13 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
+        executorService = Executors.newFixedThreadPool(nbThread);
+        // executor = Executors.newVirtualThreadPerTaskExecutor();
+
         generateUsers();
         addingPhase();
         followingPhase();
 
-//
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
@@ -258,17 +260,18 @@ public class Database {
         return values;
     }
 
+    public void shutdown() {
+        executorService.shutdown();
+    }
+
     @FunctionalInterface
     interface MyCallableWithArgument {
         Void call(Integer argument) throws Exception;
     }
 
     public void followingPhase() throws InterruptedException, ExecutionException {
-        System.out.println("Start following phase");
-        int nbProcess = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
+        System.out.println("Start follow phase");
         List<Future<Void>> futures = new ArrayList<>();
-
         MyCallableWithArgument myCallable = (Integer i) -> {
 
             int a, counter = 0, directed_sum = 0;
@@ -360,12 +363,10 @@ public class Database {
             future.get();
         }
 
-        System.out.println("End following phase");
+        System.out.println("End follow phase");
     }
 
     public void addingPhase() throws ExecutionException, InterruptedException {
-
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         Map<Integer, AtomicInteger> somme = new ConcurrentHashMap<>();
@@ -501,7 +502,7 @@ public class Database {
             mapNbLinkPerUser.put(user, nbLink);
         }
 
-        mapNbLinkPerUser = sortMapByValue(mapNbLinkPerUser);
+        mapNbLinkPerUser = eu.cloudbutton.dobj.utils.Map.sortMapByValue(mapNbLinkPerUser);
         Collections.sort(powerLawArray);
         Collections.reverse(powerLawArray);
 
@@ -747,22 +748,6 @@ public class Database {
         usersFollowProbabilityRange = sommeFollow;
     }
 
-    public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
-        // Convert the inputMap to a List of Map.Entry objects
-        List<Map.Entry<Key, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
-
-        // Sort the entryList using a custom comparator based on values
-        Collections.sort(entryList, Comparator.comparing(Map.Entry::getValue));
-        Collections.reverse(entryList);
-        // Create a new LinkedHashMap to store the sorted entries
-        Map<Key, Integer> sortedMap = new LinkedHashMap<>();
-        for (Map.Entry<Key, Integer> entry : entryList) {
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }
-
-        return sortedMap;
-    }
-
     public String computeHistogram(int range, int max, String type){
 
         Map<Key, Set<Key>> computedMap = null;
@@ -799,6 +784,7 @@ public class Database {
         return values;
 //        return mapHistogram;
     }
+
     public Map computeFollowHistogram(int range, int max, String type){
 
 //        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
