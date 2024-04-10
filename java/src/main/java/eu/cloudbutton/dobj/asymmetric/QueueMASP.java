@@ -1067,7 +1067,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public void clear() {
         head = tail = new Node<E>();
-        queueSize.set(0);
+        queueSize = new CounterIncrementOnly();
         bulkRemove(e -> true);
     }
 
