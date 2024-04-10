@@ -894,7 +894,7 @@ public class Retwis {
                 int typeComputed = type;
 
                 for (; ; ) {
-                    long val = 0;
+                    long val = Math.abs(random.nextLong() % localUsersUsageProbabilityRange);
 
                     try {
                         user = database
