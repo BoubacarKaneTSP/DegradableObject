@@ -246,14 +246,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
 //    @Contended
     private transient volatile Node<E> tail;
 
-    private CounterIncrementOnly queueSize;
+    private AtomicInteger queueSize;
 
     /**
      * Creates a {@code QueueMASP} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
-        queueSize = new CounterIncrementOnly();
+        queueSize = new AtomicInteger();
     }
 
     /**
@@ -383,7 +383,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
-                    queueSize.increment();
+                    queueSize.incrementAndGet();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -424,7 +424,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     p.item = null;
                     if (p != h) // hop two nodes at a time
                         sequentialUpdateHead(h, ((q = p.next) != null) ? q : p);
-                    queueSize.decrement();
+                    queueSize.decrementAndGet();
                     return item;
                 }
                 else if ((q = p.next) == null) {
@@ -520,7 +520,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-        return (int) queueSize.read();
+        return queueSize.intValue();
 //       restartFromHead: for (;;) {
 //            int count = 0;
 //            for (Node<E> p = first(); p != null;) {
