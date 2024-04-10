@@ -9,13 +9,14 @@ benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000000
+nbOps=80000000
+# ADD, FOLLOW/UNFOLLOW, TWEET, READ, GROUP, PROFILE
 ratio="0 0 0 0 0 100"
 ratio="0 0 99 1 0 0"
 ratio="10 20 0 0 30 40"
 ratio="15 15 30 40 0 0"
-ratio="15 15 20 30 10 10"
-ratio="0 0 0 0 100 0"
+ratio="5 10 30 40 5 10"
+ratio="0 0 0 50 50 0"
 
 #ExtendedSegmentedConcurrentHash
 
@@ -27,7 +28,7 @@ do
   str_alpha=$(echo "$alpha" | tr '.' '-')
   echo "$str_alpha"
   echo "$alpha"
-  for nbUsersInit in 100000
+  for nbUsersInit in 1600
   do
     # Cleaning old file
     # python3 rm_file.py $nbUsersInit "JUC_$str_alpha"
@@ -36,7 +37,7 @@ do
 
     # for nbThread in 1 2 4 8 16 32 48
   #  for nbThread in 1 16 48
-      for nbThread in 12
+      for nbThread in 1 40
       # for nbThread in 1 2 4 6 8 10 12
     do
       for (( c=1; c<=nbTest; c++ ))
