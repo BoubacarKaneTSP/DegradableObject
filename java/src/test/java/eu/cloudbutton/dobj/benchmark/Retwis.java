@@ -1000,13 +1000,13 @@ public class Retwis {
 //                            throw new IllegalStateException("Unexpected value: " + type);
 //                    }
 //
-                                        startTime = System.nanoTime();
-                                        typeComputed = COUNT;
+//                                        startTime = System.nanoTime();
+//                                        typeComputed = COUNT;
                                         for (int i = 0; i < 1; i++) {
                                             // System.out.println("here w."+Thread.currentThread().getName());
                                             database.getCounter().incrementAndGet();
                                         }
-                                        endTime = System.nanoTime();
+//                                        endTime = System.nanoTime();
 //
 //                    if (!flagWarmingUp.get()) {
 //                        // timeOps.get(typeComputed).val+= endTime - startTime;
