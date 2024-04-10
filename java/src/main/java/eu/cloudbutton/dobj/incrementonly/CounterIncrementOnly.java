@@ -84,6 +84,10 @@ public class CounterIncrementOnly implements Counter {
         return total;
     }
 
+    public int intValue() {
+        return (int)read();
+    }
+
     @Override
     public long decrementAndGet(int delta) {
         local.get().val -= delta;
