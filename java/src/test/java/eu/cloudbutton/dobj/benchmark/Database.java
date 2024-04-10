@@ -145,9 +145,9 @@ public class Database {
 //        saveGraph("graph_follower_retwis.txt", mapFollowers);
 //        saveGraph("graph_following_retwis.txt", mapFollowing);
 
-//        loadGraph();
+        loadGraph();
 //        loadCompleteGraph();
-        loadDAPGraph();
+//        loadDAPGraph();
     }
 
     public Key generateUser(){
@@ -440,7 +440,7 @@ public class Database {
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 1, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
-        int val;
+        int val, indiceThread = 0, nbUserPerThread = nbUsers/nbThread;
 
         for (int i = 0; i < nbUsers;) {
             Key user = generateUser();
@@ -448,12 +448,17 @@ public class Database {
                 if (i % nbUsers * 0.05 == 0)
                     System.out.println(i);
 
-                addOriginalUser(user);
+                mapUserToAdd.get(indiceThread).add(user);
+                mapListUserFollow.put(user, new LinkedList<>());
+
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user,i);
 
                 tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
+                if (i % nbUserPerThread == 0) {
+                    indiceThread += 1;
+                }
             }
         }
 
@@ -473,15 +478,15 @@ public class Database {
                 int userIndice = Integer.parseInt(values[0]);
 
                 if (values.length <= 1){
-                    for (int i = 0; i < 5; i++) {
+                    // Code if we don't want users to follow anyone
+/*                    for (int i = 0; i < 5; i++) {
                         val = random.get().nextInt(nbUsers);
                         followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
                         tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
-                    }
+                    }*/
                 }else{
                     for (int j = 1; j < values.length; j++) {
-                        followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(j));
-                        tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+                        mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
                     }
                 }
 
@@ -493,6 +498,8 @@ public class Database {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // We then sort the users according to the number of links, so that the users with the most links are the most active.
 
         int nbLink;
         Map<Key, Integer> mapNbLinkPerUser = new HashMap<>();
@@ -521,14 +528,15 @@ public class Database {
 
         for (Key user: mapNbLinkPerUser.keySet()){
             val = powerLawArray.get(j);
-            sommeUsage.get(j%nbThread).addAndGet(val);
+            indiceThread = getKeyByValueForMapUserToAdd(mapUserToAdd, user);
+            sommeUsage.get(indiceThread).addAndGet(val);
             sommeFollow += val;
 
-            localUsersUsageProbability.get(j%nbThread).put(sommeUsage.get(j%nbThread).longValue(), user);
-            localUsersUsageProbabilityRange.put(j%nbThread, sommeUsage.get(j%nbThread).longValue());
+            localUsersUsageProbability.get(indiceThread).put(sommeUsage.get(indiceThread).longValue(), user);
+            localUsersUsageProbabilityRange.put(indiceThread, sommeUsage.get(indiceThread).longValue());
             usersFollowProbability.put(sommeFollow, user);
-            listLocalUser.get(j%nbThread).add(user);
-            listLocalUsersFollow.get(j%nbThread).put(user, tmpListUsersFollow.get(user));
+            listLocalUser.get(indiceThread).add(user);
+            listLocalUsersFollow.get(indiceThread).put(user, tmpListUsersFollow.get(user));
 
             j++;
         }
@@ -762,6 +770,14 @@ public class Database {
         }
 
         return sortedMap;
+    }
+
+    public static Integer getKeyByValueForMapUserToAdd(Map<Integer, List<Key>> map, Key value) {
+        for (Map.Entry<Integer, List<Key>> entry : map.entrySet()) {
+            if (entry.getValue().contains(value))
+                return entry.getKey();
+        }
+        return null;
     }
 
     public String computeHistogram(int range, int max, String type){
