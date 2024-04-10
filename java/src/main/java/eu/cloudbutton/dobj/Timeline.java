@@ -27,7 +27,8 @@ public class Timeline<T> {
        long queueSize = timeline.size();
        for (int i = 0; i < queueSize; i++) {
            T t=timeline.poll();
-           if ( t != null) topk.add(t);
+           assert t !=  null;
+           topk.add(t);
        }
        for (int i = 0; i < topk.size() - CAPACITY; i++)
            topk.poll();
