@@ -23,7 +23,7 @@ public class FactoryIndice {
 
         if (local.get().getVal() == -1 ){
             int indice = next.getAndIncrement();
-            System.out.println(Thread.currentThread().getName()+"->"+indice);
+            // System.out.println(Thread.currentThread().getName()+"->"+indice);
             assert indice < parallelism : "The indice generated ("+indice+") excess the number of segments ("+parallelism+")";
 //            System.out.println(Thread.currentThread().getName() + " => local ("+ System.identityHashCode(local.get().getVal())+") : " + local.get().getVal() + " | indice : " + indice);
             local.get().setVal(indice);
