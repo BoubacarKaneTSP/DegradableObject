@@ -417,6 +417,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public E poll() {
         restartFromHead: for (;;) {
+            int s = size();
             for (Node<E> h = head, p = h, q;; p = q) {
                 final E item;
                 if ((item = p.item) != null && p.casItem(item, null)) {
@@ -429,6 +430,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                 }
                 else if ((q = p.next) == null) {
                     updateHead(h, p);
+                    assert s == 0;
                     return null;
                 }
                 else if (p == q)
