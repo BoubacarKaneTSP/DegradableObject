@@ -4,12 +4,12 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=2
+nbTest=3
 benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=80000000
+nbOps=160000000
 #ratio="50 50 0 0 0 0"
 ratio="15 15 20 30 10 10"
 #ratio="5 10 20 35 15 15"

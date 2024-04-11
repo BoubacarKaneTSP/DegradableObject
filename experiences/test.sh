@@ -32,11 +32,13 @@ nbThreads=""
 nbItemsPerThread=""
 computeGCInfo=false
 alpha=""
+compile=false
 
 while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
   case "$OPTION" in
     x)
       mvn clean package -f ../java -DskipTests;
+      compile=true
       ;;
     A)
       alpha="$OPTARG"
@@ -245,20 +247,23 @@ min=$(echo -e ${nthreads}"\n"${nhwthreads} | sort -n | head -n 1)
 echo ${min}
 
 val=0
-for range in "${ranges[@]}"; do
-    start=$(echo "$range" | cut -d'-' -f1)
-    end=$(echo "$range" | cut -d'-' -f2)
-    for ((i=start; i<=end; i++)); do
-      if [ "$val" -lt "$min" ]; then
-        if [ -n "$cpuIDs" ]; then
-          cpuIDs="$cpuIDs,$i"
-        else
-          cpuIDs="$i"
+
+if [ "$compile" = true ]; then
+  for range in "${ranges[@]}"; do
+      start=$(echo "$range" | cut -d'-' -f1)
+      end=$(echo "$range" | cut -d'-' -f2)
+      for ((i=start; i<=end; i++)); do
+        if [ "$val" -lt "$min" ]; then
+          if [ -n "$cpuIDs" ]; then
+            cpuIDs="$cpuIDs,$i"
+          else
+            cpuIDs="$i"
+          fi
         fi
-      fi
-      ((val += 1))
-    done
-done
+        ((val += 1))
+      done
+  done
+fi
 
 echo "The test launched is : $typeTest"
 echo "The ratio of write is : $ratio (ADD,FOLLOW/UNFOLLOW,TWEET,READ,GROUP,PROFILE)"
