@@ -248,7 +248,7 @@ echo ${min}
 
 val=0
 
-if [ "$compile" = true ]; then
+if [ "$compile" = false ]; then
   for range in "${ranges[@]}"; do
       start=$(echo "$range" | cut -d'-' -f1)
       end=$(echo "$range" | cut -d'-' -f2)

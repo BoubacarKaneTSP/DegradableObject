@@ -16,7 +16,7 @@ list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "
 # list_nb_thread = [1,32,96]
 # list_nb_thread = [1,40,80,120,160]
 # list_nb_thread = [2,16,48]
-list_nb_thread = [40]
+list_nb_thread = [1,5,10,20,40,80]
 # list_nb_thread = [1,2,4]
 # list_nb_thread = [1]
 
@@ -43,7 +43,7 @@ if avg_flag == "true":
             
             file_avg.write(str(i) + " " + str(sum/nb_line) +"\n")
             file.close()
-            os.remove("perf_"+event+"_"+object_name+"_"+nb_user + str(i)+"_thread"+tag_spe+".txt")
+            os.remove("perf_"+event+"_"+object_name+nb_user + str(i)+"_thread"+tag_spe+".txt")
         file_avg.close()
     
     ratio_cache_misses_avg = open("perf_ratio_cache_misses_"+object_name+nb_user+tag_spe+".txt", "w")
