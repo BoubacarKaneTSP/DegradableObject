@@ -14,13 +14,13 @@ list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "
 # list_nb_thread = [1,2,4,8,16,32,48,64,70,86,96]
 # list_nb_thread = [1,2,4,8,16,32,48]
 # list_nb_thread = [1,32,96]
-# list_nb_thread = [1,40,80,120,160]
+list_nb_thread = [1,40,80,120,160]
 # list_nb_thread = [2,16,48]
 # list_nb_thread = [1,5,10,20,40,80]
 # list_nb_thread = [1,2,4]
-list_nb_thread = [80]
+# list_nb_thread = [80]
 
-tag_spe = "CT"
+tag_spe = "MB"
 # tag_spe = "ExtConcHashMapNoCleanTLPut"
 
 if avg_flag == "true":
