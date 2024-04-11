@@ -20,7 +20,7 @@ list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "
 # list_nb_thread = [1,2,4]
 list_nb_thread = [80]
 
-tag_spe = ""
+tag_spe = "CT"
 # tag_spe = "ExtConcHashMapNoCleanTLPut"
 
 if avg_flag == "true":
