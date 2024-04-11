@@ -29,7 +29,7 @@ if avg_flag == "true":
         file_avg = open("perf_"+event+"_"+object_name+nb_user+tag_spe+".txt", "w")
 
         for i in list_nb_thread:
-            file = open("perf_"+event+"_"+object_name+"_"+nb_user + str(i)+"_thread"+tag_spe+".txt", "r")
+            file = open("perf_"+event+"_"+object_name+nb_user + str(i)+"_thread"+tag_spe+".txt", "r")
             nb_line = 0
             sum = 0
             

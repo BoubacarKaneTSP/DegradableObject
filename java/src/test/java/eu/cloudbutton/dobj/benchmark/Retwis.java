@@ -659,7 +659,7 @@ public class Retwis {
 
         }
 
-        System.out.println(database);
+//        System.out.println(database);
         // System.out.println("closing prog");
         System.exit(0);
     }
