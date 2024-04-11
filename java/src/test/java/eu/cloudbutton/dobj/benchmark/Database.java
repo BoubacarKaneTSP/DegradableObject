@@ -397,7 +397,6 @@ public class Database {
             addOriginalUser(user);
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
             localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
-            listLocalUser.get(i%nbThread).add(user);
             return null;
         };
 

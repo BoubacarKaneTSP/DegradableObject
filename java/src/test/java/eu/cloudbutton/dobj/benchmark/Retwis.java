@@ -658,6 +658,8 @@ public class Retwis {
                 nbCurrThread = _nbThreads;
 
         }
+
+        System.out.println(database);
         // System.out.println("closing prog");
         System.exit(0);
     }
@@ -755,7 +757,7 @@ public class Retwis {
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
-                nbLocalUsers = database.getListLocalUser().get(myId.get()).size();
+                nbLocalUsers = database.getMapUserToAdd().get(myId.get()).size();
                 localUserUsageDistribution = new LinkedList<>();
 
                 listOperationToDo = new ArrayList<>();

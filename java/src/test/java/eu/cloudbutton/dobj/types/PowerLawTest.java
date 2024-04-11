@@ -15,7 +15,7 @@ public class PowerLawTest {
     @Test
     void add() {
 
-        double SCALE = 10, SHAPE = 1;
+        double SCALE = 1, SHAPE = 1;
         int numValues = 100000;
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -85,22 +85,22 @@ public class PowerLawTest {
         countValues = sortMapByKey(countValues);
 //        System.out.println(countValues.values());
 
-//        for (int k : countValues.keySet()){
-////            if (v>1)
-//                System.out.println(k +": " + countValues.get(k));
-//        }
+        for (int k : countValues.keySet()){
+//            if (v>1)
+                System.out.println(k +": " + countValues.get(k));
+        }
 
-//        Collections.sort(values);
+        Collections.sort(values);
 
-//            System.out.println(values);
-//        System.out.println("nb half max : " + j);
-//        System.out.println();
-//        System.out.println("max : " + Collections.max(values) + " => " + Collections.max(values)/ (double) maxFollower * 100 +"%");
-//        System.out.println("Q1 : " + values.get(values.size()/4) + " => " + values.get(values.size()/4) / (double) maxFollower * 100 +"%");
-//        System.out.println("médiane : " + values.get(values.size()/2) + " => " + values.get(values.size()/2) / (double) maxFollower * 100 +"%");
-//        System.out.println("Q3 : " + values.get(3*values.size()/4) + " => " + values.get(3*values.size()/4) / (double) maxFollower * 100 +"%");
-//        System.out.println("nbMax : " + nbMax);
-//        System.out.println("avg : " + avg/values.size());
+            System.out.println(values);
+        System.out.println("nb half max : " + j);
+        System.out.println();
+        System.out.println("max : " + Collections.max(values) + " => " + Collections.max(values)/ (double) maxFollower * 100 +"%");
+        System.out.println("Q1 : " + values.get(values.size()/4) + " => " + values.get(values.size()/4) / (double) maxFollower * 100 +"%");
+        System.out.println("médiane : " + values.get(values.size()/2) + " => " + values.get(values.size()/2) / (double) maxFollower * 100 +"%");
+        System.out.println("Q3 : " + values.get(3*values.size()/4) + " => " + values.get(3*values.size()/4) / (double) maxFollower * 100 +"%");
+        System.out.println("nbMax : " + nbMax);
+        System.out.println("avg : " + avg/values.size());
 
 
  /*       Map<String,Integer> mapTest = new HashMap<>();
