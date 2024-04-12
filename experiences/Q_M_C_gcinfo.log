@@ -1,6 +1,0 @@
-nbThread : 1000
-[0.312s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 256M->15M(5152M) 61.253ms
-[0.425s][info][gc] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 185M->15M(5152M) 62.116ms
-[0.849s][info][gc] GC(2) Pause Young (Normal) (G1 Evacuation Pause) 206M->43M(5152M) 111.078ms
-[1.008s][info][gc] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 266M->71M(5152M) 32.573ms
-[1.073s][info][gc] GC(4) Pause Young (Normal) (G1 Evacuation Pause) 224M->100M(15456M) 60.686ms
