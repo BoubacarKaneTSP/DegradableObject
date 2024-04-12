@@ -69,7 +69,7 @@ public class Database {
     private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
 
     private final Counter counter;
-
+    private final ExecutorService executorService;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
                     int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
@@ -137,9 +137,8 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-//        System.out.println("generate user");
-
-//        generateUsers();
+        executorService = Executors.newFixedThreadPool(nbThread);
+        // executor = Executors.newVirtualThreadPerTaskExecutor();
 
 //        addingPhase();
 
@@ -264,21 +263,18 @@ public class Database {
         return values;
     }
 
+    public void shutdown() {
+        executorService.shutdown();
+    }
+
     @FunctionalInterface
     interface MyCallableWithArgument {
         Void call(Integer argument) throws Exception;
     }
 
     public void followingPhase() throws InterruptedException, ExecutionException {
-        System.out.println("start following phase thread : " + Thread.currentThread().getName());
-
-        int nbProcess = Runtime.getRuntime().availableProcessors();
-//        int nbProcess = 48;
-        ExecutorService executorService = Executors.newFixedThreadPool(nbProcess);
+        System.out.println("Start follow phase");
         List<Future<Void>> futures = new ArrayList<>();
-
-        System.out.println("nb process : " + nbProcess);
-        
         MyCallableWithArgument myCallable = (Integer i) -> {
 
             int a, counter = 0, directed_sum = 0;
@@ -370,12 +366,10 @@ public class Database {
             future.get();
         }
 
-        System.out.println("end following phase thread : " + Thread.currentThread().getName());
+        System.out.println("End follow phase");
     }
 
     public void addingPhase() throws ExecutionException, InterruptedException {
-
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Void>> futures = new ArrayList<>();
 
         Map<Integer, AtomicInteger> somme = new ConcurrentHashMap<>();
