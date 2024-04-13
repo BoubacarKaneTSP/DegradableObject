@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.benchmark;
 
-import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;
@@ -267,17 +266,14 @@ public class Retwis {
                 }
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
-                    List<Callable<Void>> callables = new ArrayList<>();
-                     ExecutorService executor = Executors.newFixedThreadPool(nbCurrThread + 1); // Coordinator
-//                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-//                    ExecutorService executorServiceCoordinator = Executors.newFixedThreadPool(1);
 
+                    List<Callable<Void>> callables = new ArrayList<>();
                     flagComputing = new AtomicBoolean(true);
                     flagWarmingUp = new AtomicBoolean(false);
+
                     database = new Database(typeMap, typeSet, typeQueue, typeCounter,
                             nbCurrThread,
-                            (int) _nbUserInit,
-                            _nbItems
+                            NB_USERS
                     );
 
                     if (nbCurrTest == 1){
@@ -302,7 +298,7 @@ public class Retwis {
                     List<Future<Void>> futures = new ArrayList<>();
                     futures.add(Executors.newFixedThreadPool(1).submit(
                             new Coordinator(latchCompletionTime, latchFillDatabase, latchFillFollowingPhase)));
-                    futures.addAll(executor.invokeAll(callables));
+                    futures.addAll(database.getExecutorService().invokeAll(callables));
 
                     try{
                         for (Future<Void> future : futures) {
@@ -381,7 +377,7 @@ public class Retwis {
 //                        allProportionUserWithoutFollower.add((float) ((double)userWithoutFollower/NB_USERS)*100);
 //                        allProportionUserWithoutFollowing.add((float) ((double)userWithoutFollowing/NB_USERS)*100);
                     }
-                    executor.shutdown();
+                    database.shutdown();
                 }
 
                 if(_p)
@@ -658,8 +654,6 @@ public class Retwis {
                 nbCurrThread = _nbThreads;
 
         }
-
-//        System.out.println(database);
         // System.out.println("closing prog");
         System.exit(0);
     }
@@ -681,14 +675,11 @@ public class Retwis {
         private final ThreadLocal<Integer> myId;
         int nbLocalUsers;
         int nbAttempt;
-        Key userB, userA;
-        List<Key> dummyUsers = new ArrayList<>();
-        List<Key> dummyUsersFollow = new ArrayList<>();
+        Key userB, user, dummyUser, dummyUserFollow;
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
         long startTime, endTime;
         List<Integer> listOperationToDo;
-        List<Key> dummyKeys = new ArrayList<>();
 
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) {
             this.random = ThreadLocalRandom.current();
@@ -766,18 +757,13 @@ public class Retwis {
                     listOperationToDo.add(chooseOperation());
                 }
 
-                Key usr;
-
-                for (int i = 0; i < 1000; i++) {
-                    usr = database.generateUser();
-                    dummyUsers.add(usr);
-                    usr = database.generateUser();
-                    dummyUsersFollow.add(usr);
-                    database.addOriginalUser(usr);
-                }
+                dummyUser = database.generateUser();
                 dummySet = new HashSet<>();
                 dummyTimeline = new Timeline<>(new LinkedList<>());
 
+                dummyUserFollow = database.generateUser();
+
+                database.addOriginalUser(dummyUserFollow);
                 int num = 0;
                 boolean cleanTimeline = false;
 
@@ -906,8 +892,8 @@ public class Retwis {
                 for (; ; ) {
                     long val = Math.abs(random.nextLong() % (localUsersUsageProbabilityRange+1) );
 
-                    try{
-                        userA = database
+                    try {
+                        user = database
                                 .getLocalUsersUsageProbability()
                                 .get(myId.get())
                                 .ceilingEntry(val)
@@ -931,9 +917,9 @@ public class Retwis {
                     switch (typeComputed) {
                         case ADD:
                             // startTime = System.nanoTime();
-                            database.addUser(dummyUsers.get(numOperation%1000), dummySet, dummyTimeline);
+                            database.addUser(dummyUser, dummySet, dummyTimeline);
                             // endTime = System.nanoTime();
-                            database.removeUser(dummyUsers.get(numOperation%1000));
+                            database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
 //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
@@ -942,10 +928,10 @@ public class Retwis {
 //                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
 
                             // startTime = System.nanoTime();
-                            database.followUser(userA, dummyUsersFollow.get(numOperation%1000));
+                            database.followUser(user, dummyUserFollow);
                             // endTime = System.nanoTime();
 
-                            database.unfollowUser(userA, dummyUsersFollow.get(numOperation%1000));
+                            database.unfollowUser(user, dummyUserFollow);
                             //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
                             //
                             //
@@ -964,9 +950,9 @@ public class Retwis {
                             //
                             //                            userB = listFollow.poll();
 
-                            database.followUser(userA, dummyUsersFollow.get(numOperation%1000));
+                            database.followUser(user, dummyUserFollow);
                             // startTime = System.nanoTime();
-                            database.unfollowUser(userA, dummyUsersFollow.get(numOperation%1000));
+                            database.unfollowUser(user, dummyUserFollow);
                             // endTime = System.nanoTime();
 
                             //                            database.followUser(userA, userB);
@@ -979,28 +965,28 @@ public class Retwis {
                             break;
                         case TWEET:
                             // startTime = System.nanoTime();
-                            database.tweet(userA, msg);
+                            database.tweet(user, msg);
                             // endTime = System.nanoTime();
                             break;
                         case PROFILE:
                             // startTime = System.nanoTime();
-                            database.updateProfile(userA);
+                            database.updateProfile(user);
                             // endTime = System.nanoTime();
                             break;
                         case READ:
                             // startTime = System.nanoTime();
-                            database.showTimeline(userA);
+                            database.showTimeline(user);
                             // endTime = System.nanoTime();
                             break;
                         case GROUP:
-                            if (database.getMapCommunityStatus().get(userA) == 0) {
-                                database.getMapCommunityStatus().put(userA, 1);
+                            if (database.getMapCommunityStatus().get(user) == 0) {
+                                database.getMapCommunityStatus().put(user, 1);
                                 // startTime = System.nanoTime();
-                                database.joinCommunity(userA);
+                                database.joinCommunity(user);
                             } else {
-                                database.getMapCommunityStatus().put(userA, 0);
+                                database.getMapCommunityStatus().put(user, 0);
                                 // startTime = System.nanoTime();
-                                database.leaveCommunity(userA);
+                                database.leaveCommunity(user);
 
                             }
                             // endTime = System.nanoTime();
@@ -1040,7 +1026,7 @@ public class Retwis {
 
             }catch (Throwable e) {
                 e.printStackTrace();
-                System.err.println(Thread.currentThread()+": "+userA);
+                System.err.println(Thread.currentThread()+": "+user);
                 throw new RuntimeException();
             }
 

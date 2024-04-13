@@ -11,4 +11,7 @@ else:
     list_op = ["ALL", "ADD", "FOLLOW", "UNFOLLOW", "TWEET", "READ", "COUNT","GROUPE","PROFILE","avg_time_computed"]#, "avg_queue_size", "avg_Follower", "avg_Following", "proportion_Max_Follower", "proportion_Max_Following","proportion_User_With_Max_Following", "proportion_User_With_Max_Follower", "proportion_User_Without_Follower","proportion_User_Without_Following", "nb_user_final", "nb_tweet_final"]
 
 for op in list_op:
-    os.remove(op+"_"+type_obj+"_"+nb_user+".txt")
+    try:
+        os.remove(op+"_"+type_obj+"_"+nb_user+".txt")
+    except FileNotFoundError:
+        pass

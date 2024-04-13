@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.Profile;
 import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
@@ -72,14 +71,14 @@ public class Database {
     private final ExecutorService executorService;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, int nbUserMax) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
+                    int nbThread, int nbUserInit) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
         this.typeQueue = typeQueue;
         this.typeCounter = typeCounter;
         this.nbThread = nbThread;
-        this.factoryIndice = new FactoryIndice(nbThread + 1); // +1 because a different thread add all users at first
+        this.factoryIndice = new FactoryIndice(nbThread);
         this.random = ThreadLocal.withInitial(() -> new Random(94));
 
         if (typeMap.contains("Extended")){
@@ -94,23 +93,13 @@ public class Database {
             mapProfiles = Factory.createMap(typeMap, nbThread);
         }
 
-//        if (typeSet.contains("Extended")){
-//            community = Factory.createSet(typeSet, factoryIndice);
-//        }else{
-//            community = Factory.createSet(typeSet, nbThread);
-//        }
-
-//        mapProfiles = new ExtendedSegmentedHashMap<>( new FactoryIndice(nbThread + 1));
-//        mapProfiles = new ConcurrentHashMap<>();
         community = new ConcurrentHashSet<>();
-//        community = new ExtendedSegmentedHashSet(factoryIndice);
         mapCommunityStatus = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
         localUsersUsageProbabilityRange = new ConcurrentHashMap<>();
         nbUsers = nbUserInit;
-//        keyGenerator = new RetwisKeyGenerator(nbUserMax*nbThread, nbUserMax*nbThread,10);
         keyGenerator = new SimpleKeyGenerator(Integer.MAX_VALUE);
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
@@ -140,13 +129,12 @@ public class Database {
         executorService = Executors.newFixedThreadPool(nbThread);
         // executor = Executors.newVirtualThreadPerTaskExecutor();
 
-//        addingPhase();
+        addingPhase();
+        followingPhase();
 
-//        followingPhase();
+        saveGraph("graph_following_retwis_" + nbUsers + ".txt", mapFollowing);
 
-//        saveGraph("graph_follower_retwis.txt", mapFollowers);
-//        saveGraph("graph_following_retwis.txt", mapFollowing);
-
+        System.exit(0);
         loadGraph();
 //        loadCompleteGraph();
 //        loadDAPGraph();
@@ -158,7 +146,7 @@ public class Database {
 
     public void generateUsers() throws InterruptedException {
 
-        String fileName = "nodes_info.txt";
+        String fileName = "nodes_info_" + nbUsers + ".txt";
         Set<Key> localSetUser = new TreeSet<>();
         int r_degree, o_degree, i_degree;
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
@@ -432,7 +420,7 @@ public class Database {
     private void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
 
         int numberOfUsersInFile;
-        String fileName = "graph_following_retwis.txt";
+        String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
 
         try (Stream<String> fileStream = Files.lines(Paths.get(fileName))) {
             //Lines count
