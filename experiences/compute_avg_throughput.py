@@ -23,9 +23,6 @@ completion_time = sys.argv[4]
 
 list_nb_thread = list_nb_thread.split(" ")
 
-tag_spe = ""
-# tag_spe = "_ExtConcHashMapNoCleanTLPut"
-
 if completion_time == "True":
     list_op = ["ALL"]
 else:
@@ -53,7 +50,11 @@ else:
 
 for op in list_op:
     name_file=op+"_"+type_obj+"_"+nb_user+".txt"
-    file = open(name_file,"r")
+    try:
+        file = open(name_file,"r")
+    except FileNotFoundError:
+        print(name_file+" not found, cannot compute average performances")
+        sys.exit(1)
 
     str_result_avg = ""
 

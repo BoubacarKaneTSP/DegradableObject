@@ -4,9 +4,9 @@ import os
 perf_file_name = sys.argv[1]
 avg_flag = sys.argv[2]
 object_name = "_"+sys.argv[3]
-nb_thread = "_"+sys.argv[4]
-nb_user = "_"+sys.argv[5]
-list_nb_thread = sys.argv[6]
+nb_user = "_"+sys.argv[4]
+nb_thread = "_"+sys.argv[5]
+list_nb_thread = sys.argv[6:]
 
 list_event = ["cache-references", "cache-misses", "branch-misses", "branches", "cycles", "instructions", "l1d_pend_miss.pending_cycles_any", "l2_rqsts.all_demand_miss", "cycle_activity.stalls_total"]
 
@@ -17,7 +17,6 @@ if avg_flag == "true":
 
         for i in list_nb_thread:
             thread_num = "_"+str(i)
-
             file = open("perf_" + event + object_name + nb_user + thread_num + "_thread.txt", "r")
             nb_line = 0
             sum = 0

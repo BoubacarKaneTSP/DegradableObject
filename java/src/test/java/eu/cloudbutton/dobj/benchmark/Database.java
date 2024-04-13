@@ -129,6 +129,7 @@ public class Database {
         executorService = Executors.newFixedThreadPool(nbThread);
         // executor = Executors.newVirtualThreadPerTaskExecutor();
 
+        generateUsers();
         addingPhase();
         followingPhase();
 
@@ -146,7 +147,7 @@ public class Database {
 
     public void generateUsers() throws InterruptedException {
 
-        String fileName = "nodes_info_" + nbUsers + ".txt";
+        String fileName = "nodes_info_" + nbUsers + "_users.txt";
         Set<Key> localSetUser = new TreeSet<>();
         int r_degree, o_degree, i_degree;
         List<Integer> powerLawArray = generateValues(nbUsers, nbUsers, 600, SCALEUSAGE);
