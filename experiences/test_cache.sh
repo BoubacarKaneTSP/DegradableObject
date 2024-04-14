@@ -38,8 +38,6 @@ do
 
     for nbThread in "${nbThreads[@]}";
     do
-      echo $nbThread
-      echo "nbthread up"
       for (( c=1; c<=nbTest; c++ ))
       do
     	  echo " "
@@ -48,7 +46,6 @@ do
 
         perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c "${counters[i]}" -s "${sets[i]}" -q "${queues[i]}" -m "${maps[i]}" -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${tags[i]}" -y $nbUsersInit -i $nbOps -b -g $nbThread -z $nbOps
         python3 analyse_perf.py perf.log "false" "${tags[i]}" $nbUsersInit $nbThread "${nbThreads[@]}"
-
 
         done
       done
