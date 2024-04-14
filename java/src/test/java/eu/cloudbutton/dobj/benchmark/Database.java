@@ -263,10 +263,14 @@ public class Database {
 
     public void followingPhase() throws InterruptedException, ExecutionException {
         System.out.println("Start follow phase");
+        long startTime;
+        startTime = System.nanoTime();
         List<Future<Void>> futures = new ArrayList<>();
         MyCallableWithArgument myCallable = (Integer i) -> {
 
             System.out.println(i);
+            if (i % nbUsers * 0.05 == 0) {
+            }
 
             int a, counter = 0, directed_sum = 0;
             float pr;
@@ -357,6 +361,7 @@ public class Database {
             future.get();
         }
 
+        System.out.println("time in ns : " + (System.nanoTime() - startTime));
         System.out.println("End follow phase");
     }
 
