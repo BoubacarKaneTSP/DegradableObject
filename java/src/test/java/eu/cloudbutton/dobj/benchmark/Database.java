@@ -129,13 +129,12 @@ public class Database {
         executorService = Executors.newFixedThreadPool(nbThread);
         // executor = Executors.newVirtualThreadPerTaskExecutor();
 
-        generateUsers();
-        addingPhase();
-        followingPhase();
+//        generateUsers();
+//        addingPhase();
+//        followingPhase();
 
-        saveGraph("graph_following_retwis_" + nbUsers + ".txt", mapFollowing);
+//        saveGraph("graph_following_retwis_" + nbUsers + ".txt", mapFollowing);
 
-        System.exit(0);
         loadGraph();
 //        loadCompleteGraph();
 //        loadDAPGraph();

@@ -675,10 +675,11 @@ public class Retwis {
         private final ThreadLocal<Integer> myId;
         int nbLocalUsers;
         int nbAttempt;
-        Key userB, user, dummyUser, dummyUserFollow;
+        Key user;
+        Key dummyUser;
+        Key dummyUserFollow;
         Set<Key> dummySet;
         Timeline<String> dummyTimeline;
-        long startTime, endTime;
         List<Integer> listOperationToDo;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) {
@@ -788,9 +789,10 @@ public class Retwis {
                 if (_completionTime){
                     int nbOperationToDo = (int) (_nbOps / database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
-                        type = chooseOperation();
-                        compute(type, timeLocalOperations, cleanTimeline, i);
-                        cleanTimeline = i % (2 * _nbUserInit) == 0;
+                        dummyFunction();
+//                        type = chooseOperation();
+//                        compute(type, timeLocalOperations, cleanTimeline, i);
+//                        cleanTimeline = i % (2 * _nbUserInit) == 0;
                     }
                 }else{
 
