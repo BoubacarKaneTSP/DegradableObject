@@ -266,6 +266,10 @@ public class Database {
         List<Future<Void>> futures = new ArrayList<>();
         MyCallableWithArgument myCallable = (Integer i) -> {
 
+            if (i % nbUsers * 0.05 == 0) {
+                System.out.println(i);
+            }
+
             int a, counter = 0, directed_sum = 0;
             float pr;
             Key userA, userB;
