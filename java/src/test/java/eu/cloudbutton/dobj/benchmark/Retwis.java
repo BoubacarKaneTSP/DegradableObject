@@ -386,7 +386,7 @@ public class Retwis {
                 long timeBenchmarkAvg = (timeBenchmark.longValue()) / nbCurrThread;
 
                 if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000)/_nbTest );
+                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000000.0)/_nbTest + " seconds" );
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
@@ -420,7 +420,7 @@ public class Retwis {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(unit +" "+ completionTime/_nbTest);
+                        printWriter.println(unit +" "+ (completionTime) / 1000000000/_nbTest);
                     else
                         printWriter.println(unit +" "+ ((nbOpTotal / (double) timeTotalComputed) * nbCurrThread) * 1_000_000_000);
 
@@ -480,10 +480,6 @@ public class Retwis {
                         if (_s)
                             printWriter.flush();
                     }
-                }
-
-                if (_gcinfo || _p){
-                    System.out.println("Avg benchmark time (without warmup) : " + timeBenchmarkAvg + "ms");
                 }
 
                 if (_breakdown && !_completionTime){
