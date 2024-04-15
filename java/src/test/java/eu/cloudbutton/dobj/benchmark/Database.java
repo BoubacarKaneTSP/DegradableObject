@@ -445,8 +445,6 @@ public class Database {
         for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                if (i % (numberOfUsersInFile * 0.05) == 0)
-                    System.out.println(i);
 
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user,indiceThread);
