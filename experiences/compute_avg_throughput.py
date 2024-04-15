@@ -81,7 +81,7 @@ for op in list_op:
 
     file.close()
 
-    file = open(op+"_"+type_obj+"_"+nb_user+tag_spe+".txt","w")
+    file = open(op+"_"+type_obj+"_"+nb_user+".txt","w")
 
     file.write(str_result_avg)
     file.close()

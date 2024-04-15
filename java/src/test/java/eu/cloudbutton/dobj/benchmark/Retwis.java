@@ -769,9 +769,7 @@ public class Retwis {
                 boolean cleanTimeline = false;
 
                 while (flagWarmingUp.get()) { // warm up
-//                    type = chooseOperation();
                     type = listOperationToDo.get(num%sizeOpToDo);
-//                    compute(type, timeLocalOperations, timeLocalDurations, false,num);
                     compute(type, timeLocalOperations, cleanTimeline,num);
 
                     cleanTimeline = num++ % (2 * _nbUserInit) == 0;
@@ -853,6 +851,7 @@ public class Retwis {
 
         public void dummyFunction() throws InterruptedException {
 //            TimeUnit.NANOSECONDS.sleep(1);
+            nbAttempt++;
         }
 
         public int chooseOperation(){
