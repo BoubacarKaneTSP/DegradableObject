@@ -420,10 +420,11 @@ public class Retwis {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(unit +" "+ (completionTime) / 1000000000/_nbTest);
+                        printWriter.println(unit +" "+ completionTime / 1000000000);
                     else
                         printWriter.println(unit +" "+ ((nbOpTotal / (double) timeTotalComputed) * nbCurrThread) * 1_000_000_000);
 
+                    System.out.println(unit +" "+ completionTime / 1000000000 + " => is writed");
                 }
 
                 if (_p){
@@ -844,7 +845,7 @@ public class Retwis {
 
         public void dummyFunction() throws InterruptedException {
 //            TimeUnit.NANOSECONDS.sleep(1);
-            nbAttempt++;
+            nbAttempt = (nbAttempt *1) + 1;
         }
 
         public int chooseOperation(){
