@@ -789,6 +789,9 @@ public class Retwis {
                 if (_completionTime){
                     int nbOperationToDo = (int) (_nbOps / database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
+
+                        if (i%100000 == 0)
+                            System.out.println(i);
                         dummyFunction();
 //                        type = chooseOperation();
 //                        compute(type, timeLocalOperations, cleanTimeline, i);
