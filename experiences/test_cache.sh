@@ -50,7 +50,7 @@ do
         done
       done
 
-      python3 compute_avg_throughput.py $nbUsersInit "${tags[i]}" "${nbThreads[@]}" $completion_time
+      python3 compute_avg_throughput.py $nbUsersInit "${tags[i]}" $completion_time "${nbThreads[@]}"
       python3 analyse_perf.py perf.log "true" "${tags[i]}" $nbUsersInit " " "${nbThreads[@]}"
 
   done

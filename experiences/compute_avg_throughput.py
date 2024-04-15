@@ -18,10 +18,8 @@ def calculate_bounds(values_func):
 
 nb_user = sys.argv[1]
 type_obj = sys.argv[2]
-list_nb_thread = sys.argv[3]
-completion_time = sys.argv[4]
-
-list_nb_thread = list_nb_thread.split(" ")
+completion_time = sys.argv[3]
+list_nb_thread = sys.argv[4:]
 
 if completion_time == "True":
     list_op = ["ALL"]
