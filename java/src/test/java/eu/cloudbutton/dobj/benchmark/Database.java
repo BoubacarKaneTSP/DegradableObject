@@ -462,7 +462,7 @@ public class Database {
             }
         }
 
-        System.out.println("time to create from start in ns : " + (System.nanoTime() - startTime));
+        System.out.println("time to create users from start in ns : " + (System.nanoTime() - startTime));
 
 
         try {
@@ -526,6 +526,8 @@ public class Database {
         mapNbLinkPerUser = sortMapByValue(mapNbLinkPerUser);
         Collections.sort(powerLawArray);
         Collections.reverse(powerLawArray);
+
+        System.out.println("time to count link and sort map from start in ns : " + (System.nanoTime() - startTime));
 
         for (int i = 0; i < nbThread; i++) {
             sommeUsage.put(i, new AtomicInteger());
