@@ -133,7 +133,7 @@ public class Database {
 //        addingPhase();
 //        followingPhase();
 
-//        saveGraph("graph_following_retwis_" + nbUsers + ".txt", mapFollowing);
+//        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt", mapFollowing);
 
         loadGraph();
 //        loadCompleteGraph();
@@ -428,7 +428,8 @@ public class Database {
 
         int numberOfUsersInFile;
         String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
-
+        long startTime;
+        startTime = System.nanoTime();
         try (Stream<String> fileStream = Files.lines(Paths.get(fileName))) {
             //Lines count
             numberOfUsersInFile = (int) fileStream.count();
@@ -543,6 +544,9 @@ public class Database {
         }
 
         usersFollowProbabilityRange = sommeFollow;
+
+        System.out.println("time in ns : " + (System.nanoTime() - startTime));
+
     }
 
     private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException {

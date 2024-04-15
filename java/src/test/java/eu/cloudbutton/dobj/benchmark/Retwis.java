@@ -849,7 +849,7 @@ public class Retwis {
         }
 
         public void dummyFunction() throws InterruptedException {
-            TimeUnit.MICROSECONDS.sleep(1000);
+            TimeUnit.NANOSECONDS.sleep(1);
         }
 
         public int chooseOperation(){
