@@ -58,6 +58,7 @@ public class Database {
     private final List<List<Key>> listLocalUser;
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
     private final Map<Integer, List<Key>> mapUserToAdd;
+    private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
@@ -120,6 +121,7 @@ public class Database {
         }
 
         mapUserToAdd = new ConcurrentHashMap<>();
+        mapUserToIndiceThread = new HashMap<>();
         mapListUserFollow = new ConcurrentHashMap<>();
 
         for (int i = 0; i < nbThread; i++) {
@@ -449,6 +451,7 @@ public class Database {
                     System.out.println(i);
 
                 mapUserToAdd.get(indiceThread).add(user);
+                mapUserToIndiceThread.put(user,indiceThread);
                 mapListUserFollow.put(user, new LinkedList<>());
 
                 mapIndiceToKey.put(i, user);
@@ -537,7 +540,7 @@ public class Database {
 
         for (Key user: mapNbLinkPerUser.keySet()){
             val = powerLawArray.get(j);
-            indiceThread = getKeyByValueForMapUserToAdd(mapUserToAdd, user);
+            indiceThread = mapUserToIndiceThread.get(user);
             sommeUsage.get(indiceThread).addAndGet(val);
             sommeFollow += val;
 
