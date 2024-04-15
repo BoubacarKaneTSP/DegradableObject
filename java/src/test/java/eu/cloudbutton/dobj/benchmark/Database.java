@@ -430,8 +430,6 @@ public class Database {
 
         int numberOfUsersInFile;
         String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
-        long startTime;
-        startTime = System.nanoTime();
         try (Stream<String> fileStream = Files.lines(Paths.get(fileName))) {
             //Lines count
             numberOfUsersInFile = (int) fileStream.count();
@@ -464,9 +462,6 @@ public class Database {
                 }
             }
         }
-
-        System.out.println("time to create users from start in ns : " + (System.nanoTime() - startTime));
-
 
         try {
             File fichier = new File(fileName);
@@ -501,8 +496,6 @@ public class Database {
 
                 line = bufferedReader.readLine();
             }
-            System.out.println("time to read file from start in ns : " + (System.nanoTime() - startTime));
-
 
             bufferedReader.close();
             fileReader.close();
@@ -530,8 +523,6 @@ public class Database {
         Collections.sort(powerLawArray);
         Collections.reverse(powerLawArray);
 
-        System.out.println("time to count link and sort map from start in ns : " + (System.nanoTime() - startTime));
-
         for (int i = 0; i < nbThread; i++) {
             sommeUsage.put(i, new AtomicInteger());
         }
@@ -554,8 +545,6 @@ public class Database {
         }
 
         usersFollowProbabilityRange = sommeFollow;
-
-        System.out.println("time to load from start in ns : " + (System.nanoTime() - startTime));
 
     }
 
