@@ -420,7 +420,7 @@ public class Retwis {
 
                     printWriter = new PrintWriter(fileWriter);
                     if (_completionTime)
-                        printWriter.println(unit +" "+ completionTime / 1000000000);
+                        printWriter.println(unit +" "+ completionTime / 1000000);
                     else
                         printWriter.println(unit +" "+ ((nbOpTotal / (double) timeTotalComputed) * nbCurrThread) * 1_000_000_000);
 
