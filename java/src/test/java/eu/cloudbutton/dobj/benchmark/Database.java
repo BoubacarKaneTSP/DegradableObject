@@ -445,7 +445,7 @@ public class Database {
         for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                if (i % numberOfUsersInFile * 0.05 == 0)
+                if (i % (numberOfUsersInFile * 0.05) == 0)
                     System.out.println(i);
 
                 mapUserToAdd.get(indiceThread).add(user);
@@ -461,7 +461,10 @@ public class Database {
                 }
             }
         }
-        
+
+        System.out.println("time to create from start in ns : " + (System.nanoTime() - startTime));
+
+
         try {
             File fichier = new File(fileName);
 
@@ -495,6 +498,8 @@ public class Database {
 
                 line = bufferedReader.readLine();
             }
+            System.out.println("time to read file from start in ns : " + (System.nanoTime() - startTime));
+
 
             bufferedReader.close();
             fileReader.close();
@@ -545,7 +550,7 @@ public class Database {
 
         usersFollowProbabilityRange = sommeFollow;
 
-        System.out.println("time in ns : " + (System.nanoTime() - startTime));
+        System.out.println("time to load from start in ns : " + (System.nanoTime() - startTime));
 
     }
 
