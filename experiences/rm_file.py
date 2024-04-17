@@ -2,9 +2,9 @@ import sys
 import os
 
 benchmark_type = sys.argv[1]
+type_obj = sys.argv[2]
 if benchmark_type == 'Retwis':
-    nb_user = sys.argv[2]
-    type_obj = sys.argv[3]
+    nb_user = sys.argv[3]
     completion_time = sys.argv[4]
 
 if benchmark_type == "Retwis":

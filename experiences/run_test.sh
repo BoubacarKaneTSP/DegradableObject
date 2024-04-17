@@ -20,7 +20,7 @@ ratio="37 37 26"
 #for nbThread in 1 80
 
 for object in "${objects[@]}"; do
-  python3 rm_file.py "Microbenchmark"
+  python3 rm_file.py "Microbenchmark" "$object"
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
