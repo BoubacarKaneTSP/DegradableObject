@@ -1,10 +1,11 @@
 import sys
 import os
 
-nb_user = sys.argv[1]
-type_obj = sys.argv[2]
-completion_time = sys.argv[3]
-benchmark_type = sys.argv[4]
+benchmark_type = sys.argv[1]
+if benchmark_type == 'Retwis':
+    nb_user = sys.argv[2]
+    type_obj = sys.argv[3]
+    completion_time = sys.argv[4]
 
 if benchmark_type == "Retwis":
     if completion_time ==  "True":
@@ -19,6 +20,6 @@ for op in list_op:
         if benchmark_type == "Retwis":
             os.remove(op+"_"+type_obj+"_"+nb_user+".txt")
         else:
-            os.remove(type_obj+"_"+op+".txt")
+            os.remove("microbenchmark_results/"+type_obj+"_"+op+".txt")
     except FileNotFoundError:
         pass

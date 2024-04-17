@@ -34,7 +34,7 @@ for nbUsersInit in "${nbUsersInits[@]}"
 do
   for (( i=0; i<length; i++ ));
   do
-    python3 rm_file.py $nbUsersInit "${tags[i]}" $completion_time
+    python3 rm_file.py "Retwis" $nbUsersInit "${tags[i]}" $completion_time
 
     for nbThread in "${nbThreads[@]}";
     do

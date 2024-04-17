@@ -16,17 +16,19 @@ ratio="37 37 26"
 
 #for nbThread in 80
 #for nbThread in 1 2 4 8 16 32 48 96 160
-for nbThread in "${nbThreads[@]}";
-#for nbThread in 1 80
-do
 
-  for object in "${objects[@]}"; do
-     for (( c=1; c<=nbTest; c++ ))
-       do
-           perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m Map -t Microbenchmark -p -e -r $ratio -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-           python3 analyse_perf.py perf.log "false" "$object" "$nbThread" ""
-       done
+#for nbThread in 1 80
+
+for object in "${objects[@]}"; do
+  python3 rm_file.py "Microbenchmark"
+
+  for nbThread in "${nbThreads[@]}"; do
+    for (( c=1; c<=nbTest; c++ )) do
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m Map -t Microbenchmark -p -e -r $ratio -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+        python3 analyse_perf.py perf.log "false" "$object" "$nbThread" ""
+    done
   done
+done
 
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c AtomicReference -t Microbenchmark -p -e -r "0 0 100" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  python3 analyse_perf.py perf.log "false" "AtomicReference" $nbThread ""
@@ -73,7 +75,6 @@ do
 #  python3 analyse_perf.py perf.log "false" "ExtendedSegmentedTreeMap" $nbThread ""
 
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m SegmentedHashMap -t Microbenchmark -p -e -r "0 0 100" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-done
 #
 #python3 compute_avg_throughput_microbenchmark.py "AtomicReference" "1 40 80 120 160"
 #python3 compute_avg_throughput_microbenchmark.py "AtomicWriteOnceReference" "1 40 80 120 160"
