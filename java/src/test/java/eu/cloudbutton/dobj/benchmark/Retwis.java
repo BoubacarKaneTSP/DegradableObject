@@ -783,9 +783,9 @@ public class Retwis {
                 if (_completionTime){
                     long nbOperationToDo = (_nbOps / database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
-                        dummyFunction();
-//                        type = chooseOperation();
-//                        compute(type, timeLocalOperations, cleanTimeline, i);
+//                        dummyFunction();
+                        type = chooseOperation();
+                        compute(type, timeLocalOperations, cleanTimeline, i);
 //                        cleanTimeline = i % (2 * _nbUserInit) == 0;
                     }
                 }else{
@@ -911,7 +911,9 @@ public class Retwis {
                         System.exit(0);
                     }
 
-                    switch (typeComputed) {
+                    break;
+
+                   /* switch (typeComputed) {
                         case ADD:
                             // startTime = System.nanoTime();
                             database.addUser(dummyUser, dummySet, dummyTimeline);
@@ -1017,7 +1019,7 @@ public class Retwis {
 
                     // Thread.sleep(0,1); // simulate I/O
 
-                    break;
+                    break;*/
                     //                }
                 }
 
