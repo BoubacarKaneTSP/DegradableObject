@@ -6,12 +6,12 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=5
+nbTest=10
 benchmarkTime=60
 warmingUpTime=30
-nbThreads=("1" "10" "20" "40")
-objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
-ratio="37 37 26"
+nbThreads=("1" "5" "10" "20" "40" "80")
+objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap" "CounterJUC" "CounterIncrementOnly" "LongAdder")
+ratio="100 0 0"
 
 
 #for nbThread in 80
