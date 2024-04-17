@@ -292,7 +292,7 @@ public class Microbenchmark {
 
                     if (_s){
                         String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
-                        fileWriter = new FileWriter(directory + File.separator + nameFile, false);
+                        fileWriter = new FileWriter(directory + File.separator + nameFile, true);
 
 //                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
 //                        fileWriter = new FileWriter(nameFile, false);
@@ -323,7 +323,7 @@ public class Microbenchmark {
                         if (_s) {
 
                             String nameOpFile = object.getClass().getSimpleName() + "_" + op + ".txt";
-                            fileWriter = new FileWriter(directory + File.separator + nameOpFile, false);
+                            fileWriter = new FileWriter(directory + File.separator + nameOpFile, true);
 
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrentThread + " " + ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
