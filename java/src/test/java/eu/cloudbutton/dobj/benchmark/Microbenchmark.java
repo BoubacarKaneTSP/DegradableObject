@@ -143,7 +143,7 @@ public class Microbenchmark {
                     System.out.println("Nb threads = " + nbCurrentThread);
                 }
 
-                for (int _nbTest = 0; _nbTest < this._nbTest; _nbTest++) {
+                for (int _nbTest = 0; _nbTest < 1; _nbTest++) {
                     nbOperations = new CopyOnWriteArrayList<>();
                     timeOperations = new CopyOnWriteArrayList<>();
                     long size = 0;
