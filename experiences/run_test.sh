@@ -6,15 +6,28 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=5
-benchmarkTime=60
-warmingUpTime=30
+nbTest=2
+benchmarkTime=10
+warmingUpTime=5
+nbThreads=("1" "10" "20" "40")
+objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
+ratio="37 37 26"
+
 
 #for nbThread in 80
 #for nbThread in 1 2 4 8 16 32 48 96 160
-for nbThread in 1 40 80 120 160
+for nbThread in "${nbThreads[@]}";
 #for nbThread in 1 80
 do
+
+  for object in "${objects[@]}"; do
+     for (( c=1; c<=nbTest; c++ ))
+       do
+           perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m Map -t Microbenchmark -p -e -r $ratio -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
+           python3 analyse_perf.py perf.log "false" "$object" "$nbThread" ""
+       done
+  done
+
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -c AtomicReference -t Microbenchmark -p -e -r "0 0 100" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  python3 analyse_perf.py perf.log "false" "AtomicReference" $nbThread ""
 #
@@ -49,11 +62,6 @@ do
 #  python3 analyse_perf.py perf.log "false" "QueueMASP" $nbThread ""
 
 ##
-  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m Map -t Microbenchmark -p -e -r " 38 37 25" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-  python3 analyse_perf.py perf.log "false" "ConcurrentHashMap" $nbThread ""
-#
-  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m ExtendedSegmentedHashMap -t Microbenchmark -p -e -r " 38 37 25" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
-  python3 analyse_perf.py perf.log "false" "ExtendedSegmentedHashMap" $nbThread ""
 
 #  perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m ConcurrentSkipListMap -t Microbenchmark -p -e -r " 38 37 25" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g $nbThread
 #  python3 analyse_perf.py perf.log "false" "ConcurrentSkipListMap" $nbThread ""

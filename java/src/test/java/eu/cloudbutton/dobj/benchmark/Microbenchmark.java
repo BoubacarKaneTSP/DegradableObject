@@ -292,7 +292,7 @@ public class Microbenchmark {
 
                     if (_s){
                         String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
-                        fileWriter = new FileWriter(directory + File.separator + nameFile, true);
+                        fileWriter = new FileWriter(directory + File.separator + nameFile, false);
 
 //                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
 //                        fileWriter = new FileWriter(nameFile, false);
@@ -323,7 +323,7 @@ public class Microbenchmark {
                         if (_s) {
 
                             String nameOpFile = object.getClass().getSimpleName() + "_" + op + ".txt";
-                            fileWriter = new FileWriter(directory + File.separator + nameOpFile, true);
+                            fileWriter = new FileWriter(directory + File.separator + nameOpFile, false);
 
                             printWriter = new PrintWriter(fileWriter);
                             printWriter.println(nbCurrentThread + " " + ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
@@ -333,7 +333,7 @@ public class Microbenchmark {
 
                         if (_p) {
                             for (int j = 0; j < 10; j++) System.out.print("-");
-                            System.out.print(" Throughput (op/s) for " + op + " : ");
+                            System.out.print("Throughput (op/s) for " + op + " : ");
                             System.out.printf("%.3E%n", ((nbOp / (double) timeOp)*nbCurrentThread) * 1_000_000_000);
                         }
                     }
