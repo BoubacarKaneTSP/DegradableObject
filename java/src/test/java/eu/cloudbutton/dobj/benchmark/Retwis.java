@@ -844,7 +844,7 @@ public class Retwis {
 
         public void dummyFunction() throws InterruptedException {
 //            TimeUnit.NANOSECONDS.sleep(1);
-            System.nanoTime();
+//            System.nanoTime();
         }
 
         public int chooseOperation(){
