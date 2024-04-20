@@ -10,8 +10,8 @@ nbTest=10
 benchmarkTime=60
 warmingUpTime=30
 nbThreads=("1" "5" "10" "20" "40" "80")
-objects=("AtomicReference" "AtomicWriteOnceReference")
-ratio="0 0 100"
+objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
+ratio="12 12 76"
 
 for object in "${objects[@]}"; do
   python3 rm_file.py "Microbenchmark" "$object"
