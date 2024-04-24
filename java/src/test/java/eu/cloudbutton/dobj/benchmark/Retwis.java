@@ -877,8 +877,8 @@ public class Retwis {
 //        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
         public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, long numOperation) {
 
-            return;
-            try {
+
+            /*try {
 
                 // startTime = 0L;
                 // endTime= 0L;
@@ -1017,7 +1017,7 @@ public class Retwis {
                 e.printStackTrace();
                 System.err.println(Thread.currentThread()+": "+user);
                 throw new RuntimeException();
-            }
+            }*/
 
         }
 
