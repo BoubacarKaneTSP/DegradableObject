@@ -14,13 +14,13 @@ ratio="15 15 20 30 10 10"
 completion_time="True"
 nbThreads=("1" "5" "10" "20" "40" "80")
 #nbThreads=("1" "40")
-tags=("JUC" "DEG")
-counters=("CounterJUC" "CounterIncrementOnly")
-sets=("ConcurrentHashSet" "ExtendedSegmentedHashSet")
-queues=("ConcurrentLinkedQueue" "QueueMASP")
-maps=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
+declare -a tags=("JUC" "DEG")
+declare -a counters=("CounterJUC" "CounterIncrementOnly")
+declare -a sets=("ConcurrentHashSet" "ExtendedSegmentedHashSet")
+declare -a queues=("ConcurrentLinkedQueue" "QueueMASP")
+declare -a maps=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
 
-arrays=("${tags[@]}" "${counters[@]}" "${sets[@]}" "${queues[@]}" "${maps[@]}")
+declare -a arrays=("tags" "counters" "sets" "queues" "maps")
 length="${#tags[@]}"
 
 for array in "${arrays[@]}"; do
