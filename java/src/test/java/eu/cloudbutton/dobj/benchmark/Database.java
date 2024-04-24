@@ -990,7 +990,6 @@ public class Database {
 
     public void showTimeline(Key user) throws InterruptedException {
         try{
-
             mapTimelines.get(user).read();
         }catch (NullPointerException e){
             System.out.println(user);
