@@ -765,9 +765,9 @@ public class Retwis {
                 boolean cleanTimeline = false;
 
                 while (flagWarmingUp.get()) { // warm up
-                    dummyFunction();
-//                    type = listOperationToDo.get(num%sizeOpToDo);
-//                    compute(type, timeLocalOperations, cleanTimeline,num);
+//                    dummyFunction();
+                    type = listOperationToDo.get(num%sizeOpToDo);
+                    compute(type, timeLocalOperations, cleanTimeline,num);
 //
 //                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
@@ -784,9 +784,9 @@ public class Retwis {
                 if (_completionTime){
                     long nbOperationToDo = (_nbOps / database.getNbThread());
                     for (long i = 0; i < nbOperationToDo; i++) {
-                        dummyFunction();
-//                        type = chooseOperation();
-//                        compute(type, timeLocalOperations, cleanTimeline, i);
+//                        dummyFunction();
+                        type = chooseOperation();
+                        compute(type, timeLocalOperations, cleanTimeline, i);
 //                        cleanTimeline = i % (2 * _nbUserInit) == 0;
                     }
                 }else{
@@ -875,7 +875,7 @@ public class Retwis {
         }
 
 //        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
-        public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, int numOperation) {
+        public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, long numOperation) {
 
             try {
 

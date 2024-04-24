@@ -4,21 +4,21 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=1
+nbTest=2
 benchmarkTime=20
 warmingUpTime=5
 nbUsersInits="500000"
 nbHashCode=10000000
-nbOps=5600000000
+nbOps=1000000000
 ratio="15 15 20 30 10 10"
 completion_time="True"
-#nbThreads=("1" "5" "10" "20" "40")
-nbThreads=("1" "40")
-tags=("JUC")
-counters=("CounterJUC")
-sets=("ConcurrentHashSet")
-queues=("Queue")
-maps=("Map")
+nbThreads=("1" "5" "10" "20" "40" "80")
+#nbThreads=("1" "40")
+tags=("JUC" "DEG")
+counters=("CounterJUC" "CounterIncrementOnly")
+sets=("ConcurrentHashSet" "ExtendedSegmentedHashSet")
+queues=("ConcurrentLinkedQueue" "QueueMASP")
+maps=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
 
 arrays=("${tags[@]}" "${counters[@]}" "${sets[@]}" "${queues[@]}" "${maps[@]}")
 length="${#tags[@]}"
