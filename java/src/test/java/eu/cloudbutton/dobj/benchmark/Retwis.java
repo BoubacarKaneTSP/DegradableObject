@@ -765,10 +765,11 @@ public class Retwis {
                 boolean cleanTimeline = false;
 
                 while (flagWarmingUp.get()) { // warm up
-                    type = listOperationToDo.get(num%sizeOpToDo);
-                    compute(type, timeLocalOperations, cleanTimeline,num);
-
-                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
+                    dummyFunction();
+//                    type = listOperationToDo.get(num%sizeOpToDo);
+//                    compute(type, timeLocalOperations, cleanTimeline,num);
+//
+//                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
 
 
@@ -783,9 +784,9 @@ public class Retwis {
                 if (_completionTime){
                     long nbOperationToDo = (_nbOps / database.getNbThread());
                     for (int i = 0; i < nbOperationToDo; i++) {
-//                        dummyFunction();
-                        type = chooseOperation();
-                        compute(type, timeLocalOperations, cleanTimeline, i);
+                        dummyFunction();
+//                        type = chooseOperation();
+//                        compute(type, timeLocalOperations, cleanTimeline, i);
 //                        cleanTimeline = i % (2 * _nbUserInit) == 0;
                     }
                 }else{
@@ -843,6 +844,7 @@ public class Retwis {
         }
 
         public void dummyFunction() throws InterruptedException {
+            nbAttempt++;
 //            TimeUnit.NANOSECONDS.sleep(1);
 //            System.nanoTime();
         }
