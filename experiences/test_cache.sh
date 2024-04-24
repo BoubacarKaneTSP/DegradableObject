@@ -22,13 +22,13 @@ declare -a maps=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
 
 declare -a arrays=("tags" "counters" "sets" "queues" "maps")
 length="${#tags[@]}"
-
-for array in "${arrays[@]}"; do
-    if [ ${#array[@]} -ne $length ]; then
-        echo "number of tags and object should be identical"
-        exit 1
-    fi
-done
+#
+#for array in "${arrays[@]}"; do
+#    if [ ${#array[@]} -ne $length ]; then
+#        echo "number of tags and object should be identical"
+#        exit 1
+#    fi
+#done
 
 for nbUsersInit in "${nbUsersInits[@]}"
 do
