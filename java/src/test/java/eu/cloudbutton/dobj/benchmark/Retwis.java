@@ -881,7 +881,7 @@ public class Retwis {
 
                 // startTime = 0L;
                 // endTime= 0L;
-                nbAttempt = -1;
+//                nbAttempt = -1;
 
                 //            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
                 //            int nbAttemptMax = 10;
@@ -899,23 +899,10 @@ public class Retwis {
                                 .getValue();
 
                     } catch (NullPointerException e) {
-                        System.out.println("range : " + localUsersUsageProbabilityRange + "\n" +
-                                "val : " + val + "\n" +
-                                "max val : " + database
-                                .getLocalUsersUsageProbability()
-                                .get(myId.get())
-                                .lastKey() + "\n" +
-                                "value returned : " + database
-                                .getLocalUsersUsageProbability()
-                                .get(myId.get())
-                                .ceilingEntry(val) + "\n"
-                        );
                         System.exit(0);
                     }
 
-                    break;
-
-                   /* switch (typeComputed) {
+                    switch (typeComputed) {
                         case ADD:
                             // startTime = System.nanoTime();
                             database.addUser(dummyUser, dummySet, dummyTimeline);
@@ -1021,7 +1008,7 @@ public class Retwis {
 
                     // Thread.sleep(0,1); // simulate I/O
 
-                    break;*/
+                    break;
                     //                }
                 }
 
