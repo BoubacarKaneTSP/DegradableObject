@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=2
+nbTest=1
 benchmarkTime=20
 warmingUpTime=5
 nbUsersInits="500000"

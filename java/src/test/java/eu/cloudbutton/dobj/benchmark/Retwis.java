@@ -890,7 +890,7 @@ public class Retwis {
                 int typeComputed = type;
 
                 for (; ; ) {
-                    long val = Math.abs(random.nextLong() % (localUsersUsageProbabilityRange+1) );
+                    /*long val = Math.abs(random.nextLong() % (localUsersUsageProbabilityRange+1) );
 
                     try {
                         user = database
@@ -901,7 +901,7 @@ public class Retwis {
 
                     } catch (NullPointerException e) {
                         System.exit(0);
-                    }
+                    }*/
 
                     /*switch (typeComputed) {
                         case ADD:
