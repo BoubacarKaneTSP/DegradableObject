@@ -1,6 +1,6 @@
 import sys
-import numpy as np
-import scipy.stats as st
+import statistics
+
 
 def calculate_bounds(values_func):
     mean = sum(values_func) / len(values_func)
