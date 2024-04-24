@@ -3,18 +3,12 @@ import numpy as np
 import scipy.stats as st
 
 def calculate_bounds(values_func):
-    # Calcul de la moyenne, du max et du min
-
-    confidence = 0.95
-
-    a = 1.0 * np.array(values_func)
-    n = len(a)
-    m, se = np.mean(a), st.sem(a)
-    h = se * st.t.ppf((1 + confidence) / 2., n-1)
-    max_val = np.max(a)
-    min_val = np.min(a)
-
-    return m, m + h, m - h, max_val, min_val
+    mean = sum(values_func) / len(values_func)
+    max_value = max(values_func)
+    min_value = min(values_func)
+    standard_deviation = statistics.stdev(values_func)
+    margin_of_error = 1.96 * standard_deviation / len(values_func) ** 0.5
+    return (int(mean), int(max_value), int(min_value), int(mean + margin_of_error), int(mean - margin_of_error))
 
 nb_user = sys.argv[1]
 type_obj = sys.argv[2]
