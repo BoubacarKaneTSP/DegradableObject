@@ -878,7 +878,7 @@ public class Retwis {
         public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, long numOperation) {
 
 
-            /*try {
+            try {
 
                 // startTime = 0L;
                 // endTime= 0L;
@@ -903,7 +903,7 @@ public class Retwis {
                         System.exit(0);
                     }
 
-                    switch (typeComputed) {
+                    /*switch (typeComputed) {
                         case ADD:
                             // startTime = System.nanoTime();
                             database.addUser(dummyUser, dummySet, dummyTimeline);
@@ -982,7 +982,7 @@ public class Retwis {
                             break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + type);
-                    }
+                    }*/
 
                     //                    startTime = System.nanoTime();
                     //                    typeComputed = COUNT;
@@ -1017,7 +1017,7 @@ public class Retwis {
                 e.printStackTrace();
                 System.err.println(Thread.currentThread()+": "+user);
                 throw new RuntimeException();
-            }*/
+            }
 
         }
 
