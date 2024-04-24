@@ -3,6 +3,9 @@ import statistics
 
 
 def calculate_bounds(values_func):
+    if len(values_func) == 1:
+        return values_func[0], values_func[0], values_func[0], values_func[0], values_func[0]
+
     mean = sum(values_func) / len(values_func)
     max_value = max(values_func)
     min_value = min(values_func)
