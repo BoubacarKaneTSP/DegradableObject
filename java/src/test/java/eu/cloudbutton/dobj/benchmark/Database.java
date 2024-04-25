@@ -2,6 +2,9 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
+import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
@@ -16,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
 
 import org.apache.commons.math3.distribution.ParetoDistribution;
@@ -128,13 +132,12 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-        executorService = Executors.newFixedThreadPool(nbThread);
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         // executor = Executors.newVirtualThreadPerTaskExecutor();
 
 //        generateUsers();
 //        addingPhase();
 //        followingPhase();
-
 //        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt", mapFollowing);
 
         loadGraph();
@@ -147,7 +150,7 @@ public class Database {
     }
 
     public void generateUsers() throws InterruptedException {
-
+        System.out.println("Generate users");
         String fileName = "nodes_info_" + nbUsers + "_users.txt";
         Set<Key> localSetUser = new TreeSet<>();
         int r_degree, o_degree, i_degree;
@@ -224,7 +227,6 @@ public class Database {
 
     }
 
-
     public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) throws InterruptedException {
         List<Double> doubleValues = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -262,111 +264,9 @@ public class Database {
         Void call(Integer argument) throws Exception;
     }
 
-    public void followingPhase() throws InterruptedException, ExecutionException {
-        System.out.println("Start follow phase");
-        long startTime;
-        startTime = System.nanoTime();
-        List<Future<Void>> futures = new ArrayList<>();
-        MyCallableWithArgument myCallable = (Integer i) -> {
-
-            if (i % nbUsers * 0.05 == 0) {
-                System.out.println(i);
-            }
-
-            int a, counter = 0, directed_sum = 0;
-            float pr;
-            Key userA, userB;
-
-
-            // Sampling of reciprocal edges
-            for (int j = i; j < nbUsers; j++) {
-
-                if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
-                    pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
-
-                    if (pr>1)
-                        pr = 1;
-
-                    a = Math.random() < pr ? 1 : 0;
-
-                    if (a==1){
-
-                        userA = mapIndiceToKey.get(i);
-                        userB = mapIndiceToKey.get(j);
-
-                        followUser(userA,userB);
-
-                        followUser(userB,userA);
-
-                        if (inDegree[i] != 0 && outDegree[j] != 0){
-                            counter++;
-                            directed_sum += inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist;
-                        }
-
-                        if (inDegree[j] != 0 && outDegree[i] != 0){
-                            counter++;
-                            directed_sum += inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist;
-                        }
-                    }
-                }
-            }
-
-            int sampled_reciprocal = directed_sum/(out*in-diag-counter);
-
-            // Sampling of directed edges
-            for (int j = i; j < nbUsers; j++) {
-
-                if (inDegree[i] != 0 && outDegree[j] != 0){
-                    pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
-
-                    if (pr>1)
-                        pr = 1;
-
-                    a = Math.random() < pr ? 1 : 0;
-
-                    if (a==1){
-                        userA = mapIndiceToKey.get(i);
-                        userB = mapIndiceToKey.get(j);
-
-                        followUser(userB, userA);
-                    }
-                }
-
-                if (inDegree[j] != 0 && outDegree[i] != 0){
-                    pr = inDegree[j]*outDegree[i]/edges_d + diag_sum_d_dist + sampled_reciprocal;
-
-                    if (pr>1)
-                        pr = 1;
-
-                    a = Math.random() < pr ? 1 : 0;
-
-                    if (a==1){
-                        userA = mapIndiceToKey.get(i);
-                        userB = mapIndiceToKey.get(j);
-
-                        followUser(userA, userB);
-                    }
-                }
-            }
-
-            return null;
-        };
-
-        for (int i = 0; i < nbUsers; i++) {
-            int finalI = i;
-            Callable<Void> callable = () -> myCallable.call(finalI);
-            futures.add(executorService.submit(callable));
-        }
-
-        for (Future<Void> future :futures){
-            future.get();
-        }
-
-        System.out.println("time in ns : " + (System.nanoTime() - startTime));
-        System.out.println("End follow phase");
-    }
-
     public void addingPhase() throws ExecutionException, InterruptedException {
+        System.out.println("Start add phase");
+
         List<Future<Void>> futures = new ArrayList<>();
 
         Map<Integer, AtomicInteger> somme = new ConcurrentHashMap<>();
@@ -401,33 +301,142 @@ public class Database {
         for (Future<Void> future :futures){
             future.get();
         }
+
+        System.out.println("End add phase");
+    }
+
+    public void followingPhase() throws InterruptedException, ExecutionException {
+        System.out.println("Start follow phase");
+
+        long startTime;
+        startTime = System.nanoTime();
+        List<Future<Void>> futures = new ArrayList<>();
+        LongAdder count = new LongAdder();
+        MyCallableWithArgument myCallable = (Integer i) -> {
+
+            if (i % nbUsers * 0.05 == 0) {
+                System.out.println(i);
+            }
+
+            int a, counter = 0, directed_sum = 0;
+            float pr;
+            Key userA, userB;
+
+
+            // Sampling of reciprocal edges
+            for (int j = i; j < nbUsers; j++) {
+                if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
+                    pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
+
+                    if (pr>1)
+                        pr = 1;
+
+                    a = random.get().nextFloat() < pr ? 1 : 0;
+
+                    if (a==1){
+
+                        userA = mapIndiceToKey.get(i);
+                        userB = mapIndiceToKey.get(j);
+
+                        followUser(userA,userB);
+
+                        followUser(userB,userA);
+
+                        if (inDegree[i] != 0 && outDegree[j] != 0){
+                            counter++;
+                            directed_sum += inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist;
+                        }
+
+                        if (inDegree[j] != 0 && outDegree[i] != 0){
+                            counter++;
+                            directed_sum += inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist;
+                        }
+                    }
+                }
+            }
+
+            int sampled_reciprocal = directed_sum/(out*in-diag-counter);
+
+            // Sampling of directed edges
+            for (int j = i; j < nbUsers; j++) {
+
+                if (inDegree[i] != 0 && outDegree[j] != 0){
+                    pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
+
+                    if (pr>1)
+                        pr = 1;
+
+                    a = random.get().nextFloat() < pr ? 1 : 0;
+
+                    if (a==1){
+                        userA = mapIndiceToKey.get(i);
+                        userB = mapIndiceToKey.get(j);
+
+                        followUser(userB, userA);
+                    }
+                }
+
+                if (inDegree[j] != 0 && outDegree[i] != 0){
+                    pr = inDegree[j]*outDegree[i]/edges_d + diag_sum_d_dist + sampled_reciprocal;
+
+                    if (pr>1)
+                        pr = 1;
+
+                    a = random.get().nextFloat() < pr ? 1 : 0;
+
+                    if (a==1){
+                        userA = mapIndiceToKey.get(i);
+                        userB = mapIndiceToKey.get(j);
+
+                        followUser(userA, userB);
+                    }
+                }
+            }
+
+            count.increment();
+            if (count.longValue()%1000==0) System.out.print(".");
+
+            return null;
+        };
+
+        for (int i = 0; i < nbUsers; i++) {
+            int finalI = i;
+            Callable<Void> callable = () -> myCallable.call(finalI);
+            futures.add(executorService.submit(callable));
+        }
+
+        for (Future<Void> future :futures){
+            future.get();
+        }
+
+        System.out.println("time in ns : " + (System.nanoTime() - startTime));
+        System.out.println("End follow phase");
     }
 
     private void saveGraph(String fileName, Map<Key,Set<Key>> map){
-
-        String line = "";
+        System.out.println("Start saving graph");
+        StringBuilder builder = new StringBuilder();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-
             for (Key userA : mapIndiceToKey.values()){
-                line += mapKeyToIndice.get(userA).toString();
+                builder.append(mapKeyToIndice.get(userA).toString());
 
                 for (Key userB: map.get(userA)){
-                    line += " " + mapKeyToIndice.get(userB);
+                    builder.append(" " + mapKeyToIndice.get(userB));
                 }
 
-                line += "\n";
+                builder.append("\n");
             }
 
-            writer.write(line);
+            writer.write(builder.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        System.out.println("End saving graph");
     }
 
     private void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
-
+        System.out.println("Start loading graph");
         int numberOfUsersInFile;
         String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
         try (Stream<String> fileStream = Files.lines(Paths.get(fileName))) {
@@ -543,7 +552,7 @@ public class Database {
         }
 
         usersFollowProbabilityRange = sommeFollow;
-
+        System.out.println("End loading graph");
     }
 
     private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException {
