@@ -132,7 +132,7 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        executorService = Executors.newFixedThreadPool(nbThread);
         // executor = Executors.newVirtualThreadPerTaskExecutor();
 
 //        generateUsers();
