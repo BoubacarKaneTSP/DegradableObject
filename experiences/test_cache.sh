@@ -7,18 +7,18 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 nbTest=1
 benchmarkTime=20
 warmingUpTime=5
-nbUsersInits="500000"
+nbUsersInits="1000000"
 nbHashCode=10000000
 nbOps=1000000000
 ratio="15 15 20 30 10 10"
 completion_time="True"
 nbThreads=("1" "5" "10" "20" "40" "80")
 #nbThreads=("1" "40")
-declare -a tags=("JUC" "DEG")
-declare -a counters=("CounterJUC" "CounterIncrementOnly")
-declare -a sets=("ConcurrentHashSet" "ExtendedSegmentedHashSet")
-declare -a queues=("ConcurrentLinkedQueue" "QueueMASP")
-declare -a maps=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
+declare -a tags=("JUC")
+declare -a counters=("CounterJUC")
+declare -a sets=("ConcurrentHashSet")
+declare -a queues=("ConcurrentLinkedQueue")
+declare -a maps=("ConcurrentHashMap")
 
 declare -a arrays=("tags" "counters" "sets" "queues" "maps")
 length="${#tags[@]}"
