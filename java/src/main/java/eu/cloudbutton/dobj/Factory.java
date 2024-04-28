@@ -70,16 +70,16 @@ public class Factory {
         return constructorList.newInstance();
     }
 
-    public static Object createObject(String object, int parallelism) throws ClassNotFoundException{
+    public static Object createObject(String object, FactoryIndice factoryIndice) throws ClassNotFoundException{
 
         if (object.contains("Counter") || object.contains("LongAdder"))
             return createCounter(object);
         else if (object.contains("Set"))
-            return createSet(object, parallelism);
+            return createSet(object, factoryIndice);
         else if (object.contains("Map"))
-            return createMap(object, parallelism);
+            return createMap(object, factoryIndice);
         else if (object.contains("List"))
-            return createList(object, parallelism);
+            return createList(object, factoryIndice.getParallelism());
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Noop"))
@@ -101,15 +101,6 @@ public class Factory {
         return null;
     }
 
-    public static Object createObject(String object, FactoryIndice factoryIndice) throws ClassNotFoundException{
-
-        if (object.contains("Set"))
-            return createSet(object, factoryIndice);
-        else if (object.contains("Map"))
-            return createMap(object, factoryIndice);
-        else
-            throw new ClassNotFoundException("The object : "+ object +" may not exists");
-    }
     /* Counter */
 
     public static Counter createCounter(String counter) throws ClassNotFoundException {
@@ -153,21 +144,21 @@ public class Factory {
 
     /* Set */
 
-    public static Set createSet(String set, int parallelism) throws ClassNotFoundException {
+    public static Set createSet(String set, FactoryIndice factoryIndice) throws ClassNotFoundException {
 
         switch (set){
             case "HashSet":
                 return new HashSet<>();
             case "SegmentedSkipListSet":
-                return new SegmentedSkipListSet<>(parallelism);
+                return new SegmentedSkipListSet<>(factoryIndice.getParallelism());
             case "SegmentedTreeSet":
-                return new SegmentedTreeSet<>(parallelism);
+                return new SegmentedTreeSet<>(factoryIndice.getParallelism());
             case "SegmentedHashSet":
-                return new SegmentedHashSet<>(parallelism);
+                return new SegmentedHashSet<>(factoryIndice.getParallelism());
             case "ShardedTreeSet":
-                return new ShardedTreeSet<>(parallelism);
+                return new ShardedTreeSet<>(factoryIndice.getParallelism());
             case "ShardedHashSet":
-                return new ShardedHashSet<>(parallelism);
+                return new ShardedHashSet<>(factoryIndice.getParallelism());
             case "Set":
             case "ConcurrentSkipListSet":
                 return new ConcurrentSkipListSet<>();
@@ -179,14 +170,6 @@ public class Factory {
                 return new SetAddIntensive<>();
             case "SetMWSR":
                 return new SetMWSR<>();
-            default:
-                throw new ClassNotFoundException();
-        }
-    }
-
-    public static Set createSet(String set, FactoryIndice factoryIndice) throws ClassNotFoundException {
-
-        switch (set){
             case "ExtendedSegmentedHashSet":
                 return new ExtendedSegmentedHashSet<>(factoryIndice);
             case "ExtendedShardedHashSet":

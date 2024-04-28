@@ -37,6 +37,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 //import jdk.internal.misc.SharedSecrets;
+import jdk.internal.vm.annotation.Contended;
 import sun.misc.Unsafe;
 
 /**
@@ -281,6 +282,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * Basic hash bin node, used for most entries.  (See below for
      * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)
      */
+    // @Contended
     static class Node<K,V> implements Map.Entry<K,V> {
         final int hash;
         final K key;

@@ -67,6 +67,9 @@ public class Database {
     private final AtomicInteger count;
     private final FactoryIndice factoryIndice;
     private final ThreadLocal<Random> random;
+
+    private final double alpha;
+
     private static final double SCALEUSAGE = 10.0; // Paramètre d'échelle de la loi de puissance
     private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
     private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
@@ -76,7 +79,7 @@ public class Database {
     private final ExecutorService executorService;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
+                    int nbThread, int nbUserInit, double alpha) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -133,16 +136,17 @@ public class Database {
         }
 
         executorService = Executors.newFixedThreadPool(nbThread);
+
+        this.alpha = alpha;
         // executor = Executors.newVirtualThreadPerTaskExecutor();
 
 //        generateUsers();
 //        addingPhase();
 //        followingPhase();
 //        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt", mapFollowing);
-
         loadGraph();
-//        loadCompleteGraph();
-//        loadDAPGraph();
+        // loadCompleteGraph(); FIXME
+        // loadDAPGraph();
     }
 
     public Key generateUser(){
@@ -436,7 +440,7 @@ public class Database {
     }
 
     private void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
-        System.out.println("Start loading graph");
+        System.out.println("Start loading graph ("+alpha+")");
         int numberOfUsersInFile;
         String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
         try (Stream<String> fileStream = Files.lines(Paths.get(fileName))) {
@@ -445,16 +449,16 @@ public class Database {
         }
 
         Set<Key> localSetUser = new HashSet<>();
-        List<Integer> powerLawArray = generateValues(numberOfUsersInFile, numberOfUsersInFile, 1, SCALEUSAGE);
+        List<Integer> powerLawArray = generateValues(numberOfUsersInFile, numberOfUsersInFile, alpha, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
-        int val, indiceThread = 0, nbUserPerThread = numberOfUsersInFile/nbThread;
+        int val, indiceThread = 0, nbUserPerThread = (int) Math.ceil((double)numberOfUsersInFile/(double)nbThread);
 
 
         for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-
+                assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user,indiceThread);
                 mapListUserFollow.put(user, new LinkedList<>());
@@ -918,10 +922,10 @@ public class Database {
     }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
-        mapFollowing.put(user, new HashSet<>());
+        mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
         mapProfiles.put(user, 0);
-        mapFollowers.put(user, new ConcurrentHashSet<>());
+        mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
         mapCommunityStatus.put(user, 0);
 
 //        if (typeSet.contains("Extended"))
@@ -936,33 +940,28 @@ public class Database {
 //        assert dummyTimeline != null : "Timeline is null";
 
 //        counter.incrementAndGet();
-        mapFollowers.put(user,dummySet);
-        mapFollowing.put(user, dummySet);
-        mapTimelines.put(user, dummyTimeline);
-        mapProfiles.put(user, 0);
-        mapCommunityStatus.put(user, 0);
-
+        mapFollowers.put(user, dummySet);
+//        mapFollowing.put(user, dummySet);
+//        mapTimelines.put(user, dummyTimeline);
+//        mapProfiles.put(user, 0);
+//        mapCommunityStatus.put(user, 0);
     }
 
     public void removeUser(Key user){
         mapFollowers.remove(user);
-        mapFollowing.remove(user);
-        mapTimelines.remove(user);
-        mapProfiles.remove(user);
+//        mapFollowing.remove(user);
+//        mapTimelines.remove(user);
+//        mapProfiles.remove(user);
     }
 
     // Adding user_A to the followers of user_B
     // and user_B to the following of user_A
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
-
         try{
-
-            mapFollowers.get(userB)
-                    .add(userA);
-            mapFollowing.get(userA)
-                    .add(userB);
-        }catch (Exception e){
+            mapFollowers.get(userB).add(userA);
+            mapFollowing.get(userA).add(userB);
+        }catch (Throwable e){
             System.out.println("userB : " + userB + ", in mapFollowers :" + mapFollowers.containsKey(userB));
             System.out.println("userB : " + userB + ", in mapFollowing :" + mapFollowing.containsKey(userB));
             e.printStackTrace();
@@ -973,10 +972,8 @@ public class Database {
     // Removing user_A to the followers of user_B
     // and user_B to the following of user_A
     public void unfollowUser(Key userA, Key userB){
-        mapFollowers.get(userB)
-                .remove(userA);
-        mapFollowing.get(userA)
-                .remove(userB);
+        mapFollowers.get(userB).remove(userA);
+        mapFollowing.get(userA).remove(userB);
     }
 
     public void lightFollowUser(Key userA, Key userB){
@@ -989,11 +986,12 @@ public class Database {
 
     public void tweet(Key user, String msg) throws InterruptedException {
         Set<Key> set = mapFollowers.get(user);
-
+        int i = 0;
         for (Key follower : set) {
             Timeline<String> timeline = mapTimelines.get(follower);
             timeline.add(msg);
-            break;
+            i++;
+            if (i>0) break;
         }
     }
 
@@ -1011,14 +1009,17 @@ public class Database {
 
     public void updateProfile(Key user){
 //        mapProfiles.put(user, mapProfiles.get(user)+1);
-        mapProfiles.compute(user, (usr, profile) -> ++profile);
+        counter.incrementAndGet();
+        mapProfiles.compute(user, (usr, profile) -> (int) Math.sin(Math.log(++profile)));
     }
 
     public void joinCommunity(Key user){
+        // counter.decrementAndGet();
         community.add(user);
     }
 
     public void leaveCommunity(Key user){
+        // counter.incrementAndGet();
         community.remove(user);
     }
 
