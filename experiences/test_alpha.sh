@@ -9,7 +9,7 @@ benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=50000000
+nbOps=500000000
 # ADD, FOLLOW/UNFOLLOW, TWEET, READ, GROUP, PROFILE
 ratio="0 0 0 0 0 100"
 # ratio="0 0 99 1 0 0"
@@ -21,12 +21,12 @@ ratio="0 0 0 0 0 100"
 # ratio="100 0 0 0 0 0"
 # ratio="0 0 20 80 0 0"
 # ratio="0 100 0 0 0 0"
-# ratio="0 0 0 0 0 100"
+ratio="0 0 0 0 0 100"
 # ratio="0 0 0 0 100 0"
 # ratio="0 0 20 80 0 0"
 
 # ratio="15 15 30 40 0 0"
-ratio="10 20 20 20 15 15"
+# ratio="10 20 20 20 15 15"
 
 #ExtendedSegmentedConcurrentHash
 
@@ -48,7 +48,7 @@ do
 
     # for nbThread in 1 2 4 8 16 32 48
   #  for nbThread in 1 16 48
-      for nbThread in 1 100
+      for nbThread in 1 1000
       # for nbThread in 1 2 4 6 8 10 12
     do
       for (( c=1; c<=nbTest; c++ ))
