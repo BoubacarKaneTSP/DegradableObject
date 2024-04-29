@@ -26,7 +26,7 @@ ratio="0 0 0 0 0 100"
 # ratio="0 0 20 80 0 0"
 
 ratio="15 15 30 40 0 0"
-# ratio="10 10 25 40 5 10"
+ratio="10 20 20 30 10 10"
 
 #ExtendedSegmentedConcurrentHash
 
@@ -48,7 +48,7 @@ do
 
     # for nbThread in 1 2 4 8 16 32 48
   #  for nbThread in 1 16 48
-      for nbThread in 1 # 1000
+      for nbThread in 1 1000
       # for nbThread in 1 2 4 6 8 10 12
     do
       for (( c=1; c<=nbTest; c++ ))
