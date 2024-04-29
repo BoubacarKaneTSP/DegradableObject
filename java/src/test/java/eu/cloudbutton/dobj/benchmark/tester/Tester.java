@@ -76,17 +76,11 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 assert elapsedTime != 0;
 
-                switch (type) {
-                    case ADD:
-                        opNumber = 0;
-                        break;
-                    case REMOVE:
-                        opNumber = 1;
-                        break;
-                    case READ:
-                        opNumber = 2;
-                        break;
-                }
+                opNumber = switch (type) {
+                    case ADD -> 0;
+                    case REMOVE -> 1;
+                    case READ -> 2;
+                };
 
                 // if (elapsedTime != 0)
                 localOp.get(opNumber).val += nbRepeat;
