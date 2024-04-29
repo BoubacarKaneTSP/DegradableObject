@@ -13,17 +13,16 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
 
     public ExtendedSegmentation(Class<T> clazz, FactoryIndice factoryIndice) {
         this.factoryIndice = factoryIndice;
-        int parallelism = factoryIndice.getParallelism();
         this.segments = new CopyOnWriteArrayList<>();
-        try {
-            for (int i = 0; i < parallelism; i++) {
-                this.segments.add(i, clazz.getDeclaredConstructor().newInstance());
+        for (int i=0; i<Runtime.getRuntime().availableProcessors(); i++) {
+            try {
+                T segment = clazz.getDeclaredConstructor().newInstance();
+                segments.add(segment);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new RuntimeException();
             }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
         }
-
-        assert segments.size() == parallelism : "Wrong number of segments";
     }
 
     @Override
@@ -43,7 +42,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     }
 
     @Override
-    public List<T> segments() {
+    public final List<T> segments() {
         return segments;
     }
 }

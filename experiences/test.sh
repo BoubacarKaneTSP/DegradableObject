@@ -242,6 +242,7 @@ ranges=("0-19" "80-99" "20-39" "100-119" "40-59" "120-139" "60-79" "140-159")
 nthreads=$(echo "$nbThreads" | grep -o '[0-9]\+')
 echo "nbThreads => $nthreads"
 nhwthreads=$(cat /proc/cpuinfo  | grep processor | tail -n 1 | awk '{print ($3)+1}')
+nhwthreads=40
 echo "nhwthreads => $nhwthreads"
 min=$(echo -e ${nthreads}"\n"${nhwthreads} | sort -n | head -n 1)
 echo ${min}

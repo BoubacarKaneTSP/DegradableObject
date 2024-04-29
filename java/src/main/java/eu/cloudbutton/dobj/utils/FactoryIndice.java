@@ -3,37 +3,32 @@ package eu.cloudbutton.dobj.utils;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FactoryIndice {
-    @Getter
-    protected static ThreadLocal<BoxedLong> local = null;
+
+    private final Map<Integer,BoxedLong> indices;
     private final AtomicInteger next;
+    private final ThreadLocal<BoxedLong> local;
     @Getter
-    private final Integer parallelism;
+    private final int parallelism;
 
     public FactoryIndice(int parallelism){
-        this.parallelism = parallelism;
         this.next = new AtomicInteger();
-        local =  ThreadLocal.withInitial(() -> new BoxedLong(-1));
-        assert local.get().getVal() == -1 : "val => " + local.get().getVal() ;
+        this.indices = new ConcurrentHashMap<>();
+        this.local = new ThreadLocal();
+        this.parallelism = parallelism;
     }
 
-    public BoxedLong getIndice(){
-
-        if (local.get().getVal() == -1 ){
-            int indice = next.getAndIncrement();
-            assert indice < parallelism : "The indice generated ("+indice+") excess the number of segments ("+parallelism+")";
-//            System.out.println(Thread.currentThread().getName() + " => local ("+ System.identityHashCode(local.get().getVal())+") : " + local.get().getVal() + " | indice : " + indice);
-            local.get().setVal(indice);
-//            System.out.println(Thread.currentThread().getName() + " have indice : " + indice+ " => " + local.get().getVal());
-            assert local.get().getVal() == indice : "Failed to update local";
+    public final BoxedLong getIndice(){
+        if(local.get() == null) {
+            int carrier = Carrier.carrierID();
+            indices.putIfAbsent(carrier, new BoxedLong(next.getAndIncrement()));
+            local.set(indices.get(carrier));
         }
-
-//        System.out.println(Thread.currentThread().getName() + " have indice : " + local.get().getVal());
-
-        assert local.get().getVal() != -1 : "boxedlong not updated";
-
         return local.get();
     }
 }

@@ -135,10 +135,10 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-        executorService = Executors.newFixedThreadPool(nbThread);
+        // executorService = Executors.newFixedThreadPool(nbThread);
+        executorService = Executors.newVirtualThreadPerTaskExecutor();
 
         this.alpha = alpha;
-        // executor = Executors.newVirtualThreadPerTaskExecutor();
 
 //        generateUsers();
 //        addingPhase();
@@ -833,6 +833,7 @@ public class Database {
         return values;
 //        return mapHistogram;
     }
+
     public Map computeFollowHistogram(int range, int max, String type){
 
 //        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();

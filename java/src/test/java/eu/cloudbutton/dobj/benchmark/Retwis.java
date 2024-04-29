@@ -116,7 +116,7 @@ public class Retwis {
     private List<Counter> nbOperations;
     private List<AtomicLong> timeOperations;
     private Map<Integer, List<Long>> timeDurations;
-    private LongAdder timeBenchmark;
+    private AtomicInteger timeBenchmark;
     private Queue<String> userUsageDistribution;
     private LongAdder queueSizes;
 //    private Long nbUserFinal;
@@ -240,7 +240,7 @@ public class Retwis {
                 queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
-                timeBenchmark = new LongAdder();
+                timeBenchmark = new AtomicInteger();
                 completionTime = 0;
 
 
@@ -312,10 +312,8 @@ public class Retwis {
                 if(_p)
                     System.out.println();
 
-                long timeBenchmarkAvg = (timeBenchmark.longValue()) / nbCurrThread;
-
                 if (_gcinfo || _p) {
-                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000000.0) / _nbTest + " seconds");
+                    System.out.println("completion time : " + (double) completionTime / (double) 1_000_000_000 +" sec.");
                     System.out.print(database.statistics());
                 }
 
@@ -526,15 +524,9 @@ public class Retwis {
                 nextUserToFollow = 0;
 
                 while (flagWarmingUp.get()) { // warm up
-//                    dummyFunction();
-                    type = listOperationToDo.get(num%sizeOpToDo);
+                    type = chooseOperation();
                     compute(type, timeLocalOperations, cleanTimeline,num);
-//
-//                    cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                 }
-
-
-                resetAllTimeline();
 
                 computePhase.countDown();
                 computePhase.await();
@@ -543,7 +535,7 @@ public class Retwis {
 
                 startTimeBenchmark = System.nanoTime();
                 if (_completionTime){
-                    long nbOperationToDo = (_nbOps / database.getNbThread());
+                    long nbOperationToDo = Math.ceilDiv( _nbOps, database.getNbThread());
                     for (long i = 0; i < nbOperationToDo; i++) {
 //                        dummyFunction();
                         type = chooseOperation();
@@ -585,7 +577,7 @@ public class Retwis {
                     latchFillCompletionTime.await();
                 }
 
-                timeBenchmark.add(endTimeBenchmark - startTimeBenchmark);
+                timeBenchmark.addAndGet((int) (endTimeBenchmark - startTimeBenchmark));
 
                 if (!_completionTime){
                     for (int op: mapIntOptoStringOp.keySet()){
