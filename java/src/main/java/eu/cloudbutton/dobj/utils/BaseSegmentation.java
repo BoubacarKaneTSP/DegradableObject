@@ -25,26 +25,27 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     public BaseSegmentation(Class<T> clazz, int parallelism) {
         this.clazz = clazz;
-        this.segments = new CopyOnWriteArrayList<>(); // FIXME loom requires a (skip?) linked list instead here.
-        local = ThreadLocal.withInitial(() -> {
-            try {
-                T segment = this.clazz.getDeclaredConstructor().newInstance();
-                segments.add(segment);
-                return segment;
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        this.segments = new CopyOnWriteArrayList<>(); // FIXME loom requires a (skip?) linked list instead here, where the index is the carrier ID.
+        this.local = new ThreadLocal<>();
     }
 
     @Override
     public final T segmentFor(Object x) {
+        if (local.get() == null) {
+            try {
+                T segment = this.clazz.getDeclaredConstructor().newInstance();
+                segments.add(segment);
+                local.set(segment);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
+        }
         return local.get();
     }
 
     @Override
-    public final Collection<T> segments() {
+    public final List<T> segments() {
         return segments;
     }
 

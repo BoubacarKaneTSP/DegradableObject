@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -10,6 +12,7 @@ public final class ComposedIterator<E> implements Iterator<E> {
     private Iterator<E> _inMap;
 
     public ComposedIterator(final Collection<Iterator<E>> collection) {
+        assert collection != null;
         if (!collection.isEmpty()){
             _inUnion = collection.iterator();
             _inMap = _inUnion.next();

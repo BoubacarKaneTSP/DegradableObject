@@ -4,91 +4,103 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class ImmutableComposedSet<K> implements Set<K> {
+public class ImmutableComposedSet<K> implements Set<K>, Iterable<K> {
 
-    private Set<K>[] sets;
+    private final List<Set<K>> sets;
 
-    public ImmutableComposedSet(Set<K>[] sets) {
+    public ImmutableComposedSet(List<Set<K>> sets) {
         this.sets = sets;
     }
 
     @Override
     public int size() {
-        return 0;
+        return sets.stream().mapToInt(Set::size).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return sets.stream().allMatch(Set::isEmpty);
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return sets.stream().anyMatch(set -> set.contains(o));
     }
 
-    @NotNull
     @Override
     public Iterator<K> iterator() {
-        Collection<Iterator<K>> collection = new ArrayList<>(sets.length);
-        Arrays.stream(sets).map(s -> collection.add(s.iterator()));
+        Collection<Iterator<K>> collection = new ArrayList<>();
+        sets.forEach(set -> collection.add(set.iterator()));
         return new ComposedIterator<>(collection);
     }
 
-    @NotNull
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        throw new RuntimeException();
     }
 
-    @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] a) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
     public boolean add(K k) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends K> c) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public void clear() {
-
+        throw new RuntimeException();
     }
 
     @Override
     public boolean equals(Object o) {
-        return false;
+        throw new RuntimeException();
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return sets.stream().mapToInt(Set::hashCode).sum();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        Iterator<K> iterator = iterator();
+        while(iterator.hasNext()) {
+            builder.append(iterator.next());
+            if(iterator.hasNext()) {
+                builder.append(", ");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
     }
 }

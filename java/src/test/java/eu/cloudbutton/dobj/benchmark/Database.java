@@ -941,17 +941,17 @@ public class Database {
 
 //        counter.incrementAndGet();
         mapFollowers.put(user, dummySet);
-//        mapFollowing.put(user, dummySet);
-//        mapTimelines.put(user, dummyTimeline);
-//        mapProfiles.put(user, 0);
-//        mapCommunityStatus.put(user, 0);
+        mapFollowing.put(user, dummySet);
+        mapTimelines.put(user, dummyTimeline);
+        mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
     }
 
     public void removeUser(Key user){
         mapFollowers.remove(user);
-//        mapFollowing.remove(user);
-//        mapTimelines.remove(user);
-//        mapProfiles.remove(user);
+        mapFollowing.remove(user);
+        mapTimelines.remove(user);
+        mapProfiles.remove(user);
     }
 
     // Adding user_A to the followers of user_B
@@ -991,7 +991,7 @@ public class Database {
             Timeline<String> timeline = mapTimelines.get(follower);
             timeline.add(msg);
             i++;
-            if (i>0) break;
+            if (i>1000) break;
         }
     }
 
@@ -1009,7 +1009,7 @@ public class Database {
 
     public void updateProfile(Key user){
 //        mapProfiles.put(user, mapProfiles.get(user)+1);
-        counter.incrementAndGet();
+//        counter.incrementAndGet();
         mapProfiles.compute(user, (usr, profile) -> (int) Math.sin(Math.log(++profile)));
     }
 
@@ -1021,6 +1021,29 @@ public class Database {
     public void leaveCommunity(Key user){
         // counter.incrementAndGet();
         community.remove(user);
+    }
+
+    public String statistics() {
+        int in=0, out=0, max_in=0, max_out=0;
+        for (Key user : mapFollowers.keySet()){
+            int degree = mapFollowers.get(user).size();
+            in+=degree;
+            if (degree>max_in) max_in = degree;
+        }
+        in=in/mapFollowers.size();
+        for (Key user : mapFollowing.keySet()){
+            int degree = mapFollowing.get(user).size();
+            out+=degree;
+            if (degree>max_out) max_out = degree;
+        }
+        out=out/mapFollowing.size();
+        StringBuilder builder = new StringBuilder();
+        builder.append("#users:"+mapFollowers.size()
+                +", avg in degree:" + in
+                + ", max in degree:" + max_in
+                + ", avg out degree:" + out
+                +", max out degree:" + max_out);
+        return builder.toString();
     }
 
     @Override

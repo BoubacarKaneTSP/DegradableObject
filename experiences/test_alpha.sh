@@ -9,7 +9,7 @@ benchmarkTime=20
 warmingUpTime=5
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=500000000
+nbOps=50000000
 # ADD, FOLLOW/UNFOLLOW, TWEET, READ, GROUP, PROFILE
 ratio="0 0 0 0 0 100"
 # ratio="0 0 99 1 0 0"
@@ -21,12 +21,16 @@ ratio="0 0 0 0 0 100"
 # ratio="100 0 0 0 0 0"
 ratio="5 15 30 50 0 0"
 ratio="10 10 30 40 5 5"
+ratio="100 0 0 0 0 0"
+# ratio="0 0 20 80 0 0"
+ratio="0 100 0 0 0 0"
+# ratio="0 0 0 0 0 100"
 
 #ExtendedSegmentedConcurrentHash
 
 # alphas=("0.5" "0.7" "0.9" "1.1" "1.3" "1.5" "1.7" "1.9" "2")
-alphas=("1000000")
-alphas=("2")
+# alphas=("1000000")
+alphas=("1")
 
 for alpha in "${alphas[@]}";
 do
@@ -52,6 +56,7 @@ do
           # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log
 	  ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
 	  # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log
+	  # ./test.sh -c CounterIncrementOnly -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
 	  # ./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m SegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
       done
     done

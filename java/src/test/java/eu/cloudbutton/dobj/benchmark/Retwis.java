@@ -314,8 +314,10 @@ public class Retwis {
 
                 long timeBenchmarkAvg = (timeBenchmark.longValue()) / nbCurrThread;
 
-                if (_gcinfo || _p)
-                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000000.0)/_nbTest + " seconds" );
+                if (_gcinfo || _p) {
+                    System.out.println("benchmarkAvgTime : " + (timeBenchmarkAvg / 1000000000.0) / _nbTest + " seconds");
+                    System.out.print(database.statistics());
+                }
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
@@ -394,7 +396,7 @@ public class Retwis {
 
     public class RetwisApp implements Callable<Void>{
 
-        private static final int MAX_USERS_PER_THREAD = 1;
+        private static final int MAX_USERS_PER_THREAD = 100_000;
 
         private final ThreadLocalRandom random;
         private final int[] ratiosArray;
@@ -410,9 +412,9 @@ public class Retwis {
         private final ThreadLocal<Integer> myId;
         int nbLocalUsers;
         int nbAttempt;
-        List<Key> users;
-        Key user;
-        ThreadLocal<Integer> nextUser;
+        List<Key> users, usersToFollow;
+        Key user, userToFollow;
+        int nextUser, nextUserToFollow;
         Key dummyUser;
         Key dummyUserFollow;
         Set<Key> dummySet;
@@ -506,6 +508,7 @@ public class Retwis {
                 boolean cleanTimeline = false;
 
                 users = new ArrayList<>(MAX_USERS_PER_THREAD);
+                usersToFollow = new ArrayList<>(MAX_USERS_PER_THREAD);
                 for (int i=0; i<MAX_USERS_PER_THREAD; i++) {
                     long val = Math.abs(random.nextLong() % (localUsersUsageProbabilityRange + 1));
                     users.add(database
@@ -513,8 +516,14 @@ public class Retwis {
                             .get(myId.get())
                             .ceilingEntry(val)
                             .getValue());
+                    val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
+                    usersToFollow.add(database
+                            .getUsersFollowProbability()
+                            .ceilingEntry(val)
+                            .getValue());
                 }
-                nextUser = ThreadLocal.withInitial(() -> 0);
+                nextUser = 0;
+                nextUserToFollow = 0;
 
                 while (flagWarmingUp.get()) { // warm up
 //                    dummyFunction();
@@ -642,57 +651,17 @@ public class Retwis {
                 int typeComputed = type;
 
                 for (; ; ) {
-                    user = users.get(nextUser.get());
-                    nextUser.set((nextUser.get() + 1) % MAX_USERS_PER_THREAD);
-
+                    user = users.get(nextUser++ % MAX_USERS_PER_THREAD);
                     switch (typeComputed) {
                         case ADD:
-                            // startTime = System.nanoTime();
                             database.addUser(dummyUser, dummySet, dummyTimeline);
-                            // endTime = System.nanoTime();
                             database.removeUser(dummyUser);
                             break;
                         case FOLLOW:
-//                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
-
-//                            long val2 = Math.abs(random.nextLong()%usersFollowProbabilityRange); // We choose a user to follow according to a probability
-//                            userB = database.getUsersFollowProbability().ceilingEntry(val2).getValue();
-
-                            // startTime = System.nanoTime();
-                            database.followUser(user, dummyUserFollow);
-                            // endTime = System.nanoTime();
-
-                            database.unfollowUser(user, dummyUserFollow);
-                            //                            if (!listFollow.contains(userB) && userB != null){ // Perform follow only if userB is not already followed
-                            //
-                            //
-                            //                            }else
-                            //                                continue restartOperation;
-
-                            break;
                         case UNFOLLOW:
-
-                            //                            listFollow = database.getListLocalUsersFollow().get(myId.get()).get(userA);
-
-                            //                            if (listFollow.size() == 0) {
-                            ////                                System.out.println("restart");
-                            //                                continue restartOperation;
-                            //                            }
-                            //
-                            //                            userB = listFollow.poll();
-
-                            database.followUser(user, dummyUserFollow);
-                            // startTime = System.nanoTime();
-                            database.unfollowUser(user, dummyUserFollow);
-                            // endTime = System.nanoTime();
-
-                            //                            database.followUser(userA, userB);
-                            //                            if (userB != null){ // Perform unfollow only if userA already follow someone
-                            //                                listFollow.add(userB);
-                            //                            }else {
-                            //                                System.out.println("user null");
-                            //                                continue restartOperation;
-                            //                            }
+                            userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_PER_THREAD);
+                            database.followUser(user, userToFollow);
+                            database.unfollowUser(user, userToFollow);
                             break;
                         case TWEET:
                             // startTime = System.nanoTime();

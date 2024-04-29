@@ -7,11 +7,9 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
@@ -68,7 +66,6 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
     @Nullable
     @Override
     public V put(K k, V v) {
-
         return (V) segmentFor(k).put(k,v);
     }
 
@@ -87,20 +84,22 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
          throw new UnsupportedOperationException();
     }
 
-    @NotNull
     @Override
     public Set<K> keySet() {
-        return new ImmutableComposedSet<>(segments().toArray(new Set[0]));
+        List<Set<K>> sets = new ArrayList<>();
+        for (Map m : segments()) {
+            sets.add(m.keySet());
+        }
+        Set<K> ret = new ImmutableComposedSet<>(sets);
+        return ret;
     }
 
     @Override
-    public String toString() {
+    public String toString() { // FIXME
         StringBuilder s = new StringBuilder();
-
         for(Map m: segments()){
             s.append(m.toString());
         }
-
         return s.toString();
     }
 
