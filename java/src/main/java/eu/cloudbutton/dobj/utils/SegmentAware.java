@@ -11,7 +11,7 @@ public class SegmentAware {
     @Getter
     @Setter
     @Contended
-    AtomicWriteOnceReference<BoxedLong> reference;
+    AtomicWriteOnceReference<Integer> reference;
 
     public SegmentAware(){
         reference = new AtomicWriteOnceReference<>();

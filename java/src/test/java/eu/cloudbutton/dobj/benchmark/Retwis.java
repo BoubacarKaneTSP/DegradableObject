@@ -116,7 +116,7 @@ public class Retwis {
     private List<Counter> nbOperations;
     private List<AtomicLong> timeOperations;
     private Map<Integer, List<Long>> timeDurations;
-    private AtomicInteger timeBenchmark;
+    private AtomicLong timeBenchmark;
     private Queue<String> userUsageDistribution;
     private LongAdder queueSizes;
 //    private Long nbUserFinal;
@@ -240,7 +240,7 @@ public class Retwis {
                 queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
-                timeBenchmark = new AtomicInteger();
+                timeBenchmark = new AtomicLong();
                 completionTime = 0;
 
 
@@ -313,7 +313,7 @@ public class Retwis {
                     System.out.println();
 
                 if (_gcinfo || _p) {
-                    System.out.println("completion time : " + (double) completionTime / (double) 1_000_000_000 +" sec.");
+                    System.out.println("completion time : " + (double)completionTime / (double) 1_000_000_000 + " seconds");
                     System.out.print(database.statistics());
                 }
 
@@ -577,7 +577,7 @@ public class Retwis {
                     latchFillCompletionTime.await();
                 }
 
-                timeBenchmark.addAndGet((int) (endTimeBenchmark - startTimeBenchmark));
+                timeBenchmark.addAndGet(endTimeBenchmark - startTimeBenchmark);
 
                 if (!_completionTime){
                     for (int op: mapIntOptoStringOp.keySet()){

@@ -29,7 +29,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     public final T segmentFor(Object x) {
         SegmentAware obj = (SegmentAware) x;
         T segment;
-        BoxedLong indice = obj.getReference().get();
+        Integer indice = obj.getReference().get();
         if (indice == null){
             indice = factoryIndice.getIndice();
             if (!obj.getReference().set(indice)){
@@ -37,7 +37,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
                 // indice = obj.getReference().get();
             }
         }
-        segment = segments().get((int) indice.getVal());
+        segment = segments().get(indice);
         return segment;
     }
 
