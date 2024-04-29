@@ -45,7 +45,7 @@ public abstract class Tester<T> implements Callable<Void> {
             opType type;
             while (Microbenchmark.flag.get()) {
 
-                n = this.random.nextInt(100);
+                /*n = this.random.nextInt(100);
 
                 if (n < ratios[0]) {
                     type = opType.ADD;
@@ -54,7 +54,7 @@ public abstract class Tester<T> implements Callable<Void> {
                 } else {
                     type = opType.READ;
                 }
-                test(type);
+                test(type);*/
             }
 
             latch.countDown();
@@ -62,7 +62,7 @@ public abstract class Tester<T> implements Callable<Void> {
 
             // compute
             while (!Microbenchmark.flag.get()) {
-                n = this.random.nextInt(100);
+               /* n = this.random.nextInt(100);
 
                 if (n < ratios[0]) {
                     type = opType.ADD;
@@ -84,7 +84,7 @@ public abstract class Tester<T> implements Callable<Void> {
 
                 // if (elapsedTime != 0)
                 localOp.get(opNumber).val += nbRepeat;
-                localTimeOp.get(opNumber).val += elapsedTime;
+                localTimeOp.get(opNumber).val += elapsedTime;*/
 
             }
 
