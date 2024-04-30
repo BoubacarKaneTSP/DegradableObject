@@ -168,6 +168,7 @@ public class Retwis {
             }
 
         } catch (CmdLineException e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
 
@@ -285,6 +286,7 @@ public class Retwis {
                             future.get();
                         }
                     } catch (Throwable e) {
+                        e.printStackTrace();
                         throw new RuntimeException();
                     }
 
@@ -387,6 +389,7 @@ public class Retwis {
     public class RetwisApp implements Callable<Void>{
 
         private static final int MAX_USERS_PER_THREAD = 100_000;
+        private static final int MAX_USERS_TO_FOLLOW_PER_THREAD = 1000;
 
         private final ThreadLocalRandom random;
         private final int[] ratiosArray;
@@ -449,6 +452,7 @@ public class Retwis {
 
                             database.followUser(userA, userB);
                         } catch (NullPointerException e) {
+                            e.printStackTrace();
                             throw new RuntimeException();
                         }
                     }
@@ -498,7 +502,9 @@ public class Retwis {
                             .get(myId.get())
                             .ceilingEntry(val)
                             .getValue());
-                    val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
+                }
+                for(int i=0; i<MAX_USERS_TO_FOLLOW_PER_THREAD; i++) {
+                    long val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
                     usersToFollow.add(database
                             .getUsersFollowProbability()
                             .ceilingEntry(val)
@@ -573,6 +579,7 @@ public class Retwis {
 //                userUsageDistribution.addAll(localUserUsageDistribution);
 
             } catch (Throwable e) {
+                e.printStackTrace();
                 throw new RuntimeException();
             }
             return null;
@@ -622,7 +629,7 @@ public class Retwis {
                             break;
                         case FOLLOW:
                         case UNFOLLOW:
-                            userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_PER_THREAD);
+                            userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_TO_FOLLOW_PER_THREAD);
                             database.followUser(user, userToFollow);
                             database.unfollowUser(user, userToFollow);
                             break;
@@ -759,6 +766,7 @@ public class Retwis {
                     System.out.println("End benchmark");
 
             } catch (Throwable e) {
+                e.printStackTrace();
                 throw new RuntimeException();
             }
             return null;
@@ -930,6 +938,7 @@ public class Retwis {
 
             reader.close();
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }

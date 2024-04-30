@@ -39,7 +39,6 @@ public class SetTest {
        cls = Class.forName("eu.cloudbutton.dobj.set.ConcurrentHashSet");
        factory.setFactorySet(cls);
        doAdd(factory.getSet());
-
     }
 
     @Test

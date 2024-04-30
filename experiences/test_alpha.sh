@@ -25,8 +25,8 @@ ratio="0 0 0 0 0 100"
 # ratio="0 0 0 0 100 0"
 # ratio="0 0 20 80 0 0"
 # ratio="0 100 0 0 0 0"
-ratio="10 10 30 50 0 0"
-# ratio="10 20 20 20 15 15"
+# ratio="10 10 30 50 0 0"
+ratio="5 10 20 45 5 15"
 
 #ExtendedSegmentedConcurrentHash
 
@@ -47,19 +47,18 @@ do
   #  python3 rm_file.py $nbUsersInit "Q_M_S_C"
 
     # for nbThread in 1 2 4 8 16 32 48
-  #  for nbThread in 1 16 48
-      for nbThread in 1000 # 1 12 
+      #  for nbThread in 1 16 48
+      for nbThread in 1 1000 # 1 12 
       # for nbThread in 1 2 4 6 8 10 12
     do
       for (( c=1; c<=nbTest; c++ ))
       do
-
           echo " =============== > test number : $c"
           # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log
-	  # ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
+	  ./test.sh -c CounterJUC -s ConcurrentHashSet -q Queue -m Map -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
 	  # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log
-	  # ./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
-	  ./test.sh -c CounterJUC -s SegmentedHashSet -q QueueMASP -m SegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
+	  #./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
+	  ./test.sh -c CounterJUC -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
       done
     done
   #   python3 compute_avg_throughput.py $nbUsersInit "JUC_$str_alpha" "1 2 4 8 16 32 48"

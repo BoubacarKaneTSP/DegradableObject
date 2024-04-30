@@ -37,9 +37,10 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
     @Override
     public V get(Object o) {
         V v = (V) segmentFor(o).get(o);
+        if (v!=null) return v;
         for(Map m: segments()){
-            if (v!=null) break;
             v = (V) m.get(o);
+            if (v!=null) break;
         }
         return v;
     }

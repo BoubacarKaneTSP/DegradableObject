@@ -2,9 +2,6 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
@@ -21,6 +18,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
+import java.security.*;
 
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -931,11 +929,6 @@ public class Database {
     }
 
     public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
-//        assert user != null : "User is null";
-//        assert dummySet != null : "Set is null";
-//        assert dummyTimeline != null : "Timeline is null";
-
-//        counter.incrementAndGet();
         mapFollowers.put(user, dummySet);
         mapFollowing.put(user, dummySet);
         mapTimelines.put(user, dummyTimeline);
@@ -982,12 +975,16 @@ public class Database {
 
     public void updateProfile(Key user){
         mapProfiles.compute(user, (usr, profile) -> {
+            byte[] bytesOfMessage = null;
             try {
-                Thread.sleep(0,5000);
-            } catch (InterruptedException e) {
+                bytesOfMessage = Integer.toString(profile).getBytes("UTF-8");
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                return md.digest(bytesOfMessage).length;
+            } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
-            return 0;});
+        });
     }
 
     public void joinCommunity(Key user){

@@ -47,7 +47,7 @@ public class ConcurrentTest {
                 ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
 
                 obj.put(key, Thread.currentThread().getName());
-                SWMRHashMap<ThreadLocalKey, String> map = obj.segmentFor(key);
+                Map<ThreadLocalKey, String> map = obj.segmentFor(key);
 
                 for (String s : map.values() ){
                     assert s.equals(Thread.currentThread().getName()) : "Thread : "+ Thread.currentThread().getName() +" => values : " + map.values();

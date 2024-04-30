@@ -42,7 +42,9 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     @Override
     public String toString() {
-        return segments.toString();
+        StringBuilder builder = new StringBuilder();
+        segments().stream().forEach(segment -> builder.append(segment.toString()));
+        return builder.toString();
     }
 
 }

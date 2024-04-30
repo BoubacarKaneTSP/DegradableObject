@@ -1,6 +1,26 @@
 package eu.cloudbutton.dobj.utils;
+import jdk.internal.misc.Unsafe;
+
+import java.lang.reflect.Field;
 
 public class Helpers {
+
+    private static final Unsafe UNSAFE;
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            UNSAFE = (Unsafe) f.get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
+
+    public static Unsafe getUNSAFE() {
+        return UNSAFE;
+    }
+
     static String toString(Object[] a, int size, int charLength) {
         // assert a != null;
         // assert size > 0;
