@@ -954,15 +954,8 @@ public class Database {
     // and user_B to the following of user_A
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
-        try{
-            mapFollowers.get(userB).add(userA);
-            mapFollowing.get(userA).add(userB);
-        }catch (Throwable e){
-            System.out.println("userB : " + userB + ", in mapFollowers :" + mapFollowers.containsKey(userB));
-            System.out.println("userB : " + userB + ", in mapFollowing :" + mapFollowing.containsKey(userB));
-            e.printStackTrace();
-            System.exit(1);
-        }
+        mapFollowers.get(userB).add(userA);
+        mapFollowing.get(userA).add(userB);
     }
 
     // Removing user_A to the followers of user_B

@@ -12,7 +12,6 @@ public class BaseSegmentation<T> implements Segmentation<T> {
 
     private final CopyOnWriteArrayList<T> segments;
     private final CarrierThreadLocal<T> local;
-    private final Class<T> clazz;
 
     public BaseSegmentation(Class<T> clazz) {
         this.segments = new CopyOnWriteArrayList<>();
@@ -27,7 +26,6 @@ public class BaseSegmentation<T> implements Segmentation<T> {
                     }
                 }
         );
-        this.clazz = clazz;
     }
 
     @Override
@@ -40,6 +38,11 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     @ForceInline
     public final Collection<T> segments() {
         return segments;
+    }
+
+    @Override
+    public String toString() {
+        return segments.toString();
     }
 
 }

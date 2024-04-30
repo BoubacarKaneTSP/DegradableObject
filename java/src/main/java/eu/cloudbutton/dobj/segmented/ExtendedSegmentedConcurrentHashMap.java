@@ -1,10 +1,7 @@
 package eu.cloudbutton.dobj.segmented;
 
-import eu.cloudbutton.dobj.mcwmcr.MapAddIntensive;
-import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
-import eu.cloudbutton.dobj.utils.NonLinearizable;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
