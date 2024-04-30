@@ -1,6 +1,8 @@
 package eu.cloudbutton.dobj.incrementonly;
 
+import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import jdk.internal.vm.annotation.Contended;
+import jdk.internal.vm.annotation.ForceInline;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -12,11 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Boubacar Kane
  * */
-public class CounterIncrementOnly implements Counter {
-
-    private final List<BoxedLong> count;
-    protected final ThreadLocal<BoxedLong> local;
-
+public class CounterIncrementOnly extends BaseSegmentation<BoxedLong> implements Counter {
+    
     protected static final sun.misc.Unsafe UNSAFE;
 
     static {
@@ -33,12 +32,7 @@ public class CounterIncrementOnly implements Counter {
      * Creates a new Counter initialized with the initial value 0.
      */
     public CounterIncrementOnly() {
-        this.count = new CopyOnWriteArrayList<>();
-        this.local = ThreadLocal.withInitial(() -> {
-            BoxedLong l = new BoxedLong();
-            count.add(l);
-            return l;
-        });
+        super(BoxedLong.class, Runtime.getRuntime().availableProcessors());
     }
 
     /**
@@ -47,14 +41,13 @@ public class CounterIncrementOnly implements Counter {
      */
     @Override
     public long incrementAndGet() {
-        local.get().val += 1;
-
+        segmentFor(null).val += 1;
         UNSAFE.storeFence();
         return 0;
     }
 
     public void increment(){
-        local.get().val +=1 ;
+        segmentFor(null).val +=1 ;
         UNSAFE.storeFence();
     }
     /**
@@ -78,7 +71,7 @@ public class CounterIncrementOnly implements Counter {
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (BoxedLong v : count) {
+        for (BoxedLong v : segments()) {
             total += v.val;
         }
         return total;
@@ -92,20 +85,20 @@ public class CounterIncrementOnly implements Counter {
 
     @Override
     public long decrementAndGet(int delta) {
-        local.get().val -= delta;
+        segmentFor(null).val -= delta;
         UNSAFE.storeFence();
         return 0;
     }
 
     @Override
     public long decrementAndGet() {
-        local.get().val -= 1;
+        segmentFor(null).val -= 1;
         UNSAFE.storeFence();
         return 0;
     }
 
     public void decrement(){
-        local.get().val -=1 ;
+        segmentFor(null).val -=1 ;
         UNSAFE.storeFence();
     }
 }

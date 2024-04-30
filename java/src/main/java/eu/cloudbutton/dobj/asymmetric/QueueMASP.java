@@ -247,14 +247,14 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
-    private CounterIncrementOnly queueSize;
+    private LongAdder queueSize;
 
     /**
      * Creates a {@code QueueMASP} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
-        queueSize = new CounterIncrementOnly();
+        queueSize = new LongAdder();
     }
 
     /**
@@ -384,7 +384,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
-                    queueSize.incrementAndGet();
+                    queueSize.increment();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -414,38 +414,13 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }*/
 
     public E poll() {
-
-        /*restartFromHead: for (;;) {
-            for (Node<E> h = head, p = h, q;; p = q) {
-                final E item;
-                if ((item = p.item) != null) {
-                    // Successful CAS is the linearization point
-                    // for item to be removed from this queue.
-                    p.item = null;
-                    if (p != h) // hop two nodes at a time
-                        sequentialUpdateHead(h, ((q = p.next) != null) ? q : p);
-                    queueSize.decrementAndGet();
-                    return item;
-                }
-                else if ((q = p.next) == null) {
-                    sequentialUpdateHead(h, p);
-                    return null;
-                }
-                else if (p == q)
-                    continue restartFromHead;
-            }
-        }*/
-
-        if (head != tail){
-
-            E item = head.next.item;
+        E p;
+        if (head.next != null && (p = head.next.item) != null ){
+            head.next.item = null;
             head = head.next;
-            queueSize.decrementAndGet();
-//            queueSize.decrement();
-//            head.item = null;
-            return item;
+            queueSize.decrement();
+            return p;
         }
-
         return null;
     }
 
@@ -513,17 +488,6 @@ public class QueueMASP<E> extends AbstractQueue<E>
      */
     public int size() {
         return queueSize.intValue();
-        /*restartFromHead: for (;;) {
-            int count = 0;
-            for (Node<E> p = first(); p != null;) {
-                if (p.item != null)
-                    if (++count == Integer.MAX_VALUE)
-                        break;  // @see Collection.size()
-                if (p == (p = p.next))
-                    continue restartFromHead;
-            }
-            return count;
-        }*/
     }
 
     /**
@@ -652,7 +616,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
     }
 
     public String toString() {
-        /*String[] a = null;
+        String[] a = null;
         restartFromHead: for (;;) {
             int charLength = 0;
             int size = 0;
@@ -674,10 +638,8 @@ public class QueueMASP<E> extends AbstractQueue<E>
             if (size == 0)
                 return "[]";
 
-            return java.util.concurrent.Helpers.toString(a, size, charLength);
-        }*/
-
-        return "toString method not built";
+            return Helpers.toString(a, size, charLength);
+        }
     }
 
     private Object[] toArrayInternal(Object[] a) {
@@ -1033,7 +995,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public void clear() {
         head = tail = new Node<E>();
-        queueSize = new CounterIncrementOnly();
+        queueSize = new LongAdder();
         bulkRemove(e -> true);
     }
 

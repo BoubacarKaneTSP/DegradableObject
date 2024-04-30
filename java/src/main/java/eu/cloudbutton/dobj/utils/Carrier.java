@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.utils;
 
+import jdk.internal.vm.annotation.ForceInline;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -16,9 +18,11 @@ public class Carrier {
         }
     }
 
+    @ForceInline
     public static final int carrierID() {
         try {
-            return (int) ((Thread) currentCarrierThread.invoke(null)).threadId();
+            long id = ((Thread) currentCarrierThread.invoke(null)).threadId();
+            return (int) id;
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

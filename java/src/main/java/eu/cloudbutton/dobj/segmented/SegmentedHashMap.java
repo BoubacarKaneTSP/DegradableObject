@@ -19,47 +19,32 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
 
     @Override
     public int size() { // FIXME prove this is actually linearizable
-        int ret = 0;
-        for(Map m: segments()){
-            ret += m.size();
-        }
-        return ret;
+        return segments().stream().mapToInt(segment -> segment.size()).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        for(Map m: segments()){
-            if (!m.isEmpty()) return false;
-        }
-        return true;
+        return segments().stream().allMatch(segment -> segment.isEmpty());
     }
 
     @Override
     public boolean containsKey(Object o) {
-        for(Map m: segments()){
-            if (m.containsKey(o)) return true;
-        }
-        return false;
+        return segments().stream().anyMatch(m -> m.containsKey(o));
     }
 
     @Override
     public boolean containsValue(Object o) {
-        for(Map m: segments()){
-            if (m.containsValue(o)) return true;
-        }
-        return false;
+        return segments().stream().anyMatch(m -> m.containsValue(o));
     }
 
     @SneakyThrows
     @Override
     public V get(Object o) {
-        V v = null;
-
+        V v = (V) segmentFor(o).get(o);
         for(Map m: segments()){
-            v = (V) m.get(o);
             if (v!=null) break;
+            v = (V) m.get(o);
         }
-
         return v;
     }
 
@@ -81,7 +66,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
 
     @Override
     public void clear() {
-         throw new UnsupportedOperationException();
+       segments().forEach(Map::clear);
     }
 
     @Override

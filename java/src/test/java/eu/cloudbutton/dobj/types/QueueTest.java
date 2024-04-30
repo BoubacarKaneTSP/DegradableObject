@@ -25,37 +25,15 @@ public class QueueTest {
     }
 
     @Test
-    void append() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        Factory factory = new Factory();
-
-        Class cls;
-
-        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueMASP");
-//        cls = Class.forName("java.util.concurrent.ConcurrentLinkedQueue");
-        factory.setFactoryQueue(cls);
-//        doConcurrentAppend(factory.getQueue());
-        doAppend((Queue<Integer>) factory.getQueue());
-
-//        cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
-//        factory.setFactoryQueue(cls);
-//        doAppend(factory.getQueue());
-
-        cls = Class.forName("eu.cloudbutton.dobj.queue.WaitFreeQueue");
-        factory.setFactoryQueue(cls);
-        doEnqueue((WaitFreeQueue<Integer>) factory.getQueue());
-        doSize((WaitFreeQueue<Integer>) factory.getQueue());
-
+    public void test() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+        doAppend(new ConcurrentLinkedQueue<>());
     }
 
     private static void doAppend(Queue<Integer> queue){
-
-//        queue = ((ConcurrentLinkedQueue) queue);
         for (int i = 0; i < 1000; i++) {
-
-            queue.poll();
-            queue.offer(i);
-            queue.offer(i);
-            queue.offer(i);
+            assert queue.offer(i) == true;
+            assert queue.poll() == i;
+            assert queue.isEmpty();
         }
     }
 

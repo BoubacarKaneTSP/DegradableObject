@@ -19,12 +19,12 @@ public class Timeline<T> {
         topk = new LinkedList<>();
     }
 
-    public void add(T elt) throws InterruptedException {
+    public void add(T elt)  {
         assert elt != null;
         timeline.offer(elt);
    }
 
-   public Queue<T> read() throws InterruptedException {
+   public Queue<T> read() {
        long queueSize = timeline.size();
        for (int i = 0; i < queueSize; i++) {
            T t=timeline.poll();

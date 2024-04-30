@@ -928,11 +928,6 @@ public class Database {
         mapProfiles.put(user, 0);
         mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
         mapCommunityStatus.put(user, 0);
-
-//        if (typeSet.contains("Extended"))
-//            mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
-//        else
-//            mapFollowers.put(user, Factory.createSet(typeSet, nbThread));
     }
 
     public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
@@ -977,15 +972,7 @@ public class Database {
         mapFollowing.get(userA).remove(userB);
     }
 
-    public void lightFollowUser(Key userA, Key userB){
-        mapFollowing.get(userA).add(userB);
-    }
-
-    public void lightUnfollowUser(Key userA, Key userB){
-        mapFollowing.get(userA).remove(userB);
-    }
-
-    public void tweet(Key user, String msg) throws InterruptedException {
+    public void tweet(Key user, String msg) {
         Set<Key> set = mapFollowers.get(user);
         int i = 0;
         for (Key follower : set) {
@@ -996,22 +983,18 @@ public class Database {
         }
     }
 
-    public void showTimeline(Key user) throws InterruptedException {
-        try{
-            mapTimelines.get(user).read();
-        }catch (NullPointerException e){
-            System.out.println(user);
-            System.out.println();
-            System.out.println(mapTimelines);
-            System.out.println(e);
-            System.exit(0);
-        }
+    public void showTimeline(Key user)  {
+        mapTimelines.get(user).read();
     }
 
     public void updateProfile(Key user){
-//        mapProfiles.put(user, mapProfiles.get(user)+1);
-//        counter.incrementAndGet();
-        mapProfiles.compute(user, (usr, profile) -> (int) Math.sin(Math.log(++profile)));
+        mapProfiles.compute(user, (usr, profile) -> {
+            try {
+                Thread.sleep(0,5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return 0;});
     }
 
     public void joinCommunity(Key user){

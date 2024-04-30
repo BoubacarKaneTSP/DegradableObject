@@ -14,12 +14,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<SWMRHashSet> implements Set<E> {
+public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<SWMRHashSet> implements Set<E>, Iterable<E> {
     
     public SegmentedHashSet(int parallelism){
         super(SWMRHashSet.class, parallelism);
     }
-
 
     @Override
     public boolean add(E e) {
@@ -47,22 +46,18 @@ public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<
     @Override
     @NonLinearizable
     public int size() {
-        int ret = 0;
-        for(Set<E> set: segments()) {
-            ret+=set.size();
-        }
-        return ret;
+        return segments().stream().mapToInt(Set::size).sum();
     }
 
     @Override
     @NonLinearizable
     public boolean isEmpty() {
-        return size()==0;
+        return segments().stream().allMatch(Set::isEmpty);
     }
 
     @Override
     public boolean contains(Object o) {
-        throw new UnsupportedOperationException();
+        return segments().stream().anyMatch(set -> set.contains(o));
     }
 
     @NotNull
@@ -99,6 +94,6 @@ public class SegmentedHashSet<E extends Comparable<E>> extends BaseSegmentation<
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        segments().stream().forEach(s -> s.clear());
     }
 }

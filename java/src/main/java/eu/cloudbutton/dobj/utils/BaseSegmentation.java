@@ -1,6 +1,8 @@
 package eu.cloudbutton.dobj.utils;
 
 
+import jdk.internal.vm.annotation.ForceInline;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,10 +25,8 @@ public class BaseSegmentation<T> implements Segmentation<T> {
             int carrier = Carrier.carrierID();
             try {
                 T segment = this.clazz.getDeclaredConstructor().newInstance();
-                segments.putIfAbsent(carrier, segment); // avoiding a possible race
-                local.set(segments.get(carrier));
+                local.set(segments.putIfAbsent(carrier, segment) == null ? segment : segments.get(carrier));
             } catch (Throwable e) {
-                e.printStackTrace();
                 throw new RuntimeException();
             }
         }
@@ -34,6 +34,7 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     }
 
     @Override
+    @ForceInline
     public final Collection<T> segments() {
         return segments.values();
     }

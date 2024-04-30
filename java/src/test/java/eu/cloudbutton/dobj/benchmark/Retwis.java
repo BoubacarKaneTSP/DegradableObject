@@ -1,5 +1,4 @@
 package eu.cloudbutton.dobj.benchmark;
-import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
 import eu.cloudbutton.dobj.incrementonly.Counter;
@@ -116,7 +115,7 @@ public class Retwis {
     private List<Counter> nbOperations;
     private List<AtomicLong> timeOperations;
     private Map<Integer, List<Long>> timeDurations;
-    private AtomicLong timeBenchmark;
+    private AtomicLong totalTime;
     private Queue<String> userUsageDistribution;
     private LongAdder queueSizes;
 //    private Long nbUserFinal;
@@ -140,6 +139,7 @@ public class Retwis {
     int flag_append = 1;
 
     private long completionTime;
+    private long benchmarkTime;
 
     public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ExecutionException {
         new Retwis().doMain(args);
@@ -168,20 +168,13 @@ public class Retwis {
             }
 
         } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
-            System.err.println("java SampleMain [options...] arguments...");
-            // print the list of available options
-            parser.printUsage(System.err);
-            System.err.println();
-
-            // print option sample. This is useful some time
-            System.err.println("  Example: java eu.cloudbutton.dobj.benchmark.Retwis" + parser.printExample(ALL));
-
-            return;
+            throw new RuntimeException();
         }
 
         if (_p)
             System.out.println(" ==> Launching test from App.java, a clone of Retwis...");
+
+        benchmarkTime = System.nanoTime();
 
         List<Double> listAlpha = new ArrayList<>();
 
@@ -240,7 +233,7 @@ public class Retwis {
                 queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
-                timeBenchmark = new AtomicLong();
+                totalTime = new AtomicLong();
                 completionTime = 0;
 
 
@@ -292,11 +285,8 @@ public class Retwis {
                             future.get();
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
-                        System.exit(0);
+                        throw new RuntimeException();
                     }
-
-
 
                     if(_p)
                         System.out.println(" ==> End of test num : " + nbCurrTest);
@@ -313,8 +303,10 @@ public class Retwis {
                     System.out.println();
 
                 if (_gcinfo || _p) {
-                    System.out.println("completion time : " + (double)completionTime / (double) 1_000_000_000 + " seconds");
-                    System.out.print(database.statistics());
+                    System.out.println("completion time : " + (double) completionTime / (double) 1_000_000_000 + " seconds");
+                    System.out.println("total time : " + (double) totalTime.get() / (double) 1_000_000_000 + " seconds");
+                    System.out.println("benchmark time : " + (double) (System.nanoTime()-benchmarkTime) / (double) 1_000_000_000 + " seconds");
+                    // System.out.print(database.statistics());
                 }
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
@@ -457,15 +449,7 @@ public class Retwis {
 
                             database.followUser(userA, userB);
                         } catch (NullPointerException e) {
-
-//                            System.out.println("userA : " + userA + " | userB : " + userB);
-
-                            e.printStackTrace();
-
-                            System.out.println("is "+ userB +" one of Thread "+ myId.get() +" user : " + database.getMapUserToAdd().get(myId.get()).contains(userB));
-                            System.out.println("Thread " + myId.get() + " | Map follower of user : " + userB + " " + database.getMapFollowers().get(userB) + " | groupe of user : " + database.getMapUserToAdd().get(myId.get()));
-
-                            System.exit(1);
+                            throw new RuntimeException();
                         }
                     }
 //                    System.out.println();
@@ -571,13 +555,12 @@ public class Retwis {
                 }
 
                 endTimeBenchmark = System.nanoTime();
+                totalTime.addAndGet(endTimeBenchmark - startTimeBenchmark);
 
                 if (_completionTime){
                     latchFillCompletionTime.countDown();
                     latchFillCompletionTime.await();
                 }
-
-                timeBenchmark.addAndGet(endTimeBenchmark - startTimeBenchmark);
 
                 if (!_completionTime){
                     for (int op: mapIntOptoStringOp.keySet()){
@@ -590,8 +573,7 @@ public class Retwis {
 //                userUsageDistribution.addAll(localUserUsageDistribution);
 
             } catch (Throwable e) {
-                e.printStackTrace();
-                throw new Error(e);
+                throw new RuntimeException();
             }
             return null;
         }
@@ -627,19 +609,8 @@ public class Retwis {
             return type;
         }
 
-//        public void compute(int type, Map<Integer, BoxedLong> timeOps, Map<Integer, List<Long>> timeLocalDurations, boolean cleanTimeline, int numOperation) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
         public void compute(int type, Map<Integer, BoxedLong> timeOps, boolean cleanTimeline, long numOperation) {
-
-
             try {
-
-                // startTime = 0L;
-                // endTime= 0L;
-//                nbAttempt = -1;
-
-                //            int nbAttemptMax = (int) (Math.log(0.01)/Math.log((nbLocalUsers-1) / (double) nbLocalUsers));
-                //            int nbAttemptMax = 10;
-
                 int typeComputed = type;
 
                 for (; ; ) {
@@ -656,28 +627,20 @@ public class Retwis {
                             database.unfollowUser(user, userToFollow);
                             break;
                         case TWEET:
-                            // startTime = System.nanoTime();
                             database.tweet(user, msg);
-                            // endTime = System.nanoTime();
                             break;
                         case PROFILE:
-                            // startTime = System.nanoTime();
                             database.updateProfile(user);
-                            // endTime = System.nanoTime();
                             break;
                         case READ:
-                            // startTime = System.nanoTime();
                             database.showTimeline(user);
-                            // endTime = System.nanoTime();
                             break;
                         case GROUP:
                             if (database.getMapCommunityStatus().get(user) == 0) {
                                 database.getMapCommunityStatus().put(user, 1);
-                                // startTime = System.nanoTime();
                                 database.joinCommunity(user);
                             } else {
                                 database.getMapCommunityStatus().put(user, 0);
-                                // startTime = System.nanoTime();
                                 database.leaveCommunity(user);
 
                             }
@@ -720,10 +683,9 @@ public class Retwis {
 //                Thread.sleep(1000);
 
 
-            }catch (Throwable e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
-                // System.err.println(Thread.currentThread()+": "+user);
-                throw new RuntimeException();
+                System.exit(-1);
             }
 
         }
@@ -759,21 +721,10 @@ public class Retwis {
                 latchFillFollowingPhase.await();
 
                 if (flagWarmingUp.get()){
-
-//                    latchHistogram.await();
-
-//                    saveDistributionHistogram("Pre_Benchmark");
-//                    System.out.println("Average coefficient cluster with biased : " + database.computeAvgCoefficientCluster());
-
-//                    performHeapDump(_tag, "Pre", (int) _nbUserInit);
-
-
                     if (_p){
                         System.out.println(" ==> Warming up for " + _wTime + " seconds");
                     }
-
                     TimeUnit.SECONDS.sleep(_wTime);
-
                     flagWarmingUp.set(false);
                 }
 
@@ -808,8 +759,7 @@ public class Retwis {
                     System.out.println("End benchmark");
 
             } catch (Throwable e) {
-                e.printStackTrace();
-                throw new Error(e);
+                throw new RuntimeException();
             }
             return null;
         }
@@ -980,7 +930,7 @@ public class Retwis {
 
             reader.close();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
