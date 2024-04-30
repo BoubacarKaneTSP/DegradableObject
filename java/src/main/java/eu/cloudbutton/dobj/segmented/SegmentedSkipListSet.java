@@ -1,12 +1,12 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.SWMRSkipListSet;
 import java.util.Set;
-import java.util.TreeSet;
 
-public class SegmentedSkipListSet<E extends Comparable<E>> extends SegmentedCollection<TreeSet,E> implements Set<E> {
+public class SegmentedSkipListSet<E extends Comparable<E>> extends SegmentedCollection<SWMRSkipListSet,E> implements Set<E> {
 
     public SegmentedSkipListSet() {
-        super(TreeSet.class);
+        super(SWMRSkipListSet.class);
     }
 
 }
