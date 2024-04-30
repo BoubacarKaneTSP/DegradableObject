@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
-import eu.cloudbutton.dobj.utils.Unsafe;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
