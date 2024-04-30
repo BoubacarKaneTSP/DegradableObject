@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class SegmentedTreeMap<K,V> extends BaseSegmentation<SWSRTreeMap> implements Map<K,V> {
 
-    public SegmentedTreeMap(int parallelism) {
-        super(SWSRTreeMap.class, parallelism);
+    public SegmentedTreeMap() {
+        super(SWSRTreeMap.class);
     }
 
     @Override

@@ -1008,25 +1008,38 @@ public class Database {
     }
 
     public String statistics() {
-        int in=0, out=0, max_in=0, max_out=0;
+        int in=0, out=0, max_in=0, max_out=0, wall=0, max_wall=0;
+
         for (Key user : mapFollowers.keySet()){
             int degree = mapFollowers.get(user).size();
             in+=degree;
             if (degree>max_in) max_in = degree;
         }
         in=in/mapFollowers.size();
+
         for (Key user : mapFollowing.keySet()){
             int degree = mapFollowing.get(user).size();
             out+=degree;
             if (degree>max_out) max_out = degree;
         }
         out=out/mapFollowing.size();
+
+        for(Timeline timeline: mapTimelines.values()){
+            int w = timeline.size();
+            wall += w;
+            if (w>max_wall) max_wall = w;
+        }
+        wall=wall/mapTimelines.size();
+
         StringBuilder builder = new StringBuilder();
         builder.append("#users:"+mapFollowers.size()
                 +", avg in degree:" + in
                 + ", max in degree:" + max_in
                 + ", avg out degree:" + out
-                +", max out degree:" + max_out);
+                +", max out degree:" + max_out
+                + ", avg timeline:" + wall
+                +", max timeline:" + max_wall
+        );
         return builder.toString();
     }
 

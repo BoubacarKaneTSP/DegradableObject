@@ -32,7 +32,7 @@ public class CounterIncrementOnly extends BaseSegmentation<BoxedLong> implements
      * Creates a new Counter initialized with the initial value 0.
      */
     public CounterIncrementOnly() {
-        super(BoxedLong.class, Runtime.getRuntime().availableProcessors());
+        super(BoxedLong.class);
     }
 
     /**

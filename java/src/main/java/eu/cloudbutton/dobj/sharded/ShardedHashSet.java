@@ -7,8 +7,8 @@ import java.util.*;
 
 public class ShardedHashSet<E> extends BaseSegmentation<HashSet> implements Set<E> {
 
-    public ShardedHashSet(int parallelism){
-        super(HashSet.class, parallelism);
+    public ShardedHashSet(){
+        super(HashSet.class);
     }
 
     @Override

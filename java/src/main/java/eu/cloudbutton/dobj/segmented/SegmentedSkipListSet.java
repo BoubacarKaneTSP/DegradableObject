@@ -14,8 +14,8 @@ import java.util.Set;
 
 public class SegmentedSkipListSet<E extends Comparable<E>> extends BaseSegmentation<SWMRSkipListSet> implements Set<E> {
 
-    public SegmentedSkipListSet(int parallelism) {
-        super(SWMRSkipListSet.class, parallelism);
+    public SegmentedSkipListSet() {
+        super(SWMRSkipListSet.class);
     }
 
     @Override

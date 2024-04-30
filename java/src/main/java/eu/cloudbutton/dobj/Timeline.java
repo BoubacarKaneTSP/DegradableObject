@@ -37,6 +37,10 @@ public class Timeline<T> {
        return topk;
    }
 
+   public int size(){
+        return timeline.size();
+   }
+
    public void clear(){
         timeline.clear();
         topk.clear();

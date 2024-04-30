@@ -33,7 +33,7 @@ public class KeyTest {
         int max_item_per_thread = 2048;
         int nbAdd = 100000;
         int size = 0;
-        Set<Key> set = new SegmentedSkipListSet(nbThread);
+        Set<Key> set = new SegmentedSkipListSet();
 
         KeyGenerator keyGenerator = new SimpleKeyGenerator(max_item_per_thread);
 

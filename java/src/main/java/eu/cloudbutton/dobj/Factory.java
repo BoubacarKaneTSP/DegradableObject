@@ -134,7 +134,7 @@ public class Factory {
             case "LinkedList":
                 return new LinkedList<>();
             case "ShardedLinkedList":
-                return new ShardedLinkedList<>(parallelism);
+                return new ShardedLinkedList<>();
             case "DegradableLinkedList":
                 return new DegradableLinkedList<>();
             default:
@@ -150,15 +150,15 @@ public class Factory {
             case "HashSet":
                 return new HashSet<>();
             case "SegmentedSkipListSet":
-                return new SegmentedSkipListSet<>(factoryIndice.getParallelism());
+                return new SegmentedSkipListSet<>();
             case "SegmentedTreeSet":
-                return new SegmentedTreeSet<>(factoryIndice.getParallelism());
+                return new SegmentedTreeSet<>();
             case "SegmentedHashSet":
-                return new SegmentedHashSet<>(factoryIndice.getParallelism());
+                return new SegmentedHashSet<>();
             case "ShardedTreeSet":
-                return new ShardedTreeSet<>(factoryIndice.getParallelism());
+                return new ShardedTreeSet<>();
             case "ShardedHashSet":
-                return new ShardedHashSet<>(factoryIndice.getParallelism());
+                return new ShardedHashSet<>();
             case "Set":
             case "ConcurrentSkipListSet":
                 return new ConcurrentSkipListSet<>();
@@ -215,13 +215,13 @@ public class Factory {
         switch (map){
 
             case "SegmentedHashMap":
-                return new SegmentedHashMap<>(parallelism);
+                return new SegmentedHashMap<>();
             case "SegmentedSkipListMap":
-                return new SegmentedSkipListMap<>(parallelism);
+                return new SegmentedSkipListMap<>();
             case "SegmentedTreeMap":
-                return new SegmentedTreeMap<>(parallelism);
+                return new SegmentedTreeMap<>();
             case "ShardedHashMap":
-                return new ShardedHashMap<>(parallelism);
+                return new ShardedHashMap<>();
             case "Map":
             case "ConcurrentHashMap":
                 return new ConcurrentHashMap<>();

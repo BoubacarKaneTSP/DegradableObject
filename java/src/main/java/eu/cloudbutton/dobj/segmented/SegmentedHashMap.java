@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
+import eu.cloudbutton.dobj.utils.ImmutableComposedCollection;
 import eu.cloudbutton.dobj.utils.ImmutableComposedSet;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +14,8 @@ import java.util.stream.Collectors;
 
 public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> implements Map<K,V> {
 
-    public SegmentedHashMap(int parallelism) {
-        super(SWMRHashMap.class, parallelism);
+    public SegmentedHashMap() {
+        super(SWMRHashMap.class);
     }
 
     @Override
@@ -72,9 +73,7 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
     @Override
     public Set<K> keySet() {
         List<Set<K>> sets = new ArrayList<>();
-        for (Map m : segments()) {
-            sets.add(m.keySet());
-        }
+        segments().stream().forEach(segment -> sets.add(segment.keySet()));
         Set<K> ret = new ImmutableComposedSet<>(sets);
         return ret;
     }
@@ -91,7 +90,10 @@ public class SegmentedHashMap<K,V> extends BaseSegmentation<SWMRHashMap> impleme
     @NotNull
     @Override
     public Collection<V> values() {
-         throw new UnsupportedOperationException();
+        List<Collection<V>> collections = new ArrayList<>();
+        segments().stream().forEach(segment -> collections.add(segment.values()));
+        Collection<V> ret = new ImmutableComposedCollection<>(collections);
+        return ret;
     }
 
     @NotNull

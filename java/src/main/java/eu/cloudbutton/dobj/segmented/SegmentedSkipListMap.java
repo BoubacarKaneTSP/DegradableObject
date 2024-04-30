@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 public class SegmentedSkipListMap<K,V> extends BaseSegmentation<SWMRSkipListMap> implements Map<K,V> {
 
-    public SegmentedSkipListMap(int parallelism) {
-        super(SWMRSkipListMap.class, parallelism);
+    public SegmentedSkipListMap() {
+        super(SWMRSkipListMap.class);
     }
     
     @Override

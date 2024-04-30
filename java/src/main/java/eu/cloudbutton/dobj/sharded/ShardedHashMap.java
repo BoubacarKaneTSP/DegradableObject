@@ -12,8 +12,8 @@ import java.util.Set;
 
 public class ShardedHashMap<K,V> extends BaseSegmentation<HashMap> implements Map<K,V> {
 
-    public ShardedHashMap(int parallelism) {
-        super(HashMap.class, parallelism);
+    public ShardedHashMap() {
+        super(HashMap.class);
     }
 
     @Override
