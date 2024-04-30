@@ -11,9 +11,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
-public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentedMap<ConcurrentHashMap,K,V> implements Map<K,V> {
+public class ExtendedSegmentedHashMap<K,V> extends ExtendedSegmentedMap<Hashtable,K,V> implements Map<K,V> {
 
     public ExtendedSegmentedHashMap(FactoryIndice factoryIndice) {
-        super(ConcurrentHashMap.class, factoryIndice);
+        super(Hashtable.class, factoryIndice);
     }
 }
