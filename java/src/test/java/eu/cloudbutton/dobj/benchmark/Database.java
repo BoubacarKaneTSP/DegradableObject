@@ -980,7 +980,7 @@ public class Database {
         mapProfiles.compute(user, (usr, profile) -> {
             byte[] bytesOfMessage = null;
             try {
-                bytesOfMessage = Integer.toString(profile).getBytes("UTF-8");
+                bytesOfMessage = Integer.toString(usr.hashCode()).getBytes("UTF-8");
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 return md.digest(bytesOfMessage).length;
             } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {

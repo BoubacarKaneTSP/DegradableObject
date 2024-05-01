@@ -9,10 +9,10 @@ benchmarkTime=20
 warmingUpTime=20
 #nbUsersInit=1000
 nbHashCode=10000000
-nbOps=100000000
+nbOps=1000000
 # ADD, FOLLOW/UNFOLLOW, TWEET, READ, GROUP, PROFILE
 ratio="10 10 30 50 0 0"
-# ratio="5 10 20 45 5 15"
+# ratio="5 10 30 40 5 5"
 # ratio="0 0 0 0 0 100"
 # ratio="0 0 99 1 0 0"
 # ratio="10 20 0 0 30 40"
