@@ -106,7 +106,7 @@ public class Database {
         localUsersUsageProbability = new ConcurrentHashMap<>();
         localUsersUsageProbabilityRange = new ConcurrentHashMap<>();
         nbUsers = nbUserInit;
-        keyGenerator = new SimpleKeyGenerator(Integer.MAX_VALUE);
+        keyGenerator = new SimpleKeyGenerator();
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
@@ -133,8 +133,8 @@ public class Database {
             mapUserToAdd.put(i, new ArrayList<>());
         }
 
-        // executorService = Executors.newFixedThreadPool(nbThread);
-        executorService = Executors.newVirtualThreadPerTaskExecutor();
+        executorService = Executors.newFixedThreadPool(nbThread);
+        // executorService = Executors.newVirtualThreadPerTaskExecutor();
 
         this.alpha = alpha;
 
@@ -458,11 +458,11 @@ public class Database {
             if (localSetUser.add(user)) {
                 assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
                 mapUserToAdd.get(indiceThread).add(user);
-                mapUserToIndiceThread.put(user,indiceThread);
+                mapUserToIndiceThread.put(user, indiceThread);
                 mapListUserFollow.put(user, new LinkedList<>());
 
                 mapIndiceToKey.put(i, user);
-                mapKeyToIndice.put(user,i);
+                mapKeyToIndice.put(user, i);
 
                 tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
@@ -921,19 +921,19 @@ public class Database {
     }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
+        mapFollowers.put(user, Factory.createSet(typeSet));
         mapFollowing.put(user, Factory.createSet(typeSet));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
         mapProfiles.put(user, 0);
-        mapFollowers.put(user, Factory.createSet(typeSet));
         mapCommunityStatus.put(user, 0);
     }
 
     public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
         mapFollowers.put(user, dummySet);
-        mapFollowing.put(user, dummySet);
-        mapTimelines.put(user, dummyTimeline);
-        mapProfiles.put(user, 0);
-        mapCommunityStatus.put(user, 0);
+//        mapFollowing.put(user, dummySet);
+//        mapTimelines.put(user, dummyTimeline);
+//        mapProfiles.put(user, 0);
+//        mapCommunityStatus.put(user, 0);
     }
 
     public void removeUser(Key user){

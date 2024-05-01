@@ -213,6 +213,8 @@ public class Factory {
 
         switch (map){
 
+            case "HashMap":
+                return new HashMap<>();
             case "SegmentedHashMap":
                 return new SegmentedHashMap<>();
             case "SegmentedSkipListMap":

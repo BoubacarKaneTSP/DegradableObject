@@ -28,14 +28,12 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     }
 
     @Override
+    @ForceInline
     public final T segmentFor(Object x) {
-        SegmentAware obj = (SegmentAware) x;
-        Integer indice = obj.getReference().get();
+        Integer indice = ((SegmentAware) x).getReference().get();
         if (indice == null){
             indice = segmentationIndice.get();
-            if (!obj.getReference().set(indice)){
-                assert false : x;
-            }
+            ((SegmentAware)x).getReference().set(indice);
         }
         return segments.get(indice);
     }

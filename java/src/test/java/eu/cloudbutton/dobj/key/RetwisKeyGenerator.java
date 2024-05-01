@@ -105,7 +105,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
         private long hash;
 
         CollidingKey(long tid, long id, long hash, int max_hashes_per_thread) {
-            super(tid,id, max_hashes_per_thread);
+            super(tid,id);
             this.hash = hash;
         }
 

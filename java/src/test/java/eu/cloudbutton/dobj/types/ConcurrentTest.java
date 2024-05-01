@@ -42,7 +42,7 @@ public class ConcurrentTest {
         int nbIteration = 10000;
         Callable<Void> callable = () -> {
             for (int i = 0; i < nbIteration; i++) {
-                ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
+                ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i);
 
                 obj.put(key, Thread.currentThread().getName());
                 Map<ThreadLocalKey, String> map = obj.segmentFor(key);
@@ -70,7 +70,7 @@ public class ConcurrentTest {
         int nbIteration = 100;
         Callable<Void> callable = () -> {
             for (int i = 0; i < nbIteration; i++) {
-                ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
+                ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i);
 
                 obj.add(key);
                 Set<ThreadLocalKey> set = obj.segmentFor(key);
@@ -99,13 +99,13 @@ public class ConcurrentTest {
         int nbIteration = 10000;
         Callable<Void> callable = () -> {
             random.set(ThreadLocalRandom.current());
-            ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), 0, nbIteration);
+            ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), 0);
             map.put(key, 0);
             list.add(key);
             assert map.get(key) == 0 : "error with put method";
 
             for (int i = 0; i < nbIteration; i++) {
-                key = new ThreadLocalKey(Thread.currentThread().getId(), i, nbIteration);
+                key = new ThreadLocalKey(Thread.currentThread().getId(), i);
                 map.put(key, i);
                 list.add(key);
 

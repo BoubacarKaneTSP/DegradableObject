@@ -68,9 +68,8 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
 
     @Override
     public Set<K> keySet() {
-        List<Set<K>> sets = new ArrayList<>();
-        segments().stream().forEach(segment -> sets.add(segment.keySet()));
-        Set<K> ret = new ImmutableComposedSet<>(sets);
+        Set<K> ret = new HashSet<>();
+        segments().stream().forEach(segment -> ret.addAll(segment.keySet()));
         return ret;
     }
 

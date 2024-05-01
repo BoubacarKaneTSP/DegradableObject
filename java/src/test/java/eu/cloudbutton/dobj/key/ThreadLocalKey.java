@@ -10,9 +10,9 @@ public class ThreadLocalKey extends SegmentAware implements Key, Comparable<Thre
     public long tid;
     public long id;
 
-    public ThreadLocalKey(long tid, long id, int max_key_per_thread) {
+    public ThreadLocalKey(long tid, long id) {
         this.tid = tid;
-        this.id = id% max_key_per_thread;
+        this.id = id;
     }
 
     @Override

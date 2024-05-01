@@ -63,9 +63,7 @@ public class SetTest {
             try {
                 List<Key> list = new ArrayList<>();
                 for (int i = 0; i < ITEMS_PER_THREAD; i++) {
-                    for(;;) {
-                        if (list.add(generator.nextKey())) break;
-                    }
+                    for(;;) {if (list.add(generator.nextKey())) break;}
                 }
                 list.stream().forEach(x -> set.add(x));
                 assertEquals(set.containsAll(list), true);
@@ -78,14 +76,14 @@ public class SetTest {
 
         AtomicInteger nbElement = new AtomicInteger();
         set.stream().forEach(x -> nbElement.getAndIncrement());
-        assertEquals(nbElement.get() == ITEMS_PER_THREAD * parallelism,true, ""+nbElement);
+        assertEquals(nbElement.get() == ITEMS_PER_THREAD * parallelism,true);
         assertEquals(nbElement.get(), set.size());
 
         callable = () -> {
             try {
                 List<Key> list = new ArrayList<>();
                 for (int i = 0; i < ITEMS_PER_THREAD; i++) {
-                    list.add(generator.nextKey());
+                    for(;;) { if (list.add(generator.nextKey())) break;}
                 }
                 for (int i = 0; i < ITEMS_PER_THREAD; i++) {
                     set.remove(list.get(i));
