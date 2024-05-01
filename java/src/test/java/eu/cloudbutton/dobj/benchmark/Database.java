@@ -930,10 +930,10 @@ public class Database {
 
     public void addUser(Key user, Set<Key> dummySet, Timeline<String> dummyTimeline) {
         mapFollowers.put(user, dummySet);
-//        mapFollowing.put(user, dummySet);
-//        mapTimelines.put(user, dummyTimeline);
-//        mapProfiles.put(user, 0);
-//        mapCommunityStatus.put(user, 0);
+        mapFollowing.put(user, dummySet);
+        mapTimelines.put(user, dummyTimeline);
+        mapProfiles.put(user, 0);
+        mapCommunityStatus.put(user, 0);
     }
 
     public void removeUser(Key user){

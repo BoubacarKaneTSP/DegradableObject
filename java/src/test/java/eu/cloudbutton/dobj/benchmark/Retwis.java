@@ -614,7 +614,7 @@ public class Retwis {
                 switch (type) {
                     case ADD:
                         dummy = dummies.get(nextDummy++ % MAX_DUMMY_USERS_PER_THREAD);
-                        database.addUser(dummy,Collections.emptySet(),null);
+                        database.addOriginalUser(dummy);
                         database.removeUser(dummy);
                         break;
                     case FOLLOW:
