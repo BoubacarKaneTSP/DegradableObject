@@ -2,6 +2,9 @@ package eu.cloudbutton.dobj.utils;
 import jdk.internal.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class Helpers {
 
@@ -21,7 +24,7 @@ public class Helpers {
         return UNSAFE;
     }
 
-    static String toString(Object[] a, int size, int charLength) {
+    public static String toString(Object[] a, int size, int charLength) {
         // assert a != null;
         // assert size > 0;
 
@@ -43,5 +46,21 @@ public class Helpers {
         chars[j] = ']';
         // assert j == chars.length - 1;
         return new String(chars);
+    }
+
+    public static void executeAll(int parallelism, Callable<Void> callable) {
+        try {
+            ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+            List<Future<Void>> futures = new ArrayList<>();
+                for (int i = 0; i < parallelism; i++) {
+                    futures.add(executor.submit(callable));
+                }
+                for (Future<Void> future : futures) {
+                        future.get();
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }

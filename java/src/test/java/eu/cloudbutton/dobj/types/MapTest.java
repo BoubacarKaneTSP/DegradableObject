@@ -35,7 +35,7 @@ public class MapTest {
 //        Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap");
 //        factory.setFactoryMap(cls);
 //        doAdd(factory.getMap());
-        testSWMR(Factory.createMap("SegmentedHashMap", Runtime.getRuntime().availableProcessors()));
+        testSWMR(Factory.createMap("SegmentedHashMap"));
 //        testSWMR(factory.getMap());
 //        cls = Class.forName("eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap");
 //        factory.setFactoryMap(cls);
@@ -52,7 +52,7 @@ public class MapTest {
     @Test
     void iterator() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        doAdd(Factory.createMap("SegmentedHashMap", Runtime.getRuntime().availableProcessors()));
+        doAdd(Factory.createMap("SegmentedHashMap"));
     }
 
     private void doAdd(Map map){

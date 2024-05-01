@@ -163,7 +163,7 @@ public class Microbenchmark {
                      ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 //                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-                    object = Factory.createObject(type, factoryIndice);
+                    object = Factory.createObject(type);
 
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread + 1); // +1 for the thread that fill the object

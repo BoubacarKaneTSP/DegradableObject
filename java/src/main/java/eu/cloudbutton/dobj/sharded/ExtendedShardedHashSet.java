@@ -1,16 +1,14 @@
 package eu.cloudbutton.dobj.sharded;
 
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
-import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class ExtendedShardedHashSet<E> extends ExtendedSegmentation<HashSet> implements Set<E> {
 
-    public ExtendedShardedHashSet(FactoryIndice factoryIndice){
-        super(HashSet.class, factoryIndice);
+    public ExtendedShardedHashSet(){
+        super(HashSet.class);
     }
 
     @Override

@@ -1,13 +1,8 @@
 package eu.cloudbutton.dobj.utils;
 
-import eu.cloudbutton.dobj.incrementonly.BoxedLong;
-import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import jdk.internal.misc.CarrierThreadLocal;
 import jdk.internal.vm.annotation.ForceInline;
-import sun.misc.Unsafe;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,7 +14,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     static private CarrierThreadLocal<Integer> segmentationIndice = new CarrierThreadLocalWithInitial(
             () -> {return counter.getAndIncrement();});
 
-    public ExtendedSegmentation(Class<T> clazz, FactoryIndice factoryIndice) {
+    public ExtendedSegmentation(Class<T> clazz) {
         List<T> list = new ArrayList<>();
         for (int i=0; i<Runtime.getRuntime().availableProcessors(); i++) {
             try {

@@ -59,7 +59,7 @@ public class SegmentedCollection<T extends Collection,E> extends BaseSegmentatio
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return segments().stream().allMatch(segment -> segment.containsAll(c));
+        return c.stream().allMatch(o -> this.contains(o));
     }
 
     @Override

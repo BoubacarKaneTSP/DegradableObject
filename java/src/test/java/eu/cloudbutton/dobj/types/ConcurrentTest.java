@@ -2,11 +2,9 @@ package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.utils.FactoryIndice;
-import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
-import eu.cloudbutton.dobj.swsr.SWSRHashSet;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -33,9 +31,9 @@ public class ConcurrentTest {
 
     @Test
     void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
-        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap", factoryIndice));
-        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet" , factoryIndice));
-        concurrentSWMRMapTest(Factory.createMap("SegmentedHashMap", nbThread));
+        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap"));
+        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet"));
+        concurrentSWMRMapTest(Factory.createMap("SegmentedHashMap"));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {

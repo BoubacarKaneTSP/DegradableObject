@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashSet;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import eu.cloudbutton.dobj.utils.NonLinearizable;
@@ -14,8 +13,8 @@ import java.util.Set;
 
 public class ExtendedSegmentedHashSet<E extends Comparable<E>> extends ExtendedSegmentation<SWMRHashSet> implements Set<E> {
 
-    public ExtendedSegmentedHashSet(FactoryIndice factoryIndice){
-        super(SWMRHashSet.class, factoryIndice);
+    public ExtendedSegmentedHashSet(){
+        super(SWMRHashSet.class);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class ExtendedSegmentedHashSet<E extends Comparable<E>> extends ExtendedS
 
     @Override
     public boolean contains(Object o) {
-        throw new UnsupportedOperationException();
+        return segmentFor(o).contains(o);
     }
 
     @NotNull
@@ -76,7 +75,7 @@ public class ExtendedSegmentedHashSet<E extends Comparable<E>> extends ExtendedS
 
     @Override
     public boolean containsAll(@NotNull Collection<?> collection) {
-        throw new UnsupportedOperationException();
+        return collection.stream().allMatch(x -> segmentFor(x).contains(x));
     }
 
     @Override
@@ -96,6 +95,6 @@ public class ExtendedSegmentedHashSet<E extends Comparable<E>> extends ExtendedS
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        segments().stream().forEach(s->s.clear());
     }
 }

@@ -624,8 +624,9 @@ public class Retwis {
                     user = users.get(nextUser++ % MAX_USERS_PER_THREAD);
                     switch (typeComputed) {
                         case ADD:
-                            database.addUser(dummyUser, dummySet, dummyTimeline);
-                            database.removeUser(dummyUser);
+                            // database.addUser(dummyUser, dummySet, dummyTimeline);
+                            database.addOriginalUser(user);
+                            database.removeUser(user);
                             break;
                         case FOLLOW:
                         case UNFOLLOW:

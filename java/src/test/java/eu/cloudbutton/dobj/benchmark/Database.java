@@ -88,15 +88,15 @@ public class Database {
         this.random = ThreadLocal.withInitial(() -> new Random(94));
 
         if (typeMap.contains("Extended")){
-            mapFollowers = Factory.createMap(typeMap, factoryIndice);
-            mapFollowing = Factory.createMap(typeMap, factoryIndice);
-            mapTimelines = Factory.createMap(typeMap, factoryIndice);
-            mapProfiles = Factory.createMap(typeMap, factoryIndice);
+            mapFollowers = Factory.createMap(typeMap);
+            mapFollowing = Factory.createMap(typeMap);
+            mapTimelines = Factory.createMap(typeMap);
+            mapProfiles = Factory.createMap(typeMap);
         }else{
-            mapFollowers = Factory.createMap(typeMap, nbThread);
-            mapFollowing = Factory.createMap(typeMap, nbThread);
-            mapTimelines = Factory.createMap(typeMap, nbThread);
-            mapProfiles = Factory.createMap(typeMap, nbThread);
+            mapFollowers = Factory.createMap(typeMap);
+            mapFollowing = Factory.createMap(typeMap);
+            mapTimelines = Factory.createMap(typeMap);
+            mapProfiles = Factory.createMap(typeMap);
         }
 
         community = new ConcurrentHashSet<>();
@@ -921,10 +921,10 @@ public class Database {
     }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException {
-        mapFollowing.put(user, Factory.createSet(typeSet, factoryIndice));
+        mapFollowing.put(user, Factory.createSet(typeSet));
         mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
         mapProfiles.put(user, 0);
-        mapFollowers.put(user, Factory.createSet(typeSet, factoryIndice));
+        mapFollowers.put(user, Factory.createSet(typeSet));
         mapCommunityStatus.put(user, 0);
     }
 

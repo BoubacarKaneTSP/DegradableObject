@@ -20,7 +20,6 @@ import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import eu.cloudbutton.dobj.segmented.*;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.sharded.*;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -70,16 +69,16 @@ public class Factory {
         return constructorList.newInstance();
     }
 
-    public static Object createObject(String object, FactoryIndice factoryIndice) throws ClassNotFoundException{
+    public static Object createObject(String object) throws ClassNotFoundException{
 
         if (object.contains("Counter") || object.contains("LongAdder"))
             return createCounter(object);
         else if (object.contains("Set"))
-            return createSet(object, factoryIndice);
+            return createSet(object);
         else if (object.contains("Map"))
-            return createMap(object, factoryIndice);
+            return createMap(object);
         else if (object.contains("List"))
-            return createList(object, factoryIndice.getParallelism());
+            return createList(object);
         else if (object.contains("Queue"))
             return createQueue(object);
         else if (object.contains("Noop"))
@@ -123,7 +122,7 @@ public class Factory {
 
     /* List */
 
-    public static List createList(String list, int parallelism) throws ClassNotFoundException {
+    public static List createList(String list) throws ClassNotFoundException {
 
         switch (list){
 
@@ -144,7 +143,7 @@ public class Factory {
 
     /* Set */
 
-    public static Set createSet(String set, FactoryIndice factoryIndice) throws ClassNotFoundException {
+    public static Set createSet(String set) throws ClassNotFoundException {
 
         switch (set){
             case "HashSet":
@@ -171,9 +170,9 @@ public class Factory {
             case "SetMWSR":
                 return new SetMWSR<>();
             case "ExtendedSegmentedHashSet":
-                return new ExtendedSegmentedHashSet<>(factoryIndice);
+                return new ExtendedSegmentedHashSet<>();
             case "ExtendedShardedHashSet":
-                return new ExtendedShardedHashSet<>(factoryIndice);
+                return new ExtendedShardedHashSet<>();
             default:
                 throw new ClassNotFoundException();
         }
@@ -210,7 +209,7 @@ public class Factory {
 
     /* Map */
 
-    public static Map createMap(String map, int parallelism) throws ClassNotFoundException {
+    public static Map createMap(String map) throws ClassNotFoundException {
 
         switch (map){
 
@@ -233,22 +232,14 @@ public class Factory {
                 return new MapAddIntensive<>();
             case "SWMRHashMap":
                 return new SWMRHashMap();
-            default:
-                throw new ClassNotFoundException();
-        }
-    }
-
-    public static Map createMap(String map, FactoryIndice factoryIndice) throws ClassNotFoundException {
-
-        switch (map){
             case "ExtendedSegmentedHashMap":
-                return new ExtendedSegmentedHashMap<>(factoryIndice);
+                return new ExtendedSegmentedHashMap<>();
             case "ExtendedSegmentedConcurrentHashMap":
-                return new ExtendedSegmentedConcurrentHashMap<>(factoryIndice);
+                return new ExtendedSegmentedConcurrentHashMap<>();
             case "ExtendedSegmentedSkipListMap":
-                return new ExtendedSegmentedSkipListMap<>(factoryIndice);
+                return new ExtendedSegmentedSkipListMap<>();
             case "ExtendedSegmentedTreeMap":
-                return new ExtendedSegmentedTreeMap<>(factoryIndice);
+                return new ExtendedSegmentedTreeMap<>();
             default:
                 throw new ClassNotFoundException();
         }

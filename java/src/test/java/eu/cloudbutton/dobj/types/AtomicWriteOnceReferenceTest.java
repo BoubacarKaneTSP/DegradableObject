@@ -26,9 +26,9 @@ public class AtomicWriteOnceReferenceTest {
     @Test
     private void setTest() throws ClassNotFoundException {
 
-        AtomicWriteOnceReference<Integer> reference = (AtomicWriteOnceReference<Integer>) factory.createObject("AtomicWriteOnceReference", new FactoryIndice(nbThread));
+        AtomicWriteOnceReference<Integer> reference = (AtomicWriteOnceReference<Integer>) factory.createObject("AtomicWriteOnceReference");
 
-        AtomicReference<Integer> atomicReference = (AtomicReference<Integer>) factory.createObject("AtomicReference", new FactoryIndice(nbThread));
+        AtomicReference<Integer> atomicReference = (AtomicReference<Integer>) factory.createObject("AtomicReference");
 
         reference.set(10);
         atomicReference.set(10);
