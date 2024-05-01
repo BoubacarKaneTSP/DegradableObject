@@ -11,6 +11,7 @@ import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import lombok.Getter;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -31,6 +32,8 @@ public class Database {
     private final String typeSet;
     private final String typeQueue;
     private final String typeCounter;
+    private final Factory factory;
+
     private final int nbThread;
     private final int nbUsers;
     private Map<Key, Integer> mapProfiles;
@@ -83,20 +86,21 @@ public class Database {
         this.typeSet = typeSet;
         this.typeQueue = typeQueue;
         this.typeCounter = typeCounter;
+        this.factory = new Factory(typeMap,typeSet,typeQueue,typeCounter,"List");
+
         this.nbThread = nbThread;
         this.factoryIndice = new FactoryIndice(nbThread);
         this.random = ThreadLocal.withInitial(() -> new Random(94));
 
-        if (typeMap.contains("Extended")){
-            mapFollowers = Factory.createMap(typeMap);
-            mapFollowing = Factory.createMap(typeMap);
-            mapTimelines = Factory.createMap(typeMap);
-            mapProfiles = Factory.createMap(typeMap);
-        }else{
-            mapFollowers = Factory.createMap(typeMap);
-            mapFollowing = Factory.createMap(typeMap);
-            mapTimelines = Factory.createMap(typeMap);
-            mapProfiles = Factory.createMap(typeMap);
+        try {
+            mapFollowers = factory.getMap();
+            mapFollowing = factory.getMap();
+            mapTimelines = factory.getMap();
+            mapProfiles = factory.getMap();
+            counter = factory.getCounter();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         community = new ConcurrentHashSet<>();
@@ -110,7 +114,6 @@ public class Database {
         listLocalUser = new ArrayList<>();
         listLocalUsersFollow = new ConcurrentHashMap<>();
         count = new AtomicInteger();
-        counter = Factory.createCounter(typeCounter);
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
@@ -557,7 +560,7 @@ public class Database {
         System.out.println("End loading graph");
     }
 
-    private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException {
+    private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Set<Key> setUser = new HashSet<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
@@ -920,10 +923,10 @@ public class Database {
         return mapFollowers.get(usr1).contains(usr2) && mapFollowers.get(usr2).contains(usr1);
     }
 
-    public void addOriginalUser(Key user) throws ClassNotFoundException {
-        mapFollowers.put(user, Factory.createSet(typeSet));
-        mapFollowing.put(user, Factory.createSet(typeSet));
-        mapTimelines.put(user, new Timeline(Factory.createQueue(typeQueue)));
+    public void addOriginalUser(Key user) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        mapFollowers.put(user, factory.getSet());
+        mapFollowing.put(user, factory.getSet());
+        mapTimelines.put(user, new Timeline(factory.getQueue()));
         mapProfiles.put(user, 0);
         mapCommunityStatus.put(user, 0);
     }
@@ -1030,6 +1033,11 @@ public class Database {
                 + ", avg timeline:" + wall
                 +", max timeline:" + max_wall
         );
+
+        if (mapFollowers instanceof ConcurrentHashMap) {
+            ConcurrentHashMap map = (ConcurrentHashMap) mapFollowers;
+
+        }
         return builder.toString();
     }
 

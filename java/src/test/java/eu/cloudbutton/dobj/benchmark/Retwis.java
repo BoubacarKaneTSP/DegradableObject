@@ -1,8 +1,5 @@
 package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Timeline;
-import eu.cloudbutton.dobj.incrementonly.BoxedLong;
-import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import eu.cloudbutton.dobj.key.Key;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -22,19 +19,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
+import static eu.cloudbutton.dobj.benchmark.Retwis.operationType.*;
+
 public class Retwis {
 
-    private static final int ADD = 0, FOLLOW = 1, UNFOLLOW = 2, TWEET = 3, READ = 4, COUNT = 5, GROUP = 6, PROFILE = 7;
-    private static final Map<Integer, String> mapIntOptoStringOp = new HashMap<>(){{
-        put(ADD, "ADD");
-        put(FOLLOW, "FOLLOW");
-        put(UNFOLLOW, "UNFOLLOW");
-        put(TWEET, "TWEET");
-        put(READ, "READ");
-        put(COUNT, "COUNT");
-        put(GROUP, "GROUP");
-        put(PROFILE, "PROFILE");
-    }};
+    enum operationType {
+        ADD,
+        REMOVE,
+        FOLLOW,
+        UNFOLLOW,
+        TWEET,
+        READ,
+        COUNT,
+        GROUP,
+        PROFILE
+    }
 
     @Option(name="-set", required = true, usage = "type of Set")
     private String typeSet;
@@ -109,11 +108,10 @@ public class Retwis {
     private int _nbItems = Integer.MAX_VALUE;
 
     private AtomicBoolean flagComputing,flagWarmingUp;
-
-    private List<Counter> nbOperations;
-    private List<AtomicLong> timeOperations;
-    private Map<Integer, List<Long>> timeDurations;
     private AtomicLong totalTime;
+
+    private Map<operationType,AtomicInteger> nbOperations;
+    private Map<operationType, Queue<Long>> timeDurations;
     private Queue<String> userUsageDistribution;
     private LongAdder queueSizes;
 //    private Long nbUserFinal;
@@ -225,23 +223,18 @@ public class Retwis {
                     System.out.println();
                 }
 
-                nbOperations = new CopyOnWriteArrayList<>();
-                timeOperations = new CopyOnWriteArrayList<>();
                 userUsageDistribution = new ConcurrentLinkedQueue<>();
+                nbOperations = new ConcurrentHashMap<>();
+                Arrays.stream(operationType.values()).forEach(t -> nbOperations.put(t, new AtomicInteger()));
+                timeDurations = new ConcurrentHashMap<>();
+                Arrays.stream(operationType.values()).forEach(t -> timeDurations.put(t, new ConcurrentLinkedQueue<>()));
+
 //                timeDurations = new ConcurrentHashMap<>();
                 queueSizes = new LongAdder();
 //                nbUserFinal = 0L;
 //                nbTweetFinal = 0L;
                 totalTime = new AtomicLong();
                 completionTime = 0;
-
-
-                for (int op: mapIntOptoStringOp.keySet()) {
-//                    nbOperations.add(op, Factory.createCounter(typeCounter));
-                    nbOperations.add(op, new CounterIncrementOnly());
-                    timeOperations.add(op, new AtomicLong());
-//                    timeDurations.put(op, new CopyOnWriteArrayList<>());
-                }
 
                 for (int nbCurrTest = 1; nbCurrTest <= _nbTest; nbCurrTest++) {
 
@@ -303,8 +296,9 @@ public class Retwis {
                     System.out.println();
 
                 if (_gcinfo || _p) {
-                    double throughput = (double)(_nbOps * 1_000_000) / (double) (completionTime) ;
-                    System.out.println("completion time : " + (double) completionTime / (double) 1_000_000_000 + " seconds ("+throughput+" Kops/s)");
+                    double throughput = Math.ceil((double)(_nbOps * 1_000_000) / (double) (completionTime) );
+                    double throughput_per_process = Math.ceil(throughput / _nbThreads);
+                    System.out.println("completion time : " + (double) completionTime / (double) 1_000_000_000 + " seconds ("+throughput+" Kops/s, "+throughput_per_process+ "Kops/s per process)");
                     System.out.println("total time : " + (double) totalTime.get() / (double) 1_000_000_000 + " seconds");
                     System.out.println("benchmark time : " + (double) (System.nanoTime()-benchmarkTime) / (double) 1_000_000_000 + " seconds");
                     System.out.print(database.statistics());
@@ -313,11 +307,6 @@ public class Retwis {
                 long nbOpTotal = 0, timeTotalComputed = 0;
 
                 int unit = nbCurrThread;
-
-                for (int op: mapIntOptoStringOp.keySet()) {
-                    nbOpTotal += nbOperations.get(op).read();
-                    timeTotalComputed += timeOperations.get(op).get();
-                }
 
                 if (_breakdown && !_completionTime){
 
@@ -336,13 +325,12 @@ public class Retwis {
                     }
                     if (_p){
                         System.out.println("Stats for each op over (" + _nbTest + ") tests :");
-                        for (int op: mapIntOptoStringOp.keySet()) {
-                            int nbSpace = 10 - mapIntOptoStringOp.get(op).length();
-                            System.out.print("==> - " + mapIntOptoStringOp.get(op));
+                        for (operationType op: operationType.values()) {
+                            int nbSpace = 10 - op.toString().length();
+                            System.out.print("==> - " + op);
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
-                            System.out.println(": #ops : " + nbOperations.get(op).read()
-                                    + ", proportion : " + (int) ((nbOperations.get(op).read() / (double) nbOpTotal) * 100) + "%"
-                                    + ", time spent : " + (timeOperations.get(op).get()/nbCurrThread) / 1_000 + " us");
+                            System.out.println(": #ops : " + nbOperations.get(op).get()
+                                    + ", proportion : " + (int) ((nbOperations.get(op).get() / (double) nbOpTotal) * 100) + "%");
                         }
 
                         System.out.println("[Total (op): " + nbOpTotal);
@@ -408,7 +396,7 @@ public class Retwis {
         List<Key> users, usersToFollow, dummies;
         Key user, userToFollow, dummy;
         int nextUser, nextUserToFollow, nextDummy;
-        List<Integer> listOperationToDo;
+        List<operationType> listOperationToDo;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) {
             this.random = ThreadLocalRandom.current();
@@ -425,7 +413,7 @@ public class Retwis {
         public Void call(){
 
             try{
-                int type;
+                operationType type;
                 int sizeOpToDo = 10_000;
 
                 myId.set(database.getCount().getAndIncrement());
@@ -452,15 +440,6 @@ public class Retwis {
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
-//                System.out.println("done following");
-
-                Map<Integer, BoxedLong> timeLocalOperations = new HashMap<>();
-//                Map<Integer, List<Long>> timeLocalDurations = new HashMap<>();
-
-                for (int op: mapIntOptoStringOp.keySet()){
-                    timeLocalOperations.put(op, new BoxedLong());
-//                    timeLocalDurations.put(op, new ArrayList<>());
-                }
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
@@ -560,16 +539,6 @@ public class Retwis {
                     latchFillCompletionTime.await();
                 }
 
-                if (!_completionTime){
-                    for (int op: mapIntOptoStringOp.keySet()){
-//                    nbOperations.get(op).addAndGet(nbLocalOperations.get(op).val);
-                        timeOperations.get(op).addAndGet(timeLocalOperations.get(op).val);
-//                    timeDurations.get(op).addAll(timeLocalDurations.get(op));
-                    }
-                }
-
-//                userUsageDistribution.addAll(localUserUsageDistribution);
-
             } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException();
@@ -583,13 +552,16 @@ public class Retwis {
 //            System.nanoTime();
         }
 
-        public int chooseOperation(){
-            int type;
-
+        public operationType chooseOperation(){
+            operationType type;
             int val = random.nextInt(100);
-            if(val < ratiosArray[0]){ // add
-                type = ADD;
-            }else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
+            if (val < ratiosArray[0]){ // add
+                if (val%2 == 0){ //follow
+                    type = ADD;
+                }else{ //unfollow
+                    type = REMOVE;
+                }
+            } else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
                 if (val%2 == 0){ //follow
                     type = FOLLOW;
                 }else{ //unfollow
@@ -604,23 +576,27 @@ public class Retwis {
             }else{
                 type = PROFILE;
             }
-
             return type;
         }
 
-        public void compute(int type) {
+        public void compute(operationType type) {
             try {
                 user = users.get(nextUser++ % MAX_USERS_PER_THREAD);
                 switch (type) {
                     case ADD:
                         dummy = dummies.get(nextDummy++ % MAX_DUMMY_USERS_PER_THREAD);
                         database.addOriginalUser(dummy);
+                        break;
+                    case REMOVE:
+                        dummy = dummies.get(nextDummy++ % MAX_DUMMY_USERS_PER_THREAD);
                         database.removeUser(dummy);
                         break;
                     case FOLLOW:
-                    case UNFOLLOW:
                         userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_TO_FOLLOW_PER_THREAD);
                         database.followUser(user, userToFollow);
+                        break;
+                    case UNFOLLOW:
+                        userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_TO_FOLLOW_PER_THREAD);
                         database.unfollowUser(user, userToFollow);
                         break;
                     case TWEET:
@@ -735,8 +711,8 @@ public class Retwis {
             PrintWriter printWriter;
             FileWriter fileWriter;
 
-            for (int type: mapIntOptoStringOp.keySet()){
-                fileWriter = new FileWriter("Duration_"+mapIntOptoStringOp.get(type)+"_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
+            for (operationType type: operationType.values()){
+                fileWriter = new FileWriter("Duration_"+type.toString()+"_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
                 printWriter = new PrintWriter(fileWriter);
 
                 map = new HashMap<>();
@@ -854,51 +830,7 @@ public class Retwis {
             printWriter.flush();
             fileWriter.close();
         }
-    }
 
-    private static void performHeapDump(String tag, String when, int nbUser) {
-        System.out.println("Performing heapDump");
-        String jcmdCommand = "jcmd";
-        String processId = getProcessId();
-
-        try {
-            Process process = Runtime.getRuntime().exec(jcmdCommand);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                // Recherche de la ligne contenant le processus Java souhaité
-                if (line.contains(processId)) {
-                    String[] tokens = line.trim().split("\\s+");
-                    String pid = tokens[0];
-                    String heapDumpCommand = "jcmd " + pid + " GC.heap_dump " + "heapdump_"+ when +"_benchmark_" + tag +"_" + nbUser +".hprof";
-
-                    // Exécution de la commande jcmd pour effectuer le heap dump
-                    Process heapDumpProcess = Runtime.getRuntime().exec(heapDumpCommand);
-
-                    // Attente de la fin de l'exécution de la commande
-                    int exitCode = heapDumpProcess.waitFor();
-
-                    if (exitCode == 0) {
-                        System.out.println("Heap dump effectué avec succès !");
-                    } else {
-                        System.out.println("Erreur lors de l'exécution de la commande jcmd.");
-                    }
-
-                    break;
-                }
-            }
-
-            reader.close();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    private static String getProcessId() {
-        String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
-        return processName.split("@")[0];
     }
 
     public void startMonitoring(){

@@ -4,15 +4,16 @@ import eu.cloudbutton.dobj.utils.SegmentAware;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class ThreadLocalKey extends SegmentAware implements Key, Comparable<ThreadLocalKey>{
 
     public long tid;
-    public long id;
+    public String id;
 
     public ThreadLocalKey(long tid, long id) {
         this.tid = tid;
-        this.id = id;
+        this.id = UUID.randomUUID().toString();
     }
 
     @Override
@@ -20,22 +21,21 @@ public class ThreadLocalKey extends SegmentAware implements Key, Comparable<Thre
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ThreadLocalKey that = (ThreadLocalKey) o;
-        return tid == that.tid && id == that.id;
+        return tid == that.tid && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        int hash = (int) (tid + id);
-        return hash;
+        return Objects.hash(tid, id);
     }
 
     @Override
     public int compareTo(@NotNull ThreadLocalKey key) {
-        if (id>key.id) return 1;
-        else if (id< key.id) return -1;
-        else if (tid>key.tid) return 1;
-        else if (tid<key.tid) return -1;
-        return 0;
+        int ret = id.compareTo(key.id);
+        if (ret == 0) {
+            ret = Long.compare(tid, key.tid);
+        }
+        return ret;
     }
 
     @Override

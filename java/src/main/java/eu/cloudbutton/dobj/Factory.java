@@ -34,6 +34,20 @@ public class Factory {
     private Constructor<? extends AbstractQueue> constructorQueue;
     private Constructor<? extends Counter> constructorCounter;
 
+    public Factory() {}
+
+    public Factory(String typeMap, String typeSet, String typeQueue, String typeCounter, String typeList) throws ClassNotFoundException {
+        try {
+            constructorMap = toClass(typeMap).getConstructor();
+            constructorSet = toClass(typeSet).getConstructor();
+            constructorQueue = toClass(typeQueue).getConstructor();
+            constructorCounter = toClass(typeCounter).getConstructor();
+            constructorList = toClass(typeList).getConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void setFactoryMap(Class<? extends AbstractMap> mapClass) throws NoSuchMethodException {
         constructorMap = mapClass.getConstructor();
     }
@@ -70,182 +84,161 @@ public class Factory {
     }
 
     public static Object createObject(String object) throws ClassNotFoundException{
-
-        if (object.contains("Counter") || object.contains("LongAdder"))
-            return createCounter(object);
-        else if (object.contains("Set"))
-            return createSet(object);
-        else if (object.contains("Map"))
-            return createMap(object);
-        else if (object.contains("List"))
-            return createList(object);
-        else if (object.contains("Queue"))
-            return createQueue(object);
-        else if (object.contains("Noop"))
-            return new Noop();
-        else if (object.contains("Reference")) {
-            if (object.equals("AtomicWriteOnceReference"))
-                return new AtomicWriteOnceReference<>();
-            else {
-                try{
-                    return Class.forName("java.util.concurrent.atomic." + object).getConstructor().newInstance();
-                } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                    System.err.println("The class \"" + object + "\" may not exists");
-                    e.printStackTrace();
-                }
-            }
-        }
-        else
-            throw new ClassNotFoundException("The object : "+ object +" may not exists");
-        return null;
+        return newInstance(object);
     }
 
     /* Counter */
-
     public static Counter createCounter(String counter) throws ClassNotFoundException {
-
-        switch (counter){
-
-            case "CounterJUC":
-                return new CounterJUC();
-            case "CounterIncrementOnly":
-                return new CounterIncrementOnly();
-            case "FuzzyCounter":
-                return new FuzzyCounter();
-            case "WrappedLongAdder":
-            case "LongAdder":
-                return new WrappedLongAdder();
-            default:
-                throw new ClassNotFoundException();
-        }
+        return (Counter) newInstance(counter);
     }
 
     /* List */
 
     public static List createList(String list) throws ClassNotFoundException {
-
-        switch (list){
-
-            case "List":
-                return new ListJUC<>();
-            case "DegradableList":
-                return new DegradableList<>();
-            case "LinkedList":
-                return new LinkedList<>();
-            case "ShardedLinkedList":
-                return new ShardedLinkedList<>();
-            case "DegradableLinkedList":
-                return new DegradableLinkedList<>();
-            default:
-                throw new ClassNotFoundException();
-        }
+        return (List) newInstance(list);
     }
 
     /* Set */
 
     public static Set createSet(String set) throws ClassNotFoundException {
-
-        switch (set){
-            case "HashSet":
-                return new HashSet<>();
-            case "SegmentedSkipListSet":
-                return new SegmentedSkipListSet<>();
-            case "SegmentedTreeSet":
-                return new SegmentedTreeSet<>();
-            case "SegmentedHashSet":
-                return new SegmentedHashSet<>();
-            case "ShardedTreeSet":
-                return new ShardedTreeSet<>();
-            case "ShardedHashSet":
-                return new ShardedHashSet<>();
-            case "Set":
-            case "ConcurrentSkipListSet":
-                return new ConcurrentSkipListSet<>();
-            case "ConcurrentHashSet":
-                return new ConcurrentHashSet<>();
-            case "SetReadIntensive":
-                return new SetReadIntensive<>();
-            case "SetAddIntensive":
-                return new SetAddIntensive<>();
-            case "SetMWSR":
-                return new SetMWSR<>();
-            case "ExtendedSegmentedHashSet":
-                return new ExtendedSegmentedHashSet<>();
-            case "ExtendedShardedHashSet":
-                return new ExtendedShardedHashSet<>();
-            default:
-                throw new ClassNotFoundException();
-        }
+        return (Set) newInstance(set);
     }
 
     /* Queue */
 
     public static Queue createQueue(String queue) throws ClassNotFoundException {
-
-        switch (queue){
-
-            case "Queue":
-            case "ConcurrentLinkedQueue":
-                return new ConcurrentLinkedQueue<>();
-            case "Deque":
-                return new ConcurrentLinkedDeque();
-            case "QueueMASP":
-                return new QueueMASP<>();
-            case "DequeMASP":
-                return new DequeMASP<>();
-            case "MapQueue":
-                return new MapQueue<>();
-            case "QueueSASP":
-                return new QueueSASP<>();
-            case "SequentialQueue":
-                return new java.util.LinkedList<>();
-            case "WaitFreeQueue":
-                return new WaitFreeQueue<>();
-            default:
-                throw new ClassNotFoundException();
-
-        }
+       return (Queue) newInstance(queue);
     }
 
     /* Map */
-
     public static Map createMap(String map) throws ClassNotFoundException {
+        return (Map) newInstance(map);
+    }
 
-        switch (map){
-
-            case "HashMap":
-                return new HashMap<>();
-            case "SegmentedHashMap":
-                return new SegmentedHashMap<>();
-            case "SegmentedSkipListMap":
-                return new SegmentedSkipListMap<>();
-            case "SegmentedTreeMap":
-                return new SegmentedTreeMap<>();
-            case "ShardedHashMap":
-                return new ShardedHashMap<>();
-            case "Map":
-            case "ConcurrentHashMap":
-                return new ConcurrentHashMap<>();
-            case "ConcurrentSkipListMap":
-                return new ConcurrentSkipListMap<>();
-            case "MapReadIntensive":
-                return new MapReadIntensive<>();
-            case "MapAddIntensive":
-                return new MapAddIntensive<>();
-            case "SWMRHashMap":
-                return new SWMRHashMap();
-            case "ExtendedSegmentedHashMap":
-                return new ExtendedSegmentedHashMap<>();
-            case "ExtendedSegmentedConcurrentHashMap":
-                return new ExtendedSegmentedConcurrentHashMap<>();
-            case "ExtendedSegmentedSkipListMap":
-                return new ExtendedSegmentedSkipListMap<>();
-            case "ExtendedSegmentedTreeMap":
-                return new ExtendedSegmentedTreeMap<>();
-            default:
-                throw new ClassNotFoundException();
+    public static Object newInstance(String name) {
+        try {
+            return toClass(name).getConstructor().newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    public static Class toClass(String name) throws ClassNotFoundException {
+        switch (name) {
+            // counter
+            case "CounterJUC":
+                return CounterJUC.class;
+            case "CounterIncrementOnly":
+                return CounterIncrementOnly.class;
+            case "FuzzyCounter":
+                return FuzzyCounter.class;
+            case "WrappedLongAdder":
+            case "LongAdder":
+                return WrappedLongAdder.class;
+            // list
+            case "List":
+                return ListJUC.class;
+            case "DegradableList":
+                return DegradableList.class;
+            case "LinkedList":
+                return LinkedList.class;
+            case "ShardedLinkedList":
+                return ShardedLinkedList.class;
+            case "DegradableLinkedList":
+                return DegradableLinkedList.class;
+            // set
+            case "HashSet":
+                return HashSet.class;
+            case "SegmentedSkipListSet":
+                return SegmentedSkipListSet.class;
+            case "SegmentedTreeSet":
+                return SegmentedTreeSet.class;
+            case "SegmentedHashSet":
+                return SegmentedHashSet.class;
+            case "ShardedTreeSet":
+                return ShardedTreeSet.class;
+            case "ShardedHashSet":
+                return ShardedHashSet.class;
+            case "Set":
+            case "ConcurrentSkipListSet":
+                return ConcurrentSkipListSet.class;
+            case "ConcurrentHashSet":
+                return ConcurrentHashSet.class;
+            case "SetReadIntensive":
+                return SetReadIntensive.class;
+            case "SetAddIntensive":
+                return SetAddIntensive.class;
+            case "SetMWSR":
+                return SetMWSR.class;
+            case "ExtendedSegmentedHashSet":
+                return ExtendedSegmentedHashSet.class;
+            case "ExtendedShardedHashSet":
+                return ExtendedShardedHashSet.class;
+            // queue
+            case "Queue":
+            case "ConcurrentLinkedQueue":
+                return ConcurrentLinkedQueue.class;
+            case "Deque":
+                return ConcurrentLinkedDeque.class;
+            case "QueueMASP":
+                return QueueMASP.class;
+            case "DequeMASP":
+                return DequeMASP.class;
+            case "MapQueue":
+                return MapQueue.class;
+            case "QueueSASP":
+                return QueueSASP.class;
+            case "SequentialQueue":
+                return java.util.LinkedList.class;
+            case "WaitFreeQueue":
+                return WaitFreeQueue.class;
+            // map
+            case "HashMap":
+                return HashMap.class;
+            case "SegmentedHashMap":
+                return SegmentedHashMap.class;
+            case "SegmentedSkipListMap":
+                return SegmentedSkipListMap.class;
+            case "SegmentedTreeMap":
+                return SegmentedTreeMap.class;
+            case "ShardedHashMap":
+                return ShardedHashMap.class;
+            case "Map":
+            case "ConcurrentHashMap":
+                return ConcurrentHashMap.class;
+            case "ConcurrentSkipListMap":
+                return ConcurrentSkipListMap.class;
+            case "MapReadIntensive":
+                return MapReadIntensive.class;
+            case "MapAddIntensive":
+                return MapAddIntensive.class;
+            case "SWMRHashMap":
+                return SWMRHashMap.class;
+            case "ExtendedSegmentedHashMap":
+                return ExtendedSegmentedHashMap.class;
+            case "ExtendedSegmentedSkipListMap":
+                return ExtendedSegmentedSkipListMap.class;
+            case "ExtendedSegmentedTreeMap":
+                return ExtendedSegmentedTreeMap.class;
+            // other
+            case "Noop":
+                return Noop.class;
+            case "AtomicWriteOnceReference":
+                return AtomicWriteOnceReference.class;
+            default:
+                return Class.forName("java.util.concurrent.atomic." + name);
+
+        }
+    }
+
 
     public Noop createNoop() {return new Noop(); }
 

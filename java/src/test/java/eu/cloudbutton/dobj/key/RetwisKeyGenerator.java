@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.key;
 
-import nl.peterbloem.powerlaws.DiscreteApproximate;
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.RandomGeneratorFactory;
@@ -112,26 +111,6 @@ public class RetwisKeyGenerator implements KeyGenerator {
         @Override
         public int hashCode() {
             return (int) hash;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CollidingKey that = (CollidingKey) o;
-            return tid == that.tid && id == that.id && hash == that.hash;
-        }
-
-        @Override
-        public int compareTo(@NotNull ThreadLocalKey key) {
-            CollidingKey key1 = (CollidingKey) key;
-            if (id>key1.id) return 1;
-            else if (id<key1.id) return -1;
-            else if (tid>key1.tid) return 1;
-            else if (tid<key1.tid) return -1;
-            else if (hash>key1.hash) return 1;
-            else if (hash<key1.hash) return -1;
-            return 0;
         }
 
         public String toString() {

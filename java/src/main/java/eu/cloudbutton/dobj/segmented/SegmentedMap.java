@@ -2,7 +2,6 @@ package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import eu.cloudbutton.dobj.utils.ImmutableComposedCollection;
-import eu.cloudbutton.dobj.utils.ImmutableComposedSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
