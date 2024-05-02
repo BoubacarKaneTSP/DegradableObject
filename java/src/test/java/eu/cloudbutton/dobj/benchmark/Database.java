@@ -214,7 +214,6 @@ public class Database {
 
         int diag_sum_r = 0, diag_sum_d = 0;
 
-
         for (int i = 0; i < nbUsers; i++) {
             if (reciprocalDegree[i] != 0)
                 diag_sum_r += Math.pow(reciprocalDegree[i],2)/edges_r;
@@ -341,9 +340,8 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        followUser(userA,userB);
-
-                        followUser(userB,userA);
+                        mapFollowing.get(userA).add(userB);
+                        mapFollowing.get(userB).add(userA);
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
                             counter++;
@@ -375,7 +373,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        followUser(userB, userA);
+                        mapFollowing.get(userB).add(userA);
                     }
                 }
 
@@ -391,7 +389,8 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        followUser(userA, userB);
+                        mapFollowing.get(userA).add(userB);
+
                     }
                 }
             }
@@ -416,7 +415,7 @@ public class Database {
         System.out.println("End follow phase");
     }
 
-    private void saveGraph(String fileName, Map<Key,Set<Key>> map){
+    private void saveGraph(String fileName){
         System.out.println("Start saving graph");
         StringBuilder builder = new StringBuilder();
 
@@ -424,7 +423,7 @@ public class Database {
             for (Key userA : mapIndiceToKey.values()){
                 builder.append(mapKeyToIndice.get(userA).toString());
 
-                for (Key userB: map.get(userA)){
+                for (Key userB: mapFollowing.get(userA)){
                     builder.append(" " + mapKeyToIndice.get(userB));
                 }
 
