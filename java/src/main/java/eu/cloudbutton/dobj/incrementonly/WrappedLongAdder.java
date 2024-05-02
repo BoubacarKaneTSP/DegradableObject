@@ -1,8 +1,10 @@
 package eu.cloudbutton.dobj.incrementonly;
 
+import eu.cloudbutton.dobj.types.Counter;
+
 import java.util.concurrent.atomic.LongAdder;
 
-public class WrappedLongAdder extends LongAdder implements Counter{
+public class WrappedLongAdder extends LongAdder implements Counter {
 
     private LongAdder counter;
 

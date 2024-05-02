@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.key;
 
+import com.fasterxml.uuid.Generators;
+import eu.cloudbutton.dobj.juc.ThreadLocalRandom;
 import eu.cloudbutton.dobj.utils.SegmentAware;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,12 +10,12 @@ import java.util.UUID;
 
 public class ThreadLocalKey extends SegmentAware implements Key, Comparable<ThreadLocalKey>{
 
-    public long tid;
-    public String id;
+    public UUID id;
+    public int hash;
 
     public ThreadLocalKey(long tid, long id) {
-        this.tid = tid;
-        this.id = UUID.randomUUID().toString();
+        this.id = Generators.timeBasedGenerator().generate();
+        this.hash = ThreadLocalRandom.current().nextInt(32768);
     }
 
     @Override
@@ -21,25 +23,21 @@ public class ThreadLocalKey extends SegmentAware implements Key, Comparable<Thre
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ThreadLocalKey that = (ThreadLocalKey) o;
-        return tid == that.tid && Objects.equals(id, that.id);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tid, id);
+        return hash; // Objects.hash(id);
     }
 
     @Override
     public int compareTo(@NotNull ThreadLocalKey key) {
-        int ret = id.compareTo(key.id);
-        if (ret == 0) {
-            ret = Long.compare(tid, key.tid);
-        }
-        return ret;
+        return id.compareTo(key.id);
     }
 
     @Override
     public String toString() {
-        return "("+id+","+tid+")";
+        return "("+id+")";
     }
 }

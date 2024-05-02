@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.incrementonly;
+package eu.cloudbutton.dobj.types;
 
 public interface Counter {
     /**

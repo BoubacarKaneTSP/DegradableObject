@@ -23,7 +23,7 @@ public class DegradableQueueTest {
     void offer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ExecutionException, InterruptedException {
         Class cls = Class.forName("eu.cloudbutton.dobj.asymmetric.QueueSASP");
         factory.setFactoryQueue(cls);
-        doOffer(factory.getQueue());
+        doOffer(factory.newQueue());
     }
 
     private static void doOffer(Queue<Integer> queue) throws ExecutionException, InterruptedException {

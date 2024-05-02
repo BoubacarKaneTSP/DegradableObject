@@ -15,29 +15,29 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
 
     @Override
     public int size() {
-        return segments().stream().mapToInt(segment -> segment.size()).sum();
+        return segments.stream().mapToInt(segment -> segment.size()).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        return segments().stream().allMatch(segment -> segment.isEmpty());
+        return segments.stream().allMatch(segment -> segment.isEmpty());
     }
 
     @Override
     public boolean containsKey(Object o) {
-        return segments().stream().anyMatch(m -> m.containsKey(o));
+        return segments.stream().anyMatch(m -> m.containsKey(o));
     }
 
     @Override
     public boolean containsValue(Object o) {
-        return segments().stream().anyMatch(m -> m.containsValue(o));
+        return segments.stream().anyMatch(m -> m.containsValue(o));
     }
 
     @Override
     public V get(Object o) {
         V v = (V) segmentFor(o).get(o);
         if (v!=null) return v;
-        for(Map m: segments()){
+        for(Map m: segments){
             v = (V) m.get(o);
             if (v!=null) break;
         }
@@ -62,13 +62,13 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
 
     @Override
     public void clear() {
-        segments().forEach(Map::clear);
+        segments.forEach(Map::clear);
     }
 
     @Override
     public Set<K> keySet() {
         Set<K> ret = new HashSet<>();
-        segments().stream().forEach(segment -> ret.addAll(segment.keySet()));
+        segments.stream().forEach(segment -> ret.addAll(segment.keySet()));
         return ret;
     }
 
@@ -76,7 +76,7 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
     @Override
     public Collection<V> values() {
         List<Collection<V>> collections = new ArrayList<>();
-        segments().stream().forEach(segment -> collections.add(segment.values()));
+        segments.stream().forEach(segment -> collections.add(segment.values()));
         Collection<V> ret = new ImmutableComposedCollection<>(collections);
         return ret;
     }

@@ -14,7 +14,7 @@ public class ShardedHashSet<E> extends BaseSegmentation<HashSet> implements Set<
     @Override
     public int size() {
         int ret = 0;
-        for(HashSet<E> set: segments()) {
+        for(HashSet<E> set: segments) {
             ret+=set.size();
         }
         return ret;

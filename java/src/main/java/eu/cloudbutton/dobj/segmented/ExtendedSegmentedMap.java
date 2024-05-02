@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentation<T> implements Map<K, V> {
 
@@ -103,27 +104,29 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
     }
 
     public Iterator<K> iterator() {
-        return new KeyIterator(segments());
+        Collection<Map<K,V>> list = new ArrayList<>();
+        segments.stream().forEach(list::add);
+        return new KeyIterator(list);
     }
 
     @Override
-    public int size() { // FIXME prove this is actually linearizable
-        return segments().stream().mapToInt(s -> s.size()).sum();
+    public int size() {
+        return segments.stream().mapToInt(s -> s.size()).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        return segments().stream().allMatch(s -> s.isEmpty());
+        return segments.stream().allMatch(s -> s.isEmpty());
     }
 
     @Override
     public boolean containsKey(Object o) {
-        return segments().stream().anyMatch(s -> s.containsKey(o));
+        return segments.stream().anyMatch(s -> s.containsKey(o));
     }
 
     @Override
     public boolean containsValue(Object o) {
-        return segments().stream().anyMatch(s -> s.containsValue(o));
+        return segments.stream().anyMatch(s -> s.containsValue(o));
     }
 
     @Override
@@ -148,19 +151,19 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
 
     @Override
     public void putAll(@NotNull Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
+        map.forEach((k,v)->{this.put(k,v);});
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        segments.stream().forEach(s -> s.clear());
     }
 
     @NotNull
     @Override
     public Set<K> keySet() {
         Set<K> ret = new HashSet<>();
-        for(Map m: segments()){
+        for(Map m: segments){
             ret.addAll(m.keySet());
         }
         return ret;
@@ -170,7 +173,7 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
     @Override
     public Collection<V> values() {
         List<V> ret = new ArrayList<>();
-        for(Map m: segments()){
+        for(Map m: segments){
             ret.addAll(m.values());
         }
         return ret;
@@ -180,7 +183,7 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
     @Override
     public Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> ret = new HashSet<>();
-        for(Map m: segments()){
+        for(Map m: segments){
             ret.addAll(m.entrySet());
         }
         return ret;

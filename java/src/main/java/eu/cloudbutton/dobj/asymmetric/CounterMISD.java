@@ -1,6 +1,6 @@
 package eu.cloudbutton.dobj.asymmetric;
 
-import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 
 public class CounterMISD extends CounterIncrementOnly implements Counter {

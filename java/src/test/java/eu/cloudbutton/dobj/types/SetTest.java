@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.segmented.SegmentedHashSet;
 import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
 import eu.cloudbutton.dobj.segmented.SegmentedTreeSet;
@@ -14,7 +13,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,8 +30,7 @@ public class SetTest {
             ConcurrentHashSet.class,
             SegmentedHashSet.class,
             SegmentedTreeSet.class,
-            SegmentedSkipListSet.class,
-            ExtendedSegmentedHashSet.class
+            SegmentedSkipListSet.class
     };
 
     @BeforeTest
@@ -50,7 +47,7 @@ public class SetTest {
                 {
                     try {
                         factory.setFactorySet(cls);
-                        doTest(factory.getSet());
+                        doTest(factory.newSet());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

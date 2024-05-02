@@ -114,7 +114,7 @@ public class RetwisKeyGenerator implements KeyGenerator {
         }
 
         public String toString() {
-            return "("+tid+","+id+","+hash+")";
+            return "("+id+","+hash+")";
         }
     }
 }

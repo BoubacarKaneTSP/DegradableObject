@@ -47,7 +47,7 @@ public class MapTest {
                 {
                     try {
                         factory.setFactoryMap(cls);
-                        doTest(factory.getMap());
+                        doTest(factory.newMap());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

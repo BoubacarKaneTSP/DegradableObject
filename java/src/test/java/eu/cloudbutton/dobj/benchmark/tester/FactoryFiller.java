@@ -1,7 +1,7 @@
 package eu.cloudbutton.dobj.benchmark.tester;
 
 import eu.cloudbutton.dobj.Noop;
-import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.RetwisKeyGenerator;

@@ -1,9 +1,8 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.benchmark.tester.*;
-import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -34,6 +33,7 @@ public class Microbenchmark {
     public static int nbCurrentThread;
     public static List<AtomicLong> nbOperations;
     public static List<AtomicLong> timeOperations;
+
 
     @Option(name = "-type", required = true, usage = "type to test")
     private String type;
@@ -157,13 +157,11 @@ public class Microbenchmark {
                     if (_p)
                         System.out.println("Test #" + (_nbTest+1));
 
-                    FactoryIndice factoryIndice = new FactoryIndice(nbCurrentThread + 1); // +1 for the thread that fill the object
-
                     List<Callable<Void>> callables = new ArrayList<>();
                      ExecutorService executor = Executors.newFixedThreadPool(nbCurrentThread);
 //                    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-                    object = Factory.createObject(type);
+                    object = Factory.newObject(type);
 
                     if (object instanceof FuzzyCounter)
                         ((FuzzyCounter) object).setN(nbCurrentThread + 1); // +1 for the thread that fill the object

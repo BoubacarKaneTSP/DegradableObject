@@ -1,10 +1,8 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -15,7 +13,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ConcurrentTest {
 
     private Factory factory;
-    private FactoryIndice factoryIndice;
     private static Integer nbThread;
     private static ExecutorService executor;
 
@@ -24,16 +21,14 @@ public class ConcurrentTest {
         factory = new Factory();
         nbThread = Runtime.getRuntime().availableProcessors();
 //        nbThread = 1;
-        factoryIndice = new FactoryIndice(nbThread);
         executor = Executors.newFixedThreadPool(nbThread);
     }
 
 
     @Test
     void add() throws ExecutionException, InterruptedException, ClassNotFoundException {
-        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.createMap("ExtendedSegmentedHashMap"));
-        addExtendedSegmentedHashSet((ExtendedSegmentedHashSet<ThreadLocalKey>) Factory.createSet("ExtendedSegmentedHashSet"));
-        concurrentSWMRMapTest(Factory.createMap("SegmentedHashMap"));
+        addExtendedSegmentedHashMap((ExtendedSegmentedHashMap<ThreadLocalKey, String>) Factory.newObject("ExtendedSegmentedHashMap"));
+        concurrentSWMRMapTest((Map<ThreadLocalKey, Integer>) Factory.newObject("SegmentedHashMap"));
     }
 
     private static void addExtendedSegmentedHashMap(ExtendedSegmentedHashMap<ThreadLocalKey, String> obj) throws ExecutionException, InterruptedException {
@@ -49,34 +44,6 @@ public class ConcurrentTest {
 
                 for (String s : map.values() ){
                     assert s.equals(Thread.currentThread().getName()) : "Thread : "+ Thread.currentThread().getName() +" => values : " + map.values();
-                }
-
-            }
-            return null;
-        };
-
-        for (int i = 0; i < 20; i++) {
-            futures.add(executor.submit(callable));
-        }
-
-        for (Future<Void> future :futures){
-            future.get();
-        }
-    }
-
-    private static void addExtendedSegmentedHashSet(ExtendedSegmentedHashSet<ThreadLocalKey> obj) throws ExecutionException, InterruptedException {
-        List<Future<Void>> futures = new ArrayList<>();
-
-        int nbIteration = 100;
-        Callable<Void> callable = () -> {
-            for (int i = 0; i < nbIteration; i++) {
-                ThreadLocalKey key = new ThreadLocalKey(Thread.currentThread().getId(), i);
-
-                obj.add(key);
-                Set<ThreadLocalKey> set = obj.segmentFor(key);
-
-                for (ThreadLocalKey k : set){
-                    assert k.tid == Thread.currentThread().getId() : "Reading the wrong segment";
                 }
 
             }

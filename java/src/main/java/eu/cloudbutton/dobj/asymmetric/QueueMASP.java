@@ -35,10 +35,7 @@
 
 package eu.cloudbutton.dobj.asymmetric;
 
-import eu.cloudbutton.dobj.incrementonly.Counter;
-import eu.cloudbutton.dobj.incrementonly.CounterIncrementOnly;
 import jdk.internal.vm.annotation.Contended;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -51,7 +48,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;

@@ -3,14 +3,13 @@ package eu.cloudbutton.dobj.utils;
 
 import jdk.internal.vm.annotation.ForceInline;
 
-import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import jdk.internal.misc.*;
 
 public class BaseSegmentation<T> implements Segmentation<T> {
 
-    private final CopyOnWriteArrayList<T> segments;
+    protected final CopyOnWriteArrayList<T> segments;
     private final CarrierThreadLocal<T> local;
 
     public BaseSegmentation(Class<T> clazz) {
@@ -35,15 +34,9 @@ public class BaseSegmentation<T> implements Segmentation<T> {
     }
 
     @Override
-    @ForceInline
-    public final Collection<T> segments() {
-        return segments;
-    }
-
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        segments().stream().forEach(segment -> builder.append(segment.toString()));
+        segments.stream().forEach(segment -> builder.append(segment.toString()));
         return builder.toString();
     }
 

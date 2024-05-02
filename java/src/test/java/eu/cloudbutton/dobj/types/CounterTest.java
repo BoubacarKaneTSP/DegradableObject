@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.types;
 
-import eu.cloudbutton.dobj.incrementonly.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import eu.cloudbutton.dobj.Factory;
 import org.testng.annotations.BeforeTest;
@@ -43,7 +42,7 @@ public class CounterTest {
 
         cls = Class.forName("eu.cloudbutton.dobj.asymmetric.CounterMISD");
         factory.setFactoryCounter(cls);
-        doIncrement(factory.getCounter());
+        doIncrement(factory.newCounter());
     }
 
     private static void doIncrement(Counter count) throws ExecutionException, InterruptedException {

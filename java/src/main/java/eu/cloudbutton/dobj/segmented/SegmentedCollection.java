@@ -16,23 +16,23 @@ public class SegmentedCollection<T extends Collection,E> extends BaseSegmentatio
 
     @Override
     public int size() {
-        return segments().stream().mapToInt(Collection::size).sum();
+        return segments.stream().mapToInt(Collection::size).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        return segments().stream().allMatch(Collection::isEmpty);
+        return segments.stream().allMatch(Collection::isEmpty);
     }
 
     @Override
     public boolean contains(Object o) {
-        return segments().stream().anyMatch(segment -> segment.contains(o));
+        return segments.stream().anyMatch(segment -> segment.contains(o));
     }
 
     @Override
     public Iterator<E> iterator() {
-        Collection<Iterator<E>> iterators = new ArrayList<>(segments().size());
-        for(Collection<E> set: segments()) {
+        Collection<Iterator<E>> iterators = new ArrayList<>(0);
+        for(Collection<E> set: segments) {
             iterators.add(set.iterator());
         }
         return new ComposedIterator<E>(iterators);
@@ -76,6 +76,6 @@ public class SegmentedCollection<T extends Collection,E> extends BaseSegmentatio
 
     @Override
     public void clear() {
-        segments().stream().forEach(Collection::clear);
+        segments.stream().forEach(Collection::clear);
     }
 }

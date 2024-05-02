@@ -9,22 +9,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExtendedSegmentation<T> implements Segmentation<T>{
 
-    private final List<T> segments;
     static private AtomicInteger counter = new AtomicInteger(0);
     static private CarrierThreadLocal<Integer> segmentationIndice = new CarrierThreadLocalWithInitial(
-            () -> {return counter.getAndIncrement();});
+            () -> counter.getAndIncrement());
+
+    protected final List<T> segments;
 
     public ExtendedSegmentation(Class<T> clazz) {
-        List<T> list = new ArrayList<>();
+        this.segments = new ArrayList<>(0);
         for (int i=0; i<Runtime.getRuntime().availableProcessors(); i++) {
             try {
-                T segment = clazz.getDeclaredConstructor().newInstance();
-                list.add(segment);
+                segments.add(clazz.getDeclaredConstructor().newInstance());
             } catch (Throwable e) {
                 throw new RuntimeException();
             }
         }
-        this.segments = new CopyOnWriteArrayList<>(list);
+        Helpers.getUNSAFE().fullFence();
     }
 
     @Override
@@ -39,15 +39,9 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     }
 
     @Override
-    @ForceInline
-    public final List<T> segments() {
-        return segments;
-    }
-
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        segments().stream().forEach(segment -> builder.append(segment.toString()));
+        segments.stream().forEach(segment -> builder.append(segment.toString()));
         return builder.toString();
     }
 

@@ -1,4 +1,4 @@
-package eu.cloudbutton.dobj.incrementonly;
+package eu.cloudbutton.dobj.juc;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Boubacar Kane
  * */
-public class CounterJUC implements Counter {
+public class Counter implements eu.cloudbutton.dobj.types.Counter {
 
     private final AtomicLong count;
 
@@ -15,18 +15,18 @@ public class CounterJUC implements Counter {
      * Creates a new Counter initialized with the value stored in the specified counter.
      * @param counter The counter whose value is given to the new.
      */
-    public CounterJUC(CounterJUC counter) { count = new AtomicLong(counter.read()); }
+    public Counter(Counter counter) { count = new AtomicLong(counter.read()); }
 
     /**
      * Creates a new Counter initialized with the given initial value.
      * @param initialValue the initial value.
      */
-    public CounterJUC(int initialValue) { count = new AtomicLong(initialValue); }
+    public Counter(int initialValue) { count = new AtomicLong(initialValue); }
 
     /**
      * Creates a new Counter initialized with the initial value 0.
      */
-    public CounterJUC() { count = new AtomicLong(); }
+    public Counter() { count = new AtomicLong(); }
 
     /**
      * Atomically increments the current value of the Counter.

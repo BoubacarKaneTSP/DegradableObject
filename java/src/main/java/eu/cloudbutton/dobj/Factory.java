@@ -20,6 +20,7 @@ import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import eu.cloudbutton.dobj.segmented.*;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.sharded.*;
+import eu.cloudbutton.dobj.types.Counter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -67,52 +68,26 @@ public class Factory {
         constructorQueue = queueClass.getConstructor();
     }
 
-    public Map getMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Map newMap() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorMap.newInstance();
     }
-    public Counter getCounter() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Counter newCounter() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorCounter.newInstance();
     }
-    public Set getSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Set newSet() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorSet.newInstance();
     }
-    public Queue getQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Queue newQueue() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorQueue.newInstance();
     }
-    public List getList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public List newList() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return constructorList.newInstance();
     }
 
-    public static Object createObject(String object) throws ClassNotFoundException{
+    // static
+
+    public static Object newObject(String object) throws ClassNotFoundException{
         return newInstance(object);
-    }
-
-    /* Counter */
-    public static Counter createCounter(String counter) throws ClassNotFoundException {
-        return (Counter) newInstance(counter);
-    }
-
-    /* List */
-
-    public static List createList(String list) throws ClassNotFoundException {
-        return (List) newInstance(list);
-    }
-
-    /* Set */
-
-    public static Set createSet(String set) throws ClassNotFoundException {
-        return (Set) newInstance(set);
-    }
-
-    /* Queue */
-
-    public static Queue createQueue(String queue) throws ClassNotFoundException {
-       return (Queue) newInstance(queue);
-    }
-
-    /* Map */
-    public static Map createMap(String map) throws ClassNotFoundException {
-        return (Map) newInstance(map);
     }
 
     public static Object newInstance(String name) {
@@ -134,8 +109,8 @@ public class Factory {
     public static Class toClass(String name) throws ClassNotFoundException {
         switch (name) {
             // counter
-            case "CounterJUC":
-                return CounterJUC.class;
+            case "juc.Counter":
+                return eu.cloudbutton.dobj.juc.Counter.class;
             case "CounterIncrementOnly":
                 return CounterIncrementOnly.class;
             case "FuzzyCounter":
@@ -178,10 +153,6 @@ public class Factory {
                 return SetAddIntensive.class;
             case "SetMWSR":
                 return SetMWSR.class;
-            case "ExtendedSegmentedHashSet":
-                return ExtendedSegmentedHashSet.class;
-            case "ExtendedShardedHashSet":
-                return ExtendedShardedHashSet.class;
             // queue
             case "Queue":
             case "ConcurrentLinkedQueue":
@@ -211,6 +182,10 @@ public class Factory {
                 return SegmentedTreeMap.class;
             case "ShardedHashMap":
                 return ShardedHashMap.class;
+            case "juc.ConcurrentHashMap":
+                return eu.cloudbutton.dobj.juc.ConcurrentHashMap.class;
+            case "juc.LockBasedJavaHashMap":
+                return eu.cloudbutton.dobj.juc.LockBasedJavaHashMap.class;
             case "Map":
             case "ConcurrentHashMap":
                 return ConcurrentHashMap.class;

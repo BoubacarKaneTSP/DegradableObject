@@ -288,9 +288,10 @@ echo ""
 #  fi
 #done
 
-# Xlog:gc 
-JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --enable-preview"
-JVM_ARGS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED"
+# Xlog:gc
+JVM_EXPORTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.util.random=ALL-UNNAMED"
+JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea ${JVM_EXPORTS}"
+# JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}"
 
 if [[ $typeTest == "Microbenchmark" ]]
 then

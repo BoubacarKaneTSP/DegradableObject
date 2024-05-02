@@ -14,7 +14,7 @@ public class SegmentedOrderedMap<T extends Map, K,V> extends SegmentedMap<T,K,V>
     @Override
     public Set<K> keySet() {
         Set<K> ret = new TreeSet<>();
-        segments().stream().forEach(segment -> ret.addAll(segment.keySet()));
+        segments.stream().forEach(segment -> ret.addAll(segment.keySet()));
         return ret;
     }
 

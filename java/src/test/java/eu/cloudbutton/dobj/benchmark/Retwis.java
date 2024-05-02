@@ -376,7 +376,7 @@ public class Retwis {
     public class RetwisApp implements Callable<Void>{
 
         private static final int MAX_USERS_PER_THREAD = 100_000;
-        private static final int MAX_DUMMY_USERS_PER_THREAD = 1_000;
+        private static final int MAX_DUMMY_USERS_PER_THREAD = 10_000;
         private static final int MAX_USERS_TO_FOLLOW_PER_THREAD = 1_000;
 
         private final ThreadLocalRandom random;
@@ -556,9 +556,9 @@ public class Retwis {
             operationType type;
             int val = random.nextInt(100);
             if (val < ratiosArray[0]){ // add
-                if (val%2 == 0){ //follow
+                if (val%2 == 0){
                     type = ADD;
-                }else{ //unfollow
+                }else{
                     type = REMOVE;
                 }
             } else if (val >= ratiosArray[0] && val < ratiosArray[0]+ ratiosArray[1]){ //follow or unfollow
@@ -592,11 +592,9 @@ public class Retwis {
                         database.removeUser(dummy);
                         break;
                     case FOLLOW:
-                        userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_TO_FOLLOW_PER_THREAD);
-                        database.followUser(user, userToFollow);
-                        break;
                     case UNFOLLOW:
                         userToFollow = usersToFollow.get(nextUserToFollow++ % MAX_USERS_TO_FOLLOW_PER_THREAD);
+                        database.followUser(user, userToFollow);
                         database.unfollowUser(user, userToFollow);
                         break;
                     case TWEET:

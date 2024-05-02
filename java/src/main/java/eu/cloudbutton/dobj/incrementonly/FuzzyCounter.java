@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.incrementonly;
 
+import eu.cloudbutton.dobj.types.Counter;
+
 public class FuzzyCounter implements Counter {
     
     private final CounterIncrementOnly counter;

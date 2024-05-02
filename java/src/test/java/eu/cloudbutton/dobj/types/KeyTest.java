@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.key.*;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
 import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
@@ -16,7 +15,6 @@ import static org.testng.Assert.assertEquals;
 public class KeyTest {
 
     private Factory factory;
-    private FactoryIndice factoryIndice;
     private static Integer nbThread;
 
     @BeforeTest
@@ -24,7 +22,6 @@ public class KeyTest {
         factory = new Factory();
         nbThread = Runtime.getRuntime().availableProcessors();
 //        nbThread = 1;
-        factoryIndice = new FactoryIndice(nbThread);
     }
 
     @Test

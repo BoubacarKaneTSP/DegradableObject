@@ -1,9 +1,8 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.incrementonly.Counter;
+import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
@@ -36,12 +35,14 @@ public class Database {
 
     private final int nbThread;
     private final int nbUsers;
+
     private Map<Key, Integer> mapProfiles;
     private Map<Key, Set<Key>> mapFollowers;
     private Map<Key, Set<Key>> mapFollowing;
     private Map<Key, Timeline<String>> mapTimelines;
     private Map<Key, Integer> mapCommunityStatus;
     private Set<Key> community;
+
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
     private final int[] reciprocalDegree;
@@ -66,7 +67,6 @@ public class Database {
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
-    private final FactoryIndice factoryIndice;
     private final ThreadLocal<Random> random;
 
     private final double alpha;
@@ -89,15 +89,14 @@ public class Database {
         this.factory = new Factory(typeMap,typeSet,typeQueue,typeCounter,"List");
 
         this.nbThread = nbThread;
-        this.factoryIndice = new FactoryIndice(nbThread);
         this.random = ThreadLocal.withInitial(() -> new Random(94));
 
         try {
-            mapFollowers = factory.getMap();
-            mapFollowing = factory.getMap();
-            mapTimelines = factory.getMap();
-            mapProfiles = factory.getMap();
-            counter = factory.getCounter();
+            mapFollowers = factory.newMap();
+            mapFollowing = factory.newMap();
+            mapTimelines = factory.newMap();
+            mapProfiles = factory.newMap();
+            counter = factory.newCounter();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -924,9 +923,9 @@ public class Database {
     }
 
     public void addOriginalUser(Key user) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        mapFollowers.put(user, factory.getSet());
-        mapFollowing.put(user, factory.getSet());
-        mapTimelines.put(user, new Timeline(factory.getQueue()));
+        mapFollowers.put(user, factory.newSet());
+        mapFollowing.put(user, factory.newSet());
+        mapTimelines.put(user, new Timeline(factory.newQueue()));
         mapProfiles.put(user, 0);
         mapCommunityStatus.put(user, 0);
     }
@@ -977,17 +976,20 @@ public class Database {
     }
 
     public void updateProfile(Key user){
-        mapProfiles.compute(user, (usr, profile) -> {
-            byte[] bytesOfMessage = null;
-            try {
-                bytesOfMessage = Integer.toString(usr.hashCode()).getBytes("UTF-8");
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                return md.digest(bytesOfMessage).length;
-            } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        });
+        mapProfiles.compute(user,
+                (u,p) ->
+                {
+//                    return p++;
+                    byte[] bytesOfMessage = null;
+                    try {
+                        bytesOfMessage = Integer.toString(u.hashCode()).getBytes("UTF-8");
+                        MessageDigest md = MessageDigest.getInstance("MD5");
+                        return md.digest(bytesOfMessage).length;
+                    } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     public void joinCommunity(Key user){

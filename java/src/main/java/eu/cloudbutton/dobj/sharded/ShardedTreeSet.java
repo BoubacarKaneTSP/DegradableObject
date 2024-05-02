@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.sharded;
 
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ public class ShardedTreeSet<E> extends BaseSegmentation<TreeSet> implements Set<
     @Override
     public int size() {
         int ret = 0;
-        for(TreeSet<E> set: segments()) {
+        for(TreeSet<E> set: segments) {
             ret+=set.size();
         }
         return ret;

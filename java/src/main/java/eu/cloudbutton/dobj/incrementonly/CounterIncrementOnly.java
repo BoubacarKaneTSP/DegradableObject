@@ -1,13 +1,10 @@
 package eu.cloudbutton.dobj.incrementonly;
 
+import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
-import jdk.internal.vm.annotation.Contended;
-import jdk.internal.vm.annotation.ForceInline;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class build a Counter on top of a Snapshot object.
@@ -71,7 +68,7 @@ public class CounterIncrementOnly extends BaseSegmentation<BoxedLong> implements
     public long read() {
         long total = 0;
         UNSAFE.loadFence();
-        for (BoxedLong v : segments()) {
+        for (BoxedLong v : segments) {
             total += v.val;
         }
         return total;

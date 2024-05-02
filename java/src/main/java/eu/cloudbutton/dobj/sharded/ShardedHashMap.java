@@ -1,6 +1,5 @@
 package eu.cloudbutton.dobj.sharded;
 
-import eu.cloudbutton.dobj.utils.FactoryIndice;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +63,7 @@ public class ShardedHashMap<K,V> extends BaseSegmentation<HashMap> implements Ma
     @Override
     public int size() {
         int ret = 0;
-        for(HashMap<K,V> set: segments()) {
+        for(HashMap<K,V> set: segments) {
             ret+=set.size();
         }
         return ret;
