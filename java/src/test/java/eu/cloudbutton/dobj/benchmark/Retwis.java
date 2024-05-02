@@ -107,6 +107,12 @@ public class Retwis {
     @Option(name = "-nbItems", usage = "Number of items max per thread")
     private int _nbItems = Integer.MAX_VALUE;
 
+    @Option(name = "-load", usage = "Load the graph")
+    private boolean _run = true;
+
+    @Option(name = "-generate", usage = "Generate and save the graph")
+    private boolean _generate = false;
+
     private AtomicBoolean flagComputing,flagWarmingUp;
     private AtomicLong totalTime;
 
@@ -247,6 +253,19 @@ public class Retwis {
                             NB_USERS,
                             alpha
                     );
+
+                    if (_generate) {
+                        database.generateAndSaveGraph();
+                    }
+
+                    if (!_run) {
+                        System.out.println("Done, exiting.");
+                        System.exit(0);
+                    }
+
+                    database.loadGraph();
+                    // database.loadCompleteGraph();
+                    // database.loadDAPGraph();
 
                     if (nbCurrTest == 1){
                         flagWarmingUp.set(true);

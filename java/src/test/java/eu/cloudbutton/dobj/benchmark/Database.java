@@ -139,14 +139,13 @@ public class Database {
         // executorService = Executors.newVirtualThreadPerTaskExecutor();
 
         this.alpha = alpha;
+    }
 
-//        generateUsers();
-//        addingPhase();
-//        followingPhase();
-//        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt", mapFollowing);
-        loadGraph();
-        // loadCompleteGraph(); FIXME
-        // loadDAPGraph();
+    public void generateAndSaveGraph() throws InterruptedException, ExecutionException {
+        generateUsers();
+        addingPhase();
+        followingPhase();
+        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt", mapFollowing);
     }
 
     public Key generateUser(){
@@ -439,7 +438,7 @@ public class Database {
         System.out.println("End saving graph");
     }
 
-    private void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
+    public void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
         System.out.println("Start loading graph ("+alpha+")");
         int numberOfUsersInFile;
         String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
@@ -559,7 +558,7 @@ public class Database {
         System.out.println("End loading graph");
     }
 
-    private void loadCompleteGraph() throws ClassNotFoundException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void loadCompleteGraph() throws ClassNotFoundException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Set<Key> setUser = new HashSet<>();
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
@@ -611,7 +610,7 @@ public class Database {
         usersFollowProbabilityRange = sommeFollow;
     }
 
-    private void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
+    public void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
         System.out.println("Loading DAP graph");
 
         Set<Key> setUser = new HashSet<>();

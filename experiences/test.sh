@@ -293,6 +293,8 @@ JVM_EXPORTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/j
 JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea ${JVM_EXPORTS}"
 # JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}"
 
+RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha}"
+
 if [[ $typeTest == "Microbenchmark" ]]
 then
   if [[ $computeGCInfo == true ]]
@@ -306,10 +308,10 @@ elif [[ $typeTest == "Retwis" ]]
 then
   if [[ $computeGCInfo == true ]]
   then
-      CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs --membind=0 java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha} | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
+      CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind=$cpuIDs --membind=0 java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis ${RETWIS_ARGS} | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
     python3 analyse_gc.py $tag $nbTest $nbUserInit
   else
-      CLASSPATH=../java/target/*:../java/target/lib/* java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis -set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -alphaMin ${alpha}
+      CLASSPATH=../java/target/*:../java/target/lib/* java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis ${RETWIS_ARGS}
       echo ${cmd}
       eval ${cmd}
   fi

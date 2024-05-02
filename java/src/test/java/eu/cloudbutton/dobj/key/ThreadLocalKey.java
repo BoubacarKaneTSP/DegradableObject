@@ -28,7 +28,8 @@ public class ThreadLocalKey extends SegmentAware implements Key, Comparable<Thre
 
     @Override
     public int hashCode() {
-        return hash; // Objects.hash(id);
+        return Objects.hash(id);
+        // return hash;
     }
 
     @Override
