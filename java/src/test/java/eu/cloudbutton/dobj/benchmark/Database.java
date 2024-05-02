@@ -145,7 +145,7 @@ public class Database {
         generateUsers();
         addingPhase();
         followingPhase();
-        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt", mapFollowing);
+        saveGraph("graph_following_retwis_" + nbUsers + "_users.txt");
     }
 
     public Key generateUser(){
