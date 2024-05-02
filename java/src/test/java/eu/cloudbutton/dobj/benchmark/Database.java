@@ -374,7 +374,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        followUser(userB, userA);
+                        mapFollowing.get(userB).add(userA);
                     }
                 }
 
@@ -390,7 +390,8 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        followUser(userA, userB);
+                        mapFollowing.get(userA).add(userB);
+
                     }
                 }
             }
