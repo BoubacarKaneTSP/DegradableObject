@@ -340,8 +340,9 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        mapFollowing.get(userA).add(userB);
-                        mapFollowing.get(userB).add(userA);
+                        followUser(userA,userB);
+
+                        followUser(userB,userA);
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
                             counter++;
@@ -373,7 +374,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        mapFollowing.get(userB).add(userA);
+                        followUser(userB, userA);
                     }
                 }
 
@@ -389,8 +390,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        mapFollowing.get(userA).add(userB);
-
+                        followUser(userA, userB);
                     }
                 }
             }
