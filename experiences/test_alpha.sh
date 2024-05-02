@@ -39,7 +39,7 @@ do
   str_alpha=$(echo "$alpha" | tr '.' '-')
   echo "$str_alpha"
   echo "$alpha"
-  for nbUsersInit in 500000
+  for nbUsersInit in 1000000
   do
     # Cleaning old file
     # python3 rm_file.py $nbUsersInit "JUC_$str_alpha"
