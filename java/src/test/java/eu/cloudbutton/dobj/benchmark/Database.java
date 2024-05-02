@@ -45,17 +45,18 @@ public class Database {
 
     private final Map<Integer, Key> mapIndiceToKey;
     private final Map<Key, Integer> mapKeyToIndice;
-    private final int[] reciprocalDegree;
-    private final int[] inDegree;
-    private final int[] outDegree;
-    private int reciprocal = 0; // Number of nodes with a reciprocal degree bigger than 0
-    private int out = 0; // Number of nodes with an out degree bigger than 0
-    private int in = 0; //Number of nodes with an in degree bigger than 0
-    private int edges_r = 0; // Number of reciprocal edges
-    private int edges_d = 0; // Number of directed edges
-    private int diag = 0;
-    private float diag_sum_r_dist;
-    private float diag_sum_d_dist;
+    private final long[] reciprocalDegree;
+    private final long[] inDegree;
+    private final long[] outDegree;
+    private long reciprocal = 0; // Number of nodes with a reciprocal degree bigger than 0
+    private long out = 0; // Number of nodes with an out degree bigger than 0
+    private long in = 0; //Number of nodes with an in degree bigger than 0
+    private long edges_r = 0; // Number of reciprocal edges
+    private long edges_d = 0; // Number of directed edges
+    private long diag = 0;
+    private double diag_sum_r_dist;
+    private double diag_sum_d_dist;
+
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
     private long usersFollowProbabilityRange;
@@ -116,9 +117,9 @@ public class Database {
 
         mapIndiceToKey = new ConcurrentHashMap<>();
         mapKeyToIndice = new ConcurrentHashMap<>();
-        reciprocalDegree = new int[nbUsers];
-        inDegree = new int[nbUsers];
-        outDegree = new int[nbUsers];
+        reciprocalDegree = new long[nbUsers];
+        inDegree = new long[nbUsers];
+        outDegree = new long[nbUsers];
 
         for (int i = 0; i < nbThread; i++) {
             localUsersUsageProbability.put(i , new ConcurrentSkipListMap<>());
@@ -320,8 +321,8 @@ public class Database {
                 System.out.println(i);
             }
 
-            int a, counter = 0, directed_sum = 0;
-            float pr;
+            long a, counter = 0, directed_sum = 0;
+            double pr;
             Key userA, userB;
 
 
@@ -357,7 +358,7 @@ public class Database {
                 }
             }
 
-            int sampled_reciprocal = directed_sum/(out*in-diag-counter);
+            long sampled_reciprocal = directed_sum/(out*in-diag-counter);
 
             // Sampling of directed edges
             for (int j = i; j < nbUsers; j++) {
