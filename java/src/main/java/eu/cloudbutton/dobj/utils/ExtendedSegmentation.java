@@ -33,7 +33,8 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
         Integer indice = ((SegmentAware) x).getReference().get();
         if (indice == null){
             indice = segmentationIndice.get();
-            ((SegmentAware)x).getReference().set(indice);
+            boolean b = ((SegmentAware)x).getReference().set(indice);
+            assert b;
         }
         return segments.get(indice);
     }
