@@ -108,7 +108,7 @@ public class Retwis {
     private int _nbItems = Integer.MAX_VALUE;
 
     @Option(name = "-generate", usage = "If true, generate the graph then exit")
-    private boolean _generate = true;
+    private boolean _generate = false;
 
 
     private AtomicBoolean flagComputing,flagWarmingUp;
