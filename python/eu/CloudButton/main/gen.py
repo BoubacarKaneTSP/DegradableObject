@@ -38,7 +38,8 @@ START = datetime.now()
 
 
 # Declare the size of the network
-numNodes = 10_000_000
+# numNodes = 10_000_000
+numNodes = 100_000
 
 
 # In[ ]:
