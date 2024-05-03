@@ -16,15 +16,15 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     protected final List<T> segments;
 
     public ExtendedSegmentation(Class<T> clazz) {
-        this.segments = new ArrayList<>(0);
+        List<T> list = new ArrayList<>(0);
         for (int i=0; i<Runtime.getRuntime().availableProcessors(); i++) {
             try {
-                segments.add(clazz.getDeclaredConstructor().newInstance());
+                list.add(clazz.getDeclaredConstructor().newInstance());
             } catch (Throwable e) {
                 throw new RuntimeException();
             }
         }
-        Helpers.getUNSAFE().fullFence();
+        segments = new CopyOnWriteArrayList<>(list);
     }
 
     @Override

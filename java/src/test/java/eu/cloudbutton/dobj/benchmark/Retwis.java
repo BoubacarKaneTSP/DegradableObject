@@ -110,7 +110,6 @@ public class Retwis {
     @Option(name = "-generate", usage = "If true, generate the graph then exit")
     private boolean _generate = false;
 
-
     private AtomicBoolean flagComputing,flagWarmingUp;
     private AtomicLong totalTime;
 
