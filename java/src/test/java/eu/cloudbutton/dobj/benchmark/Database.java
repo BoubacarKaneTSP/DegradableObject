@@ -325,34 +325,32 @@ public class Database {
             double pr;
             Key userA, userB;
 
-
             // Sampling of reciprocal edges
             for (int j = i; j < nbUsers; j++) {
                 if (reciprocalDegree[j] != 0 && reciprocalDegree[i] != 0){
-                    pr = 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
+                    pr = (double) 2*reciprocalDegree[i]*reciprocalDegree[j]/edges_r + diag_sum_r_dist;
 
                     if (pr>1)
                         pr = 1;
 
-                    a = random.get().nextFloat() < pr ? 1 : 0;
+                    a = random.get().nextDouble() < pr ? 1 : 0;
 
                     if (a==1){
 
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        followUser(userA,userB);
-
-                        followUser(userB,userA);
+                        mapFollowing.get(userA).add(userB);
+                        mapFollowing.get(userB).add(userA);
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
                             counter++;
-                            directed_sum += inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist;
+                            directed_sum += (double) inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist;
                         }
 
                         if (inDegree[j] != 0 && outDegree[i] != 0){
                             counter++;
-                            directed_sum += inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist;
+                            directed_sum += (double) inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist;
                         }
                     }
                 }
@@ -364,12 +362,12 @@ public class Database {
             for (int j = i; j < nbUsers; j++) {
 
                 if (inDegree[i] != 0 && outDegree[j] != 0){
-                    pr = inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
+                    pr = (double) inDegree[i]*outDegree[j]/edges_d + diag_sum_d_dist + sampled_reciprocal;
 
                     if (pr>1)
                         pr = 1;
 
-                    a = random.get().nextFloat() < pr ? 1 : 0;
+                    a = random.get().nextDouble() < pr ? 1 : 0;
 
                     if (a==1){
                         userA = mapIndiceToKey.get(i);
@@ -380,12 +378,12 @@ public class Database {
                 }
 
                 if (inDegree[j] != 0 && outDegree[i] != 0){
-                    pr = inDegree[j]*outDegree[i]/edges_d + diag_sum_d_dist + sampled_reciprocal;
+                    pr = (double) inDegree[j]*outDegree[i]/edges_d + diag_sum_d_dist + sampled_reciprocal;
 
                     if (pr>1)
                         pr = 1;
 
-                    a = random.get().nextFloat() < pr ? 1 : 0;
+                    a = random.get().nextDouble() < pr ? 1 : 0;
 
                     if (a==1){
                         userA = mapIndiceToKey.get(i);

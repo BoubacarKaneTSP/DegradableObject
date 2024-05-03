@@ -39,7 +39,7 @@ do
   str_alpha=$(echo "$alpha" | tr '.' '-')
   echo "$str_alpha"
   echo "$alpha"
-  for nbUsersInit in 12
+  for nbUsersInit in 500000
   do
     # Cleaning old file
     # python3 rm_file.py $nbUsersInit "JUC_$str_alpha"
@@ -48,7 +48,7 @@ do
 
     # for nbThread in 1 2 4 8 16 32 48
       #  for nbThread in 1 16 48
-      for nbThread in 1
+      for nbThread in 12
       # for nbThread in 1 2 4 6 8 10 12
     do
       for (( c=1; c<=nbTest; c++ ))
