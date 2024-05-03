@@ -44,9 +44,9 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
         return v;
     }
 
-    @Nullable
     @Override
-    public V put(K k, V v) {
+    public V put(K k, @NotNull V v) {
+        assert v!=null;
         return (V) segmentFor(k).put(k,v);
     }
 
@@ -57,7 +57,7 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
 
     @Override
     public void putAll(@NotNull Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
+        map.keySet().stream().forEachOrdered(k -> put(k,map.get(k)));
     }
 
     @Override

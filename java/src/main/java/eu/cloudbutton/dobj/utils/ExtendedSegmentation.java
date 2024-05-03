@@ -16,15 +16,14 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     protected final List<T> segments;
 
     public ExtendedSegmentation(Class<T> clazz) {
-        List<T> list = new ArrayList<>(0);
+        segments = new CopyOnWriteArrayList<>();
         for (int i=0; i<Runtime.getRuntime().availableProcessors(); i++) {
             try {
-                list.add(clazz.getDeclaredConstructor().newInstance());
+                segments.add(clazz.getDeclaredConstructor().newInstance());
             } catch (Throwable e) {
                 throw new RuntimeException();
             }
         }
-        segments = new CopyOnWriteArrayList<>(list);
     }
 
     @Override
@@ -33,8 +32,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
         Integer indice = ((SegmentAware) x).getReference().get();
         if (indice == null){
             indice = segmentationIndice.get();
-            boolean b = ((SegmentAware)x).getReference().set(indice);
-            assert b;
+            ((SegmentAware)x).getReference().set(indice);
         }
         return segments.get(indice);
     }

@@ -238,6 +238,7 @@ done
 
 cpuIDs=""
 ranges=("0-19" "80-99" "20-39" "100-119" "40-59" "120-139" "60-79" "140-159")
+ranges=("140-159" "60-79" "120-139" "40-59" "100-119" "20-39" "0-19" "80-99"      )
 
 nthreads=$(echo "$nbThreads" | grep -o '[0-9]\+')
 echo "nbThreads => $nthreads"
@@ -293,9 +294,9 @@ JVM_EXPORTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/j
 JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea ${JVM_EXPORTS}"
 # JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}"
 
-RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha} -generate"
+RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha}" # -generate
 
-NUMA="numactl --physcpubind=$cpuIDs --membind=0"
+# NUMA="numactl --physcpubind=$cpuIDs --membind=0"
 
 if [[ $typeTest == "Microbenchmark" ]]
 then

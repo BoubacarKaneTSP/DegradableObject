@@ -39,7 +39,7 @@ do
   str_alpha=$(echo "$alpha" | tr '.' '-')
   echo "$str_alpha"
   echo "$alpha"
-  for nbUsersInit in 500000
+  for nbUsersInit in 160
   do
     # Cleaning old file
     # python3 rm_file.py $nbUsersInit "JUC_$str_alpha"
@@ -57,9 +57,9 @@ do
           # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log
 	  # ./test.sh -c juc.Counter -s HashSet -q Queue -m HashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z # SEQ
 	  # ./test.sh -c juc.Counter -s ConcurrentHashSet -q Queue -m juc.LockBasedJavaHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
-	  ./test.sh -c juc.Counter -s ConcurrentHashSet -q Queue -m juc.ConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
+	  # ./test.sh -c juc.Counter -s ConcurrentHashSet -q Queue -m juc.ConcurrentHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "JUC_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
 	  # perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log
-	  # ./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
+	  ./test.sh -c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedHashMap -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "Q_M_C_$str_alpha" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
       done
     done
   #   python3 compute_avg_throughput.py $nbUsersInit "JUC_$str_alpha" "1 2 4 8 16 32 48"

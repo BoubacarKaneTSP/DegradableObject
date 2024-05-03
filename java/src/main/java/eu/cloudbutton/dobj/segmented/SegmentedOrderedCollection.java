@@ -13,10 +13,7 @@ public class SegmentedOrderedCollection<T extends Collection,E> extends Segmente
 
     @Override
     public Iterator<E> iterator() {
+        // WIP
         return null;
-//        Collection<Iterator<E>> iterators = new LinkedList<>();
-//        segments.stream().forEach(s->iterators.add(s.iterator()));
-//        TreeSet<E> first = new TreeSet<>();
-//        iterators.stream().forEach(s->{if (s.hasNext()) first.add(s.next()); });
     }
 }

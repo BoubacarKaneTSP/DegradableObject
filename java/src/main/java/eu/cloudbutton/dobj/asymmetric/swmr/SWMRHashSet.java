@@ -11,7 +11,7 @@ public class SWMRHashSet<E> extends AbstractSet<E> implements Set<E> {
     Map m;
 
     public SWMRHashSet(){
-        m = new SWMRHashMap();
+        m = new ConcurrentHashMap<>();
     }
 
     @Override
