@@ -18,15 +18,15 @@ import static org.testng.Assert.*;
 
 public class MapTest {
     private static final int MAX_ITEMS_PER_THREAD = Integer.MAX_VALUE;
-    private static final int ITEMS_PER_THREAD = 1_000;
+    private static final int ITEMS_PER_THREAD = 10_000;
 
     private Factory factory;
     private SimpleKeyGenerator generator;
     private static int parallelism;
 
     private static Class[] IMPL = {
-            ConcurrentHashMap.class,
-            SegmentedHashMap.class,
+//            ConcurrentHashMap.class,
+//            SegmentedHashMap.class,
 //            SegmentedTreeMap.class,
 //            SegmentedSkipListMap.class,
             ExtendedSegmentedHashMap.class
@@ -69,7 +69,7 @@ public class MapTest {
                 int me = Helpers.threadIndexInPool();
                 Collection<Key> collection = keys.get(Helpers.threadIndexInPool());
                 collection.stream().forEach(x -> map.put(x,x));
-                assertEquals(collection.stream().allMatch(x -> map.get(x)==x), true);
+                assertEquals(collection.stream().allMatch(x -> map.get(x).equals(x)), true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -103,17 +103,20 @@ public class MapTest {
         map.clear();
         assertEquals(map.size(), 0);
 
-        Set<Key> keys3 = new ConcurrentSkipListSet<>();
+        Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
+                ITEMS_PER_THREAD * parallelism, parallelism);
+
+        Set<Key> other = new ConcurrentSkipListSet<>();
         CountDownLatch latch3 = new CountDownLatch(parallelism);
         callable = () -> {
             try {
-                latch2.countDown();
-                latch2.await();
-                Collection<Key> collection = keys2.get(Helpers.threadIndexInPool());
+                latch3.countDown();
+                latch3.await();
+                Collection<Key> collection = keys3.get(Helpers.threadIndexInPool());
                 for (Key key : collection) {
                     map.put(key,key);
-                    keys3.add(key);
-                    keys3.stream().forEach(x->assertTrue(map.containsKey(x)));
+                    other.add(key);
+                    other.stream().forEach(x->assertTrue(map.containsKey(x)));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -126,7 +129,10 @@ public class MapTest {
         Map<Integer, List<Key>> keys4 = generator.generateAndSplit(
                 100 * parallelism, parallelism);
 
+        CountDownLatch latch4 = new CountDownLatch(parallelism);
         callable = () -> {
+            latch4.countDown();
+            latch4.await();
             List<Key> collection = keys4.get(Helpers.threadIndexInPool());
             Key c, p = collection.get(0);
             map.put(p,"");

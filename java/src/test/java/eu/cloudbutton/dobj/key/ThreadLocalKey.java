@@ -12,11 +12,9 @@ import java.util.UUID;
 public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<ThreadLocalKey>{
 
     public UUID id;
-    public int hash;
 
     public ThreadLocalKey(long tid, long id) {
         this.id = Generators.timeBasedGenerator().generate();
-        this.hash = ThreadLocalRandom.current().nextInt(32768);
     }
 
     @Override
@@ -30,7 +28,6 @@ public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<T
     @Override
     public int hashCode() {
         return Objects.hash(id);
-        // return hash;
     }
 
     @Override
