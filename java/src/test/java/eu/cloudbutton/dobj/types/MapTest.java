@@ -25,7 +25,7 @@ public class MapTest {
     private static int parallelism;
 
     private static Class[] IMPL = {
-//            ConcurrentHashMap.class,
+            ConcurrentHashMap.class,
 //            SegmentedHashMap.class,
 //            SegmentedTreeMap.class,
 //            SegmentedSkipListMap.class,
