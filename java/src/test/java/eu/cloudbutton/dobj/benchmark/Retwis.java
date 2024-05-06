@@ -429,7 +429,7 @@ public class Retwis {
                 operationType type;
                 int sizeOpToDo = 10_000;
 
-                myId.set(1);
+                myId.set(database.getCount().getAndIncrement());
 
                 for (Key user : database.getMapUserToAdd().get(myId.get())){
                     database.addOriginalUser(user);

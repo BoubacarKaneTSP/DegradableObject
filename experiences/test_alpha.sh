@@ -37,7 +37,7 @@ do
     str_alpha=$(echo "$alpha" | tr '.' '-')
     echo "$str_alpha"
     echo "$alpha"
-    for nbUsersInit in 100000
+    for nbUsersInit in 160
     do
 	for nbThread in 12
 	do
