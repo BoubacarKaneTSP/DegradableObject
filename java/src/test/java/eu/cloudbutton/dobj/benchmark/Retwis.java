@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.utils.Helpers;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -429,7 +430,9 @@ public class Retwis {
                 operationType type;
                 int sizeOpToDo = 10_000;
 
-                myId.set(database.getCount().getAndIncrement());
+                myId.set(Helpers.threadIndexInPool());
+
+                System.out.println(myId.get()+": "+database.getMapUserToAdd().get(myId.get()).size()+" users");
 
                 for (Key user : database.getMapUserToAdd().get(myId.get())){
                     database.addOriginalUser(user);

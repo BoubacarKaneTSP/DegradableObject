@@ -61,8 +61,11 @@ public class MapTest {
 
         Map<Integer, List<Key>> keys = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
+        CountDownLatch latch = new CountDownLatch(parallelism);
         Callable<Void> callable = () -> {
             try {
+                latch.countDown();
+                latch.await();
                 int me = Helpers.threadIndexInPool();
                 Collection<Key> collection = keys.get(Helpers.threadIndexInPool());
                 collection.stream().forEach(x -> map.put(x,x));
@@ -73,7 +76,6 @@ public class MapTest {
             return null;
         };
         Helpers.executeAll(parallelism, callable);
-
         AtomicInteger nbElement = new AtomicInteger();
         map.keySet().stream().forEach(_ -> nbElement.getAndIncrement());
         assertEquals(nbElement.get(), ITEMS_PER_THREAD * parallelism);
@@ -81,9 +83,11 @@ public class MapTest {
 
         Map<Integer, List<Key>> keys2 = generator.generateAndSplit(
                 ITEMS_PER_THREAD*parallelism, parallelism);
-
+        CountDownLatch latch2 = new CountDownLatch(parallelism);
         callable = () -> {
             try {
+                latch2.countDown();
+                latch2.await();
                 Collection<Key> collection = keys2.get(Helpers.threadIndexInPool());
                 for (Key key : collection) {
                     map.remove(key);
@@ -100,8 +104,11 @@ public class MapTest {
         assertEquals(map.size(), 0);
 
         Set<Key> keys3 = new ConcurrentSkipListSet<>();
+        CountDownLatch latch3 = new CountDownLatch(parallelism);
         callable = () -> {
             try {
+                latch2.countDown();
+                latch2.await();
                 Collection<Key> collection = keys2.get(Helpers.threadIndexInPool());
                 for (Key key : collection) {
                     map.put(key,key);

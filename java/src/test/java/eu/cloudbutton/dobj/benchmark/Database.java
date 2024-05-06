@@ -456,7 +456,8 @@ public class Database {
         for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
+                indiceThread = Math.abs(user.hashCode() % nbThread);
+                // assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user, indiceThread);
                 mapListUserFollow.put(user, new LinkedList<>());
@@ -466,9 +467,9 @@ public class Database {
 
                 tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
-                if (i % nbUserPerThread == 0) {
-                    indiceThread += 1;
-                }
+//                if (i % nbUserPerThread == 0) {
+//                    indiceThread += 1;
+//                }
             }
         }
 
