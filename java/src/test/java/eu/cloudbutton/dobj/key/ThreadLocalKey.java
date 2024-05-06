@@ -1,9 +1,7 @@
 package eu.cloudbutton.dobj.key;
 
 import com.fasterxml.uuid.Generators;
-import eu.cloudbutton.dobj.juc.ThreadLocalRandom;
 import eu.cloudbutton.dobj.utils.BaseSegmentable;
-import eu.cloudbutton.dobj.utils.Segmentable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -14,7 +12,7 @@ public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<T
     public UUID id;
 
     public ThreadLocalKey(long tid, long id) {
-        this.id = Generators.timeBasedGenerator().generate();
+        this.id = Generators.randomBasedGenerator().generate();
     }
 
     @Override
@@ -28,6 +26,7 @@ public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<T
     @Override
     public int hashCode() {
         return Objects.hash(id);
+        // return hash;
     }
 
     @Override
