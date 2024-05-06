@@ -106,18 +106,18 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends HashSegmentation<
 
     public Iterator<K> iterator() {
         Collection<Map<K,V>> list = new ArrayList<>();
-        segments.stream().forEach(list::add);
+        Arrays.stream(segments).forEach(list::add);
         return new KeyIterator(list);
     }
 
     @Override
     public int size() {
-        return segments.stream().mapToInt(s -> s.size()).sum();
+        return Arrays.stream(segments).mapToInt(s -> s.size()).sum();
     }
 
     @Override
     public boolean isEmpty() {
-        return segments.stream().allMatch(s -> s.isEmpty());
+        return Arrays.stream(segments).allMatch(s -> s.isEmpty());
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends HashSegmentation<
 
     @Override
     public boolean containsValue(Object o) {
-        return segments.stream().anyMatch(s -> s.containsValue(o));
+        return Arrays.stream(segments).anyMatch(s -> s.containsValue(o));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends HashSegmentation<
 
     @Override
     public void clear() {
-        segments.stream().forEach(s -> s.clear());
+        Arrays.stream(segments).forEach(s -> s.clear());
     }
 
     @NotNull
