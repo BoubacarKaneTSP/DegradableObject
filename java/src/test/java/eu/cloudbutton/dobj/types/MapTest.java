@@ -18,7 +18,7 @@ import static org.testng.Assert.*;
 
 public class MapTest {
     private static final int MAX_ITEMS_PER_THREAD = Integer.MAX_VALUE;
-    private static final int ITEMS_PER_THREAD = 1_000;
+    private static final int ITEMS_PER_THREAD = 5_000;
 
     private Factory factory;
     private SimpleKeyGenerator generator;
@@ -26,10 +26,10 @@ public class MapTest {
 
     private static Class[] IMPL = {
             ConcurrentHashMap.class,
+            ExtendedSegmentedHashMap.class
 //            SegmentedHashMap.class,
 //            SegmentedTreeMap.class,
 //            SegmentedSkipListMap.class,
-            ExtendedSegmentedHashMap.class
     };
 
     @BeforeTest
@@ -66,7 +66,6 @@ public class MapTest {
             try {
                 latch.countDown();
                 latch.await();
-                int me = Helpers.threadIndexInPool();
                 Collection<Key> collection = keys.get(Helpers.threadIndexInPool());
                 collection.stream().forEach(x -> map.put(x,x));
                 assertEquals(collection.stream().allMatch(x -> map.get(x).equals(x)), true);
