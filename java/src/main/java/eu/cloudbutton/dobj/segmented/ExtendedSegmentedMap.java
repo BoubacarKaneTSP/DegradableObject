@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentation<T> implements Map<K, V> {
+public class ExtendedSegmentedMap<T extends Map, K, V> extends HashSegmentation<T> implements Map<K, V> {
 
     public ExtendedSegmentedMap(Class<T> clazz) {
         super(clazz);
