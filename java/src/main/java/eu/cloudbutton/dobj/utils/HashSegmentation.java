@@ -12,10 +12,10 @@ public class HashSegmentation<T> implements Segmentation<T>{
 
     private static final int parallelism = Runtime.getRuntime().availableProcessors();
 
-    protected volatile List<T> segments;
+    protected final List<T> segments;
 
     public HashSegmentation(Class<T> clazz) {
-        List<T> list = new ArrayList<>(); // FIXME
+        List<T> list = new ArrayList<>();
         try {
             Constructor<T> constructor = clazz.getConstructor();
             for (int i = 0; i < parallelism; i++) {
