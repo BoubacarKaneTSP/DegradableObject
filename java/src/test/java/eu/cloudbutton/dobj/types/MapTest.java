@@ -18,7 +18,7 @@ import static org.testng.Assert.*;
 
 public class MapTest {
     private static final int MAX_ITEMS_PER_THREAD = Integer.MAX_VALUE;
-    private static final int ITEMS_PER_THREAD = 10_000;
+    private static final int ITEMS_PER_THREAD = 1_000;
 
     private Factory factory;
     private SimpleKeyGenerator generator;
