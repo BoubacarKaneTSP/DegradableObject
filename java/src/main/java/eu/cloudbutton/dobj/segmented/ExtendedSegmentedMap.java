@@ -121,7 +121,7 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
 
     @Override
     public boolean containsKey(Object o) {
-        return segments.stream().anyMatch(s -> s.containsKey(o));
+        return get(o) != null;
     }
 
     @Override

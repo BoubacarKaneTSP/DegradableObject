@@ -8,10 +8,16 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
+
+import static java.lang.Thread.sleep;
 
 public class Helpers {
 
     private static final Unsafe UNSAFE;
+    private static final ExecutorService executor;
+    private static final String prefix = "pool-1-thread-";
 
     static {
         try {
@@ -21,10 +27,34 @@ public class Helpers {
         } catch (Exception e) {
             throw new Error(e);
         }
+        executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
-    public static Unsafe getUNSAFE() {
+    public static final Unsafe getUNSAFE() {
         return UNSAFE;
+    }
+
+    public static final void executeAll(int parallelism, Callable<Void> callable) {
+        try {
+            List<Future<Void>> futures = new ArrayList<>();
+            for (int i = 0; i < parallelism; i++) {
+                futures.add(executor.submit(callable));
+            }
+            for (Future<Void> future : futures) {
+                future.get();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ExecutorService getExecutor() {
+        return executor;
+    }
+
+    public static final String getThreadNamePrefix() {
+        return prefix;
     }
 
     public static String toString(Object[] a, int size, int charLength) {
@@ -49,22 +79,6 @@ public class Helpers {
         chars[j] = ']';
         // assert j == chars.length - 1;
         return new String(chars);
-    }
-
-    public static void executeAll(int parallelism, Callable<Void> callable) {
-        try {
-            ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-            List<Future<Void>> futures = new ArrayList<>();
-                for (int i = 0; i < parallelism; i++) {
-                    futures.add(executor.submit(callable));
-                }
-                for (Future<Void> future : futures) {
-                        future.get();
-                }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
     public static String getProcessId() {

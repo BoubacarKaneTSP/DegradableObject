@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ExtendedSegmentation<T> implements Segmentation<T>{
 
     static private AtomicInteger counter = new AtomicInteger(0);
-    static private CarrierThreadLocal<Integer> segmentationIndice = new CarrierThreadLocalWithInitial(
+    static private CarrierThreadLocal<Integer> indices = new CarrierThreadLocalWithInitial(
             () -> counter.getAndIncrement());
 
     protected final List<T> segments;
@@ -29,10 +29,10 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     @Override
     @ForceInline
     public final T segmentFor(Object x) {
-        Integer indice = ((SegmentAware) x).getReference().get();
+        Integer indice = ((Segmentable) x).getIndice();
         if (indice == null){
-            indice = segmentationIndice.get();
-            ((SegmentAware)x).getReference().set(indice);
+            indice = indices.get();
+            ((Segmentable)x).setIndice(indice);
         }
         return segments.get(indice);
     }

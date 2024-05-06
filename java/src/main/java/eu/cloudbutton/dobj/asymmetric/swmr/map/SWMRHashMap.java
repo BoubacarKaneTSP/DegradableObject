@@ -32,13 +32,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 //import jdk.internal.misc.SharedSecrets;
+import jdk.internal.misc.Unsafe;
 import jdk.internal.vm.annotation.Contended;
-import sun.misc.Unsafe;
 
 /**
  * Hash table based implementation of the {@code Map} interface.  This
@@ -261,7 +262,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * shrinkage.
      */
     static final int TREEIFY_THRESHOLD = 8;
-//    static final int TREEIFY_THRESHOLD = 10000000;
+    // static final int TREEIFY_THRESHOLD = 10000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -435,18 +436,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final float loadFactor;
 
-    private static final sun.misc.Unsafe UNSAFE;
-
-    static {
-        try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            UNSAFE = (Unsafe) f.get(null);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-
     /* ---------------- Public operations -------------- */
 
     /**
@@ -580,9 +569,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
-        UNSAFE.fullFence();
         if ((tab = table) != null && (n = tab.length) > 0 &&
-                (first = tab[(n - 1) & hash]) != null) {
+                (first = tabAt(tab,(n - 1) & hash)) != null) {
             if (first.hash == hash && // always check first node
                     ((k = first.key) == key || (key != null && key.equals(k))))
                 return first;
@@ -643,8 +631,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
-            tab[i] = newNode(hash, key, value, null);
-            UNSAFE.fullFence();
+            setTabAt(tab,i,newNode(hash, key, value, null));
         }
         else {
             Node<K,V> e; K k;
@@ -658,7 +645,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
-                        UNSAFE.fullFence();
+                        U.fullFence();
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -674,15 +661,16 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 afterNodeAccess(e);
-                UNSAFE.fullFence();
+                U.fullFence();
                 return oldValue;
             }
         }
         ++modCount;
-        if (++size > threshold)
+        if (U.getAndSetInt(this,SIZE,size+1) > threshold) {
             resize();
+        }
         afterNodeInsertion(evict);
-        UNSAFE.fullFence();
+        U.fullFence();
         return null;
     }
 
@@ -766,9 +754,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
             }
         }
-        UNSAFE.storeFence();
-        table = newTab;
-        UNSAFE.fullFence();
+        U.fullFence();
+        U.putReferenceRelease(this,TABLE,newTab);
         return newTab;
     }
 
@@ -792,8 +779,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
                 tl = p;
             } while ((e = e.next) != null);
-            if ((tab[index] = hd) != null) {
-                UNSAFE.fullFence();
+            if ((tab[index] = hd) != null) { // FIXME defer this after treeifying the nodes
+                U.fullFence();
                 hd.treeify(tab);
             }
         }
@@ -869,10 +856,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else
                     p.next = node.next;
 
-                UNSAFE.fullFence();
+                U.fullFence();
 
                 ++modCount;
-                --size;
+                U.getAndSetInt(this,SIZE,size-1);
                 afterNodeRemoval(node);
                 return node;
             }
@@ -889,9 +876,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         modCount++;
         if ((tab = table) != null && size > 0) {
             size = 0;
+            table = null;
+            U.fullFence();
             for (int i = 0; i < tab.length; ++i) {
                 tab[i] = null;
-                UNSAFE.fullFence();
             }
         }
     }
@@ -1178,14 +1166,14 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         else if (t != null)
             t.putTreeVal(this, tab, hash, key, v);
         else {
-            tab[i] = newNode(hash, key, v, first);
-            UNSAFE.fullFence();
+            setTabAt(tab,i,newNode(hash, key, v, first));
             if (binCount >= TREEIFY_THRESHOLD - 1)
                 treeifyBin(tab, hash);
         }
         modCount = mc + 1;
         ++size;
         afterNodeInsertion(true);
+        U.fullFence();
         return v;
     }
 
@@ -1276,15 +1264,15 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             if (t != null)
                 t.putTreeVal(this, tab, hash, key, v);
             else {
-                tab[i] = newNode(hash, key, v, first);
-                UNSAFE.fullFence();
+                setTabAt(tab,i,newNode(hash, key, v, first));
                 if (binCount >= TREEIFY_THRESHOLD - 1)
                     treeifyBin(tab, hash);
             }
             modCount = mc + 1;
-            ++size;
+            U.getAndSetInt(this,SIZE,size+1);
             afterNodeInsertion(true);
         }
+        U.fullFence();
         return v;
     }
 
@@ -2033,8 +2021,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     }
                 }
             }
+            U.fullFence(); // FIXME
             moveRootToFront(tab, root);
-            UNSAFE.fullFence();
+            U.fullFence();
         }
 
         /**
@@ -2069,7 +2058,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else if (ph < h)
                     dir = 1;
                 else if ((pk = p.key) == k || (k != null && k.equals(pk))) {
-                    UNSAFE.fullFence();
                     return p;
                 }
                 else if ((kc == null &&
@@ -2082,7 +2070,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                                 (q = ch.find(h, k, kc)) != null) ||
                                 ((ch = p.right) != null &&
                                         (q = ch.find(h, k, kc)) != null)) {
-                            UNSAFE.fullFence();
                             return q;
                         }
                     }
@@ -2093,6 +2080,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if ((p = (dir <= 0) ? p.left : p.right) == null) {
                     Node<K,V> xpn = xp.next;
                     TreeNode<K,V> x = map.newTreeNode(h, k, v, xpn);
+                    U.storeStoreFence();
                     if (dir <= 0)
                         xp.left = x;
                     else
@@ -2101,8 +2089,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     x.parent = x.prev = xp;
                     if (xpn != null)
                         ((TreeNode<K,V>)xpn).prev = x;
-                    moveRootToFront(tab, balanceInsertion(root, x));
-                    UNSAFE.fullFence();
+                    TreeNode<K,V> t = balanceInsertion(root, x);
+                    U.fullFence();
+                    moveRootToFront(tab, t); // FIXME
                     return null;
                 }
             }
@@ -2141,7 +2130,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     && (root.right == null
                     || (rl = root.left) == null
                     || rl.left == null))) {
-                tab[index] = first.untreeify(map);  // too small
+                Node<K,V> t = first.untreeify(map);  // too small
+                U.fullFence();
+                tab[index] = t;
                 return;
             }
             TreeNode<K,V> p = this, pl = left, pr = right, replacement;
@@ -2199,8 +2190,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     pp.right = replacement;
                 p.left = p.right = p.parent = null;
             }
-
-            TreeNode<K,V> r = p.red ? root : balanceDeletion(root, replacement);
+            U.fullFence();
+            TreeNode<K,V> r = p.red ? root : balanceDeletion(root, replacement); // FIXME
 
             if (replacement == p) {  // detach
                 TreeNode<K,V> pp = p.parent;
@@ -2213,7 +2204,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
             }
             if (movable)
-                moveRootToFront(tab, r);
+                moveRootToFront(tab, r); // FIXME
         }
 
         /**
@@ -2484,5 +2475,29 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             return true;
         }
     }
+
+    // Unsafe mechanic
+
+    private static final Unsafe U = Unsafe.getUnsafe();
+    private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
+    private static final long TABLE = U.objectFieldOffset(SWMRHashMap.class, "table");
+    private static final int ABASE = U.arrayBaseOffset(Node[].class);
+    private static final int ASHIFT;
+
+    static {
+        int scale = U.arrayIndexScale(Node[].class);
+        if ((scale & (scale - 1)) != 0)
+            throw new ExceptionInInitializerError("array index scale not a power of two");
+        ASHIFT = 31 - Integer.numberOfLeadingZeros(scale);
+    }
+
+    static final <K,V> void setTabAt(Node<K,V>[] tab, int i, Node<K,V> v) {
+        U.putReferenceRelease(tab, ((long)i << ASHIFT) + ABASE, v);
+    }
+
+    static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
+        return (Node<K,V>)U.getReferenceAcquire(tab, ((long)i << ASHIFT) + ABASE);
+    }
+
 
 }

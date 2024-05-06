@@ -2,13 +2,14 @@ package eu.cloudbutton.dobj.key;
 
 import com.fasterxml.uuid.Generators;
 import eu.cloudbutton.dobj.juc.ThreadLocalRandom;
-import eu.cloudbutton.dobj.utils.SegmentAware;
+import eu.cloudbutton.dobj.utils.BaseSegmentable;
+import eu.cloudbutton.dobj.utils.Segmentable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class ThreadLocalKey extends SegmentAware implements Key, Comparable<ThreadLocalKey>{
+public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<ThreadLocalKey>{
 
     public UUID id;
     public int hash;
@@ -41,4 +42,5 @@ public class ThreadLocalKey extends SegmentAware implements Key, Comparable<Thre
     public String toString() {
         return "("+id+")";
     }
+
 }
