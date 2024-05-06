@@ -16,7 +16,7 @@ public class ConsistentHashSegmentation<T> implements Segmentation<T> {
         try {
             Constructor<T> constructor = clazz.getConstructor();
             for(int i=0; i<parallelism; i++) {
-                int hash = (Helpers.getThreadNamePrefix() + i).hashCode();
+                int hash = (Helpers.getExecutorNamePrefix() + i).hashCode();
                 treeMap.put(hash, constructor.newInstance());
             }
         } catch (Exception e) {

@@ -261,8 +261,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-    static final int TREEIFY_THRESHOLD = 8;
-    // static final int TREEIFY_THRESHOLD = 10000000;
+    // static final int TREEIFY_THRESHOLD = 8;
+    static final int TREEIFY_THRESHOLD = 10000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -287,8 +287,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     static class Node<K,V> implements Map.Entry<K,V> {
         final int hash;
         final K key;
-        V value;
-        Node<K,V> next;
+        volatile V value;
+        volatile Node<K,V> next;
 
         Node(int hash, K key, V value, Node<K,V> next) {
             this.hash = hash;
@@ -396,7 +396,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * (We also tolerate length zero in some operations to allow
      * bootstrapping mechanics that are currently not needed.)
      */
-    transient Node<K,V>[] table;
+    transient volatile Node<K,V>[] table;
 
     /**
      * Holds cached entrySet(). Note that AbstractMap fields are used
@@ -407,7 +407,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The number of key-value mappings contained in this map.
      */
-    transient int size;
+    transient volatile int size;
 
     /**
      * The number of times this HashMap has been structurally modified
@@ -631,7 +631,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
-            setTabAt(tab,i,newNode(hash, key, value, null));
+            Node<K,V> node = newNode(hash, key, value, null);
+            setTabAt(tab,i,node);
         }
         else {
             Node<K,V> e; K k;
@@ -644,8 +645,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
-                        p.next = newNode(hash, key, value, null);
-                        U.fullFence();
+                        Node<K,V> node = newNode(hash, key, value, null);
+                        U.putReferenceRelease(p,NEXT,node);
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -659,9 +660,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
-                    e.value = value;
+                    U.putReferenceRelease(p,VALUE,value);
                 afterNodeAccess(e);
-                U.fullFence();
+                U.fullFence(); // FIXME
                 return oldValue;
             }
         }
@@ -670,7 +671,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             resize();
         }
         afterNodeInsertion(evict);
-        U.fullFence();
+        U.fullFence(); // FIXME
         return null;
     }
 
@@ -1878,11 +1879,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * linked node.
      */
     static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
-        TreeNode<K,V> parent;  // red-black tree links
-        TreeNode<K,V> left;
-        TreeNode<K,V> right;
-        TreeNode<K,V> prev;    // needed to unlink next upon deletion
-        boolean red;
+        volatile TreeNode<K,V> parent;  // red-black tree links
+        volatile TreeNode<K,V> left;
+        volatile TreeNode<K,V> right;
+        volatile TreeNode<K,V> prev;    // needed to unlink next upon deletion
+        volatile boolean red;
         TreeNode(int hash, K key, V val, Node<K,V> next) {
             super(hash, key, val, next);
         }
@@ -2481,6 +2482,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final Unsafe U = Unsafe.getUnsafe();
     private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
     private static final long TABLE = U.objectFieldOffset(SWMRHashMap.class, "table");
+    private static final long NEXT = U.objectFieldOffset(Node.class, "next");
+    private static final long VALUE = U.objectFieldOffset(Node.class, "value");
     private static final int ABASE = U.arrayBaseOffset(Node[].class);
     private static final int ASHIFT;
 

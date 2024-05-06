@@ -26,7 +26,7 @@ public class HashSegmentation<T> implements Segmentation<T>{
 
     @Override
     public T segmentFor(Object x) {
-        return segments[x.hashCode()%parallelism];
+        return segments[Math.abs(x.hashCode()%parallelism)];
     }
 
     // Unsafe mechanic

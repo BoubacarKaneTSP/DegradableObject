@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.IntConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import static java.lang.Thread.sleep;
@@ -17,7 +19,8 @@ public class Helpers {
 
     private static final Unsafe UNSAFE;
     private static final ExecutorService executor;
-    private static final String prefix = "pool-1-thread-";
+    private static final String executorNamePrefix = "pool-1-thread-";
+    private static final Pattern pattern = Pattern.compile("pool-.*-thread-(.*)");
 
     static {
         try {
@@ -32,6 +35,12 @@ public class Helpers {
 
     public static final Unsafe getUNSAFE() {
         return UNSAFE;
+    }
+
+    public static final int threadIndexInPool() {
+        Matcher matcher = pattern.matcher(Thread.currentThread().getName());
+        matcher.find();
+        return Integer.parseInt(matcher.group(1)) - 1;
     }
 
     public static final void executeAll(int parallelism, Callable<Void> callable) {
@@ -53,8 +62,8 @@ public class Helpers {
         return executor;
     }
 
-    public static final String getThreadNamePrefix() {
-        return prefix;
+    public static final String getExecutorNamePrefix() {
+        return executorNamePrefix;
     }
 
     public static String toString(Object[] a, int size, int charLength) {

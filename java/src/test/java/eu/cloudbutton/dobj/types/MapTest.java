@@ -21,7 +21,7 @@ public class MapTest {
     private static final int ITEMS_PER_THREAD = 1_000;
 
     private Factory factory;
-    private KeyGenerator generator;
+    private SimpleKeyGenerator generator;
     private static int parallelism;
 
     private static Class[] IMPL = {
@@ -58,16 +58,15 @@ public class MapTest {
     }
 
     private void doTest(Map map) {
+
+        Map<Integer, List<Key>> keys = generator.generateAndSplit(
+                ITEMS_PER_THREAD * parallelism, parallelism);
         Callable<Void> callable = () -> {
             try {
-                List<Key> list = new ArrayList<>();
-                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
-                    for (; ; ) {
-                        if (list.add(generator.nextKey())) break;
-                    }
-                }
-                list.stream().forEach(x -> map.put(x,x));
-                assertEquals(list.stream().allMatch(x -> map.get(x)==x), true);
+                int me = Helpers.threadIndexInPool();
+                Collection<Key> collection = keys.get(Helpers.threadIndexInPool());
+                collection.stream().forEach(x -> map.put(x,x));
+                assertEquals(collection.stream().allMatch(x -> map.get(x)==x), true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -77,20 +76,18 @@ public class MapTest {
 
         AtomicInteger nbElement = new AtomicInteger();
         map.keySet().stream().forEach(_ -> nbElement.getAndIncrement());
-        assertEquals(nbElement.get() == ITEMS_PER_THREAD * parallelism,true);
+        assertEquals(nbElement.get(), ITEMS_PER_THREAD * parallelism);
         assertEquals(nbElement.get(), map.size());
+
+        Map<Integer, List<Key>> keys2 = generator.generateAndSplit(
+                ITEMS_PER_THREAD*parallelism, parallelism);
 
         callable = () -> {
             try {
-                List<Key> list = new ArrayList<>();
-                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
-                    for (; ; ) {
-                        if (list.add(generator.nextKey())) break;
-                    }
-                }
-                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
-                    map.remove(list.get(i));
-                    assertEquals(map.containsKey(list.get(i)), false);
+                Collection<Key> collection = keys2.get(Helpers.threadIndexInPool());
+                for (Key key : collection) {
+                    map.remove(key);
+                    assertEquals(map.containsKey(key), false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -99,18 +96,17 @@ public class MapTest {
         };
         Helpers.executeAll(parallelism, callable);
         assertEquals(map.size(), ITEMS_PER_THREAD * parallelism);
-
         map.clear();
         assertEquals(map.size(), 0);
 
-        Set<Key> keys = new ConcurrentSkipListSet<>();
+        Set<Key> keys3 = new ConcurrentSkipListSet<>();
         callable = () -> {
             try {
-                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
-                    Key k = generator.nextKey();
-                    map.put(k,k);
-                    keys.add(k);
-                    keys.stream().forEach(x->assertTrue(map.containsKey(x)));
+                Collection<Key> collection = keys2.get(Helpers.threadIndexInPool());
+                for (Key key : collection) {
+                    map.put(key,key);
+                    keys3.add(key);
+                    keys3.stream().forEach(x->assertTrue(map.containsKey(x)));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -120,12 +116,16 @@ public class MapTest {
         Helpers.executeAll(parallelism, callable);
 
         Map<Key,Key> previous = new ConcurrentHashMap<>();
+        Map<Integer, List<Key>> keys4 = generator.generateAndSplit(
+                100 * parallelism, parallelism);
+
         callable = () -> {
-            Key c=null, p=generator.nextKey();
+            List<Key> collection = keys4.get(Helpers.threadIndexInPool());
+            Key c, p = collection.get(0);
             map.put(p,"");
             try {
-                for (int i = 0; i < 100; i++) {
-                    c = generator.nextKey();
+                for (int i = 1; i < collection.size(); i++) {
+                    c = collection.get(i);
                     map.put(c,"");
                     previous.put(c,p);
                     p = c;
@@ -133,7 +133,7 @@ public class MapTest {
                             forEach(x->
                             {
                                 Key y = previous.get(x);
-                                assertTrue(map.get(x)!=null);
+                                assertTrue(map.containsKey(y));
                             });
                 }
             } catch (Exception e) {
@@ -142,7 +142,6 @@ public class MapTest {
             return null;
         };
         Helpers.executeAll(parallelism, callable);
-
 
     }
 }
