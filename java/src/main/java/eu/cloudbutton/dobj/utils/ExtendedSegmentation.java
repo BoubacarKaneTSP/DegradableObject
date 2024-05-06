@@ -9,15 +9,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExtendedSegmentation<T> implements Segmentation<T>{
 
-    static private AtomicInteger counter = new AtomicInteger(0);
-    static private CarrierThreadLocal<Integer> indices = new CarrierThreadLocalWithInitial(
+    private static AtomicInteger counter = new AtomicInteger(0);
+    private static CarrierThreadLocal<Integer> indices = new CarrierThreadLocalWithInitial(
             () -> counter.getAndIncrement());
+    private static final int parallelism = Runtime.getRuntime().availableProcessors();
 
     protected final List<T> segments;
 
     public ExtendedSegmentation(Class<T> clazz) {
         segments = new CopyOnWriteArrayList<>();
-        for (int i=0; i<Runtime.getRuntime().availableProcessors(); i++) {
+        for (int i=0; i<parallelism; i++) {
             try {
                 segments.add(clazz.getDeclaredConstructor().newInstance());
             } catch (Throwable e) {

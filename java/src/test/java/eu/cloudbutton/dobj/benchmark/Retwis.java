@@ -183,6 +183,11 @@ public class Retwis {
 
         NB_USERS = (int) _nbUserInit;
 
+        if (_nbThreads > Runtime.getRuntime().availableProcessors()) {
+                System.out.println("More threads than HW resources specified; fixing.");
+                _nbThreads = Runtime.getRuntime().availableProcessors();
+        }
+
         if (_nbUserInit > _nbItems){
             System.out.println("Nb User must be lower or equal to number of hash");
             System.exit(1);
@@ -410,7 +415,6 @@ public class Retwis {
         List<Key> users, usersToFollow, dummies;
         Key user, userToFollow, dummy;
         int nextUser, nextUserToFollow, nextDummy;
-        List<operationType> listOperationToDo;
 
         public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) {
             this.random = ThreadLocalRandom.current();
@@ -433,6 +437,7 @@ public class Retwis {
                 myId.set(Helpers.threadIndexInPool());
 
                 System.out.println(myId.get()+": "+database.getMapUserToAdd().get(myId.get()).size()+" users");
+                assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
 
                 for (Key user : database.getMapUserToAdd().get(myId.get())){
                     database.addOriginalUser(user);
@@ -440,8 +445,6 @@ public class Retwis {
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
-
-                if (myId.get()==0) assert database.getMapFollowers().size() == NB_USERS;
 
                 for (Key userA : database.getMapUserToAdd().get(myId.get())){
                     for (Key userB : database.getMapListUserFollow().get(userA)){
@@ -461,16 +464,6 @@ public class Retwis {
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 nbLocalUsers = database.getMapUserToAdd().get(myId.get()).size();
                 localUserUsageDistribution = new LinkedList<>();
-
-                listOperationToDo = new ArrayList<>();
-
-                for (int i = 0; i < sizeOpToDo; i++) {
-                    listOperationToDo.add(chooseOperation());
-                }
-
-
-                int num = 0;
-                boolean cleanTimeline = false;
 
                 users = new ArrayList<>(MAX_USERS_PER_THREAD);
                 usersToFollow = new ArrayList<>(MAX_USERS_PER_THREAD);
@@ -521,8 +514,6 @@ public class Retwis {
                     }
                 }else{
 
-                    num=0;
-
                     while (flagComputing.get()){
 
                         type = chooseOperation();
@@ -533,15 +524,13 @@ public class Retwis {
                             for (int j = 0; j < nbRepeat; j++) {
                                 compute(type);
 //                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
-                                cleanTimeline = num++ % (2 * _nbUserInit) == 0;
-//                                num++;
+                                //                                num++;
                             }
                         }else{
 
                             compute(type);
 //                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
-                            num++;
-//
+                            //
 //                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }

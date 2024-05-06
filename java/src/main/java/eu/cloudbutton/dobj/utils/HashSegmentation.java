@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.utils;
 
+import jdk.internal.misc.Unsafe;
+
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

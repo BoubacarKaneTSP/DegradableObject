@@ -456,7 +456,7 @@ public class Database {
         for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                indiceThread = Math.abs(user.hashCode() % nbThread);
+                indiceThread = Math.abs(user.hashCode()%nbThread);
                 // assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user, indiceThread);

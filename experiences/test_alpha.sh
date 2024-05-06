@@ -39,7 +39,7 @@ do
     echo "$alpha"
     for nbUsersInit in 160
     do
-	for nbThread in 12
+	for nbThread in 8
 	do
 	    for (( c=1; c<=nbTest; c++ ))
 	    do
