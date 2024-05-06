@@ -28,10 +28,14 @@ package eu.cloudbutton.dobj.asymmetric.swmr.map;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -318,6 +322,16 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     return true;
             }
             return false;
+        }
+
+        private static final VarHandle NEXT;
+        static {
+            try {
+                MethodHandles.Lookup l = MethodHandles.lookup();
+                NEXT = l.findVarHandle(Node.class, "next", Node.class);
+            } catch (ReflectiveOperationException e) {
+                throw new ExceptionInInitializerError(e);
+            }
         }
     }
 
@@ -641,8 +655,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
-            tab[i] = newNode(hash, key, value, null);
-            UNSAFE.fullFence();
+            TABLE.setRelease(this, i, newNode(hash, key, value, null));
         }
         else {
             Node<K,V> e; K k;
@@ -655,8 +668,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
-                        p.next = newNode(hash, key, value, null);
-                        UNSAFE.fullFence();
+                        p.NEXT.setRelease(this, newNode(hash, key, value, null));
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -672,7 +684,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 afterNodeAccess(e);
-                UNSAFE.fullFence();
                 return oldValue;
             }
         }
@@ -680,7 +691,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);
-        UNSAFE.fullFence();
         return null;
     }
 
@@ -1918,7 +1928,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 TreeNode<K,V> first = (TreeNode<K,V>)tab[index];
                 if (root != first) {
                     Node<K,V> rn;
-                    tab[index] = root;
+                    TABLE.setRelease(tab, index, root);
                     TreeNode<K,V> rp = root.prev;
                     if ((rn = root.next) != null)
                         ((TreeNode<K,V>)rn).prev = rp;
@@ -2480,6 +2490,36 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             if (tr != null && !checkInvariants(tr))
                 return false;
             return true;
+        }
+    }
+
+    private static final VarHandle TABLE;
+    private static final VarHandle HASH;
+    private static final VarHandle KEY;
+    private static final VarHandle VALUE;
+    private static final VarHandle NEXT;
+
+    private static final VarHandle PARENT;
+    private static final VarHandle LEFT;
+    private static final VarHandle RIGHT;
+    private static final VarHandle PREV;
+
+    static {
+        try{
+            MethodHandles.Lookup l = MethodHandles.lookup();
+            TABLE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
+            NEXT = l.findVarHandle(Node.class, "next", Node.class);
+            HASH = l.findVarHandle(Node.class, "hash", int.class);
+            KEY = l.findVarHandle(Node.class, "key", Object.class);
+            VALUE = l.findVarHandle(Node.class, "value", Object.class);
+            PARENT = l.findVarHandle(TreeNode.class, "parent", TreeNode.class);
+            LEFT = l.findVarHandle(TreeNode.class, "left", TreeNode.class);
+            RIGHT = l.findVarHandle(TreeNode.class, "right", TreeNode.class);
+            PREV = l.findVarHandle(TreeNode.class, "prev", TreeNode.class);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
