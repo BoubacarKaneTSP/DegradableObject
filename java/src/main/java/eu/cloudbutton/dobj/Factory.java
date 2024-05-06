@@ -153,6 +153,8 @@ public class Factory {
                 return SetAddIntensive.class;
             case "SetMWSR":
                 return SetMWSR.class;
+            case "ExtendedSegmentedHashSet":
+                return ExtendedSegmentedHashSet.class;
             // queue
             case "Queue":
             case "ConcurrentLinkedQueue":
