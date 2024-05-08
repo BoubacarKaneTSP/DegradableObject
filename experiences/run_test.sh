@@ -11,7 +11,7 @@ benchmarkTime=60
 warmingUpTime=30
 nbThreads=("1" "5" "10" "20" "40" "80")
 objects=("AtomicReference" "AtomicWriteOnceReference")
-ratio="37 37 26"
+ratio="0 0 100"
 
 for object in "${objects[@]}"; do
   python3 rm_file.py "Microbenchmark" "$object"
