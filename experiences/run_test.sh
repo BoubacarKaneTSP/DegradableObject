@@ -10,7 +10,7 @@ nbTest=15
 benchmarkTime=60
 warmingUpTime=30
 nbThreads=("1" "5" "10" "20" "40" "80")
-objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
+objects=("AtomicReference" "AtomicWriteOnceReference")
 ratio="37 37 26"
 
 for object in "${objects[@]}"; do
