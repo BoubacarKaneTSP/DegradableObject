@@ -783,6 +783,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * table is too small, in which case resizes instead.
      */
     final void treeifyBin(Node<K,V>[] tab, int hash) {
+        System.exit(1);
         int n, index; Node<K,V> e;
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
@@ -2065,6 +2066,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          */
         final TreeNode<K,V> putTreeVal(SWMRHashMap<K,V> map, Node<K,V>[] tab,
                                        int h, K k, V v) {
+            System.exit(1);
             Class<?> kc = null;
             boolean searched = false;
             TreeNode<K,V> root = (parent != null) ? root() : this;
