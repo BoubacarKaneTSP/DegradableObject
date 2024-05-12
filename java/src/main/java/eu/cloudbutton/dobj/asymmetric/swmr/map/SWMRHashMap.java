@@ -781,8 +781,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
 
+        table = newTab;
+//        U.putReferenceRelease(this,UTABLE,newTab);
         U.fullFence();
-        U.putReferenceRelease(this,UTABLE,newTab);
         return newTab;
     }
 
