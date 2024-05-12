@@ -105,6 +105,7 @@ public class MapTest {
         Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
 
+        Key usr = generator.nextKey();
         Set<Key> other = new ConcurrentSkipListSet<>();
         CountDownLatch latch3 = new CountDownLatch(parallelism);
         Callable<Void> callable = () -> {
@@ -113,9 +114,9 @@ public class MapTest {
                 latch3.await();
                 Collection<Key> collection = keys3.get(Helpers.threadIndexInPool());
                 for (Key key : collection) {
-                    map.put(key,key);
-                    other.add(key);
-                    other.stream().forEach(x->assertTrue(map.containsKey(x)));
+                    map.put(usr,usr);
+                    other.add(usr);
+                    other.stream().forEach(x->assertTrue(map.containsKey(usr)));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
