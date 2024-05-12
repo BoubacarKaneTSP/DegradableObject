@@ -653,7 +653,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
         if ((p = tab[i = (n - 1) & hash]) == null) {
-            TABLE.setRelease(this, i, newNode(hash, key, value, null));
+            TABLE.setRelease(table, i, newNode(hash, key, value, null));
         }
         else {
             Node<K,V> e; K k;
@@ -666,7 +666,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
-                        p.NEXT.setRelease(this, newNode(hash, key, value, null));
+                        NEXT.setRelease(p, newNode(hash, key, value, null));
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
