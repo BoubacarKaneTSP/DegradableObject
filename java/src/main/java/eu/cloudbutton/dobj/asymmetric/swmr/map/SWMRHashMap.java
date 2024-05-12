@@ -284,17 +284,17 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)
      */
     static class Node<K,V> implements Entry<K,V> {
-        volatile int hash;
-        volatile K key;
+        final int hash;
+        final K key;
         V value;
         Node<K,V> next;
 
         Node(int hash, K key, V value, Node<K,V> next) {
             this.hash = hash;
             this.key = key;
+            UNSAFE.fullFence();
             VALUE.setRelease(this, value);
             NEXT.setRelease(this, next);
-            UNSAFE.fullFence();
         }
 
         public final K getKey()        { return key; }
@@ -652,15 +652,20 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
-        if ((tab = table) == null || (n = tab.length) == 0)
-            n = (tab = resize()).length;
-        if ((p = tab[i = (n - 1) & hash]) == null) {
+        if ((tab = table) == null || (n = tab.length) == 0) {
+            tab = resize();
+            n = tab.length;
+        }
+        i = (n - 1) & hash;
+        p = (Node<K, V>) TABLE.getAcquire(tab, i);
+        if (p == null) {
             TABLE.setRelease(table, i, newNode(hash, key, value, null));
         }
         else {
             Node<K,V> e; K k;
+            k = p.key;
             if (p.hash == hash &&
-                    ((k = p.key) == key || (key != null && key.equals(k))))
+                    (k == key || (key != null && key.equals(k))))
                 e = p;
             else if (p instanceof TreeNode) {
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
