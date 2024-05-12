@@ -773,8 +773,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
 
+        table = newTab;
         UNSAFE.loadFence();
-        TABLE.setRelease(this, newTab);
         return newTab;
     }
 
