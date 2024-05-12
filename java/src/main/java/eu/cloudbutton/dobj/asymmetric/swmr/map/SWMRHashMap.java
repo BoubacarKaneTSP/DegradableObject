@@ -284,8 +284,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)
      */
     static class Node<K,V> implements Entry<K,V> {
-        final int hash;
-        final K key;
+        volatile int hash;
+        volatile K key;
         V value;
         Node<K,V> next;
 
