@@ -9,9 +9,9 @@ range=32768
 nbTest=15
 benchmarkTime=60
 warmingUpTime=30
-nbThreads=("1" "5" "10" "20" "40" "80")
-objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
-ratio="37 37 26"
+nbThreads=("80")
+objects=("ExtendedSegmentedHashMap")
+ratio="50 0 50"
 
 for object in "${objects[@]}"; do
   python3 rm_file.py "Microbenchmark" "$object"
