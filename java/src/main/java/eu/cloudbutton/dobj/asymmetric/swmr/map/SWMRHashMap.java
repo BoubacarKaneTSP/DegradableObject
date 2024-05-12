@@ -592,13 +592,15 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
         if ((tab = table) != null && (n = tab.length) > 0 &&
-                (first = (Node<K, V>) TABLE.getAcquire(tab, (n - 1) & hash)) != null) {
+                (first = (Node<K, V>) TABLE.getAcquire(tab, (n - 1) & hash)) != null) { // Check if table is empty
             if ((int) HASH.getAcquire(first) == hash && // always check first node
                     ((k = (K) KEY.getAcquire(first)) == key || (key != null && key.equals(k))))
                 return first;
             if ((e = (Node<K, V>) NEXT.getAcquire(first)) != null) {
-                if (first instanceof TreeNode)
-                    return ((TreeNode<K,V>)first).getTreeNode(hash, key);
+                if (first instanceof TreeNode) {
+                    System.exit(1);
+                    return ((TreeNode<K, V>) first).getTreeNode(hash, key);
+                }
                 do {
                     if ((int) HASH.getAcquire(e) == hash &&
                             ((k = (K) KEY.getAcquire(e)) == key || (key != null && key.equals(k))))

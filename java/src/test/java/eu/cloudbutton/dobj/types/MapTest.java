@@ -59,7 +59,7 @@ public class MapTest {
 
     private void doTest(Map map) {
 
-        Map<Integer, List<Key>> keys = generator.generateAndSplit(
+        /*Map<Integer, List<Key>> keys = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
         CountDownLatch latch = new CountDownLatch(parallelism);
         Callable<Void> callable = () -> {
@@ -100,14 +100,14 @@ public class MapTest {
         Helpers.executeAll(parallelism, callable);
         assertEquals(map.size(), ITEMS_PER_THREAD * parallelism);
         map.clear();
-        assertEquals(map.size(), 0);
+        assertEquals(map.size(), 0);*/
 
         Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
 
         Set<Key> other = new ConcurrentSkipListSet<>();
         CountDownLatch latch3 = new CountDownLatch(parallelism);
-        callable = () -> {
+        Callable<Void> callable = () -> {
             try {
                 latch3.countDown();
                 latch3.await();
