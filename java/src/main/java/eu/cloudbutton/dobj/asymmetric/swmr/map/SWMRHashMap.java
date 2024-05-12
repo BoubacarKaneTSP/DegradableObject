@@ -2503,7 +2503,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     static {
         try{
             MethodHandles.Lookup l = MethodHandles.lookup();
-            TABLE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
+            TABLE = MethodHandles.arrayElementVarHandle(Node[].class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
             HASH = l.findVarHandle(Node.class, "hash", int.class);
             KEY = l.findVarHandle(Node.class, "key", Object.class);
@@ -2512,9 +2512,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             LEFT = l.findVarHandle(TreeNode.class, "left", TreeNode.class);
             RIGHT = l.findVarHandle(TreeNode.class, "right", TreeNode.class);
             PREV = l.findVarHandle(TreeNode.class, "prev", TreeNode.class);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
