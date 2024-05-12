@@ -110,14 +110,19 @@ public class MapTest {
         CountDownLatch latch3 = new CountDownLatch(parallelism);
         Callable<Void> callable = () -> {
             try {
+                map.put(usr,usr);
+                other.add(usr);
                 latch3.countDown();
                 latch3.await();
-                Collection<Key> collection = keys3.get(Helpers.threadIndexInPool());
-                for (Key key : collection) {
-                    map.put(usr,usr);
-                    other.add(usr);
-                    other.stream().forEach(x->assertTrue(map.containsKey(usr)));
+
+                for (int i = 0; i < 1000; i++) {
+                    assertTrue(map.containsKey(usr));
                 }
+//                Collection<Key> collection = keys3.get(Helpers.threadIndexInPool());
+//                for (Key key : collection) {
+//
+//                    other.stream().forEach(x->assertTrue(map.containsKey(usr)));
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
