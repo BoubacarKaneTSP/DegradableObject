@@ -709,6 +709,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * @return the table
      */
     final Node<K,V>[] resize() {
+        System.out.println("resize <======================");
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
