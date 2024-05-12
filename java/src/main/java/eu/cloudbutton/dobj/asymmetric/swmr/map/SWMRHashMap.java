@@ -238,8 +238,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-    static final int DEFAULT_INITIAL_CAPACITY = 1 << 30; // aka 16
-//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 30; // aka 16
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
      * The maximum capacity, used if a higher value is implicitly specified
@@ -743,7 +743,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if ((e = oldTab[j]) != null) {
 //                    oldTab[j] = null;
                     if (e.next == null) {
-                        newTab[e.hash & (newCap - 1)] = e;
+                        TABLE.setRelease(newTab, e.hash & (newCap - 1), e);
                     }
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
@@ -757,24 +757,24 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                                 if (loTail == null)
                                     loHead = e;
                                 else
-                                    loTail.next = e;
+                                    NEXT.setRelease(loTail, e);
                                 loTail = e;
                             }
                             else {
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
-                                    hiTail.next = e;
+                                    NEXT.setRelease(hiTail, e);
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
                         if (loTail != null) {
-                            loTail.next = null;
-                            newTab[j] = loHead;
+                            NEXT.setRelease(loTail, null);
+                            TABLE.setRelease(newTab, j, loHead);
                         }
                         if (hiTail != null) {
-                            hiTail.next = null;
-                            newTab[j + oldCap] = hiHead;
+                            NEXT.setRelease(hiTail, null);
+                            TABLE.setRelease(newTab, j+ oldCap, hiHead);
                         }
                     }
                 }
@@ -2251,20 +2251,22 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             int lc = 0, hc = 0;
             for (TreeNode<K,V> e = b, next; e != null; e = next) {
                 next = (TreeNode<K,V>)e.next;
-                e.next = null;
+                NEXT.setRelease(e, null);
                 if ((e.hash & bit) == 0) {
-                    if ((e.prev = loTail) == null)
+                    PREV.setRelease(e, loTail);
+                    if (e.prev == null)
                         loHead = e;
                     else
-                        loTail.next = e;
+                        NEXT.setRelease(loTail, e);
                     loTail = e;
                     ++lc;
                 }
                 else {
-                    if ((e.prev = hiTail) == null)
+                    PREV.setRelease(e, hiTail);
+                    if (e.prev == null)
                         hiHead = e;
                     else
-                        hiTail.next = e;
+                        NEXT.setRelease(hiTail, e);
                     hiTail = e;
                     ++hc;
                 }
