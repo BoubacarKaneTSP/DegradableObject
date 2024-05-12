@@ -139,11 +139,13 @@ public class MapTest {
             latch4.countDown();
             latch4.await();
             List<Key> collection = keys4.get(Helpers.threadIndexInPool());
-            Key c, p = collection.get(0);
+//            Key c, p = collection.get(0);
+            Key c, p = usr;
             map.put(p,"");
             try {
                 for (int i = 1; i < collection.size(); i++) {
-                    c = collection.get(i);
+//                    c = collection.get(i);
+                    c = usr;
                     map.put(c,"");
                     previous.put(c,p);
                     p = c;
