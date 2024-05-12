@@ -775,8 +775,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
 
-        table = newTab;
-        UNSAFE.loadFence();
+        U.fullFence();
+        U.putReferenceRelease(this,UTABLE,newTab);
         return newTab;
     }
 
@@ -2511,6 +2511,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
     private static final int ABASE = U.arrayBaseOffset(Node[].class);
     private static final int ASHIFT;
+    private static final long UTABLE = U.objectFieldOffset(SWMRHashMap.class, "table");
+
 
     static {
         try{
