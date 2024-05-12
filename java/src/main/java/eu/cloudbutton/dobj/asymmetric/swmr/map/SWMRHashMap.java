@@ -238,8 +238,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 30; // aka 16
-    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+    static final int DEFAULT_INITIAL_CAPACITY = 16384; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
      * The maximum capacity, used if a higher value is implicitly specified
@@ -261,8 +261,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-//    static final int TREEIFY_THRESHOLD = 8;
-    static final int TREEIFY_THRESHOLD = 10000000;
+    static final int TREEIFY_THRESHOLD = 8;
+//    static final int TREEIFY_THRESHOLD = 10000000;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -598,7 +598,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 return first;
             if ((e = (Node<K, V>) NEXT.getAcquire(first)) != null) {
                 if (first instanceof TreeNode) {
-                    System.exit(1);
                     return ((TreeNode<K, V>) first).getTreeNode(hash, key);
                 }
                 do {
@@ -792,7 +791,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * table is too small, in which case resizes instead.
      */
     final void treeifyBin(Node<K,V>[] tab, int hash) {
-        System.exit(1);
         int n, index; Node<K,V> e;
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
@@ -2075,7 +2073,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          */
         final TreeNode<K,V> putTreeVal(SWMRHashMap<K,V> map, Node<K,V>[] tab,
                                        int h, K k, V v) {
-            System.exit(1);
             Class<?> kc = null;
             boolean searched = false;
             TreeNode<K,V> root = (parent != null) ? root() : this;
