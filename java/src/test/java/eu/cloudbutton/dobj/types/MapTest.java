@@ -59,7 +59,7 @@ public class MapTest {
 
     private void doTest(Map map) {
 
-        /*Map<Integer, List<Key>> keys = generator.generateAndSplit(
+        Map<Integer, List<Key>> keys = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
         CountDownLatch latch = new CountDownLatch(parallelism);
         Callable<Void> callable = () -> {
@@ -100,29 +100,23 @@ public class MapTest {
         Helpers.executeAll(parallelism, callable);
         assertEquals(map.size(), ITEMS_PER_THREAD * parallelism);
         map.clear();
-        assertEquals(map.size(), 0);*/
+        assertEquals(map.size(), 0);
 
         Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
 
-        Key usr = generator.nextKey();
         Set<Key> other = new ConcurrentSkipListSet<>();
         CountDownLatch latch3 = new CountDownLatch(parallelism);
-        Callable<Void> callable = () -> {
+        callable = () -> {
             try {
-                map.put(usr,usr);
-                other.add(usr);
                 latch3.countDown();
                 latch3.await();
-
-                for (int i = 0; i < 1000; i++) {
-                    assertTrue(map.containsKey(usr));
+                Collection<Key> collection = keys3.get(Helpers.threadIndexInPool());
+                for (Key key : collection) {
+                    map.put(key,key);
+                    other.add(key);
+                    other.stream().forEach(x->assertTrue(map.containsKey(x)));
                 }
-//                Collection<Key> collection = keys3.get(Helpers.threadIndexInPool());
-//                for (Key key : collection) {
-//
-//                    other.stream().forEach(x->assertTrue(map.containsKey(usr)));
-//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -132,7 +126,7 @@ public class MapTest {
 
         Map<Key,Key> previous = new ConcurrentHashMap<>();
         Map<Integer, List<Key>> keys4 = generator.generateAndSplit(
-                100 * parallelism, parallelism);
+                10000 * parallelism, parallelism);
 
         CountDownLatch latch4 = new CountDownLatch(parallelism);
         callable = () -> {
