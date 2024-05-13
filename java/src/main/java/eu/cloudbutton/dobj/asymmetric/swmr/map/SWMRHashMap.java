@@ -743,7 +743,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if ((e = oldTab[j]) != null) {
 //                    oldTab[j] = null;
                     if (e.next == null) {
-                        TABLE.setRelease(newTab, e.hash & (newCap - 1), e);
+                        TABLE.setRelease(newTable, e.hash & (newCap - 1), e);
                     }
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTable, j, oldCap);
