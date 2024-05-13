@@ -781,9 +781,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
 
-        table = newTab;
-//        U.putReferenceRelease(this,UTABLE,newTab);
-        U.fullFence();
+        TABLE_UPDATE.setRelease(this, newTab);
         return newTab;
     }
 
@@ -2505,6 +2503,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
 
     private static final VarHandle TABLE;
+    private static final VarHandle TABLE_UPDATE;
     private static final VarHandle HASH;
     private static final VarHandle KEY;
     private static final VarHandle VALUE;
@@ -2514,6 +2513,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final VarHandle LEFT;
     private static final VarHandle RIGHT;
     private static final VarHandle PREV;
+    private static final VarHandle ARRAY_HANDLE;
 
     private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
     private static final int ABASE = U.arrayBaseOffset(Node[].class);
@@ -2525,6 +2525,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         try{
             MethodHandles.Lookup l = MethodHandles.lookup();
             TABLE = MethodHandles.arrayElementVarHandle(Node[].class);
+            TABLE_UPDATE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
             HASH = l.findVarHandle(Node.class, "hash", int.class);
             KEY = l.findVarHandle(Node.class, "key", Object.class);
@@ -2533,6 +2534,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             LEFT = l.findVarHandle(TreeNode.class, "left", TreeNode.class);
             RIGHT = l.findVarHandle(TreeNode.class, "right", TreeNode.class);
             PREV = l.findVarHandle(TreeNode.class, "prev", TreeNode.class);
+            ARRAY_HANDLE = MethodHandles.lookup().findStaticVarHandle(SWMRHashMap.class, "table", Node[].class);
 
             int scale = U.arrayIndexScale(Node[].class);
             if ((scale & (scale - 1)) != 0)
