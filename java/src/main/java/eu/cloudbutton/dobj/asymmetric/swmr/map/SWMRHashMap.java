@@ -238,8 +238,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-    static final int DEFAULT_INITIAL_CAPACITY = 1 << 20; // aka 16
-//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 20; // aka 16
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
      * The maximum capacity, used if a higher value is implicitly specified
@@ -261,8 +261,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-    static final int TREEIFY_THRESHOLD = 8;
-//    static final int TREEIFY_THRESHOLD = 10000000;
+//    static final int TREEIFY_THRESHOLD = 8;
+    static final int TREEIFY_THRESHOLD = 1 << 20;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
