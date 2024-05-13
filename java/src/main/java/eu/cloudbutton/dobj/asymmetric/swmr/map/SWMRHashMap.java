@@ -736,7 +736,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         threshold = newThr;
         System.out.println("resize <=========== old cap : " + oldCap);
         @SuppressWarnings({"rawtypes","unchecked"})
-        Node<K,V>[] newTab = new Node[0];
+        Node<K,V>[] newTab = (Node<K,V>[])new Node[0];
         TABLE_UPDATE.setRelease(newTab, (Node<K,V>[])new Node[newCap]);
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
@@ -2527,7 +2527,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         try{
             MethodHandles.Lookup l = MethodHandles.lookup();
             TABLE = MethodHandles.arrayElementVarHandle(Node[].class);
-            TABLE_UPDATE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
+            TABLE_UPDATE = l.findVarHandle(Node[].class, "table", Node[].class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
             HASH = l.findVarHandle(Node.class, "hash", int.class);
             KEY = l.findVarHandle(Node.class, "key", Object.class);
