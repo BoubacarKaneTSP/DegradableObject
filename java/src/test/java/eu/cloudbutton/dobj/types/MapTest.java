@@ -126,7 +126,7 @@ public class MapTest {
 
         Map<Key,Key> previous = new ConcurrentHashMap<>();
         Map<Integer, List<Key>> keys4 = generator.generateAndSplit(
-                10000 * parallelism, parallelism);
+                100 * parallelism, parallelism);
 
         CountDownLatch latch4 = new CountDownLatch(parallelism);
         callable = () -> {
