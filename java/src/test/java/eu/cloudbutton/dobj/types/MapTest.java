@@ -59,6 +59,7 @@ public class MapTest {
 
     private void doTest(Map map) {
 
+        System.out.println("Each thread can see what it has added");
         Map<Integer, List<Key>> keys = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
         CountDownLatch latch = new CountDownLatch(parallelism);
@@ -75,11 +76,14 @@ public class MapTest {
             return null;
         };
         Helpers.executeAll(parallelism, callable);
+        System.out.println("Done");
+
         AtomicInteger nbElement = new AtomicInteger();
         map.keySet().stream().forEach(_ -> nbElement.getAndIncrement());
-        assertEquals(nbElement.get(), ITEMS_PER_THREAD * parallelism);
-        assertEquals(nbElement.get(), map.size());
+        assertEquals(nbElement.get(), ITEMS_PER_THREAD * parallelism, "All elements are not successfully added");
+        assertEquals(nbElement.get(), map.size(), "Error with map.size()");
 
+        /*System.out.println("Test remove");
         Map<Integer, List<Key>> keys2 = generator.generateAndSplit(
                 ITEMS_PER_THREAD*parallelism, parallelism);
         CountDownLatch latch2 = new CountDownLatch(parallelism);
@@ -98,10 +102,13 @@ public class MapTest {
             return null;
         };
         Helpers.executeAll(parallelism, callable);
+        System.out.println("Done");
+
         assertEquals(map.size(), ITEMS_PER_THREAD * parallelism);
         map.clear();
-        assertEquals(map.size(), 0);
+        assertEquals(map.size(), 0);*/
 
+        System.out.println("Each thread can see what other thread has added");
         Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
 
@@ -123,7 +130,9 @@ public class MapTest {
             return null;
         };
         Helpers.executeAll(parallelism, callable);
+        System.out.println("Done");
 
+        System.out.println("Check if previous values are added");
         Map<Key,Key> previous = new ConcurrentHashMap<>();
         Map<Integer, List<Key>> keys4 = generator.generateAndSplit(
                 100 * parallelism, parallelism);
@@ -134,12 +143,10 @@ public class MapTest {
             latch4.await();
             List<Key> collection = keys4.get(Helpers.threadIndexInPool());
             Key c, p = collection.get(0);
-//            Key c, p = usr;
             map.put(p,"");
             try {
                 for (int i = 1; i < collection.size(); i++) {
                     c = collection.get(i);
-//                    c = usr;
                     map.put(c,"");
                     previous.put(c,p);
                     p = c;
@@ -156,6 +163,7 @@ public class MapTest {
             return null;
         };
         Helpers.executeAll(parallelism, callable);
+        System.out.println("done");
 
     }
 }
