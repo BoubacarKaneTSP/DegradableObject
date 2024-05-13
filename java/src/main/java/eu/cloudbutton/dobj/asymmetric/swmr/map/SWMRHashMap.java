@@ -736,7 +736,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         threshold = newThr;
         System.out.println("resize <=========== old cap : " + oldCap);
         @SuppressWarnings({"rawtypes","unchecked"})
-        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+        Node<K,V>[] newTab = null;
+        TABLE_UPDATE.setRelease(newTab, (Node<K,V>[])new Node[newCap]);
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;
@@ -751,6 +752,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         Node<K,V> loHead = null, loTail = null;
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
+
                         do {
                             next = e.next;
                             if ((e.hash & oldCap) == 0) {
@@ -770,10 +772,12 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         } while ((e = next) != null);
                         if (loTail != null) {
                             NEXT.setRelease(loTail, null);
+                            UNSAFE.fullFence();
                             TABLE.setRelease(newTab, j, loHead);
                         }
                         if (hiTail != null) {
                             NEXT.setRelease(hiTail, null);
+                            UNSAFE.fullFence();
                             TABLE.setRelease(newTab, j+ oldCap, hiHead);
                         }
                     }
