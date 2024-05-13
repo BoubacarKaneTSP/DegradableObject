@@ -2513,12 +2513,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final VarHandle LEFT;
     private static final VarHandle RIGHT;
     private static final VarHandle PREV;
-    private static final VarHandle ARRAY_HANDLE;
 
     private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
     private static final int ABASE = U.arrayBaseOffset(Node[].class);
     private static final int ASHIFT;
-    private static final long UTABLE = U.objectFieldOffset(SWMRHashMap.class, "table");
 
 
     static {
@@ -2534,7 +2532,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             LEFT = l.findVarHandle(TreeNode.class, "left", TreeNode.class);
             RIGHT = l.findVarHandle(TreeNode.class, "right", TreeNode.class);
             PREV = l.findVarHandle(TreeNode.class, "prev", TreeNode.class);
-            ARRAY_HANDLE = MethodHandles.lookup().findStaticVarHandle(SWMRHashMap.class, "table", Node[].class);
 
             int scale = U.arrayIndexScale(Node[].class);
             if ((scale & (scale - 1)) != 0)
