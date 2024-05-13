@@ -407,6 +407,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * bootstrapping mechanics that are currently not needed.)
      */
     transient Node<K,V>[] table;
+    private Node<K,V>[] newTable;
 
     /**
      * Holds cached entrySet(). Note that AbstractMap fields are used
@@ -735,9 +736,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
         threshold = newThr;
         System.out.println("resize <=========== old cap : " + oldCap);
-        @SuppressWarnings({"rawtypes","unchecked"})
-        Node<K,V>[] newTab = (Node<K,V>[])new Node[0];
-        TABLE_UPDATE.setRelease(newTab, (Node<K,V>[])new Node[newCap]);
+        NEWTABLE.setRelease(this, (Node<K,V>[])new Node[newCap]);
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;
@@ -747,7 +746,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         TABLE.setRelease(newTab, e.hash & (newCap - 1), e);
                     }
                     else if (e instanceof TreeNode)
-                        ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                        ((TreeNode<K,V>)e).split(this, newTable, j, oldCap);
                     else { // preserve order
                         Node<K,V> loHead = null, loTail = null;
                         Node<K,V> hiHead = null, hiTail = null;
@@ -773,20 +772,20 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         if (loTail != null) {
                             NEXT.setRelease(loTail, null);
                             UNSAFE.fullFence();
-                            TABLE.setRelease(newTab, j, loHead);
+                            TABLE.setRelease(newTable, j, loHead);
                         }
                         if (hiTail != null) {
                             NEXT.setRelease(hiTail, null);
                             UNSAFE.fullFence();
-                            TABLE.setRelease(newTab, j+ oldCap, hiHead);
+                            TABLE.setRelease(newTable, j+ oldCap, hiHead);
                         }
                     }
                 }
             }
         }
 
-        TABLE_UPDATE.setRelease(this, newTab);
-        return newTab;
+        TABLE_UPDATE.setRelease(this, newTable);
+        return newTable;
     }
 
     /**
@@ -2508,6 +2507,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
     private static final VarHandle TABLE;
     private static final VarHandle TABLE_UPDATE;
+    private static final VarHandle NEWTABLE;
     private static final VarHandle HASH;
     private static final VarHandle KEY;
     private static final VarHandle VALUE;
@@ -2527,7 +2527,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         try{
             MethodHandles.Lookup l = MethodHandles.lookup();
             TABLE = MethodHandles.arrayElementVarHandle(Node[].class);
-            TABLE_UPDATE = l.findVarHandle(Node[].class, "table", Node[].class);
+            TABLE_UPDATE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
+            NEWTABLE = l.findVarHandle(SWMRHashMap.class, "newTable", Node[].class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
             HASH = l.findVarHandle(Node.class, "hash", int.class);
             KEY = l.findVarHandle(Node.class, "key", Object.class);
