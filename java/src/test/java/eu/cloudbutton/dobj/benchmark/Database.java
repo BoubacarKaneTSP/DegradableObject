@@ -183,9 +183,7 @@ public class Database {
                     i_degree = (int) Double.parseDouble(degrees[1]);
                     o_degree = (int) Double.parseDouble(degrees[2]);
                     mapIndiceToKey.put(i, user);
-                    assert mapIndiceToKey.get(i) == user;
                     mapKeyToIndice.put(user,i);
-                    assert mapKeyToIndice.get(user) == i;
                     reciprocalDegree[i] = r_degree;
                     inDegree[i] = i_degree;
                     outDegree[i] = o_degree;
@@ -229,8 +227,6 @@ public class Database {
 
         diag_sum_r_dist = diag_sum_r / ((reciprocal * (reciprocal - 1)) / 2);
         diag_sum_d_dist = diag_sum_d/(out*in-diag);
-
-        assert mapIndiceToKey.size() == nbUsers;
 
     }
 
@@ -293,10 +289,6 @@ public class Database {
 
             user = mapIndiceToKey.get(i);
             addOriginalUser(user);
-//            assert mapFollowers.get(user) != null;
-//            assert mapFollowing.get(user) != null;
-//            assert mapTimelines.get(user) != null;
-//            assert mapProfiles.get(user) != null;
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
             localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
             return null;
@@ -367,7 +359,6 @@ public class Database {
             long sampled_reciprocal = directed_sum/(out*in-diag-counter);
 
             // Sampling of directed edges
-            assert mapIndiceToKey.size() == nbUsers;
             for (int j = i; j < nbUsers; j++) {
 
                 if (inDegree[i] != 0 && outDegree[j] != 0){
@@ -382,8 +373,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        assert mapFollowing.get(userB) != null;
-                        mapFollowing.get(userB).add(userA);
+                        followUser(userB, userA);
                     }
                 }
 
@@ -399,9 +389,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        assert mapFollowing.get(userA) != null;
-                        mapFollowing.get(userA).add(userB);
-
+                        followUser(userA, userB);
                     }
                 }
             }
@@ -959,9 +947,7 @@ public class Database {
     // and user_B to the following of user_A
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
-        assert mapFollowers.get(userB) != null;
         mapFollowers.get(userB).add(userA);
-        assert mapFollowing.get(userA) != null;
         mapFollowing.get(userA).add(userB);
     }
 

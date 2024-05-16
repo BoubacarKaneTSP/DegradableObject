@@ -664,7 +664,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 assert owner.get().equals(Thread.currentThread().getName()) : "Wrong thread trying to write";
 
             tab = resize();
-            assert table == tab;
             n = tab.length;
         }
         i = (n - 1) & hash;
@@ -672,7 +671,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (p == null) {
             Node<K,V> node = newNode(hash, key, value, null);
             TABLE.setVolatile(tab, i, node);
-            assert table[i] == node;
         }
         else {
             Node<K,V> e; K k;
@@ -750,13 +748,12 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     (int)ft : Integer.MAX_VALUE);
         }
         threshold = newThr;
-        NEWTABLE.setVolatile(this, (Node<K,V>[])new Node[newCap]);
+        newTable = (Node<K,V>[])new Node[newCap];
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e, tmp = oldTab[j];
 
                 if (tmp != null) {
-                    VarHandle.releaseFence();
                     if (tmp instanceof TreeNode)
                         e = new TreeNode<>(tmp.hash, tmp.key, tmp.value, tmp.next);
                     else
@@ -764,7 +761,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
                     // oldTab[j] = null;
                     if (e.next == null) { // Move bucket with one node
-                        TABLE.setVolatile(newTable, e.hash & (newCap - 1), e);
+                        newTable[e.hash & (newCap - 1)] = e;
                     } else if (e instanceof TreeNode)
                         ((TreeNode<K, V>) e).split(this, newTable, j, oldCap);
                     else { // preserve order
@@ -782,28 +779,29 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                                 if (loTail == null)
                                     loHead = e;
                                 else
-                                    NEXT.setVolatile(loTail, e);
+                                    loTail.next = e;
                                 loTail = e;
                             } else {
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
-                                    NEXT.setVolatile(hiTail, e);
+                                    hiTail.next = e;
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
                         if (loTail != null) {
-                            NEXT.setVolatile(loTail, null);
-                            TABLE.setVolatile(newTable, j, loHead);
+                            loTail.next = null;
+                            newTable[j] = loHead;
                         }
                         if (hiTail != null) {
-                            NEXT.setVolatile(hiTail, null);
-                            TABLE.setVolatile(newTable, j + oldCap, hiHead);
+                            hiTail.next = null;
+                            newTable[j + oldCap] = hiHead;
                         }
                     }
                 }
             }
         }
+        VarHandle.fullFence();
         TABLE_UPDATE.setVolatile(this, newTable);
         return newTable;
     }
@@ -2275,13 +2273,12 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else
                     next = null;
 
-//                NEXT.setVolatile(e, null);
                 if ((e.hash & bit) == 0) {
                     e.prev = loTail;
                     if (e.prev == null)
                         loHead = e;
                     else
-                        NEXT.setVolatile(loTail, e);
+                        loTail.next = e;
                     loTail = e;
                     ++lc;
                 }
@@ -2290,7 +2287,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     if (e.prev == null)
                         hiHead = e;
                     else
-                        NEXT.setVolatile(hiTail, e);
+                        hiTail.next = e;
                     hiTail = e;
                     ++hc;
                 }
