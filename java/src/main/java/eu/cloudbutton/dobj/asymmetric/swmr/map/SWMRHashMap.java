@@ -448,7 +448,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final float loadFactor;
 
-    private AtomicWriteOnceReference<String> owner;
+    private AtomicWriteOnceReference<String> owner = new AtomicWriteOnceReference<>();
 
     private static final Unsafe UNSAFE;
 
@@ -503,7 +503,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * (16) and the default load factor (0.75).
      */
     public SWMRHashMap() {
-        this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
+        this.loadFactor = DEFAULT_LOAD_FACTOR;// all other fields defaulted
     }
 
     /**
