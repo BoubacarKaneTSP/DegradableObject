@@ -183,7 +183,9 @@ public class Database {
                     i_degree = (int) Double.parseDouble(degrees[1]);
                     o_degree = (int) Double.parseDouble(degrees[2]);
                     mapIndiceToKey.put(i, user);
+                    assert mapIndiceToKey.containsValue(user);
                     mapKeyToIndice.put(user,i);
+                    assert mapKeyToIndice.containsKey(user);
                     reciprocalDegree[i] = r_degree;
                     inDegree[i] = i_degree;
                     outDegree[i] = o_degree;
@@ -306,8 +308,8 @@ public class Database {
             future.get();
         }
 
+        assert mapIndiceToKey.size() == nbUsers;
         for (Key user: mapIndiceToKey.values()){
-            assert mapIndiceToKey.size() == nbUsers;
             assert mapFollowers.get(user) != null;
             assert mapFollowing.get(user) != null;
             assert mapTimelines.get(user) != null;
