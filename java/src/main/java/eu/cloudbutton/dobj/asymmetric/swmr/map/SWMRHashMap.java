@@ -655,14 +655,16 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         tab = table;
         if (tab == null || (n = tab.length) == 0) {
             tab = resize();
+            assert tab.length == DEFAULT_INITIAL_CAPACITY;
             n = tab.length;
         }
         i = (n - 1) & hash;
         p = tab[i];
         if (p == null) {
             Node<K,V> node = newNode(hash, key, value, null);
+            assert table == tab;
             assert table.length == DEFAULT_INITIAL_CAPACITY : "table size :" + table.length;
-            TABLE.setVolatile(table, i, node);
+            TABLE.setVolatile(tab, i, node);
             assert table[i] == node;
         }
         else {
@@ -731,7 +733,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         else {               // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
-            System.out.println("initialize table of size : " + newCap);
         }
         if (newThr == 0) {
             float ft = (float)newCap * loadFactor;
