@@ -731,6 +731,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         else {               // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+            System.out.println("initialize table of size : " + newCap);
         }
         if (newThr == 0) {
             float ft = (float)newCap * loadFactor;
