@@ -1,4 +1,4 @@
-package contention.abstractions;
+package eu.cloudbutton.dobj.juc;
 
 import java.util.Map;
 
