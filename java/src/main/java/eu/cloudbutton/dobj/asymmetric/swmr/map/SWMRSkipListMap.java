@@ -24,6 +24,8 @@ package eu.cloudbutton.dobj.asymmetric.swmr.map;
 import eu.cloudbutton.dobj.utils.NonLinearizable;
 import sun.misc.Unsafe;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
@@ -890,5 +892,15 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
 
         }
     }
+    private static final VarHandle VALUE;
 
+    static {
+        try{
+            MethodHandles.Lookup l = MethodHandles.lookup();
+            VALUE = l.findVarHandle(SWMRSkipListMap.Node.class, "value", Object.class);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

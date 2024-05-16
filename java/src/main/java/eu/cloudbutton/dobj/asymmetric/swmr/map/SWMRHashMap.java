@@ -2529,8 +2529,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final VarHandle PREV;
 
     private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
-    private static final int ABASE = U.arrayBaseOffset(Node[].class);
-    private static final int ASHIFT;
 
 
     static {
@@ -2548,21 +2546,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             RIGHT = l.findVarHandle(TreeNode.class, "right", TreeNode.class);
             PREV = l.findVarHandle(TreeNode.class, "prev", TreeNode.class);
 
-            int scale = U.arrayIndexScale(Node[].class);
-            if ((scale & (scale - 1)) != 0)
-                throw new ExceptionInInitializerError("array index scale not a power of two");
-            ASHIFT = 31 - Integer.numberOfLeadingZeros(scale);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    static final <K,V> void setTabAt(Node<K,V>[] tab, int i, Node<K,V> v) {
-        U.putReferenceRelease(tab, ((long)i << ASHIFT) + ABASE, v);
-    }
-
-    static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
-        return (Node<K,V>)U.getReferenceAcquire(tab, ((long)i << ASHIFT) + ABASE);
     }
 
 }
