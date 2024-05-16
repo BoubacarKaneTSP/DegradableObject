@@ -52,8 +52,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import contention.abstractions.CompositionalMap;
-
 /**
  * A hash table supporting full concurrency of retrievals and adjustable
  * expected concurrency for updates. This class obeys the same functional

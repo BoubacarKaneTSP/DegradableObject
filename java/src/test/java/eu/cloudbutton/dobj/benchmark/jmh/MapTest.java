@@ -11,7 +11,7 @@ public class MapTest {
 //    public enum Impl {
 //        Hash {
 //            @Override
-//            Map<Element, Element> create(Collection<Element> keys) {
+//            Map<Elem!ent, Element> create(Collection<Element> keys) {
 //                Map<Element, Element> map = Maps.newHashMap();
 //                for (Element element : keys) {
 //                    map.put(element, element);
