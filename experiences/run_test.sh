@@ -6,12 +6,12 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 initSize=16384
 range=32768
-nbTest=15
+nbTest=5
 benchmarkTime=60
 warmingUpTime=30
 nbThreads=("1" "5" "10" "20" "40" "80")
-objects=("AtomicReference" "AtomicWriteOnceReference")
-ratio="0 0 100"
+objects=("ExtendedSegmentedHashMap")
+ratio="100 0 0"
 
 for object in "${objects[@]}"; do
   python3 rm_file.py "Microbenchmark" "$object"
