@@ -104,7 +104,7 @@ public class MapTest {
         Helpers.executeAll(parallelism, callable);
         System.out.println("Done");
 
-        assertEquals(map.size(), ITEMS_PER_THREAD * parallelism);
+        assertEquals(map.size(), ITEMS_PER_THREAD * parallelism); // Should be false ?
         map.clear();
         assertEquals(map.size(), 0);*/
 

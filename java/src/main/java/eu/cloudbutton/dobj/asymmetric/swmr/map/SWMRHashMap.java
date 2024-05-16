@@ -735,56 +735,62 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     (int)ft : Integer.MAX_VALUE);
         }
         threshold = newThr;
-        System.out.println("resize <=========== old cap : " + oldCap);
         NEWTABLE.setRelease(this, (Node<K,V>[])new Node[newCap]);
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
-                Node<K,V> e;
-                if ((e = oldTab[j]) != null) {
-//                    oldTab[j] = null;
-                    if (e.next == null) {
-                        TABLE.setRelease(newTable, e.hash & (newCap - 1), e);
-                    }
-                    else if (e instanceof TreeNode)
-                        ((TreeNode<K,V>)e).split(this, newTable, j, oldCap);
+                Node<K,V> e, tmp = oldTab[j];
+
+                if (tmp != null) {
+                    VarHandle.releaseFence();
+
+                    if (tmp instanceof TreeNode)
+                        e = new TreeNode<>(tmp.hash, tmp.key, tmp.value, tmp.next);
+                    else
+                        e = new Node<>(tmp.hash, tmp.key, tmp.value, tmp.next);
+
+                    // oldTab[j] = null;
+                    if (e.next == null) { // Move bucket with one node
+                        TABLE.setOpaque(newTable, e.hash & (newCap - 1), e);
+                    } else if (e instanceof TreeNode)
+                        ((TreeNode<K, V>) e).split(this, newTable, j, oldCap);
                     else { // preserve order
-                        Node<K,V> loHead = null, loTail = null;
-                        Node<K,V> hiHead = null, hiTail = null;
-                        Node<K,V> next;
+                        Node<K, V> loHead = null, loTail = null;
+                        Node<K, V> hiHead = null, hiTail = null;
+                        Node<K, V> next;
 
                         do {
-                            next = e.next;
+                            tmp = e.next;
+                            if (tmp != null)
+                                next = new Node<>(tmp.hash, tmp.key, tmp.value, tmp.next);
+                            else
+                                next = null;
                             if ((e.hash & oldCap) == 0) {
                                 if (loTail == null)
                                     loHead = e;
                                 else
-                                    NEXT.setRelease(loTail, e);
+                                    NEXT.setOpaque(loTail, e);
                                 loTail = e;
-                            }
-                            else {
+                            } else {
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
-                                    NEXT.setRelease(hiTail, e);
+                                    NEXT.setOpaque(hiTail, e);
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
                         if (loTail != null) {
-                            NEXT.setRelease(loTail, null);
-                            UNSAFE.fullFence();
-                            TABLE.setRelease(newTable, j, loHead);
+                            NEXT.setOpaque(loTail, null);
+                            TABLE.setOpaque(newTable, j, loHead);
                         }
                         if (hiTail != null) {
-                            NEXT.setRelease(hiTail, null);
-                            UNSAFE.fullFence();
-                            TABLE.setRelease(newTable, j+ oldCap, hiHead);
+                            NEXT.setOpaque(hiTail, null);
+                            TABLE.setOpaque(newTable, j + oldCap, hiHead);
                         }
                     }
                 }
             }
         }
-
-        TABLE_UPDATE.setRelease(this, newTable);
+        TABLE_UPDATE.setOpaque(this, newTable);
         return newTable;
     }
 
