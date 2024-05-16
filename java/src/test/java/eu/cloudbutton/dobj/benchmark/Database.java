@@ -340,8 +340,9 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
-                        mapFollowing.get(userA).add(userB);
-                        mapFollowing.get(userB).add(userA);
+                        followUser(userA,userB);
+
+                        followUser(userB,userA);
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
                             counter++;
@@ -951,7 +952,9 @@ public class Database {
     // and user_B to the following of user_A
     // user_A  is following user_B
     public void followUser(Key userA, Key userB) throws InterruptedException {
+        assert mapFollowers.get(userB) != null;
         mapFollowers.get(userB).add(userA);
+        assert mapFollowing.get(userA) != null;
         mapFollowing.get(userA).add(userB);
     }
 
