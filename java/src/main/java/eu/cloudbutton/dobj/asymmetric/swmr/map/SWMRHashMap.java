@@ -655,7 +655,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         tab = table;
         if (tab == null || (n = tab.length) == 0) {
             tab = resize();
-            assert tab.length == DEFAULT_INITIAL_CAPACITY;
+            assert tab.length == DEFAULT_INITIAL_CAPACITY : "table size :" + tab.length;
             n = tab.length;
         }
         i = (n - 1) & hash;
