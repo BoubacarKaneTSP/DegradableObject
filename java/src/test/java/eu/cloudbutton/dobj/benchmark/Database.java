@@ -307,6 +307,7 @@ public class Database {
         }
 
         for (Key user: mapIndiceToKey.values()){
+            assert mapIndiceToKey.size() == nbUsers;
             assert mapFollowers.get(user) != null;
             assert mapFollowing.get(user) != null;
             assert mapTimelines.get(user) != null;
