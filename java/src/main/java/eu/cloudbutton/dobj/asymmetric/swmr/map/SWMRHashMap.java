@@ -481,6 +481,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     loadFactor);
         this.loadFactor = loadFactor;
         this.threshold = tableSizeFor(initialCapacity);
+        assert false;
     }
 
     /**
@@ -532,6 +533,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         (int)ft : MAXIMUM_CAPACITY);
                 if (t > threshold)
                     threshold = tableSizeFor(t);
+                assert false;
             }
             else if (s > threshold)
                 resize();
@@ -728,6 +730,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (oldCap > 0) {
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
+                assert false;
                 return oldTab;
             }
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
@@ -1519,6 +1522,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             threshold = ((cap < MAXIMUM_CAPACITY && ft < MAXIMUM_CAPACITY) ?
                     (int)ft : Integer.MAX_VALUE);
 
+            assert false;
             // Check Map.Entry[].class since it's the nearest public type to
             // what we're actually creating.
 //            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap); //Quoting this line since SharedSecrets is not visible
