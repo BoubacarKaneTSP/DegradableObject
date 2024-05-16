@@ -655,6 +655,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         tab = table;
         if (tab == null || (n = tab.length) == 0) {
             tab = resize();
+            assert table == tab;
             assert tab.length == DEFAULT_INITIAL_CAPACITY : "table size :" + tab.length;
             n = tab.length;
         }
@@ -662,7 +663,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         p = tab[i];
         if (p == null) {
             Node<K,V> node = newNode(hash, key, value, null);
-            assert table == tab;
             assert table.length == DEFAULT_INITIAL_CAPACITY : "table size :" + table.length;
             TABLE.setVolatile(tab, i, node);
             assert table[i] == node;
@@ -754,7 +754,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
                     // oldTab[j] = null;
                     if (e.next == null) { // Move bucket with one node
-                        TABLE.setOpaque(newTable, e.hash & (newCap - 1), e);
+                        TABLE.setVolatile(newTable, e.hash & (newCap - 1), e);
                     } else if (e instanceof TreeNode)
                         ((TreeNode<K, V>) e).split(this, newTable, j, oldCap);
                     else { // preserve order
@@ -772,29 +772,29 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                                 if (loTail == null)
                                     loHead = e;
                                 else
-                                    NEXT.setOpaque(loTail, e);
+                                    NEXT.setVolatile(loTail, e);
                                 loTail = e;
                             } else {
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
-                                    NEXT.setOpaque(hiTail, e);
+                                    NEXT.setVolatile(hiTail, e);
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
                         if (loTail != null) {
-                            NEXT.setOpaque(loTail, null);
-                            TABLE.setOpaque(newTable, j, loHead);
+                            NEXT.setVolatile(loTail, null);
+                            TABLE.setVolatile(newTable, j, loHead);
                         }
                         if (hiTail != null) {
-                            NEXT.setOpaque(hiTail, null);
-                            TABLE.setOpaque(newTable, j + oldCap, hiHead);
+                            NEXT.setVolatile(hiTail, null);
+                            TABLE.setVolatile(newTable, j + oldCap, hiHead);
                         }
                     }
                 }
             }
         }
-        TABLE_UPDATE.setOpaque(this, newTable);
+        TABLE_UPDATE.setVolatile(this, newTable);
         return newTable;
     }
 
@@ -2271,7 +2271,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     if (e.prev == null)
                         loHead = e;
                     else
-                        NEXT.setOpaque(loTail, e);
+                        NEXT.setVolatile(loTail, e);
                     loTail = e;
                     ++lc;
                 }
@@ -2280,7 +2280,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     if (e.prev == null)
                         hiHead = e;
                     else
-                        NEXT.setOpaque(hiTail, e);
+                        NEXT.setVolatile(hiTail, e);
                     hiTail = e;
                     ++hc;
                 }
