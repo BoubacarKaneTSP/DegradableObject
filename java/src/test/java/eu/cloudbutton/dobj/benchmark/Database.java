@@ -230,6 +230,8 @@ public class Database {
         diag_sum_r_dist = diag_sum_r / ((reciprocal * (reciprocal - 1)) / 2);
         diag_sum_d_dist = diag_sum_d/(out*in-diag);
 
+        assert mapIndiceToKey.size() == nbUsers;
+
     }
 
     public static List<Integer> generateValues(int numValues, double desiredMaxValue, double SHAPE, double SCALE) throws InterruptedException {
@@ -292,6 +294,10 @@ public class Database {
 
             user = mapIndiceToKey.get(i);
             addOriginalUser(user);
+            assert mapFollowers.get(user) != null;
+            assert mapFollowing.get(user) != null;
+            assert mapTimelines.get(user) != null;
+            assert mapProfiles.get(user) != null;
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
             localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
             return null;
@@ -306,14 +312,6 @@ public class Database {
 
         for (Future<Void> future :futures){
             future.get();
-        }
-
-        assert mapIndiceToKey.size() == nbUsers;
-        for (Key user: mapIndiceToKey.values()){
-            assert mapFollowers.get(user) != null;
-            assert mapFollowing.get(user) != null;
-            assert mapTimelines.get(user) != null;
-            assert mapProfiles.get(user) != null;
         }
 
         System.out.println("End add phase");
