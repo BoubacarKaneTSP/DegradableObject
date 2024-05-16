@@ -238,7 +238,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-    static final int DEFAULT_INITIAL_CAPACITY = 1 << 20; // aka 2²⁰ : 1,048,576
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 21; // aka 2²¹
 //    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
