@@ -789,7 +789,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
             }
         }
-        TABLE_UPDATE.setOpaque(this, newTable);
+        TABLE_UPDATE.setVolatile(this, newTable);
         return newTable;
     }
 
