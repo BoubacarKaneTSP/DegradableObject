@@ -699,8 +699,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
         ++modCount;
-        if (++size > threshold)
+        if (++size > threshold) {
+            System.out.println(size + " > " + threshold);
             resize();
+        }
         afterNodeInsertion(evict);
         return null;
     }
@@ -720,7 +722,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         int oldThr = threshold;
         int newCap, newThr = 0;
         if (oldCap > 0) {
-            System.out.println("oldCap > 0");
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
@@ -730,11 +731,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 newThr = oldThr << 1; // double threshold
         }
         else if (oldThr > 0) { // initial capacity was placed in threshold
-            System.out.println("oldThr > 0");
             newCap = oldThr;
         }
         else {// zero initial threshold signifies using defaults
-            System.out.println("default");
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
