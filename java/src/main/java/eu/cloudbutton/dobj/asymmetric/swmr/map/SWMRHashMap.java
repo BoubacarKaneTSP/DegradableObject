@@ -889,10 +889,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 else
                     p.next = node.next;
 
-                U.fullFence();
-
                 ++modCount;
-                U.getAndSetInt(this,SIZE,size-1);
+                size--;
                 afterNodeRemoval(node);
                 return node;
             }
@@ -910,7 +908,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if ((tab = table) != null && size > 0) {
             size = 0;
             table = null;
-            U.fullFence();
             for (int i = 0; i < tab.length; ++i) {
                 tab[i] = null;
             }
@@ -2513,8 +2510,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
     }
 
-    private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
-
     private static final VarHandle TABLE;
     private static final VarHandle TABLE_UPDATE;
     private static final VarHandle NEWTABLE;
@@ -2527,9 +2522,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final VarHandle LEFT;
     private static final VarHandle RIGHT;
     private static final VarHandle PREV;
-
-    private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
-
 
     static {
         try{
