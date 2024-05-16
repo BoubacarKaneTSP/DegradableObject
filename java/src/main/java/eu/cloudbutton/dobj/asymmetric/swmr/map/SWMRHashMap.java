@@ -720,6 +720,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         int oldThr = threshold;
         int newCap, newThr = 0;
         if (oldCap > 0) {
+            System.out.println("oldCap > 0");
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
@@ -728,9 +729,12 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     oldCap >= DEFAULT_INITIAL_CAPACITY)
                 newThr = oldThr << 1; // double threshold
         }
-        else if (oldThr > 0) // initial capacity was placed in threshold
+        else if (oldThr > 0) { // initial capacity was placed in threshold
+            System.out.println("oldThr > 0");
             newCap = oldThr;
-        else {               // zero initial threshold signifies using defaults
+        }
+        else {// zero initial threshold signifies using defaults
+            System.out.println("default");
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
@@ -741,7 +745,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
         threshold = newThr;
         NEWTABLE.setVolatile(this, (Node<K,V>[])new Node[newCap]);
-        assert newCap == DEFAULT_INITIAL_CAPACITY;
+        assert newCap == DEFAULT_INITIAL_CAPACITY : "newCap : " + newCap;
         assert newTable.length == DEFAULT_INITIAL_CAPACITY;
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
