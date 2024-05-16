@@ -183,9 +183,9 @@ public class Database {
                     i_degree = (int) Double.parseDouble(degrees[1]);
                     o_degree = (int) Double.parseDouble(degrees[2]);
                     mapIndiceToKey.put(i, user);
-                    assert mapIndiceToKey.containsValue(user);
+                    assert mapIndiceToKey.get(i) == user;
                     mapKeyToIndice.put(user,i);
-                    assert mapKeyToIndice.containsKey(user);
+                    assert mapKeyToIndice.get(user) == i;
                     reciprocalDegree[i] = r_degree;
                     inDegree[i] = i_degree;
                     outDegree[i] = o_degree;
