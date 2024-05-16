@@ -359,6 +359,7 @@ public class Database {
             long sampled_reciprocal = directed_sum/(out*in-diag-counter);
 
             // Sampling of directed edges
+            assert mapIndiceToKey.size() == nbUsers;
             for (int j = i; j < nbUsers; j++) {
 
                 if (inDegree[i] != 0 && outDegree[j] != 0){
@@ -373,6 +374,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
+                        assert mapFollowing.get(userB) != null;
                         mapFollowing.get(userB).add(userA);
                     }
                 }
@@ -389,6 +391,7 @@ public class Database {
                         userA = mapIndiceToKey.get(i);
                         userB = mapIndiceToKey.get(j);
 
+                        assert mapFollowing.get(userA) != null;
                         mapFollowing.get(userA).add(userB);
 
                     }
