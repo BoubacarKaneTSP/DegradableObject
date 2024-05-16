@@ -261,8 +261,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-//    static final int TREEIFY_THRESHOLD = 8;
-    static final int TREEIFY_THRESHOLD = 1 << 20;
+    static final int TREEIFY_THRESHOLD = 8;
+//    static final int TREEIFY_THRESHOLD = 1 << 20;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -742,7 +742,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
                 if (tmp != null) {
                     VarHandle.releaseFence();
-
                     if (tmp instanceof TreeNode)
                         e = new TreeNode<>(tmp.hash, tmp.key, tmp.value, tmp.next);
                     else
@@ -2045,11 +2044,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
                         TreeNode<K,V> xp = p;
                         if ((p = (dir <= 0) ? p.left : p.right) == null) {
-                            PARENT.setRelease(x, xp);
+                            x.parent = xp;
                             if (dir <= 0)
-                                LEFT.setRelease(xp, x);
+                                xp.left = x;
                             else
-                                RIGHT.setRelease(xp, x);
+                                xp.right = x;
                             root = balanceInsertion(root, x);
                             break;
                         }
@@ -2124,7 +2123,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     if (xpn != null)
                         PREV.setRelease(xpn, x);
                     moveRootToFront(tab, balanceInsertion(root, x));
-                    UNSAFE.fullFence();
                     return null;
                 }
             }
@@ -2249,29 +2247,35 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          * @param bit the bit of hash to split on
          */
         final void split(SWMRHashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
-            TreeNode<K,V> b = this;
+            VarHandle.releaseFence();
+            TreeNode<K,V> tmp, b = new TreeNode<>(this.hash, this.key, this.value, this.next);
             // Relink into lo and hi lists, preserving order
             TreeNode<K,V> loHead = null, loTail = null;
             TreeNode<K,V> hiHead = null, hiTail = null;
             int lc = 0, hc = 0;
             for (TreeNode<K,V> e = b, next; e != null; e = next) {
-                next = (TreeNode<K,V>)e.next;
-                NEXT.setRelease(e, null);
+                tmp = (TreeNode<K,V>)e.next;
+                if (tmp != null)
+                    next = new TreeNode<>(tmp.hash, tmp.key, tmp.value, tmp.next);
+                else
+                    next = null;
+
+//                NEXT.setRelease(e, null);
                 if ((e.hash & bit) == 0) {
-                    PREV.setRelease(e, loTail);
+                    e.prev = loTail;
                     if (e.prev == null)
                         loHead = e;
                     else
-                        NEXT.setRelease(loTail, e);
+                        NEXT.setOpaque(loTail, e);
                     loTail = e;
                     ++lc;
                 }
                 else {
-                    PREV.setRelease(e, hiTail);
+                    e.prev = hiTail;
                     if (e.prev == null)
                         hiHead = e;
                     else
-                        NEXT.setRelease(hiTail, e);
+                        NEXT.setOpaque(hiTail, e);
                     hiTail = e;
                     ++hc;
                 }
