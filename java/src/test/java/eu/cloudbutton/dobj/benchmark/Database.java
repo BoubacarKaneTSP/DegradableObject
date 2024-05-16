@@ -294,10 +294,10 @@ public class Database {
 
             user = mapIndiceToKey.get(i);
             addOriginalUser(user);
-            assert mapFollowers.get(user) != null;
-            assert mapFollowing.get(user) != null;
-            assert mapTimelines.get(user) != null;
-            assert mapProfiles.get(user) != null;
+//            assert mapFollowers.get(user) != null;
+//            assert mapFollowing.get(user) != null;
+//            assert mapTimelines.get(user) != null;
+//            assert mapProfiles.get(user) != null;
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
             localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
             return null;

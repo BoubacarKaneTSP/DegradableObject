@@ -238,7 +238,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-    static final int DEFAULT_INITIAL_CAPACITY = 1 << 20; // aka 16
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 20; // aka 2²⁰ : 1,048,576
 //    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
@@ -660,7 +660,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         i = (n - 1) & hash;
         p = tab[i];
         if (p == null) {
-            TABLE.setVolatile(table, i, newNode(hash, key, value, null));
+            Node<K,V> node = newNode(hash, key, value, null);
+            TABLE.setVolatile(table, i, node);
+            assert table[i] == node;
         }
         else {
             Node<K,V> e; K k;
