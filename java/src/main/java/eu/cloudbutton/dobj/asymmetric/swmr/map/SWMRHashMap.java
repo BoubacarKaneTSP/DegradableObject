@@ -741,6 +741,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
         threshold = newThr;
         NEWTABLE.setVolatile(this, (Node<K,V>[])new Node[newCap]);
+        assert newCap == DEFAULT_INITIAL_CAPACITY;
         assert newTable.length == DEFAULT_INITIAL_CAPACITY;
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
