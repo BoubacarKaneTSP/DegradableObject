@@ -661,6 +661,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         p = tab[i];
         if (p == null) {
             Node<K,V> node = newNode(hash, key, value, null);
+            assert table.length == DEFAULT_INITIAL_CAPACITY : "table size :" + table.length;
             TABLE.setVolatile(table, i, node);
             assert table[i] == node;
         }
