@@ -306,7 +306,7 @@ public class Database {
             future.get();
         }
 
-        for (Key user: users){
+        for (Key user: mapIndiceToKey.values()){
             assert mapFollowers.get(user) != null;
             assert mapFollowing.get(user) != null;
             assert mapTimelines.get(user) != null;
@@ -353,12 +353,12 @@ public class Database {
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
                             counter++;
-                            directed_sum += (double) inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist;
+                            directed_sum += (long) ((double) inDegree[i]*outDegree[j]/edges_d +diag_sum_d_dist);
                         }
 
                         if (inDegree[j] != 0 && outDegree[i] != 0){
                             counter++;
-                            directed_sum += (double) inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist;
+                            directed_sum += (long) ((double) inDegree[j]*outDegree[i]/edges_d +diag_sum_d_dist);
                         }
                     }
                 }
