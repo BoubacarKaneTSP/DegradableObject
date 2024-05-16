@@ -271,6 +271,7 @@ public class Database {
         System.out.println("Start add phase");
 
         List<Future<Void>> futures = new ArrayList<>();
+        Set<Key> users = new ConcurrentHashSet<>();
 
         Map<Integer, AtomicInteger> somme = new ConcurrentHashMap<>();
 
@@ -303,6 +304,13 @@ public class Database {
 
         for (Future<Void> future :futures){
             future.get();
+        }
+
+        for (Key user: users){
+            assert mapFollowers.get(user) != null;
+            assert mapFollowing.get(user) != null;
+            assert mapTimelines.get(user) != null;
+            assert mapProfiles.get(user) != null;
         }
 
         System.out.println("End add phase");
@@ -341,7 +349,6 @@ public class Database {
                         userB = mapIndiceToKey.get(j);
 
                         followUser(userA,userB);
-
                         followUser(userB,userA);
 
                         if (inDegree[i] != 0 && outDegree[j] != 0){
