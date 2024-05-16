@@ -39,6 +39,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 //import jdk.internal.misc.SharedSecrets;
+import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import sun.misc.Unsafe;
 
 /**
@@ -447,6 +448,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final float loadFactor;
 
+    private AtomicWriteOnceReference<String> owner;
+
     private static final Unsafe UNSAFE;
 
     static {
@@ -481,7 +484,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     loadFactor);
         this.loadFactor = loadFactor;
         this.threshold = tableSizeFor(initialCapacity);
-        assert false;
+
     }
 
     /**
@@ -533,7 +536,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         (int)ft : MAXIMUM_CAPACITY);
                 if (t > threshold)
                     threshold = tableSizeFor(t);
-                assert false;
             }
             else if (s > threshold)
                 resize();
@@ -656,6 +658,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         tab = table;
         if (tab == null || (n = tab.length) == 0) {
+            if (owner.get() == null)
+                owner.set(Thread.currentThread().getName());
+            else
+                assert owner.get().equals(Thread.currentThread().getName()) : "Wrong thread trying to write";
+
             tab = resize();
             assert table == tab;
             assert tab.length == DEFAULT_INITIAL_CAPACITY : "table size :" + tab.length;
@@ -702,7 +709,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
         ++modCount;
         if (++size > threshold) {
-            System.out.println(size + " > " + threshold);
             resize();
         }
         afterNodeInsertion(evict);
@@ -723,14 +729,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
         int newCap, newThr = 0;
-        System.out.println(oldThr);
-        if (oldThr > 0){
-            System.out.println("repeat resize");
-        }
+
         if (oldCap > 0) {
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
-                assert false;
                 return oldTab;
             }
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
@@ -1522,7 +1524,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             threshold = ((cap < MAXIMUM_CAPACITY && ft < MAXIMUM_CAPACITY) ?
                     (int)ft : Integer.MAX_VALUE);
 
-            assert false;
             // Check Map.Entry[].class since it's the nearest public type to
             // what we're actually creating.
 //            SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, cap); //Quoting this line since SharedSecrets is not visible

@@ -275,7 +275,6 @@ public class Database {
         System.out.println("Start add phase");
 
         List<Future<Void>> futures = new ArrayList<>();
-        Set<Key> users = new ConcurrentHashSet<>();
 
         Map<Integer, AtomicInteger> somme = new ConcurrentHashMap<>();
 
