@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
@@ -23,6 +24,7 @@ public class MapTest {
     private Factory factory;
     private SimpleKeyGenerator generator;
     private static int parallelism;
+    private ExecutorService executorService;
 
     private static Class[] IMPL = {
             ExtendedSegmentedHashMap.class,
@@ -36,7 +38,23 @@ public class MapTest {
     void setUp() {
         factory = new Factory();
         generator = new SimpleKeyGenerator(MAX_ITEMS_PER_THREAD);
-        parallelism = Runtime.getRuntime().availableProcessors();
+        parallelism = 8; // Runtime.getRuntime().availableProcessors();
+        executorService = Executors.newFixedThreadPool(parallelism);
+    }
+
+    void executeAll(Callable<Void> callable) {
+        try {
+            List<Future<Void>> futures = new ArrayList<>();
+            for (int i = 0; i < parallelism; i++) {
+                futures.add(executorService.submit(callable));
+            }
+            for (Future<Void> future : futures) {
+                future.get();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -63,6 +81,7 @@ public class MapTest {
         Map<Integer, List<Key>> keys = generator.generateAndSplit(
                 ITEMS_PER_THREAD * parallelism, parallelism);
         CountDownLatch latch = new CountDownLatch(parallelism);
+
         Callable<Void> callable = () -> {
             try {
                 latch.countDown();
@@ -75,7 +94,7 @@ public class MapTest {
             }
             return null;
         };
-        Helpers.executeAll(parallelism, callable);
+        executeAll(callable);
         System.out.println("Done");
 
         AtomicInteger nbElement = new AtomicInteger();
@@ -83,7 +102,7 @@ public class MapTest {
         assertEquals(nbElement.get(), ITEMS_PER_THREAD * parallelism, "All elements are not successfully added");
         assertEquals(nbElement.get(), map.size(), "Error with map.size()");
 
-        /*System.out.println("Test remove");
+        System.out.println("Test remove");
         Map<Integer, List<Key>> keys2 = generator.generateAndSplit(
                 ITEMS_PER_THREAD*parallelism, parallelism);
         CountDownLatch latch2 = new CountDownLatch(parallelism);
@@ -101,12 +120,12 @@ public class MapTest {
             }
             return null;
         };
-        Helpers.executeAll(parallelism, callable);
+        executeAll(callable);
         System.out.println("Done");
 
         assertEquals(map.size(), ITEMS_PER_THREAD * parallelism); // Should be false ?
         map.clear();
-        assertEquals(map.size(), 0);*/
+        assertEquals(map.size(), 0);
 
         System.out.println("Each thread can see what other thread has added");
         Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
@@ -129,7 +148,7 @@ public class MapTest {
             }
             return null;
         };
-        Helpers.executeAll(parallelism, callable);
+        executeAll(callable);
         System.out.println("Done");
 
         System.out.println("Check if previous values are added");
@@ -162,7 +181,7 @@ public class MapTest {
             }
             return null;
         };
-        Helpers.executeAll(parallelism, callable);
+        executeAll(callable);
         System.out.println("done");
 
     }

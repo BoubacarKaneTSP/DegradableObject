@@ -39,6 +39,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 //import jdk.internal.misc.SharedSecrets;
+import com.sun.source.tree.Tree;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import sun.misc.Unsafe;
 
@@ -239,7 +240,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
-//    static final int DEFAULT_INITIAL_CAPACITY = 1 << 21; // aka 2²¹
+    // static final int DEFAULT_INITIAL_CAPACITY = 1 << 21; // aka 2²¹
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
@@ -262,8 +263,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-    static final int TREEIFY_THRESHOLD = 8;
-//    static final int TREEIFY_THRESHOLD = 1 << 20;
+    // static final int TREEIFY_THRESHOLD = 8;
+    static final int TREEIFY_THRESHOLD = 1 << 20;
 
     /**
      * The bin count threshold for untreeifying a (split) bin during a
@@ -293,9 +294,13 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         Node(int hash, K key, V value, Node<K,V> next) {
             this.hash = hash;
             this.key = key;
-            UNSAFE.fullFence();
+            UNSAFE.fullFence(); // needed?
             VALUE.setVolatile(this, value);
             NEXT.setVolatile(this, next);
+        }
+
+        Node(Node<K, V> node) {
+            this(node.hash,node.key,node.value,node.next);
         }
 
         public final K getKey()        { return key; }
@@ -324,15 +329,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             return false;
         }
 
-        private static final VarHandle NEXT;
-        static {
-            try {
-                MethodHandles.Lookup l = MethodHandles.lookup();
-                NEXT = l.findVarHandle(Node.class, "next", Node.class);
-            } catch (ReflectiveOperationException e) {
-                throw new ExceptionInInitializerError(e);
-            }
-        }
     }
 
     /* ---------------- Static utilities -------------- */
@@ -408,7 +404,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      * bootstrapping mechanics that are currently not needed.)
      */
     transient Node<K,V>[] table;
-    private Node<K,V>[] newTable;
 
     /**
      * Holds cached entrySet(). Note that AbstractMap fields are used
@@ -448,7 +443,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final float loadFactor;
 
-    private AtomicWriteOnceReference<String> owner = new AtomicWriteOnceReference<>();
+    private AtomicWriteOnceReference<Thread> owner = new AtomicWriteOnceReference<>();
 
     private static final Unsafe UNSAFE;
 
@@ -659,9 +654,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         tab = table;
         if (tab == null || (n = tab.length) == 0) {
             if (owner.get() == null)
-                owner.set(Thread.currentThread().getName());
-            else
-                assert owner.get().equals(Thread.currentThread().getName()) : "Wrong thread trying to write";
+                owner.set(Thread.currentThread());
+            else {
+                if (!owner.get().equals(Thread.currentThread()))
+                    assert false;
+            }
 
             tab = resize();
             n = tab.length;
@@ -698,7 +695,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
-                    e.value = value;
+                    VALUE.setVolatile(e,value);
                 afterNodeAccess(e);
                 return oldValue;
             }
@@ -735,10 +732,9 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     oldCap >= DEFAULT_INITIAL_CAPACITY)
                 newThr = oldThr << 1; // double threshold
         }
-        else if (oldThr > 0) { // initial capacity was placed in threshold
+        else if (oldThr > 0) // initial capacity was placed in threshold
             newCap = oldThr;
-        }
-        else {// zero initial threshold signifies using defaults
+        else {               // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
@@ -748,40 +744,33 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     (int)ft : Integer.MAX_VALUE);
         }
         threshold = newThr;
-        newTable = (Node<K,V>[])new Node[newCap];
+        @SuppressWarnings({"rawtypes","unchecked"})
+        Node<K,V>[] newTable = (Node<K,V>[])new Node[newCap];
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
-                Node<K,V> e, tmp = oldTab[j];
-
-                if (tmp != null) {
-                    if (tmp instanceof TreeNode)
-                        e = new TreeNode<>(tmp.hash, tmp.key, tmp.value, tmp.next);
-                    else
-                        e = new Node<>(tmp.hash, tmp.key, tmp.value, tmp.next);
-
-                    // oldTab[j] = null;
-                    if (e.next == null) { // Move bucket with one node
+                Node<K,V> e;
+                if ((e = oldTab[j]) != null) {
+                    oldTab[j] = null;
+                    if (e.next == null)
                         newTable[e.hash & (newCap - 1)] = e;
-                    } else if (e instanceof TreeNode)
-                        ((TreeNode<K, V>) e).split(this, newTable, j, oldCap);
+                    else if (e instanceof TreeNode)
+                        ((TreeNode<K,V>)e).split(this, newTable, j, oldCap);
                     else { // preserve order
-                        Node<K, V> loHead = null, loTail = null;
-                        Node<K, V> hiHead = null, hiTail = null;
-                        Node<K, V> next;
-
+                        Node<K,V> loHead = null, loTail = null;
+                        Node<K,V> hiHead = null, hiTail = null;
+                        Node<K,V> next;
+                        e = new Node<>(e);
                         do {
-                            tmp = e.next;
-                            if (tmp != null)
-                                next = new Node<>(tmp.hash, tmp.key, tmp.value, tmp.next);
-                            else
-                                next = null;
+                            next = (e.next == null) ? e.next : new Node<>(e.next);
+                            e.next = next;
                             if ((e.hash & oldCap) == 0) {
                                 if (loTail == null)
                                     loHead = e;
                                 else
                                     loTail.next = e;
                                 loTail = e;
-                            } else {
+                            }
+                            else {
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
@@ -802,7 +791,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             }
         }
         VarHandle.fullFence();
-        TABLE_UPDATE.setVolatile(this, newTable);
+        TABLE_UPDATE.setVolatile(this,newTable);
         return newTable;
     }
 
@@ -821,14 +810,16 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 if (tl == null)
                     hd = p;
                 else {
-                    PREV.setVolatile(p, tl);
-                    NEXT.setVolatile(tl, p);
+                    p.prev = tl;
+                    tl.next = p;
                 }
                 tl = p;
             } while ((e = e.next) != null);
-            if ((tab[index] = hd) != null) {
+            if (hd != null) {
                 hd.treeify(tab);
             }
+            tab[index] = hd;
+            U.fullFence();
         }
     }
 
@@ -1205,7 +1196,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (v == null) {
             return null;
         } else if (old != null) {
-            old.value = v;
+            VALUE.setVolatile(old,v);
             afterNodeAccess(old);
             return v;
         }
@@ -1301,7 +1292,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if (mc != modCount) { throw new ConcurrentModificationException(); }
         if (old != null) {
             if (v != null) {
-                old.value = v;
+                VALUE.setVolatile(old,v);
                 afterNodeAccess(old);
             }
             else
@@ -1375,7 +1366,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 v = value;
             }
             if (v != null) {
-                old.value = v;
+                VALUE.setVolatile(old,v);
                 afterNodeAccess(old);
             }
             else
@@ -1934,15 +1925,13 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             super(hash, key, val, next);
         }
 
-        TreeNode(int hash, K key, V val, Node<K,V> next,
-                 TreeNode<K,V> parent, TreeNode<K,V> left, TreeNode<K,V> right,
-                 TreeNode<K,V> prev, boolean red) {
-            super(hash, key, val, next);
-            this.parent = parent;
-            this.left = left;
-            this.right = right;
-            this.prev = prev;
-            this.red = red;
+        public TreeNode(TreeNode<K, V> node) {
+            super(node.hash, node.key, node.value, node.next);
+            this.parent = node.parent;
+            this.left = node.left;
+            this.right = node.right;
+            this.prev = node.prev;
+            this.red = node.red;
         }
 
         /**
@@ -1966,16 +1955,17 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 TreeNode<K,V> first = (TreeNode<K,V>)tab[index];
                 if (root != first) {
                     Node<K,V> rn;
-                    TABLE.setVolatile(tab, index, root);
+                    tab[index] = root;
                     TreeNode<K,V> rp = root.prev;
                     if ((rn = root.next) != null)
-                        PREV.setVolatile((TreeNode<K,V>)rn, rp);
+                        ((TreeNode<K,V>)rn).prev = rp;
                     if (rp != null)
-                        NEXT.setVolatile(rp, rn);
+                        rp.next = rn;
                     if (first != null)
-                        PREV.setVolatile(first, root);
-                    NEXT.setVolatile(root, first);
+                        first.prev = root;
+                    root.next = first;
                     root.prev = null;
+                    U.fullFence(); // no need to synchronize because readers only use left/right to traverse
                 }
                 assert checkInvariants(root);
             }
@@ -2041,6 +2031,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          * Forms tree of the nodes linked from this node.
          */
         final void treeify(Node<K,V>[] tab) {
+            assert checkInvariants(root());
             TreeNode<K,V> root = null;
             for (TreeNode<K,V> x = this, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
@@ -2079,15 +2070,16 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     }
                 }
             }
-            checkInvariants(root);
             moveRootToFront(tab, root);
+            assert checkInvariants(root);
+            U.fullFence();
         }
 
         /**
          * Returns a list of non-TreeNodes replacing those linked from
          * this node.
          */
-        final Node<K,V> untreeify(SWMRHashMap<K,V> map) {
+        final Node<K,V> untreeify(SWMRHashMap<K,V> map) { // TODO
             Node<K,V> hd = null, tl = null;
             for (Node<K,V> q = this; q != null; q = q.next) {
                 Node<K,V> p = map.replacementNode(q, null);
@@ -2105,6 +2097,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          */
         final TreeNode<K,V> putTreeVal(SWMRHashMap<K,V> map, Node<K,V>[] tab,
                                        int h, K k, V v) {
+            assert checkInvariants(root());
             Class<?> kc = null;
             boolean searched = false;
             TreeNode<K,V> root = (parent != null) ? root() : this;
@@ -2114,19 +2107,20 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     dir = -1;
                 else if (ph < h)
                     dir = 1;
-                else if ((pk = p.key) == k || (k != null && k.equals(pk))) { //If root equals the value we try to put
+                else if ((pk = p.key) == k || (k != null && k.equals(pk))) {
+                    assert checkInvariants(root());
                     return p;
-                }
-                else if ((kc == null &&
+                } else if ((kc == null &&
                         (kc = comparableClassFor(k)) == null) ||
-                        (dir = compareComparables(kc, k, pk)) == 0) { // True if key class and parent's key class are not comparable
+                        (dir = compareComparables(kc, k, pk)) == 0) {
                     if (!searched) {
                         TreeNode<K,V> q, ch;
-                        searched = true; // Search only one time if the node is not present and the key class is not comparable
+                        searched = true;
                         if (((ch = p.left) != null &&
                                 (q = ch.find(h, k, kc)) != null) ||
                                 ((ch = p.right) != null &&
-                                        (q = ch.find(h, k, kc)) != null)) { //search the node starting from parent, if the node is already in the tree, retrieves it
+                                        (q = ch.find(h, k, kc)) != null)) {
+                            assert checkInvariants(root());
                             return q;
                         }
                     }
@@ -2134,20 +2128,20 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                 }
 
                 TreeNode<K,V> xp = p;
-                if ((p = (dir <= 0) ? p.left : p.right) == null) { // If p is null, we insert a new node, otherwise it is a "continue"
+                if ((p = (dir <= 0) ? p.left : p.right) == null) {
                     Node<K,V> xpn = xp.next;
                     TreeNode<K,V> x = map.newTreeNode(h, k, v, xpn);
                     if (dir <= 0)
-                        LEFT.setVolatile(xp, x);
+                        LEFT.setVolatile(xp,x); // only these are needed
                     else
-                        RIGHT.setVolatile(xp, x);
-                    NEXT.setVolatile(xp, x);
-                    PARENT.setVolatile(x, xp);
-                    PREV.setVolatile(x, xp);
-
+                        RIGHT.setVolatile(xp,x);
+                    xp.next = x;
+                    x.parent = x.prev = xp;
                     if (xpn != null)
-                        PREV.setVolatile(xpn, x);
+                        ((TreeNode<K,V>)xpn).prev = x;
                     moveRootToFront(tab, balanceInsertion(root, x));
+                    U.fullFence(); // same in ConcurrentHashMap that uses a lock here
+                    assert checkInvariants(root());
                     return null;
                 }
             }
@@ -2272,23 +2266,18 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          * @param bit the bit of hash to split on
          */
         final void split(SWMRHashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
-            VarHandle.releaseFence();
-            TreeNode<K,V> tmp, b = new TreeNode<>(this.hash, this.key, this.value, this.next,
-                    this.parent, this.left, this.right, this.prev, this.red);
+            assert checkInvariants(root());
+            TreeNode<K,V> b = this;
             // Relink into lo and hi lists, preserving order
             TreeNode<K,V> loHead = null, loTail = null;
             TreeNode<K,V> hiHead = null, hiTail = null;
             int lc = 0, hc = 0;
             for (TreeNode<K,V> e = b, next; e != null; e = next) {
-                tmp = (TreeNode<K,V>)e.next;
-                if (tmp != null)
-                    next = new TreeNode<>(tmp.hash, tmp.key, tmp.value, tmp.next);
-                else
-                    next = null;
-
+                next = (TreeNode<K,V>) e.next;
+                e = new TreeNode<>(e);
+                e.next = null;
                 if ((e.hash & bit) == 0) {
-                    e.prev = loTail;
-                    if (e.prev == null)
+                    if ((e.prev = loTail) == null)
                         loHead = e;
                     else
                         loTail.next = e;
@@ -2296,8 +2285,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     ++lc;
                 }
                 else {
-                    e.prev = hiTail;
-                    if (e.prev == null)
+                    if ((e.prev = hiTail) == null)
                         hiHead = e;
                     else
                         hiTail.next = e;
@@ -2324,6 +2312,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                         hiHead.treeify(tab);
                 }
             }
+            assert checkInvariants(root());
         }
 
         /* ------------------------------------------------------------ */
@@ -2334,15 +2323,15 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             TreeNode<K,V> r, pp, rl;
             if (p != null && (r = p.right) != null) {
                 if ((rl = p.right = r.left) != null)
-                    PARENT.setVolatile(rl, p);
+                    rl.parent = p;
                 if ((pp = r.parent = p.parent) == null)
                     (root = r).red = false;
                 else if (pp.left == p)
-                    LEFT.setVolatile(pp, r);
+                    pp.left = r;
                 else
-                    RIGHT.setVolatile(pp, r);
-                RIGHT.setVolatile(r, p);
-                PARENT.setVolatile(p, r);
+                    pp.right = r;
+                r.left = p;
+                p.parent = r;
             }
             return root;
         }
@@ -2352,21 +2341,21 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             TreeNode<K,V> l, pp, lr;
             if (p != null && (l = p.left) != null) {
                 if ((lr = p.left = l.right) != null)
-                    PARENT.setVolatile(lr, p);
+                    lr.parent = p;
                 if ((pp = l.parent = p.parent) == null)
                     (root = l).red = false;
                 else if (pp.right == p)
-                    RIGHT.setVolatile(pp, l);
+                    pp.right = l;
                 else
-                    LEFT.setVolatile(pp, l);
-                RIGHT.setVolatile(l, p);
-                PARENT.setVolatile(p, l);
+                    pp.left = l;
+                l.right = p;
+                p.parent = l;
             }
             return root;
         }
 
         static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,
-                                                    TreeNode<K,V> x) {
+                                                    TreeNode<K,V> x) { // FIXME same as ConcurrentHashMap, so this should be correct for readers
             x.red = true;
             for (TreeNode<K,V> xp, xpp, xppl, xppr;;) {
                 if ((xp = x.parent) == null) {
@@ -2542,7 +2531,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
 
     private static final VarHandle TABLE;
     private static final VarHandle TABLE_UPDATE;
-    private static final VarHandle NEWTABLE;
     private static final VarHandle HASH;
     private static final VarHandle KEY;
     private static final VarHandle VALUE;
@@ -2561,7 +2549,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             MethodHandles.Lookup l = MethodHandles.lookup();
             TABLE = MethodHandles.arrayElementVarHandle(Node[].class);
             TABLE_UPDATE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
-            NEWTABLE = l.findVarHandle(SWMRHashMap.class, "newTable", Node[].class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
             HASH = l.findVarHandle(Node.class, "hash", int.class);
             KEY = l.findVarHandle(Node.class, "key", Object.class);

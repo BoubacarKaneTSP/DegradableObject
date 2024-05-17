@@ -22,6 +22,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
             try {
                 segments.add(clazz.getDeclaredConstructor().newInstance());
             } catch (Throwable e) {
+                e.printStackTrace();
                 throw new RuntimeException();
             }
         }
