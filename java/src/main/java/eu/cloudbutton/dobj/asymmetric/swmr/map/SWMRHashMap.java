@@ -1934,6 +1934,17 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             super(hash, key, val, next);
         }
 
+        TreeNode(int hash, K key, V val, Node<K,V> next,
+                 TreeNode<K,V> parent, TreeNode<K,V> left, TreeNode<K,V> right,
+                 TreeNode<K,V> prev, boolean red) {
+            super(hash, key, val, next);
+            this.parent = parent;
+            this.left = left;
+            this.right = right;
+            this.prev = prev;
+            this.red = red;
+        }
+
         /**
          * Returns root of tree containing this node.
          */
@@ -2068,6 +2079,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     }
                 }
             }
+            checkInvariants(root);
             moveRootToFront(tab, root);
         }
 
@@ -2261,7 +2273,8 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          */
         final void split(SWMRHashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
             VarHandle.releaseFence();
-            TreeNode<K,V> tmp, b = new TreeNode<>(this.hash, this.key, this.value, this.next);
+            TreeNode<K,V> tmp, b = new TreeNode<>(this.hash, this.key, this.value, this.next,
+                    this.parent, this.left, this.right, this.prev, this.red);
             // Relink into lo and hi lists, preserving order
             TreeNode<K,V> loHead = null, loTail = null;
             TreeNode<K,V> hiHead = null, hiTail = null;

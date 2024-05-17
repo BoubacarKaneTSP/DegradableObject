@@ -18,7 +18,7 @@ import static org.testng.Assert.*;
 
 public class MapTest {
     private static final int MAX_ITEMS_PER_THREAD = Integer.MAX_VALUE;
-    private static final int ITEMS_PER_THREAD = 5_000;
+    private static final int ITEMS_PER_THREAD = 100_000;
 
     private Factory factory;
     private SimpleKeyGenerator generator;
@@ -110,7 +110,7 @@ public class MapTest {
 
         System.out.println("Each thread can see what other thread has added");
         Map<Integer, List<Key>> keys3 = generator.generateAndSplit(
-                ITEMS_PER_THREAD * parallelism, parallelism);
+                ITEMS_PER_THREAD * parallelism / 50, parallelism);
 
         Set<Key> other = new ConcurrentSkipListSet<>();
         CountDownLatch latch3 = new CountDownLatch(parallelism);
