@@ -25,9 +25,8 @@ public class Timeline<T> {
    }
 
    public Queue<T> read() {
-       long queueSize = timeline.size();
        topk.clear();
-       for (int i = 0; i < queueSize; i++) {
+       for (int i = 0; i < CAPACITY; i++) {
            T t=timeline.poll();
            if (t == null)
                break;
