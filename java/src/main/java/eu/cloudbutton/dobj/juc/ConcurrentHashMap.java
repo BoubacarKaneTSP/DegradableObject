@@ -696,7 +696,8 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * never be used in index calculations because of table bounds.
      */
     static final int spread(int h) {
-        return (h ^ (h >>> 16)) & HASH_BITS;
+        return h & HASH_BITS;
+        // return (h ^ (h >>> 16)) & HASH_BITS;
     }
 
     /**
@@ -2667,6 +2668,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * too small, in which case resizes instead.
      */
     private final void treeifyBin(Node<K,V>[] tab, int index) {
+        System.out.println("T");
         Node<K,V> b; int n;
         if (tab != null) {
             if ((n = tab.length) < MIN_TREEIFY_CAPACITY)
