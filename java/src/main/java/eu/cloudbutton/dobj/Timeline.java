@@ -26,14 +26,13 @@ public class Timeline<T> {
 
    public Queue<T> read() {
        long queueSize = timeline.size();
+       topk.clear();
        for (int i = 0; i < queueSize; i++) {
            T t=timeline.poll();
            if (t == null)
                break;
            topk.add(t);
        }
-       for (int i = 0; i < topk.size() - CAPACITY; i++)
-           topk.poll();
        return topk;
    }
 
@@ -43,6 +42,5 @@ public class Timeline<T> {
 
    public void clear(){
         timeline.clear();
-        topk.clear();
    }
 }

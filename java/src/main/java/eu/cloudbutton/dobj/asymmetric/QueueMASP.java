@@ -243,15 +243,15 @@ public class QueueMASP<E> extends AbstractQueue<E>
     @Contended
     private transient volatile Node<E> tail;
 
-    @Contended
-    private LongAdder queueSize;
+    //@Contended
+    //private LongAdder queueSize;
 
     /**
      * Creates a {@code QueueMASP} that is initially empty.
      */
     public QueueMASP() {
         head = tail = new Node<E>();
-        queueSize = new LongAdder();
+        // queueSize = new LongAdder();
     }
 
     /**
@@ -381,7 +381,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
                     // and for newNode to become "live".
                     if (p != t) // hop two nodes at a time; failure is OK
                         TAIL.weakCompareAndSet(this, t, newNode);
-                    queueSize.increment();
+                    // queueSize.increment();
                     return true;
                 }
                 // Lost CAS race to another thread; re-read next
@@ -415,7 +415,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
         if (head.next != null && (p = head.next.item) != null ){
             head.next.item = null;
             head = head.next;
-            queueSize.decrement();
+            // queueSize.decrement();
             return p;
         }
         return null;
@@ -484,7 +484,18 @@ public class QueueMASP<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-        return queueSize.intValue();
+        // return queueSize.intValue();
+        restartFromHead: for (;;) {
+            int count = 0;
+            for (Node<E> p = first(); p != null;) {
+                if (p.item != null)
+                    if (++count == Integer.MAX_VALUE)
+                        break;  // @see Collection.size()
+                if (p == (p = p.next))
+                    continue restartFromHead;
+            }
+            return count;
+        }
     }
 
     /**
@@ -992,7 +1003,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
 
     public void clear() {
         head = tail = new Node<E>();
-        queueSize = new LongAdder();
+        // queueSize = new LongAdder();
         bulkRemove(e -> true);
     }
 
