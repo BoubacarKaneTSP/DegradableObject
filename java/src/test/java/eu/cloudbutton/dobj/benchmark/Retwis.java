@@ -662,13 +662,12 @@ public class Retwis {
 
                 database.clearLoadingData();
 
-                if (flagWarmingUp.get()){
-                    if (_p){
-                        System.out.println(" ==> Warming up for " + _wTime + " seconds");
-                    }
-                    TimeUnit.SECONDS.sleep(_wTime);
-                    flagWarmingUp.set(false);
+                if (_p){
+                    System.out.println(" ==> Warming up for " + _wTime + " seconds");
                 }
+                TimeUnit.SECONDS.sleep(_wTime);
+                startTime = System.nanoTime();
+                flagWarmingUp.set(false);
 
                 if (_gcinfo)
                     System.out.println("Start benchmark");
@@ -678,7 +677,6 @@ public class Retwis {
                         System.out.println(" ==> Computing the throughput for "+ _time +" seconds");
                     }
 
-                    startTime = System.nanoTime();
                     TimeUnit.SECONDS.sleep(_time);
                     flagComputing.set(false);
                     endTime = System.nanoTime();
@@ -690,7 +688,6 @@ public class Retwis {
                         System.out.println(" ==> Computing the completion time for " + _nbOps + " operations");
                     }
 
-                    startTime = System.nanoTime();
                     latchCompletionTime.countDown();
                     latchCompletionTime.await();
                     endTime = System.nanoTime();
