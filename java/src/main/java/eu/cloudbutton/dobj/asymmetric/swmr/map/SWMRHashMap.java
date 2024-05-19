@@ -2015,7 +2015,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
          * Forms tree of the nodes linked from this node.
          */
         final void treeify(Node<K,V>[] tab) {
-            System.out.println("T");
             TreeNode<K,V> root = null;
             for (TreeNode<K,V> x = this, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
