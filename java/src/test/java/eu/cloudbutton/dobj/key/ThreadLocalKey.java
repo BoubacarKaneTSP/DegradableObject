@@ -12,7 +12,7 @@ public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<T
     public UUID id;
 
     public ThreadLocalKey(long tid, long id) {
-        this.id = Generators.randomBasedGenerator().generate();
+        this.id = UUID.randomUUID();
     }
 
     @Override
