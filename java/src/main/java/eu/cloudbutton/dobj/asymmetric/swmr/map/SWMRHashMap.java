@@ -292,7 +292,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         Node(int hash, K key, V value, Node<K,V> next) {
             this.hash = hash;
             this.key = key;
-            UNSAFE.fullFence(); // needed?
+            // UNSAFE.fullFence(); // needed?
             VALUE.setVolatile(this, value);
             NEXT.setVolatile(this, next);
         }

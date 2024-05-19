@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class SWMRHashSet<E> extends AbstractSet<E> implements Set<E> {
 
-    Map m;
+    private final Map m;
 
     public SWMRHashSet(){
         m = new SWMRHashMap();
