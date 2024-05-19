@@ -5,10 +5,10 @@ import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashSet;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class SegmentedHashSet<E> extends SegmentedCollection<HashSet,E> implements Set<E> {
+public final class SegmentedHashSet<E> extends SegmentedCollection<SWMRHashSet,E> implements Set<E> {
     
     public SegmentedHashSet(){
-        super(HashSet.class);
+        super(SWMRHashSet.class);
     }
 
 }
