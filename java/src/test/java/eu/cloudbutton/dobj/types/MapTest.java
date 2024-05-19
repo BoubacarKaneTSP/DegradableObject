@@ -28,8 +28,8 @@ public class MapTest {
 
     private static Class[] IMPL = {
             ExtendedSegmentedHashMap.class,
-//            ConcurrentHashMap.class
-//            SegmentedHashMap.class,
+            ConcurrentHashMap.class,
+            SegmentedHashMap.class,
 //            SegmentedTreeMap.class,
 //            SegmentedSkipListMap.class,
     };
@@ -38,7 +38,7 @@ public class MapTest {
     void setUp() {
         factory = new Factory();
         generator = new SimpleKeyGenerator(MAX_ITEMS_PER_THREAD);
-        parallelism = 4; // Runtime.getRuntime().availableProcessors();
+        parallelism = Runtime.getRuntime().availableProcessors();
         executorService = Executors.newFixedThreadPool(parallelism);
     }
 

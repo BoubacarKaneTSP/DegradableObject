@@ -457,9 +457,6 @@ public class Retwis {
                     }
                 }
 
-                latchFillFollowingPhase.countDown();
-                latchFillFollowingPhase.await();
-
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 nbLocalUsers = database.getMapUserToAdd().get(myId.get()).size();
@@ -478,10 +475,11 @@ public class Retwis {
 
                 for(int i=0; i<MAX_USERS_TO_FOLLOW_PER_THREAD; i++) {
                     long val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
-                    usersToFollow.add(database
+                    Key user = database
                             .getUsersFollowProbability()
                             .ceilingEntry(val)
-                            .getValue());
+                            .getValue();
+                    usersToFollow.add(user);
                 }
 
                 dummies = new ArrayList<>();
@@ -492,6 +490,9 @@ public class Retwis {
                 nextUser = 0;
                 nextUserToFollow = 0;
                 nextDummy = 0;
+
+                latchFillFollowingPhase.countDown();
+                latchFillFollowingPhase.await();
 
                 while (flagWarmingUp.get()) { // warm up
                     type = chooseOperation();
@@ -658,6 +659,8 @@ public class Retwis {
 
                 latchFillDatabase.await();
                 latchFillFollowingPhase.await();
+
+                database.clearLoadingData();
 
                 if (flagWarmingUp.get()){
                     if (_p){

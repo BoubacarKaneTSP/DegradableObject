@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.Timeline;
@@ -260,6 +261,17 @@ public class Database {
 
     public void shutdown() {
         executorService.shutdown();
+    }
+
+    public void clearLoadingData() {
+        usersFollowProbability.clear();
+        localUsersUsageProbability.clear();
+        localUsersUsageProbabilityRange.clear();
+        listLocalUser.clear();
+        listLocalUsersFollow.clear();
+        mapUserToAdd.clear();
+        mapUserToIndiceThread.clear();
+        mapListUserFollow.clear();
     }
 
     @FunctionalInterface
@@ -941,6 +953,7 @@ public class Database {
         mapFollowing.remove(user);
         mapTimelines.remove(user);
         mapProfiles.remove(user);
+        mapCommunityStatus.remove(user);
     }
 
     // Adding user_A to the followers of user_B

@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SWMRHashSet<E> extends AbstractSet<E> implements Set<E> {
+public final class SWMRHashSet<E> extends AbstractSet<E> implements Set<E> {
 
     Map m;
 
     public SWMRHashSet(){
-        m = new ConcurrentHashMap<>();
+        m = new SWMRHashMap();
     }
 
     @Override
