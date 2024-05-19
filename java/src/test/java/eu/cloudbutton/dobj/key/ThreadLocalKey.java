@@ -25,8 +25,7 @@ public class ThreadLocalKey extends BaseSegmentable implements Key, Comparable<T
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
-        // return hash;
+        return id.hashCode();
     }
 
     @Override
