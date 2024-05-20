@@ -4,7 +4,6 @@ import eu.cloudbutton.dobj.utils.BaseSegmentable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class SimpleKey extends BaseSegmentable implements Key, Comparable<SimpleKey>{
 

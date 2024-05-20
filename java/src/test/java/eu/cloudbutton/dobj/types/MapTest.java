@@ -2,6 +2,7 @@ package eu.cloudbutton.dobj.types;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
+import eu.cloudbutton.dobj.juc.LockBasedJavaHashMap;
 import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
@@ -28,12 +29,13 @@ public class MapTest {
     private ExecutorService executorService;
 
     private static Class[] IMPL = {
-            // ExtendedSegmentedHashMap.class,
-            // eu.cloudbutton.dobj.juc.ConcurrentHashMap.class,
+            ExtendedSegmentedHashMap.class,
+            eu.cloudbutton.dobj.juc.ConcurrentHashMap.class,
             // SegmentedHashMap.class,
-            ConcurrentSkipListMap.class,
+            LockBasedJavaHashMap.class,
+            // ConcurrentSkipListMap.class,
 //            SegmentedTreeMap.class,
-            ExtendedSegmentedSkipListMap.class,
+            // ExtendedSegmentedSkipListMap.class,
     };
 
     @BeforeTest

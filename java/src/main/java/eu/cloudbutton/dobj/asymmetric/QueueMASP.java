@@ -414,7 +414,7 @@ public class QueueMASP<E> extends AbstractQueue<E>
         E p;
         if (head.next != null && (p = head.next.item) != null ){
             head.next.item = null;
-            head = head.next;
+            HEAD.setVolatile(head.next);
             // queueSize.decrement();
             return p;
         }
