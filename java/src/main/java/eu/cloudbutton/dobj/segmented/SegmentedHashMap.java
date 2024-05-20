@@ -1,13 +1,12 @@
 package eu.cloudbutton.dobj.segmented;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
+import eu.cloudbutton.dobj.juc.ConcurrentHashMap;
 
-import java.util.HashMap;
-
-public class SegmentedHashMap<K,V> extends SegmentedMap<HashMap,K,V> {
+public class SegmentedHashMap<K,V> extends SegmentedMap<ConcurrentHashMap,K,V> {
 
     public SegmentedHashMap() {
-        super(HashMap.class);
+        super(ConcurrentHashMap.class);
     }
 
 }
