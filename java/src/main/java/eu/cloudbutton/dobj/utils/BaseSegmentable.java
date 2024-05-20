@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.utils;
 
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
+import jdk.internal.vm.annotation.ForceInline;
 
 public class BaseSegmentable implements Segmentable{
 
@@ -11,6 +12,7 @@ public class BaseSegmentable implements Segmentable{
     }
 
     @Override
+    @ForceInline
     public Integer getIndice() {
         return reference.get();
     }

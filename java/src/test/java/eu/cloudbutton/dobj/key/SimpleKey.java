@@ -8,10 +8,10 @@ import java.util.UUID;
 
 public class SimpleKey extends BaseSegmentable implements Key, Comparable<SimpleKey>{
 
-    public UUID id;
+    public String id;
 
     public SimpleKey(long id) {
-        this.id = UUID.randomUUID();
+        this.id = "user:"+id;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class SimpleKey extends BaseSegmentable implements Key, Comparable<Simple
 
     @Override
     public int hashCode() {
-        return Objects.hash(id); // % 100_000;
+        return Objects.hash(id);
     }
 
     @Override
