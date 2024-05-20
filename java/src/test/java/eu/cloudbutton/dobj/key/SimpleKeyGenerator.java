@@ -15,7 +15,7 @@ public class SimpleKeyGenerator implements KeyGenerator {
 
     public SimpleKeyGenerator() {
         random = ThreadLocalRandom.current();
-        random.setSeed(0); // to have reproducible perf.
+        random.setSeed(0); // to improve performance reproducibility.
     }
 
     @Override
