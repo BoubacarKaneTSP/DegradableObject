@@ -296,7 +296,7 @@ JVM_ARGS="-Xms8g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}
 
 RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha}" # -generate"
 
-# NUMA="numactl --physcpubind=$cpuIDs --membind=0"
+NUMA="numactl --physcpubind=$cpuIDs" # --membind=0"
 
 if [[ $typeTest == "Microbenchmark" ]]
 then
