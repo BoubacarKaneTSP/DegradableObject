@@ -396,7 +396,7 @@ public class Retwis {
 
         private static final int MAX_USERS_PER_THREAD = 100_000;
         private static final int MAX_DUMMY_USERS_PER_THREAD = 10_000;
-        private static final int MAX_USERS_TO_FOLLOW_PER_THREAD = 1_000;
+        private static final int MAX_USERS_TO_FOLLOW_PER_THREAD = 10_000;
 
         private final ThreadLocalRandom random;
         private final int[] ratiosArray;
