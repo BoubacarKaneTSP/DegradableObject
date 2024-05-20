@@ -600,7 +600,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Serialized pseudo-fields, provided only for jdk7 compatibility.
-     * @serialField segments Segment[]
+     * @serialField ws Segment[]
      *   The segments, each of which is a specialized hash table.
      * @serialField segmentMask int
      *   Mask value for indexing into segments. The upper bits of a
