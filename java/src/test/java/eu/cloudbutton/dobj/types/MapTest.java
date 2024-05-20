@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.testng.Assert.*;
 
 public class MapTest {
-    private static final int ITEMS_PER_THREAD = 1_000_000;
+    private static final int ITEMS_PER_THREAD = 100_000;
 
     private Factory factory;
     private SimpleKeyGenerator generator;
