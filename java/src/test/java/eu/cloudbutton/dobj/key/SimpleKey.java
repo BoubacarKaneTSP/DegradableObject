@@ -7,10 +7,10 @@ import java.util.Objects;
 
 public class SimpleKey extends BaseSegmentable implements Key, Comparable<SimpleKey>{
 
-    public long id;
+    public String id;
 
     public SimpleKey(long id) {
-        this.id = id;
+        this.id = "user"+id;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SimpleKey extends BaseSegmentable implements Key, Comparable<Simple
 
     @Override
     public int compareTo(@NotNull SimpleKey other) {
-        return Long.compare(id,other.id);
+        return id.compareTo(other.id);
     }
 
     @Override

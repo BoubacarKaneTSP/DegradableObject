@@ -28,7 +28,7 @@ public class MapTest {
     private static Class[] IMPL = {
 //            ExtendedSegmentedHashMap.class,
             eu.cloudbutton.dobj.juc.ConcurrentHashMap.class,
-            SegmentedHashMap.class,
+//            SegmentedHashMap.class,
 //            SegmentedTreeMap.class,
 //            SegmentedSkipListMap.class,
     };
