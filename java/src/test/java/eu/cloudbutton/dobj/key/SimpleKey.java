@@ -9,8 +9,8 @@ public class SimpleKey extends BaseSegmentable implements Key, Comparable<Simple
 
     public String id;
 
-    public SimpleKey(long id) {
-        this.id = "user:"+id;
+    public SimpleKey(long tid, long id) {
+        this.id = "user:"+tid+":"+id;
     }
 
     @Override

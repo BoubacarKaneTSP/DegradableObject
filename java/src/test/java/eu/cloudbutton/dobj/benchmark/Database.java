@@ -989,16 +989,16 @@ public class Database {
         mapProfiles.compute(user,
                 (u,p) ->
                 {
-//                    return p++;
-                    byte[] bytesOfMessage = null;
-                    try {
-                        bytesOfMessage = Integer.toString(u.hashCode()).getBytes("UTF-8");
-                        MessageDigest md = MessageDigest.getInstance("MD5");
-                        return md.digest(bytesOfMessage).length;
-                    } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
+                    return p++;
+//                    byte[] bytesOfMessage = null;
+//                    try {
+//                        bytesOfMessage = Integer.toString(u.hashCode()).getBytes("UTF-8");
+//                        MessageDigest md = MessageDigest.getInstance("MD5");
+//                        return md.digest(bytesOfMessage).length;
+//                    } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+//                        e.printStackTrace();
+//                        throw new RuntimeException(e);
+//                    }
                 });
     }
 

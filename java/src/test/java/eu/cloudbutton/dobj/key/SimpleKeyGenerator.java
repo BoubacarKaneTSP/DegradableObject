@@ -11,12 +11,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleKeyGenerator implements KeyGenerator {
 
-
     public SimpleKeyGenerator() {}
 
     @Override
     public Key nextKey() {
-        return new SimpleKey(ThreadLocalRandom.current().nextLong());
+        return new SimpleKey(
+                Thread.currentThread().threadId(),
+                ThreadLocalRandom.current().nextLong());
     }
 
     public Map<Integer, List<Key>> generateAndSplit(int n, int parallelism) {
