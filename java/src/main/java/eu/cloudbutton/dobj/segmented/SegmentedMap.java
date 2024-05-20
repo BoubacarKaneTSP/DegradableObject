@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> implements Map<K,V> {
 
@@ -85,5 +86,10 @@ public class SegmentedMap<T extends Map,K,V> extends BaseSegmentation<T> impleme
     @Override
     public Set<Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public V compute(K o, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        return (V) segmentFor(o).compute(o, remappingFunction);
     }
 }
