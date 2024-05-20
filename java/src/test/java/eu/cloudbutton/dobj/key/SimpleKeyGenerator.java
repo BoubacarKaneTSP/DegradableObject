@@ -7,9 +7,13 @@ import jdk.internal.misc.CarrierThreadLocal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleKeyGenerator implements KeyGenerator {
+
+    ThreadLocal<Random> random = CarrierThreadLocal.withInitial(
+            () -> new Random(0)); // to improve reproducibility
 
     public SimpleKeyGenerator() {}
 
@@ -17,7 +21,7 @@ public class SimpleKeyGenerator implements KeyGenerator {
     public Key nextKey() {
         return new SimpleKey(
                 Thread.currentThread().threadId(),
-                ThreadLocalRandom.current().nextLong());
+                random.get().nextLong());
     }
 
     public Map<Integer, List<Key>> generateAndSplit(int n, int parallelism) {
