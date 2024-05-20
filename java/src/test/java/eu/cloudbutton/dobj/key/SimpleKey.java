@@ -4,13 +4,14 @@ import eu.cloudbutton.dobj.utils.BaseSegmentable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class SimpleKey extends BaseSegmentable implements Key, Comparable<SimpleKey>{
 
-    public String id;
+    public UUID id;
 
     public SimpleKey(long id) {
-        this.id = "user"+id;
+        this.id = UUID.randomUUID();
     }
 
     @Override

@@ -18,7 +18,7 @@ public class UUIDKey extends BaseSegmentable implements Key, Comparable<UUIDKey>
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleKey that = (SimpleKey) o;
+        UUIDKey that = (UUIDKey) o;
         return Objects.equals(id, that.id);
     }
 
