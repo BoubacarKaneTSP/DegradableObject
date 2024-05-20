@@ -26,7 +26,7 @@ public class QueueTest {
 
     @Test
     public void test() throws ExecutionException, InterruptedException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        doAppend(new ConcurrentLinkedQueue<>());
+        doAppend(new QueueMASP<>());
     }
 
     private static void doAppend(Queue<Integer> queue){
