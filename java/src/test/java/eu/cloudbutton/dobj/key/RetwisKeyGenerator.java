@@ -3,7 +3,6 @@ package eu.cloudbutton.dobj.key;
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.RandomGeneratorFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -99,12 +98,12 @@ public class RetwisKeyGenerator implements KeyGenerator {
 
     }
 
-    private static class CollidingKey extends ThreadLocalKey implements Comparable<ThreadLocalKey> {
+    private static class CollidingKey extends SimpleKey implements Comparable<SimpleKey> {
 
         private long hash;
 
         CollidingKey(long tid, long id, long hash, int max_hashes_per_thread) {
-            super(tid,id);
+            super(tid * 10_000_000 + id);
             this.hash = hash;
         }
 

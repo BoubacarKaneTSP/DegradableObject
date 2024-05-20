@@ -291,7 +291,7 @@ echo ""
 
 # Xlog:gc
 JVM_EXPORTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.util.random=ALL-UNNAMED"
-JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}" #  -ea 
+JVM_ARGS="-Xms8g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}" #  -ea  -Xmx16g
 # JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}"
 
 RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha}" # -generate"

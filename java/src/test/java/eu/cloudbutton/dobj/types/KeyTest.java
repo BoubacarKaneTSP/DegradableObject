@@ -32,7 +32,7 @@ public class KeyTest {
         int size = 0;
         Set<Key> set = new SegmentedSkipListSet();
 
-        KeyGenerator keyGenerator = new SimpleKeyGenerator(max_item_per_thread);
+        KeyGenerator keyGenerator = new SimpleKeyGenerator();
 
         for (int i = 0; i < nbAdd; i++) {
             Key key = keyGenerator.nextKey();

@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.key.ThreadLocalKey;
 import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.Timeline;

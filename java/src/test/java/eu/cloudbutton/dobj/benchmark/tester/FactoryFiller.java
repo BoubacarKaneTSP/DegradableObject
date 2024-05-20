@@ -23,7 +23,7 @@ public class FactoryFiller {
         this.object = object;
         this.nbWorker = nbWorker;
         this.nbOps = nbOps;
-        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator(max_item_per_thread);
+        keyGenerator = useCollisionKey ? new RetwisKeyGenerator(max_item_per_thread) : new SimpleKeyGenerator();
     }
 
     public Filler createFiller() throws ClassNotFoundException {

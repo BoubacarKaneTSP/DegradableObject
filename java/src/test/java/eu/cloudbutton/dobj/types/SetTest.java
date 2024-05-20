@@ -36,7 +36,7 @@ public class SetTest {
     @BeforeTest
     void setUp() {
         factory = new Factory();
-        generator = new SimpleKeyGenerator(MAX_ITEMS_PER_THREAD);
+        generator = new SimpleKeyGenerator();
         parallelism = Runtime.getRuntime().availableProcessors();
     }
 
