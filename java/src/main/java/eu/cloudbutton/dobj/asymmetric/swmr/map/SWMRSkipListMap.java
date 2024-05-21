@@ -544,6 +544,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
                     else {
                         nn = nn.next[0];
                         System.out.println("searching for key");
+                        System.exit(1);
                     }
                 }
                 return null;
