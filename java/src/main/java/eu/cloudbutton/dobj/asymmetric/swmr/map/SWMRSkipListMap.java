@@ -520,9 +520,9 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         Node<K, V> node = head;
         for (int i = level - 1; i >= 0; i--) {
             while (i < node.next.length
-                    && node.next[i] != null
+                    && NEXT.getVolatile(node.next, i) != null
                     && compare(comparator, (Node) NEXT.getVolatile(node.next, i), key) < 0) {
-                node = node.next[i];
+                node = (Node<K, V>) NEXT.getVolatile(node.next, i);
             }
             if (update != null) {
                 update[i] = node;
