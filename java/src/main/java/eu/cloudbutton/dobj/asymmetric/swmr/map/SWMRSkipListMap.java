@@ -227,7 +227,6 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         if (node != null) {
             V oldValue = node.value;
             node.value = value;
-            UNSAFE.fullFence();
             return oldValue;
         }
 
@@ -242,17 +241,12 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
 
         // create a new node and link it with existing nodes
         Node<K, V> newNode = new Node<>(key, value, newLevel);
-        UNSAFE.storeFence();
 
         for (int i = 0; i < newLevel; i++) {
             // link new node and nodes with greater keys
             linkNode(newNode, update[i].next[i], i);
-            UNSAFE.storeFence();
-
             // link new node and nodes with less keys
             linkNode(update[i], newNode, i);
-            UNSAFE.storeFence();
-
         }
 
         size++;
@@ -489,10 +483,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
             linkNode(node.prev[i], node.next[i], i);
 
             node.prev[i] = null;
-            UNSAFE.storeFence();
-
             node.next[i] = null;
-            UNSAFE.storeFence();
         }
         while (level > 0 && head.next[level] == null) {
             level--;
@@ -502,7 +493,10 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
 
     private void linkNode(Node<K, V> prevNode, Node<K, V> nextNode, int level) {
         if (prevNode != null) {
-            prevNode.next[level] = nextNode;
+            if (level == 0)
+                NEXT.setVolatile(prevNode.next, level, nextNode);
+            else
+                prevNode.next[level] = nextNode;
         }
         if (nextNode != null) {
             nextNode.prev[level] = prevNode;
@@ -621,7 +615,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
 
         Node(K key, V value, int level) {
             this.key = key;
-            this.value = value;
+            VALUE.setVolatile(this, value);
             this.next = new Node[level];
             this.prev = new Node[level];
         }
@@ -893,11 +887,13 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         }
     }
     private static final VarHandle VALUE;
+    private static final VarHandle NEXT;
 
     static {
         try{
             MethodHandles.Lookup l = MethodHandles.lookup();
             VALUE = l.findVarHandle(SWMRSkipListMap.Node.class, "value", Object.class);
+            NEXT =  MethodHandles.arrayElementVarHandle(SWMRSkipListMap.Node[].class);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);

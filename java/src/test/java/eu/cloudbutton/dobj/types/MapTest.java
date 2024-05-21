@@ -6,6 +6,7 @@ import eu.cloudbutton.dobj.key.Key;
 import eu.cloudbutton.dobj.key.KeyGenerator;
 import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
 import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedSkipListMap;
 import eu.cloudbutton.dobj.segmented.SegmentedHashMap;
 import eu.cloudbutton.dobj.utils.Helpers;
 import org.testng.annotations.BeforeTest;
@@ -27,7 +28,8 @@ public class MapTest {
     private ExecutorService executorService;
 
     private static Class[] IMPL = {
-            ExtendedSegmentedHashMap.class,
+            ExtendedSegmentedSkipListMap.class,
+//            ExtendedSegmentedHashMap.class,
 //            ConcurrentHashMap.class
 //            SegmentedHashMap.class,
 //            SegmentedTreeMap.class,
