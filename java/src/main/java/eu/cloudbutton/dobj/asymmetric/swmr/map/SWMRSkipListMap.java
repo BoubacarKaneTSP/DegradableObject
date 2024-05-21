@@ -174,7 +174,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
      */
     @Override
     @SuppressWarnings("unchecked")
-    public boolean containsKey(Object key) {
+    public boolean sKey(Object key) {
         return findClosestNode((K) key, Relation.EQ) != null;
     }
 
@@ -521,24 +521,25 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         for (int i = level - 1; i >= 0; i--) {
             while (i < node.next.length
                     && node.next[i] != null
-                    && compare(comparator, node.next[i], key) < 0) {
+                    && compare(comparator, (Node) NEXT.getVolatile(node.next, i), key) < 0) {
                 node = node.next[i];
             }
             if (update != null) {
                 update[i] = node;
             }
         }
+        Node<K, V> nn = (Node<K, V>) NEXT.getVolatile(node.next, 0);
         if (relation.includes(Relation.GT)) {
-            return dataNodeOrNull(node.next[0]);
+            return dataNodeOrNull(nn);
         }
         if (relation == Relation.LT) {
             return dataNodeOrNull(node);
         }
         if (relation == Relation.EQ) {
-            return checkEquality(key, node.next[0]) ? node.next[0] : null;
+            return checkEquality(key, nn) ? nn : null;
         }
         // LE
-        return checkEquality(key, node.next[0]) ? node.next[0] : dataNodeOrNull(node);
+        return checkEquality(key, nn) ? nn : dataNodeOrNull(node);
     }
 
     private int randomLevel() {
