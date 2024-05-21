@@ -174,7 +174,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
      */
     @Override
     @SuppressWarnings("unchecked")
-    public boolean sKey(Object key) {
+    public boolean containsKey(Object key) {
         return findClosestNode((K) key, Relation.EQ) != null;
     }
 
@@ -201,7 +201,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
 
     /**
      * Associates the specified value with the specified key in this skip list map.
-     * If the map previously contained a mapping for the key, the old
+     * If the map previously ed a mapping for the key, the old
      * value is replaced.
      *
      * @param key   key with which the specified value is to be associated
