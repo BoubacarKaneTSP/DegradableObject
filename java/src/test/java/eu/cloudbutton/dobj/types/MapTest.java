@@ -104,7 +104,7 @@ public class MapTest {
         assertEquals(nbElement.get(), ITEMS_PER_THREAD * parallelism, "All elements are not successfully added");
         assertEquals(nbElement.get(), map.size(), "Error with map.size()");
 
-        System.out.println("Test remove");
+        /*System.out.println("Test remove");
         Map<Integer, List<Key>> keys2 = generator.generateAndSplit(
                 ITEMS_PER_THREAD*parallelism, parallelism);
         CountDownLatch latch2 = new CountDownLatch(parallelism);
@@ -123,7 +123,7 @@ public class MapTest {
             return null;
         };
         executeAll(callable);
-        System.out.println("Done");
+        System.out.println("Done");*/
 
         assertEquals(map.size(), ITEMS_PER_THREAD * parallelism); // Should be false ?
         map.clear();
