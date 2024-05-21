@@ -517,7 +517,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
      * @return the node whose key is closest to the given {@code key} or null if there is not.
      */
     private Node<K, V> findClosestNode(K key, Relation relation, Node<K, V>[] update) {
-        Node<K, V> tmp, node = head;
+        Node<K, V> tmp = tail, node = head;
         int lvl = (int) LEVEL.getVolatile(this);
         for (int i = lvl - 1; i >= 0; i--) {
             while (i < node.next.length
@@ -529,7 +529,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
                 update[i] = node;
             }
         }
-        Node<K, V> nn = (Node<K, V>) NEXT.getVolatile(node.next, 0);
+        Node<K, V> nn = tmp;
         if (relation.includes(Relation.GT)) {
             return dataNodeOrNull(nn);
         }
@@ -537,17 +537,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
             return dataNodeOrNull(node);
         }
         if (relation == Relation.EQ) {
-            if (update == null){
-                while(nn != tail){
-                    if (checkEquality(key, nn))
-                        return nn;
-                    else {
-                        nn = nn.next[0];
-                    }
-                }
-                return null;
-            }
-            return checkEquality(key, nn) ? nn : null;
+             return checkEquality(key, nn) ? nn : null;
         }
         // LE
         return checkEquality(key, nn) ? nn : dataNodeOrNull(node);
