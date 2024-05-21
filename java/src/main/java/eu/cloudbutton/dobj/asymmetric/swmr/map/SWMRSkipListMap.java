@@ -483,10 +483,10 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
             linkNode(node.prev[i], node.next[i], i);
 
             node.prev[i] = null;
-//            node.next[i] = null;
+            NEXT.setVolatile(node.next, i, null);
         }
         while (level > 0 && head.next[level] == null) {
-            level = level - 1;
+            LEVEL.setVolatile(this, level - 1);
         }
         size--;
     }
