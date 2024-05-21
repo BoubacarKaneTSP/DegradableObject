@@ -40,7 +40,7 @@ public class MapTest {
     void setUp() {
         factory = new Factory();
         generator = new SimpleKeyGenerator(MAX_ITEMS_PER_THREAD);
-        parallelism = Runtime.getRuntime().availableProcessors();
+        parallelism = 8; //Runtime.getRuntime().availableProcessors();
         executorService = Executors.newFixedThreadPool(parallelism);
     }
 
