@@ -90,7 +90,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
     /**
      * The current level of this skip list map.
      */
-    private int level;
+    private volatile int level;
 
     /**
      * The size of this skip list map. This value should be changed after any modification like insertion, removal, etc.
