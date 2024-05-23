@@ -20,6 +20,7 @@ import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import eu.cloudbutton.dobj.segmented.*;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.sharded.*;
+import eu.cloudbutton.dobj.swsr.SkipListMap;
 import eu.cloudbutton.dobj.types.Counter;
 
 import java.lang.reflect.Constructor;
@@ -176,6 +177,8 @@ public class Factory {
             // map
             case "HashMap":
                 return HashMap.class;
+            case "SkipListMap":
+                return SkipListMap.class;
             case "SegmentedHashMap":
                 return SegmentedHashMap.class;
             case "SegmentedSkipListMap":
