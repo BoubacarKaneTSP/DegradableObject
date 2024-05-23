@@ -8,7 +8,6 @@ import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.incrementonly.*;
 import eu.cloudbutton.dobj.list.DegradableLinkedList;
 import eu.cloudbutton.dobj.list.DegradableList;
-import eu.cloudbutton.dobj.list.LinkedList;
 import eu.cloudbutton.dobj.list.ListJUC;
 import eu.cloudbutton.dobj.mcwmcr.MapAddIntensive;
 import eu.cloudbutton.dobj.mcwmcr.MapReadIntensive;
