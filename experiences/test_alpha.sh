@@ -38,7 +38,7 @@ declare -A params
 params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
 #params[dego]="-c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
 
-for impl in seq;# juc dego;
+for impl in juc;# dego;
 do
     for alpha in "${alphas[@]}";
     do
