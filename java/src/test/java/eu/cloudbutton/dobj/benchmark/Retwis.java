@@ -588,6 +588,9 @@ public class Retwis {
         public void compute(operationType type) {
             try {
                 user = users.get(nextUser++ % MAX_USERS_PER_THREAD);
+                if (database.usageStat && type != ADD)
+                    database.getMapUserUsage().compute(user, (_,v) -> v+1);
+
                 switch (type) {
                     case ADD:
                         dummy = dummies.get(nextDummy++ % MAX_DUMMY_USERS_PER_THREAD);

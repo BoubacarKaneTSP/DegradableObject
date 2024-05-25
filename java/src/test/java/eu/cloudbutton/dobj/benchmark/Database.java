@@ -18,7 +18,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
-import java.security.*;
 
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -65,6 +64,8 @@ public class Database {
     private final List<List<Key>> listLocalUser;
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
     private final Map<Integer, List<Key>> mapUserToAdd;
+    private Map<Key, Integer> mapUserUsage;
+    public final boolean usageStat = true;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -131,6 +132,7 @@ public class Database {
         mapUserToAdd = new ConcurrentHashMap<>();
         mapUserToIndiceThread = new HashMap<>();
         mapListUserFollow = new ConcurrentHashMap<>();
+        mapUserUsage = new ConcurrentHashMap<>();
 
         for (int i = 0; i < nbThread; i++) {
             mapUserToAdd.put(i, new ArrayList<>());
@@ -184,6 +186,10 @@ public class Database {
                     o_degree = (int) Double.parseDouble(degrees[2]);
                     mapIndiceToKey.put(i, user);
                     mapKeyToIndice.put(user,i);
+
+                    if (usageStat)
+                        mapUserUsage.put(user, 0);
+
                     reciprocalDegree[i] = r_degree;
                     inDegree[i] = i_degree;
                     outDegree[i] = o_degree;
@@ -1013,8 +1019,20 @@ public class Database {
     }
 
     public String statistics() {
-        int in=0, out=0, max_in=0, max_out=0, wall=0, max_wall=0;
+        int in=0, out=0, max_in=0, max_out=0, wall=0, max_wall=0, nbOpTot = 0, nbOp = 0;
 
+        if (usageStat) {
+            mapUserUsage = sortMapByValue(mapUserUsage);
+            int n, i = 0;
+            for (Key user : mapUserUsage.keySet()){
+                n = mapUserUsage.get(user);
+                if (i <= nbUsers*0.2)
+                    nbOp += n;
+
+                nbOpTot += n;
+                i++;
+            }
+        }
         for (Key user : mapFollowers.keySet()){
             int degree = mapFollowers.get(user).size();
             in+=degree;
@@ -1046,9 +1064,10 @@ public class Database {
                 +", max timeline:" + max_wall
         );
 
+        if (usageStat)
+            builder.append("% op from 20% more actif user : " + (nbOp/nbOpTot)*100);
         if (mapFollowers instanceof ConcurrentHashMap) {
             ConcurrentHashMap map = (ConcurrentHashMap) mapFollowers;
-
         }
         return builder.toString();
     }
