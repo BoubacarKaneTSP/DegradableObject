@@ -1068,7 +1068,7 @@ public class Database {
         );
 
         if (usageStat)
-            builder.append("% op from 20% more actif user : " + (nbOp/nbOpTot)*100);
+            builder.append(",% op from 20% more actif user : " + (nbOp/(double)nbOpTot)*100);
         if (mapFollowers instanceof ConcurrentHashMap) {
             ConcurrentHashMap map = (ConcurrentHashMap) mapFollowers;
         }
