@@ -461,6 +461,7 @@ public class Database {
             numberOfUsersInFile = (int) fileStream.count();
         }
 
+
         Set<Key> localSetUser = new HashSet<>();
         List<Integer> powerLawArray = generateValues(numberOfUsersInFile, numberOfUsersInFile, alpha, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
@@ -476,6 +477,9 @@ public class Database {
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user, indiceThread);
                 mapListUserFollow.put(user, new LinkedList<>());
+
+                if (usageStat)
+                    mapUserUsage.put(user, 0);
 
                 mapIndiceToKey.put(i, user);
                 mapKeyToIndice.put(user, i);
