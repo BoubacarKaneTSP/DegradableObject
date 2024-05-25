@@ -187,9 +187,6 @@ public class Database {
                     mapIndiceToKey.put(i, user);
                     mapKeyToIndice.put(user,i);
 
-                    if (usageStat)
-                        mapUserUsage.put(user, 0);
-
                     reciprocalDegree[i] = r_degree;
                     inDegree[i] = i_degree;
                     outDegree[i] = o_degree;
@@ -305,6 +302,8 @@ public class Database {
             somme.get(i%nbThread).addAndGet(powerLawArray.get(i));
 
             user = mapIndiceToKey.get(i);
+            if (usageStat)
+                mapUserUsage.put(user, 0);
             addOriginalUser(user);
             localUsersUsageProbability.get(i%nbThread).put(somme.get(i%nbThread).longValue(), user);
             localUsersUsageProbabilityRange.compute(i%nbThread,  (k,v) -> Math.max(v,somme.get(i%nbThread).longValue()));
