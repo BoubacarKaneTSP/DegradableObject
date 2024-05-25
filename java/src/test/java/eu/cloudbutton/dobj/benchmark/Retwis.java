@@ -593,7 +593,7 @@ public class Retwis {
                     if (database.usageStat && type != ADD)
                         database.getMapUserUsage().compute(user, (_,v) -> v+1);
                 }catch (NullPointerException e){
-                    System.out.println(database.getMapUserUsage().size());
+                    System.out.println("size :" + database.getMapUserUsage().size());
                     System.exit(1);
                 }
 
