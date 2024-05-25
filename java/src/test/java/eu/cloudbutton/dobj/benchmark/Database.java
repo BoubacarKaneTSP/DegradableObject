@@ -65,7 +65,7 @@ public class Database {
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
-    public final boolean usageStat = true;
+    public final boolean usageStat = false;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
