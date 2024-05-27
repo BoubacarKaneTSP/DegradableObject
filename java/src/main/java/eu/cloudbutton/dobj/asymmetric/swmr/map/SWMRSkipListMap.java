@@ -21,7 +21,9 @@ package eu.cloudbutton.dobj.asymmetric.swmr.map;
  * SOFTWARE.
  */
 
+import eu.cloudbutton.dobj.swsr.SWSRSkipListMap;
 import eu.cloudbutton.dobj.utils.NonLinearizable;
+import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
@@ -38,6 +40,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.function.BiFunction;
 
 /**
  * An implementation of {@link java.util.Map} based on skip lists, a data structure first described in 1989
@@ -259,6 +262,21 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         return null;
     }
 
+
+    @Override
+    public V compute(K key,
+                     @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+
+        V v = null;
+        Node<K, V> node = findClosestNode(key, Relation.EQ);
+        if (node != null) {
+            v = remappingFunction.apply(key, node.value);
+            if (v != null)
+                VALUE.setVolatile(node, v);
+        }
+
+        return v;
+    }
     /**
      * Removes the mapping for a key from this skip list map if it is present
      * (optional operation).
