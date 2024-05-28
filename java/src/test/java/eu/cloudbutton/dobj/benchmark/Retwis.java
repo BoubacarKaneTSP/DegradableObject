@@ -466,11 +466,9 @@ public class Retwis {
                             indiceA = database.getMapKeyToIndice().get(userA);
                             indiceB = database.getMapKeyToIndice().get(userB);
 
-                            System.out.println(database.getMapListUserFollow().get(userA));
-                            System.out.println();
-//                            System.out.println("userA: " + userA +", userB: " + userB + "\n"
-//                                    + "indiceA: " + indiceA + ", indiceB: " + indiceB + "\n"
-//                                    + "=> is " + indiceA/nbLocalUsers + " = " + indiceB/nbLocalUsers+ " = " + myId.get() + " ?\n");
+                            System.out.println("userA: " + userA +", userB: " + userB + "\n"
+                                    + "indiceA: " + indiceA + ", indiceB: " + indiceB + "\n"
+                                    + "=> is " + indiceA/nbLocalUsers + " = " + indiceB/nbLocalUsers+ " = " + myId.get() + " ?\n");
                             System.exit(1);
 //                            e.printStackTrace();
 //                            throw new RuntimeException();
