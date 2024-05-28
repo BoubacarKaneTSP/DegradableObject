@@ -155,7 +155,7 @@ public class Retwis {
                 throw new CmdLineException(parser, "No argument is given");
 
             if (distribution.length != 6){
-                throw new java.lang.Error("#ratios must be 6 (% add, % follow or unfollow, % tweet, % read, % join/leave groupe, % update profile), has:"+Arrays.toString(distribution));
+                throw new Error("#ratios must be 6 (% add, % follow or unfollow, % tweet, % read, % join/leave groupe, % update profile), has:"+Arrays.toString(distribution));
             }
 
             int total = 0;
@@ -164,7 +164,7 @@ public class Retwis {
             }
 
             if (total != 100){
-                throw new java.lang.Error("Total ratio must be 100");
+                throw new Error("Total ratio must be 100");
             }
 
         } catch (CmdLineException e) {
@@ -234,9 +234,9 @@ public class Retwis {
 
                 userUsageDistribution = new ConcurrentLinkedQueue<>();
                 nbOperations = new ConcurrentHashMap<>();
-                Arrays.stream(operationType.values()).forEach(t -> nbOperations.put(t, new AtomicInteger()));
+                Arrays.stream(values()).forEach(t -> nbOperations.put(t, new AtomicInteger()));
                 timeDurations = new ConcurrentHashMap<>();
-                Arrays.stream(operationType.values()).forEach(t -> timeDurations.put(t, new ConcurrentLinkedQueue<>()));
+                Arrays.stream(values()).forEach(t -> timeDurations.put(t, new ConcurrentLinkedQueue<>()));
 
 //                timeDurations = new ConcurrentHashMap<>();
                 queueSizes = new LongAdder();
@@ -346,7 +346,7 @@ public class Retwis {
                     }
                     if (_p){
                         System.out.println("Stats for each op over (" + _nbTest + ") tests :");
-                        for (operationType op: operationType.values()) {
+                        for (operationType op: values()) {
                             int nbSpace = 10 - op.toString().length();
                             System.out.print("==> - " + op);
                             for (int i = 0; i < nbSpace; i++) System.out.print(" ");
@@ -492,15 +492,24 @@ public class Retwis {
                 }
 
                 for(int i=0; i<MAX_USERS_TO_FOLLOW_PER_THREAD; i++) {
-                    Key user;
+                    Key user = null;
                     long val;
                     if (database.isDAP()){
                         val = Math.abs(random.nextLong() % (database.getLocalUsersFollowProbabilityRange().get(myId.get()) + 1));
-                        user = database
-                                .getLocalUsersFollowProbability()
-                                .get(myId.get())
-                                .ceilingEntry(val)
-                                .getValue();
+                        try{
+
+                            user = database
+                                    .getLocalUsersFollowProbability()
+                                    .get(myId.get())
+                                    .ceilingEntry(val)
+                                    .getValue();
+                        }catch (NullPointerException e) {
+                            System.out.println("val : " + val);
+                            System.out.println(database
+                                    .getLocalUsersFollowProbability()
+                                    .get(myId.get()));
+                            System.exit(1);
+                        }
                     }
                     else {
                         val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
@@ -752,7 +761,7 @@ public class Retwis {
             PrintWriter printWriter;
             FileWriter fileWriter;
 
-            for (operationType type: operationType.values()){
+            for (operationType type: values()){
                 fileWriter = new FileWriter("Duration_"+type.toString()+"_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
                 printWriter = new PrintWriter(fileWriter);
 
