@@ -508,7 +508,6 @@ public class Retwis {
                     if (database.isDAP()){
                         val = Math.abs(random.nextLong() % (database.getLocalUsersFollowProbabilityRange().get(myId.get()) + 1));
                         try{
-
                             user = database
                                     .getLocalUsersFollowProbability()
                                     .get(myId.get())
@@ -521,6 +520,7 @@ public class Retwis {
                                     .get(myId.get()));
                             System.exit(1);
                         }
+                        assert user != null;
                     }
                     else {
                         val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
