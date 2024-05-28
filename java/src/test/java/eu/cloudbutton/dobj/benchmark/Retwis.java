@@ -445,27 +445,27 @@ public class Retwis {
                     System.out.println(myId.get()+": "+userToAdd.size()+" users");
                 assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
 
-                int v = 0;
+//                int v = 0;
 
                 for (Key user : userToAdd){
                     if (database.isDAP())
                         assert database.getMapKeyToIndice().get(user) / database.getNbUsers() != myId.get() : "Graph is not DAP";
 
-                    if (v%10000 == 0)
-                        System.out.println(v);
+//                    if (v%10000 == 0)
+//                        System.out.println(v);
 
                     database.addOriginalUser(user);
-                    v++;
+//                    v++;
                 }
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
                 System.out.println("following");
-                v = 0;
+//                v = 0;
                 for (Key userA : userToAdd){
-                    if (v%10000 == 0)
-                        System.out.println(v);
+//                    if (v%10000 == 0)
+//                        System.out.println(v);
                     for (Key userB : database.getMapListUserFollow().get(userA)){
                         try{
                             database.followUser(userA, userB);
@@ -483,7 +483,7 @@ public class Retwis {
 //                            throw new RuntimeException();
                         }
                     }
-                    v++;
+//                    v++;
                 }
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
