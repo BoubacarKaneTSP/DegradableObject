@@ -538,8 +538,10 @@ public class Database {
             } else {
                 for (int j = 1; j < values.length; j++) {
                     try{
-                        if (isDAP)
-                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j]) / nbUserPerThread));
+                        if (isDAP) {
+                            int userIndex = (userIndice/nbUserPerThread) + j;
+                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userIndex));
+                        }
                         else
                             mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
                     } catch (NullPointerException e) {
