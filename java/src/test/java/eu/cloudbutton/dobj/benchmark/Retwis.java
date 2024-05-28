@@ -397,6 +397,7 @@ public class Retwis {
         private static final int MAX_USERS_PER_THREAD = 100_000;
         private static final int MAX_DUMMY_USERS_PER_THREAD = 10_000;
         private static final int MAX_USERS_TO_FOLLOW_PER_THREAD = 10_000;
+        private static final int RANGE_DIFF_OP_TO_DO = 10_000;
 
         private final ThreadLocalRandom random;
         private final int[] ratiosArray;
@@ -413,6 +414,7 @@ public class Retwis {
         int nbLocalUsers;
         int nbAttempt;
         List<Key> users, usersToFollow, dummies;
+        List<operationType> differentOpToDo;
         Key user, userToFollow, dummy;
         int nextUser, nextUserToFollow, nextDummy;
 
@@ -432,21 +434,25 @@ public class Retwis {
 
             try{
                 operationType type;
-                int sizeOpToDo = 10_000;
 
                 myId.set(Helpers.threadIndexInPool());
-
-                System.out.println(myId.get()+": "+database.getMapUserToAdd().get(myId.get()).size()+" users");
+                List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
+                if (_p)
+                    System.out.println(myId.get()+": "+userToAdd.size()+" users");
                 assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
 
-                for (Key user : database.getMapUserToAdd().get(myId.get())){
+
+                for (Key user : userToAdd){
+                    if (database.isDAP())
+                        assert database.getMapKeyToIndice().get(user) / database.getNbUsers() != myId.get() : "Graph is not DAP";
+
                     database.addOriginalUser(user);
                 }
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
-                for (Key userA : database.getMapUserToAdd().get(myId.get())){
+                for (Key userA : userToAdd){
                     for (Key userB : database.getMapListUserFollow().get(userA)){
                         try{
                             database.followUser(userA, userB);
@@ -459,7 +465,7 @@ public class Retwis {
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
-                nbLocalUsers = database.getMapUserToAdd().get(myId.get()).size();
+                nbLocalUsers = userToAdd.size();
                 localUserUsageDistribution = new LinkedList<>();
 
                 users = new ArrayList<>(MAX_USERS_PER_THREAD);
@@ -487,6 +493,11 @@ public class Retwis {
                     dummies.add(database.generateUser());
                 }
 
+                differentOpToDo = new ArrayList<>();
+
+                for (int i = 0; i < RANGE_DIFF_OP_TO_DO; i++) {
+                    differentOpToDo.add(chooseOperation());
+                }
                 nextUser = 0;
                 nextUserToFollow = 0;
                 nextDummy = 0;
@@ -509,7 +520,7 @@ public class Retwis {
                     long nbOperationToDo = Math.ceilDiv( _nbOps, database.getNbThread());
                     for (long i = 0; i < nbOperationToDo; i++) {
 //                        dummyFunction();
-                        type = chooseOperation();
+                        type = differentOpToDo.get((int) (i%RANGE_DIFF_OP_TO_DO));
                         compute(type);
 //                        cleanTimeline = i % (2 * _nbUserInit) == 0;
                     }

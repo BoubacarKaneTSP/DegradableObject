@@ -65,8 +65,8 @@ public class Database {
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
-    public final boolean usageStat = true;
-    public final boolean isDAP = false;
+    public final boolean usageStat = false;
+    public final boolean isDAP = true;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -453,7 +453,7 @@ public class Database {
         System.out.println("End saving graph");
     }
 
-    public void loadGraph() throws InterruptedException, ClassNotFoundException, IOException {
+    public void loadGraph() throws InterruptedException, ClassNotFoundException, IOException, ExecutionException {
         System.out.println("Start loading graph ("+alpha+")");
         int numberOfUsersInFile;
         String fileName = "graph_following_retwis_" + nbUsers + "_users.txt";
@@ -498,6 +498,8 @@ public class Database {
             }
         }
 
+        Queue<String[]> lines = new ConcurrentLinkedQueue<>();
+
         try {
             File fichier = new File(fileName);
 
@@ -507,30 +509,7 @@ public class Database {
             String line = bufferedReader.readLine();
 
             while (line != null){
-
-                String[] values = line.split(" ");
-                int userIndice = Integer.parseInt(values[0]);
-
-                if (values.length <= 1){
-                    // Code if we don't want users to follow anyone
-/*                    for (int i = 0; i < 5; i++) {
-                        val = random.get().nextInt(nbUsers);
-                        followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
-                        tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
-                    }*/
-                }else{
-                    for (int j = 1; j < values.length; j++) {
-                        try{
-                            if (isDAP)
-                                mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])/nbUserPerThread));
-                            else
-                                mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
-                        }catch (NullPointerException e){
-                            System.out.println("key from " + userIndice + " is suposed to be null : " +  mapIndiceToKey.get(userIndice));
-                        }
-                    }
-                }
-
+                lines.add(line.split(" "));
                 line = bufferedReader.readLine();
             }
 
@@ -538,6 +517,46 @@ public class Database {
             fileReader.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        List<Future<Void>> futures = new ArrayList<>();
+
+        Callable<Void> myCallable = () -> {
+
+            String[] values = lines.poll();
+
+            assert values != null;
+            int userIndice = Integer.parseInt(values[0]);
+
+            if (values.length <= 1) {
+                // Code if we don't want users to follow anyone
+/*                    for (int i = 0; i < 5; i++) {
+                    val = random.get().nextInt(nbUsers);
+                    followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
+                    tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
+                }*/
+            } else {
+                for (int j = 1; j < values.length; j++) {
+                    try{
+                        if (isDAP)
+                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j]) / nbUserPerThread));
+                        else
+                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
+                    } catch (NullPointerException e) {
+                        System.out.println("key from " + userIndice + " is suposed to be null : " + mapIndiceToKey.get(userIndice));
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        for (int i = 0; i < numberOfUsersInFile; i++) {
+            futures.add(executorService.submit(myCallable));
+        }
+
+        for (Future<Void> future :futures){
+            future.get();
         }
 
         // We then sort the users according to the number of links, so that the users with the most links are the most active.
