@@ -113,6 +113,7 @@ public class Database {
         usersFollowProbability = new ConcurrentSkipListMap<>();
         localUsersUsageProbability = new ConcurrentHashMap<>();
         localUsersUsageProbabilityRange = new ConcurrentHashMap<>();
+        localUsersFollowProbabilityRange = new ConcurrentHashMap<>();
         nbUsers = nbUserInit;
         keyGenerator = new SimpleKeyGenerator();
         listLocalUser = new ArrayList<>();
