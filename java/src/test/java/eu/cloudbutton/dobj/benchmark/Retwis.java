@@ -439,6 +439,8 @@ public class Retwis {
 
                 myId.set(Helpers.threadIndexInPool());
                 List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
+                nbLocalUsers = userToAdd.size();
+
                 if (_p)
                     System.out.println(myId.get()+": "+userToAdd.size()+" users");
                 assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
@@ -459,6 +461,12 @@ public class Retwis {
                         try{
                             database.followUser(userA, userB);
                         } catch (NullPointerException e) {
+                            int indiceA, indiceB;
+
+                            indiceA = database.getMapKeyToIndice().get(userA) / nbLocalUsers;
+                            indiceB = database.getMapKeyToIndice().get(userB) / nbLocalUsers;
+
+                            System.out.println("=> is " + indiceA + " = " + indiceB + " = " + myId.get() + " ?");
                             e.printStackTrace();
                             throw new RuntimeException();
                         }
@@ -467,7 +475,6 @@ public class Retwis {
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
-                nbLocalUsers = userToAdd.size();
                 localUserUsageDistribution = new LinkedList<>();
 
                 users = new ArrayList<>(MAX_USERS_PER_THREAD);

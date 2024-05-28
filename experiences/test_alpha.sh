@@ -46,7 +46,7 @@ do
 	for nbUsersInit in 1000000 #100000 500000 1000000
 	do
 #	    for nbThread in 1 5 10 20 40 80
-	    for nbThread in 1 20 40 80
+	    for nbThread in 20 40 80
 	    do
 		nbOps=$((1000000*nbThread))
 		for (( c=1; c<=nbTest; c++ ))
