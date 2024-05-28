@@ -618,7 +618,7 @@ public class Database {
             localUsersUsageProbabilityRange.put(indiceThread, sommeUsage.get(indiceThread).longValue());
 
             if (isDAP)
-                localUsersFollowProbability.get(indiceThread).put(sommeFollow, user);
+                localUsersFollowProbability.get(indiceThread).put(threadSommeFollow.get(indiceThread), user);
             else
                 usersFollowProbability.put(sommeFollow, user);
             listLocalUser.get(indiceThread).add(user);
