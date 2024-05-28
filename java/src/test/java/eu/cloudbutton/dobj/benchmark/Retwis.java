@@ -320,7 +320,9 @@ public class Retwis {
                     System.out.println("completion time : " + (double) completionTime / (double) 1_000_000_000 + " seconds ("+throughput+" Kops/s, "+throughput_per_process+ "Kops/s per process)");
                     System.out.println("total time : " + (double) totalTime.get() / (double) 1_000_000_000 + " seconds");
                     System.out.println("benchmark time : " + (double) (System.nanoTime()-benchmarkTime) / (double) 1_000_000_000 + " seconds");
-                    System.out.print(database.statistics());
+
+                    if (!database.isDAP())
+                        System.out.print(database.statistics());
                 }
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
