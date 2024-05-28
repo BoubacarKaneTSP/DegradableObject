@@ -468,6 +468,7 @@ public class Retwis {
 //                    if (v%10000 == 0)
 //                        System.out.println(v);
                     for (Key userB : database.getMapListUserFollow().get(userA)){
+                        System.out.println(database.getMapKeyToIndice().get(userB));
                         try{
                             database.followUser(userA, userB);
                         } catch (NullPointerException e) {
