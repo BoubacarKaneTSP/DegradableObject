@@ -540,6 +540,7 @@ public class Database {
                     try{
                         if (isDAP) {
                             int userIndex = (userIndice/nbUserPerThread) + j;
+                            assert userIndex/nbUserPerThread == userIndice/nbUserPerThread;
                             mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userIndex));
                         }
                         else
