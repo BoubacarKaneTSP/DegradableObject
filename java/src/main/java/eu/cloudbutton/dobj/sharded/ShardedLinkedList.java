@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implements List<E> {
+public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implements Queue<E> {
 
     public ShardedLinkedList() {
         super(LinkedList.class);
@@ -51,6 +51,31 @@ public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implement
     }
 
     @Override
+    public boolean offer(E e) {
+        return segmentFor(e).offer(e);
+    }
+
+    @Override
+    public E remove() {
+        return null;
+    }
+
+    @Override
+    public E poll() {
+        return null;
+    }
+
+    @Override
+    public E element() {
+        return null;
+    }
+
+    @Override
+    public E peek() {
+        return null;
+    }
+
+    @Override
     public boolean remove(Object o) {
         return segmentFor(o).remove(o);
     }
@@ -66,11 +91,6 @@ public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implement
     }
 
     @Override
-    public boolean addAll(int index, @NotNull Collection<? extends E> c) {
-        return false;
-    }
-
-    @Override
     public boolean removeAll(@NotNull Collection<?> c) {
         throw new IllegalStateException("not supported");
     }
@@ -83,54 +103,6 @@ public class ShardedLinkedList<E> extends BaseSegmentation<LinkedList> implement
     @Override
     public void clear() {
         segmentFor(null).clear();
-    }
-
-    @Override
-    public E get(int index) {
-        return null;
-    }
-
-    @Override
-    public E set(int index, E element) {
-        return null;
-    }
-
-    @Override
-    public void add(int index, E element) {
-
-    }
-
-    @Override
-    public E remove(int index) {
-        return null;
-    }
-
-    @Override
-    public int indexOf(Object o) {
-        return 0;
-    }
-
-    @Override
-    public int lastIndexOf(Object o) {
-        return 0;
-    }
-
-    @NotNull
-    @Override
-    public ListIterator<E> listIterator() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public ListIterator<E> listIterator(int index) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public List<E> subList(int fromIndex, int toIndex) {
-        return null;
     }
 
 }
