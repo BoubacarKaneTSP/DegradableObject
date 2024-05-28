@@ -186,6 +186,8 @@ public class Factory {
                 return SegmentedTreeMap.class;
             case "ShardedHashMap":
                 return ShardedHashMap.class;
+            case "ShardedSkipListMap":
+                return ShardedSkipListMap.class;
             case "juc.ConcurrentHashMap":
                 return eu.cloudbutton.dobj.juc.ConcurrentHashMap.class;
             case "juc.LockBasedJavaHashMap":
