@@ -463,10 +463,12 @@ public class Retwis {
                         } catch (NullPointerException e) {
                             int indiceA, indiceB;
 
-                            indiceA = database.getMapKeyToIndice().get(userA) / nbLocalUsers;
-                            indiceB = database.getMapKeyToIndice().get(userB) / nbLocalUsers;
+                            indiceA = database.getMapKeyToIndice().get(userA);
+                            indiceB = database.getMapKeyToIndice().get(userB);
 
-                            System.out.println("=> is " + indiceA + " = " + indiceB + " = " + myId.get() + " ?");
+                            System.out.println("userA: " + userA +", userB: " + userB + "\n"
+                                    + "indiceA: " + indiceA + ", indiceB: " + indiceB + "\n"
+                                    + "=> is " + indiceA/nbLocalUsers + " = " + indiceB/nbLocalUsers+ " = " + myId.get() + " ?");
                             System.exit(1);
 //                            e.printStackTrace();
 //                            throw new RuntimeException();
