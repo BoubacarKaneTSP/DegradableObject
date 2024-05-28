@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.sharded;
 
+import eu.cloudbutton.dobj.juc.ConcurrentHashMap;
 import eu.cloudbutton.dobj.swsr.SWSRSkipListMap;
 import eu.cloudbutton.dobj.utils.BaseSegmentation;
 import org.jetbrains.annotations.NotNull;
@@ -9,10 +10,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class ShardedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap> implements Map<K,V> {
+public class ShardedSkipListMap<K,V> extends BaseSegmentation<ConcurrentHashMap> implements Map<K,V> {
 
     public ShardedSkipListMap() {
-        super(SWSRSkipListMap.class);
+        super(ConcurrentHashMap.class);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ShardedSkipListMap<K,V> extends BaseSegmentation<SWSRSkipListMap> i
     @Override
     public int size() {
         int ret = 0;
-        for(SWSRSkipListMap<K,V> set: segments) {
+        for(ConcurrentHashMap<K,V> set: segments) {
             ret+=set.size();
         }
         return ret;
