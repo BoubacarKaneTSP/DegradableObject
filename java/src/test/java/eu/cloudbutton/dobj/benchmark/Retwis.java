@@ -461,7 +461,11 @@ public class Retwis {
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
+                System.out.println("following");
+                v = 0;
                 for (Key userA : userToAdd){
+                    if (v%10000 == 0)
+                        System.out.println(v);
                     for (Key userB : database.getMapListUserFollow().get(userA)){
                         try{
                             database.followUser(userA, userB);
@@ -479,6 +483,7 @@ public class Retwis {
 //                            throw new RuntimeException();
                         }
                     }
+                    v++;
                 }
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
