@@ -492,11 +492,23 @@ public class Retwis {
                 }
 
                 for(int i=0; i<MAX_USERS_TO_FOLLOW_PER_THREAD; i++) {
-                    long val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
-                    Key user = database
-                            .getUsersFollowProbability()
-                            .ceilingEntry(val)
-                            .getValue();
+                    Key user;
+                    long val;
+                    if (database.isDAP()){
+                        val = Math.abs(random.nextLong() % (database.getLocalUsersFollowProbabilityRange().get(myId.get()) + 1));
+                        user = database
+                                .getLocalUsersFollowProbability()
+                                .get(myId.get())
+                                .ceilingEntry(val)
+                                .getValue();
+                    }
+                    else {
+                        val = Math.abs(random.nextLong() % (usersFollowProbabilityRange + 1));
+                        user = database
+                                .getUsersFollowProbability()
+                                .ceilingEntry(val)
+                                .getValue();
+                    }
                     usersToFollow.add(user);
                 }
 

@@ -58,7 +58,9 @@ public class Database {
 
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
+    private Map<Integer,ConcurrentSkipListMap<Long, Key>> localUsersFollowProbability = null;
     private long usersFollowProbabilityRange;
+    private Map<Integer,Long> localUsersFollowProbabilityRange;
     private final Map<Integer, ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
     private final Map<Integer, Long> localUsersUsageProbabilityRange;
     private final List<List<Key>> listLocalUser;
@@ -137,6 +139,10 @@ public class Database {
 
         for (int i = 0; i < nbThread; i++) {
             mapUserToAdd.put(i, new ArrayList<>());
+            if (isDAP) {
+                localUsersFollowProbabilityRange.put(i, 0L);
+                localUsersFollowProbability.put(i, new ConcurrentSkipListMap<>());
+            }
         }
 
         executorService = Executors.newFixedThreadPool(nbThread);
@@ -570,6 +576,12 @@ public class Database {
         Map<Key, Integer> mapNbLinkPerUser = new HashMap<>();
         Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
         long sommeFollow = 0L;
+        Map<Integer, Long> threadSommeFollow = new HashMap<>();
+        if (isDAP)
+            for (int i = 0; i < nbThread; i++)
+                threadSommeFollow.put(i, 0L);
+
+
 
         for (int i = 0; i < numberOfUsersInFile; i++) {
             nbLink = 0;
@@ -594,18 +606,30 @@ public class Database {
             val = powerLawArray.get(j);
             indiceThread = mapUserToIndiceThread.get(user);
             sommeUsage.get(indiceThread).addAndGet(val);
-            sommeFollow += val;
+
+            if (isDAP)
+                threadSommeFollow.put(indiceThread, threadSommeFollow.get(indiceThread) + val);
+            else
+                sommeFollow += val;
 
             localUsersUsageProbability.get(indiceThread).put(sommeUsage.get(indiceThread).longValue(), user);
             localUsersUsageProbabilityRange.put(indiceThread, sommeUsage.get(indiceThread).longValue());
-            usersFollowProbability.put(sommeFollow, user);
+
+            if (isDAP)
+                localUsersFollowProbability.get(indiceThread).put(sommeFollow, user);
+            else
+                usersFollowProbability.put(sommeFollow, user);
             listLocalUser.get(indiceThread).add(user);
             listLocalUsersFollow.get(indiceThread).put(user, tmpListUsersFollow.get(user));
 
             j++;
         }
 
-        usersFollowProbabilityRange = sommeFollow;
+        if (isDAP)
+            for (int i = 0; i < nbThread; i++)
+                localUsersFollowProbabilityRange.put(i, threadSommeFollow.get(i));
+        else
+            usersFollowProbabilityRange = sommeFollow;
         System.out.println("End loading graph");
     }
 
