@@ -65,7 +65,8 @@ public class Database {
     private final Map<Integer, Map<Key, Queue<Key>>> listLocalUsersFollow;
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
-    public final boolean usageStat = false;
+    public final boolean usageStat = true;
+    public final boolean isDAP = true;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -472,7 +473,12 @@ public class Database {
         for (int i = 0; i < numberOfUsersInFile;) {
             Key user = generateUser();
             if (localSetUser.add(user)) {
-                indiceThread = Math.abs(user.hashCode()%nbThread);
+
+                if(isDAP)
+                    indiceThread = i/numberOfUsersInFile;
+                else
+                    indiceThread = Math.abs(user.hashCode()%nbThread);
+
                 // assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user, indiceThread);
@@ -515,8 +521,10 @@ public class Database {
                 }else{
                     for (int j = 1; j < values.length; j++) {
                         try{
-
-                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+                            if (isDAP)
+                                mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])/numberOfUsersInFile));
+                            else
+                                mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
                         }catch (NullPointerException e){
                             System.out.println("key from " + userIndice + " is suposed to be null : " +  mapIndiceToKey.get(userIndice));
                         }
@@ -1026,14 +1034,19 @@ public class Database {
 
         if (usageStat) {
             mapUserUsage = sortMapByValue(mapUserUsage);
-            int n, i = 0;
+            int n, nbUserActif = 0, i = 0;
+            for (Key user : mapUserUsage.keySet()) {
+                if(mapUserUsage.get(user)>0)
+                    nbUserActif++;
+            }
             for (Key user : mapUserUsage.keySet()){
                 n = mapUserUsage.get(user);
-                if (i <= nbUsers*0.2)
+                if (i <= nbUserActif*0.2)
                     nbOp += n;
 
                 nbOpTot += n;
-                i++;
+                if (n>0)
+                    i++;
             }
         }
         for (Key user : mapFollowers.keySet()){
