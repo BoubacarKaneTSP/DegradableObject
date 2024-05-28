@@ -468,7 +468,7 @@ public class Retwis {
 
                             System.out.println("userA: " + userA +", userB: " + userB + "\n"
                                     + "indiceA: " + indiceA + ", indiceB: " + indiceB + "\n"
-                                    + "=> is " + indiceA/nbLocalUsers + " = " + indiceB/nbLocalUsers+ " = " + myId.get() + " ?");
+                                    + "=> is " + indiceA/nbLocalUsers + " = " + indiceB/nbLocalUsers+ " = " + myId.get() + " ?\n");
                             System.exit(1);
 //                            e.printStackTrace();
 //                            throw new RuntimeException();
