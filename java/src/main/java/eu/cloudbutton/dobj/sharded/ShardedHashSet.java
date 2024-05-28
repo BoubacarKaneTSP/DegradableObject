@@ -33,7 +33,7 @@ public class ShardedHashSet<E> extends BaseSegmentation<HashSet> implements Set<
     @NotNull
     @Override
     public Iterator<E> iterator() {
-        throw new IllegalStateException("not supported");
+        return segmentFor(null).iterator();
     }
 
     @NotNull
