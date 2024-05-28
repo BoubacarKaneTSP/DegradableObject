@@ -66,7 +66,7 @@ public class Database {
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
     public final boolean usageStat = true;
-    public final boolean isDAP = true;
+    public final boolean isDAP = false;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -475,7 +475,7 @@ public class Database {
             if (localSetUser.add(user)) {
 
                 if(isDAP)
-                    indiceThread = i/numberOfUsersInFile;
+                    indiceThread = i/nbUserPerThread;
                 else
                     indiceThread = Math.abs(user.hashCode()%nbThread);
 
@@ -522,7 +522,7 @@ public class Database {
                     for (int j = 1; j < values.length; j++) {
                         try{
                             if (isDAP)
-                                mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])/numberOfUsersInFile));
+                                mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])/nbUserPerThread));
                             else
                                 mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
                         }catch (NullPointerException e){
