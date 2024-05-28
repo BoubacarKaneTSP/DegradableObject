@@ -489,6 +489,10 @@ public class Retwis {
 //                    v++;
                 }
 
+                for (Key userA : userToAdd){
+                    System.out.println(database.getMapFollowing().get(userA));
+                }
+
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 localUserUsageDistribution = new LinkedList<>();
