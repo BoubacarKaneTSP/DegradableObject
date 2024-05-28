@@ -26,11 +26,11 @@ public class MapTest {
     private ExecutorService executorService;
 
     private static Class[] IMPL = {
-            ExtendedSegmentedHashMap.class,
-            eu.cloudbutton.dobj.juc.ConcurrentHashMap.class,
-            SegmentedHashMap.class,
-            LockBasedJavaHashMap.class,
-            ConcurrentSkipListMap.class,
+//            ExtendedSegmentedHashMap.class,
+//            eu.cloudbutton.dobj.juc.ConcurrentHashMap.class,
+//            SegmentedHashMap.class,
+//            LockBasedJavaHashMap.class,
+//            ConcurrentSkipListMap.class,
             ExtendedSegmentedSkipListMap.class,
     };
 

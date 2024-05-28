@@ -229,8 +229,7 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         Node<K, V> node = findClosestNode(key, Relation.EQ, update);
         if (node != null) {
             V oldValue = node.value;
-            node.value = value;
-            UNSAFE.fullFence();
+            VALUE.setVolatile(node, value);
             return oldValue;
         }
 
@@ -240,21 +239,19 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
             for (int i = level; i < newLevel; i++) {
                 update[i] = head;
             }
-            level = newLevel;
+            LEVEL.setVolatile(this, newLevel);
         }
 
         // create a new node and link it with existing nodes
         Node<K, V> newNode = new Node<>(key, value, newLevel);
-        UNSAFE.storeFence();
 
         for (int i = 0; i < newLevel; i++) {
             // link new node and nodes with greater keys
             linkNode(newNode, update[i].next[i], i);
-            UNSAFE.storeFence();
 
             // link new node and nodes with less keys
-            linkNode(update[i], newNode, i);
-            UNSAFE.storeFence();
+            linkNodePrev(update[i], newNode, i);
+            UNSAFE.fullFence();
 
         }
 
@@ -504,20 +501,26 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         }
 
         for (int i = 0; i < node.next.length; i++) {
-            linkNode(node.prev[i], node.next[i], i);
-
+            linkNodePrev(node.prev[i], node.next[i], i);
+            UNSAFE.fullFence();
             node.prev[i] = null;
-            UNSAFE.storeFence();
 
             node.next[i] = null;
-            UNSAFE.storeFence();
         }
         while (level > 0 && head.next[level] == null) {
-            level--;
+            LEVEL.setVolatile(this, level - 1);
         }
         size--;
     }
 
+    private void linkNodePrev(Node<K, V> prevNode, Node<K, V> nextNode, int level) {
+        if (prevNode != null) {
+            NEXT.setRelease(prevNode.next, level, nextNode);
+        }
+        if (nextNode != null) {
+            nextNode.prev[level] = prevNode;
+        }
+    }
     private void linkNode(Node<K, V> prevNode, Node<K, V> nextNode, int level) {
         if (prevNode != null) {
             prevNode.next[level] = nextNode;
@@ -541,28 +544,30 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
      * @return the node whose key is closest to the given {@code key} or null if there is not.
      */
     private Node<K, V> findClosestNode(K key, Relation relation, Node<K, V>[] update) {
-        Node<K, V> node = head;
-        for (int i = level - 1; i >= 0; i--) {
+        Node<K, V> tmp = tail, node = head;
+        int lvl = (int) LEVEL.getVolatile(this);
+        for (int i = lvl - 1; i >= 0; i--) {
             while (i < node.next.length
-                    && node.next[i] != null
-                    && compare(comparator, node.next[i], key) < 0) {
-                node = node.next[i];
+                    && (tmp = (Node<K, V>) NEXT.getAcquire(node.next, i)) != null
+                    && compare(comparator, tmp, key) < 0) {
+                node = tmp;
             }
             if (update != null) {
                 update[i] = node;
             }
         }
+        Node<K, V> nn = tmp;
         if (relation.includes(Relation.GT)) {
-            return dataNodeOrNull(node.next[0]);
+            return dataNodeOrNull(nn);
         }
         if (relation == Relation.LT) {
             return dataNodeOrNull(node);
         }
         if (relation == Relation.EQ) {
-            return checkEquality(key, node.next[0]) ? node.next[0] : null;
+             return checkEquality(key, nn) ? nn : null;
         }
         // LE
-        return checkEquality(key, node.next[0]) ? node.next[0] : dataNodeOrNull(node);
+        return checkEquality(key, nn) ? nn : dataNodeOrNull(node);
     }
 
     private int randomLevel() {
@@ -911,11 +916,17 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
         }
     }
     private static final VarHandle VALUE;
+    private static final VarHandle LEVEL;
+    private static final VarHandle NEXT;
+    private static final VarHandle PREV;
 
     static {
         try{
             MethodHandles.Lookup l = MethodHandles.lookup();
             VALUE = l.findVarHandle(SWMRSkipListMap.Node.class, "value", Object.class);
+            NEXT = MethodHandles.arrayElementVarHandle(SWMRSkipListMap.Node[].class);
+            LEVEL = l.findVarHandle(SWMRSkipListMap.class, "level", int.class);
+            PREV = MethodHandles.arrayElementVarHandle(SWMRSkipListMap.Node[].class);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
