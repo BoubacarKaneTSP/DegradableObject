@@ -467,8 +467,9 @@ public class Retwis {
                             indiceB = database.getMapKeyToIndice().get(userB) / nbLocalUsers;
 
                             System.out.println("=> is " + indiceA + " = " + indiceB + " = " + myId.get() + " ?");
-                            e.printStackTrace();
-                            throw new RuntimeException();
+                            System.exit(1);
+//                            e.printStackTrace();
+//                            throw new RuntimeException();
                         }
                     }
                 }
