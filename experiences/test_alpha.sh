@@ -4,7 +4,7 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=1
+nbTest=2
 benchmarkTime=20
 warmingUpTime=20
 #nbUsersInit=1000
@@ -40,7 +40,7 @@ params[dego]="-c CounterIncrementOnly -s SegmentedHashSet -q Queue -m Concurrent
 #params[dego]="-c CounterIncrementOnly -s SegmentedHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
 params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
 
-for impl in dego;
+for impl in juc dego;
 do
     for alpha in "${alphas[@]}";
     do
