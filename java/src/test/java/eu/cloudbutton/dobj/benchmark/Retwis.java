@@ -441,7 +441,6 @@ public class Retwis {
                 myId.set(Helpers.threadIndexInPool());
                 List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
                 nbLocalUsers = userToAdd.size();
-                System.out.println("myID : "+myId.get());
 
                 if (_p)
                     System.out.println(myId.get()+": "+userToAdd.size()+" users");
@@ -465,6 +464,7 @@ public class Retwis {
 
                 System.out.println("following");
 //                v = 0;
+                System.out.println("userToAdd size : " + userToAdd.size());
                 for (Key userA : userToAdd){
 //                    System.out.println(database.getMapFollowing().get(userA).size());
 //                    if (v%10000 == 0)
