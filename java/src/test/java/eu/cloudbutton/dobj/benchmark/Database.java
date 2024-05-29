@@ -68,7 +68,7 @@ public class Database {
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
     public final boolean usageStat = false;
-    public final boolean isDAP = false;
+    public final boolean isDAP = true;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -1044,7 +1044,7 @@ public class Database {
             Timeline<String> timeline = mapTimelines.get(follower);
 //            timeline.add(msg);
             i++;
-            if (i>1000) break;
+            if (i>10) break;
         }
     }
 
