@@ -506,7 +506,7 @@ public class Database {
             }
         }
 
-        System.out.println(indiceThread);
+        System.out.println("indiceThread : "+indiceThread);
         Queue<String[]> lines = new ConcurrentLinkedQueue<>();
 
         try {
