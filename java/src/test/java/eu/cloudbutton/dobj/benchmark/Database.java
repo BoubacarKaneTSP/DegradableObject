@@ -506,7 +506,7 @@ public class Database {
             }
         }
 
-        System.out.println("indiceThread : "+indiceThread);
+        System.out.println("size user to add : "+mapUserToAdd.get(indiceThread).size());
         Queue<String[]> lines = new ConcurrentLinkedQueue<>();
 
         try {
