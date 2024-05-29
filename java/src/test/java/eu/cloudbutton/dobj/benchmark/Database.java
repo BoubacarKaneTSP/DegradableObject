@@ -549,7 +549,7 @@ public class Database {
                         if (isDAP) {
                             int userToFollowIndice, rangeStart, userRangeLevel = userIndice/ nbUserPerThread;
                             rangeStart = userRangeLevel * nbUserPerThread;
-                            userToFollowIndice = (userIndice + 1) % nbUserPerThread + rangeStart;
+                            userToFollowIndice = (userIndice + j) % nbUserPerThread + rangeStart;
                             assert userToFollowIndice/nbUserPerThread == userIndice/nbUserPerThread;
                             mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userToFollowIndice));
                         }
