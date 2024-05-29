@@ -441,6 +441,7 @@ public class Retwis {
                 myId.set(Helpers.threadIndexInPool());
                 List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
                 nbLocalUsers = userToAdd.size();
+                System.out.println(myId.get());
 
                 if (_p)
                     System.out.println(myId.get()+": "+userToAdd.size()+" users");
