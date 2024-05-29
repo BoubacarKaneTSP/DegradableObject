@@ -487,7 +487,7 @@ public class Retwis {
 //                            throw new RuntimeException();
                         }
                     }
-                    s += database.getMapFollowing().get(userA).size();
+                    s += database.getMapFollowing().get(userA).size() + "\n";
                     System.out.println(s);
 //                    v++;
                 }
