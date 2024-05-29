@@ -446,32 +446,20 @@ public class Retwis {
                     System.out.println(myId.get()+": "+userToAdd.size()+" users");
                 assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
 
-//                int v = 0;
-
                 for (Key user : userToAdd){
                     if (database.isDAP())
                         assert database.getMapKeyToIndice().get(user) / database.getNbUsers() != myId.get() : "Graph is not DAP";
 
-//                    if (v%10000 == 0)
-//                        System.out.println(v);
-
                     database.addOriginalUser(user);
-//                    v++;
                 }
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
 
                 System.out.println("following");
-//                v = 0;
 
-                String s;
-                int v;
                 for (Key userA : userToAdd){
-                    v = 0;
-                    s = database.getMapListUserFollow().get(userA).size() + " => ";
                     for (Key userB : database.getMapListUserFollow().get(userA)){
-                        v++;
                         try{
                             database.followUser(userA, userB);
                             assert database.getMapFollowers().get(userB).contains(userA);
@@ -490,10 +478,6 @@ public class Retwis {
 //                            throw new RuntimeException();
                         }
                     }
-                    assert v == database.getMapListUserFollow().get(userA).size();
-                    s += database.getMapFollowing().get(userA).size();
-                    System.out.println(s);
-//                    v++;
                 }
 
                 System.out.println(database.statistics());
