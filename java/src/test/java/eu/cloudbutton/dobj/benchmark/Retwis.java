@@ -474,8 +474,8 @@ public class Retwis {
                         v++;
                         try{
                             database.followUser(userA, userB);
-                            assert !database.getMapFollowers().get(userB).add(userA);
-                            assert !database.getMapFollowing().get(userA).add(userB);
+                            assert database.getMapFollowers().get(userB).contains(userA);
+                            assert database.getMapFollowing().get(userA).contains(userB);
                         } catch (NullPointerException e) {
                             int indiceA, indiceB;
 
