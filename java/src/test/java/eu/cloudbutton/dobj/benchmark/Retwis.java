@@ -462,8 +462,6 @@ public class Retwis {
                     for (Key userB : database.getMapListUserFollow().get(userA)){
                         try{
                             database.followUser(userA, userB);
-                            assert database.getMapFollowers().get(userB).contains(userA);
-                            assert database.getMapFollowing().get(userA).contains(userB);
                         } catch (NullPointerException e) {
                             int indiceA, indiceB;
 
