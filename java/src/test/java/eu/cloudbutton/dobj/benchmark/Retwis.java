@@ -436,8 +436,6 @@ public class Retwis {
 
             try{
                 operationType type;
-                long startTime, endTime;
-                startTime = System.nanoTime();
                 myId.set(Helpers.threadIndexInPool());
                 List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
                 nbLocalUsers = userToAdd.size();
@@ -455,8 +453,6 @@ public class Retwis {
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
-
-                System.out.println("following");
 
                 for (Key userA : userToAdd){
                     for (Key userB : database.getMapListUserFollow().get(userA)){
@@ -536,10 +532,6 @@ public class Retwis {
                 nextUser = 0;
                 nextUserToFollow = 0;
                 nextDummy = 0;
-
-                endTime = System.nanoTime();
-
-                System.out.println("loading time : " + (endTime - startTime)/1000000 + "ms");
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
