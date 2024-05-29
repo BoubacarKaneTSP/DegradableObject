@@ -554,7 +554,8 @@ public class Database {
                             mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userToFollowIndice));
                         }
                         else
-                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
+                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+//                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
                     } catch (NullPointerException e) {
                         System.out.println("key from " + userIndice + " is suposed to be null : " + mapIndiceToKey.get(userIndice));
                     }
