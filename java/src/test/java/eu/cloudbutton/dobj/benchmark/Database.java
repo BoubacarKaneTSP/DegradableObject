@@ -1044,7 +1044,7 @@ public class Database {
             Timeline<String> timeline = mapTimelines.get(follower);
             timeline.add(msg);
             i++;
-            if (i>10) break;
+            if (i>100) break;
         }
     }
 
