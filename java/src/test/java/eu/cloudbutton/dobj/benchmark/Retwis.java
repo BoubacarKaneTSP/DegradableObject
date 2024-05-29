@@ -489,6 +489,8 @@ public class Retwis {
 //                    v++;
                 }
 
+                System.out.println(database.statistics());
+
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
                 localUserUsageDistribution = new LinkedList<>();
@@ -551,7 +553,6 @@ public class Retwis {
                 endTime = System.nanoTime();
 
                 System.out.println("loading time : " + (endTime - startTime)/1000000 + "ms");
-                System.out.println(database.statistics());
 
                 latchFillFollowingPhase.countDown();
                 latchFillFollowingPhase.await();
