@@ -467,7 +467,6 @@ public class Retwis {
                 System.out.println("userToAdd size : " + userToAdd.size());
                 for (Key userA : userToAdd){
                     for (Key userB : database.getMapListUserFollow().get(userA)){
-                        System.out.println(userA);
                         try{
                             database.followUser(userA, userB);
                             assert !database.getMapFollowers().get(userB).add(userA);
