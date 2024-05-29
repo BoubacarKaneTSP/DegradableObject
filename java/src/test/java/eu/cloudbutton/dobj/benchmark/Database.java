@@ -1041,7 +1041,7 @@ public class Database {
         Set<Key> set = mapFollowers.get(user);
         int i = 0;
         for (Key follower : set) {
-            Timeline<String> timeline = mapTimelines.get(follower);
+//            Timeline<String> timeline = mapTimelines.get(follower);
 //            timeline.add(msg);
             i++;
             if (i>10) break;
