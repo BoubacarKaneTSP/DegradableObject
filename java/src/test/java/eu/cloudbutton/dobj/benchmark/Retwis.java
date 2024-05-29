@@ -321,7 +321,7 @@ public class Retwis {
                     System.out.println("total time : " + (double) totalTime.get() / (double) 1_000_000_000 + " seconds");
                     System.out.println("benchmark time : " + (double) (System.nanoTime()-benchmarkTime) / (double) 1_000_000_000 + " seconds");
 
-//                    if (!database.isDAP())
+                    if (!database.isDAP())
                         System.out.print(database.statistics());
                 }
 
@@ -477,8 +477,6 @@ public class Retwis {
                         }
                     }
                 }
-
-                System.out.println(database.statistics());
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
