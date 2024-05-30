@@ -323,10 +323,10 @@ public class Retwis {
                     System.out.println("benchmark time : " + (double) (System.nanoTime()-benchmarkTime) / (double) 1_000_000_000 + " seconds");
 
                     if (!database.isDAP())
-                        System.out.print(database.statistics());
+                        System.out.println(database.statistics());
 
-                    System.out.println("\n=> Nb total bin : " + database.nbTotalBin());
-                    System.out.println("\n=> Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
+                    System.out.println("=> Nb total bin : " + database.nbTotalBin());
+                    System.out.println("=> Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
 
                 }
 

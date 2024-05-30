@@ -2512,10 +2512,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     public int getNbBin(){
         int nbBin = 0;
 
-        for (Node<K, V> node : table)
-            if (node != null)
-                nbBin++;
-
+        if (size() > 0) {
+            for (Node<K, V> node : table)
+                if (node != null)
+                    nbBin++;
+        }
         return nbBin;
     }
     private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();

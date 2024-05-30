@@ -1146,7 +1146,7 @@ public class Database {
         for (Key user : mapFollowers.keySet()) {
             if (Objects.equals(typeSet, "ConcurrentHashSet"))
                 nbBin += ((ConcurrentHashSet)mapFollowers.get(user)).getNbBin();
-            else if (typeSet == "ExtendedSegmentedHashSet")
+            else if (Objects.equals(typeSet, "ExtendedSegmentedHashSet"))
                 nbBin += ((ExtendedSegmentedHashSet)mapFollowers.get(user)).getNbBin();
             else{
                 System.out.println("\n======================> error : " + typeSet + " != ConcurrentHashSet" );
