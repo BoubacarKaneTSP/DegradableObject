@@ -36,8 +36,8 @@ nbOps=10000000
 
 declare -A params
 #params[seq]="-c juc.Counter -s HashSet -q LinkedList -m SkipListMap"
-params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
-params[dego]="-c CounterIncrementOnly -s ExtendedSegmentedHashSet -q Queue -m ConcurrentSkipListMap"
+params[juc]="-c juc.Counter -s ConcurrentSkipListSet -q Queue -m ConcurrentSkipListMap"
+params[dego]="-c CounterIncrementOnly -s ExtendedSegmentedSkipListSet -q Queue -m ConcurrentSkipListMap"
 #params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
 params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
 
