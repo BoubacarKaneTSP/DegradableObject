@@ -324,7 +324,7 @@ public class Retwis {
                     if (!database.isDAP())
                         System.out.print(database.statistics());
 
-                    System.out.println("Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
+                    System.out.println("\n=> Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
                 }
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
