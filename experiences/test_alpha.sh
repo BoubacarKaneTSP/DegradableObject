@@ -30,8 +30,8 @@ nbOps=10000000
 
 # alphas=("0.5" "0.7" "0.9" "1.1" "1.3" "1.5" "1.7" "1.9" "2")
 # alphas=("0.01")
- alphas=("1")
-# alphas=("0.01" "0.1" "1")
+# alphas=("1")
+ alphas=("0.01" "0.1" "1")
 #alphas=("0.1" "1")
 
 declare -A params
@@ -41,14 +41,14 @@ params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListM
 params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
 params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
 
-for impl in juc dego;
+for impl in dap;
 do
     for alpha in "${alphas[@]}";
     do
-	for nbUsersInit in 100000 #500000 1000000
+	for nbUsersInit in 100000 500000 1000000
 	do
-#	    for nbThread in 1 5 10 20 40 80
-	    for nbThread in 1 20 40 80
+	    for nbThread in 1 5 10 20 40 80
+#	    for nbThread in 1 20 40 80
 	    do
 		nbOps=$((1000000*nbThread))
 		for (( c=1; c<=nbTest; c++ ))
