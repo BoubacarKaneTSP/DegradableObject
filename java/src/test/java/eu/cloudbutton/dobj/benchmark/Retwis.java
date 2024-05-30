@@ -444,8 +444,8 @@ public class Retwis {
                 List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
                 nbLocalUsers = userToAdd.size();
 
-                if (_p)
-                    System.out.println(myId.get()+": "+userToAdd.size()+" users");
+//                if (_p)
+//                    System.out.println(myId.get()+": "+userToAdd.size()+" users");
                 assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
 
                 for (Key user : userToAdd){
