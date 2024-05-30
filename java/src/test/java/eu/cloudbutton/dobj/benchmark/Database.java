@@ -1002,7 +1002,7 @@ public class Database {
 
     public void addOriginalUser(Key user) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         mapFollowers.put(user, factory.newSet());
-        mapFollowing.put(user, factory.newSet());
+        mapFollowing.put(user, new HashSet<>());
         mapTimelines.put(user, new Timeline(factory.newQueue()));
         mapProfiles.put(user, 0);
         mapCommunityStatus.put(user, 0);
