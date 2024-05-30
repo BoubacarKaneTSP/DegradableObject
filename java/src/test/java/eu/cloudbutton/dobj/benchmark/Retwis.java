@@ -323,6 +323,8 @@ public class Retwis {
 
                     if (!database.isDAP())
                         System.out.print(database.statistics());
+
+                    System.out.println("Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
                 }
 
                 long nbOpTotal = 0, timeTotalComputed = 0;
@@ -894,5 +896,15 @@ public class Retwis {
         if (_p){
             System.out.println("===> Ending monitoring.");
         }
+    }
+
+    public static long getTotalMemoryUsed() {
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+
+        return totalMemory - freeMemory;
     }
 }
