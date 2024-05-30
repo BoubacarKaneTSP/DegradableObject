@@ -155,6 +155,8 @@ public class Factory {
                 return SetMWSR.class;
             case "ExtendedSegmentedHashSet":
                 return ExtendedSegmentedHashSet.class;
+            case "ExtendedSegmentedSkipListSet":
+                return ExtendedSegmentedSkipListSet.class;
             // queue
             case "Queue":
             case "ConcurrentLinkedQueue":
