@@ -325,7 +325,7 @@ public class Retwis {
                     if (!database.isDAP())
                         System.out.println(database.statistics());
 
-                    performHeapDump();
+//                    performHeapDump();
 //                    System.out.println("=> Nb total bin : " + database.nbTotalBin());
 //                    System.out.println("=> Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
 
