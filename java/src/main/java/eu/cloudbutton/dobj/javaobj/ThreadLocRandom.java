@@ -339,11 +339,11 @@ public final class ThreadLocRandom extends Random {
     // Unsafe mechanics
     private static final Unsafe U = Unsafe.getUnsafe();
     private static final long SEED
-            = U.objectFieldOffset(Thread.class, "ThreadLocalRandomSeed");
+            = U.objectFieldOffset(Thread.class, "threadLocalRandomSeed");
     private static final long PROBE
-            = U.objectFieldOffset(Thread.class, "ThreadLocalRandomProbe");
+            = U.objectFieldOffset(Thread.class, "threadLocalRandomProbe");
     private static final long SECONDARY
-            = U.objectFieldOffset(Thread.class, "ThreadLocalRandomSecondarySeed");
+            = U.objectFieldOffset(Thread.class, "threadLocalRandomSecondarySeed");
     private static final long THREADLOCALS
             = U.objectFieldOffset(Thread.class, "threadLocals");
     private static final long INHERITABLETHREADLOCALS
