@@ -2513,9 +2513,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         int nbBin = 0;
 
         if (size() > 0) {
-            for (Node<K, V> node : table)
-                if (node != null)
-                    nbBin++;
+            nbBin = table.length;
+//            for (Node<K, V> node : table)
+//                if (node != null)
+//                    nbBin++;
         }
         return nbBin;
     }
