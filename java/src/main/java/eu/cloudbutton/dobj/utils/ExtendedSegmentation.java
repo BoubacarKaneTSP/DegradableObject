@@ -12,7 +12,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     private static AtomicInteger counter = new AtomicInteger(0);
     private static CarrierThreadLocal<Integer> indices = new CarrierThreadLocalWithInitial(
             () -> counter.getAndIncrement());
-    private static final int parallelism = Runtime.getRuntime().availableProcessors() + 1;
+    private static final int parallelism = Runtime.getRuntime().availableProcessors();
 
     protected final List<T> segments;
 
