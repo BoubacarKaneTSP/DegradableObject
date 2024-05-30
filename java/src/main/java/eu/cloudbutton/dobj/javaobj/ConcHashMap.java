@@ -3327,10 +3327,11 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
     public int getNbBin(){
         int nbBin = 0;
 
-        for (Node<K, V> node : table)
-            if (node != null)
-                nbBin++;
-
+        if (table != null) {
+            for (Node<K, V> node : table)
+                if (node != null)
+                    nbBin++;
+        }
         return nbBin;
     }
     /* ----------------Table Traversal -------------- */
