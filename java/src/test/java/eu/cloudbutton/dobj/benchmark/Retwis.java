@@ -900,7 +900,7 @@ public class Retwis {
 
     public static long getTotalMemoryUsed() {
         Runtime runtime = Runtime.getRuntime();
-        runtime.gc();
+//        runtime.gc();
 
         long totalMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
