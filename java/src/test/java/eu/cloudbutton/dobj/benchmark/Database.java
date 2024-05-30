@@ -1144,7 +1144,6 @@ public class Database {
         int nbBin = 0;
 
         for (Key user : mapFollowers.keySet()) {
-            System.out.println(typeSet);
             if (Objects.equals(typeSet, "ConcurrentHashSet"))
                 nbBin += ((ConcurrentHashSet)mapFollowers.get(user)).getNbBin();
             else if (typeSet == "ExtendedSegmentedHashSet")
