@@ -3327,7 +3327,7 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
     public int getNbBin(){
         int nbBin = 0;
 
-        if (table != null) {
+        if (size() > 0) {
             for (Node<K, V> node : table)
                 if (node != null)
                     nbBin++;
