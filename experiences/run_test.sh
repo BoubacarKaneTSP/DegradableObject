@@ -11,6 +11,7 @@ benchmarkTime=60
 warmingUpTime=30
 nbThreads=("1" "40" "80")
 objects=("ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
+objects=("ExtendedSegmentedSkipListMap")
 ratio="50 50 0"
 
 for object in "${objects[@]}"; do

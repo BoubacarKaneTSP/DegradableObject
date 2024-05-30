@@ -17,6 +17,7 @@ public class ExtendedSegmentation<T> implements Segmentation<T>{
     protected final List<T> segments;
 
     public ExtendedSegmentation(Class<T> clazz) {
+        System.out.println("parallelism: " + parallelism);
         segments = new CopyOnWriteArrayList<>();
         for (int i=0; i<parallelism; i++) {
             try {
