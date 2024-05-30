@@ -1043,7 +1043,7 @@ public class Database {
         int i = 0;
         for (Key follower : set) {
             Timeline<String> timeline = mapTimelines.get(follower);
-//            timeline.add(msg);
+            timeline.add(msg);
             i++;
             if (i>1) break;
         }
