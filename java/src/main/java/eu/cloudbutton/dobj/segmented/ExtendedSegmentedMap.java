@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.utils.ExtendedSegmentation;
 import eu.cloudbutton.dobj.utils.HashSegmentation;
 import org.jetbrains.annotations.NotNull;
@@ -188,5 +189,25 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
             ret.addAll(m.entrySet());
         }
         return ret;
+    }
+
+    public int getNbTreeBin(){
+        int nbTreeBin = 0;
+
+        for(Map m: segments){
+            nbTreeBin += ((SWMRHashMap) m).getNbTreeBin();
+        }
+
+        return nbTreeBin;
+    }
+
+    public int getNbBin(){
+        int nbBin = 0;
+
+        for(Map m: segments){
+            nbBin += ((SWMRHashMap) m).getNbBin();
+        }
+
+        return nbBin;
     }
 }

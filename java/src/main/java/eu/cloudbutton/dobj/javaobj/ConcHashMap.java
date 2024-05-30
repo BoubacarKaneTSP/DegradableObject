@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.javaobj;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import jdk.internal.misc.Unsafe;
 
 import java.io.ObjectStreamField;
@@ -3313,6 +3314,25 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
                 = U.objectFieldOffset(TreeBin.class, "waiter");
     }
 
+    public int getNbTreeBin(){
+        int nbTreeBin = 0;
+
+        for (Node<K, V> node : table)
+            if (node instanceof TreeBin)
+                nbTreeBin++;
+
+        return nbTreeBin;
+    }
+
+    public int getNbBin(){
+        int nbBin = 0;
+
+        for (Node<K, V> node : table)
+            if (node != null)
+                nbBin++;
+
+        return nbBin;
+    }
     /* ----------------Table Traversal -------------- */
 
     /**

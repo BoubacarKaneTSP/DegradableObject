@@ -10,7 +10,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
     Map m;
 
     public ConcurrentHashSet(){
-        m = new ConcurrentHashMap<>();
+        m = new ConcurrentHashMap();
     }
 
     @Override
@@ -94,4 +94,5 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
     public void clear() {
         m.clear();
     }
+
 }
