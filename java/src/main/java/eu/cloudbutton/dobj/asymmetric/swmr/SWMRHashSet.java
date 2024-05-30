@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.asymmetric.swmr;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -94,5 +95,9 @@ public final class SWMRHashSet<E> extends AbstractSet<E> implements Set<E> {
     @Override
     public void clear() {
         m.clear();
+    }
+
+    public int getNbBin(){
+        return ((SWMRHashMap)m).getNbBin();
     }
 }

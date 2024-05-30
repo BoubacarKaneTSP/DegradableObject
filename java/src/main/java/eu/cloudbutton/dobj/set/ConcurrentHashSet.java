@@ -1,5 +1,6 @@
 package eu.cloudbutton.dobj.set;
 
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -10,7 +11,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
     Map m;
 
     public ConcurrentHashSet(){
-        m = new ConcurrentHashMap();
+        m = new ConcHashMap();
     }
 
     @Override
@@ -95,4 +96,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
         m.clear();
     }
 
+    public int getNbBin(){
+        return ((ConcHashMap)m).getNbBin();
+    }
 }

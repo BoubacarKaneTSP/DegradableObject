@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.Timeline;
@@ -1137,6 +1138,19 @@ public class Database {
             ConcurrentHashMap map = (ConcurrentHashMap) mapFollowers;
         }
         return builder.toString();
+    }
+
+    public int nbTotalBin(){
+        int nbBin = 0;
+
+        for (Key user : mapFollowers.keySet()) {
+            if (typeSet == "ConcurrentHashSet")
+                nbBin += ((ConcurrentHashSet)mapFollowers.get(user)).getNbBin();
+            else if (typeSet == "ExtendedSegmentedHashSet") {
+                nbBin += ((ExtendedSegmentedHashSet)mapFollowers.get(user)).getNbBin();
+            }
+        }
+        return nbBin;
     }
 
     @Override

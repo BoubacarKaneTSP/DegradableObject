@@ -1,6 +1,7 @@
 package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.utils.Helpers;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -324,7 +325,9 @@ public class Retwis {
                     if (!database.isDAP())
                         System.out.print(database.statistics());
 
+                    System.out.println("\n=> Nb total bin : " + database.nbTotalBin());
                     System.out.println("\n=> Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
+
                 }
 
                 long nbOpTotal = 0, timeTotalComputed = 0;

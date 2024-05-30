@@ -1,5 +1,7 @@
 package eu.cloudbutton.dobj.segmented;
 
+import eu.cloudbutton.dobj.asymmetric.swmr.SWMRHashSet;
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
 import eu.cloudbutton.dobj.utils.ComposedIterator;
 import eu.cloudbutton.dobj.utils.HashSegmentation;
 import org.jetbrains.annotations.NotNull;
@@ -77,5 +79,9 @@ public class ExtendedSegmentedCollection <T extends Collection,E> extends HashSe
     @Override
     public void clear() {
         segments.stream().forEach(Collection::clear);
+    }
+
+    public int getNbBin(){
+        return segments.stream().mapToInt(set -> ((SWMRHashSet) set).getNbBin()).sum();
     }
 }
