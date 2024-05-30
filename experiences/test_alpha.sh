@@ -17,8 +17,8 @@ nbOps=10000000
 # ratio="0 0 0 50 50 0"
 # ratio="0 0 0 0 0 100"
 # ratio="0 0 20 80 0 0"
- ratio="0 0 100 0 0 0"
-# ratio="0 0 0 0 0 100"
+# ratio="0 0 100 0 0 0"
+ ratio="0 0 0 0 100 0"
 # ratio="0 0 0 0 50 50"
 # ratio="0 0 1 99 0 0"
 # ratio="40 60 0 0 0 0"
@@ -36,9 +36,9 @@ nbOps=10000000
 
 declare -A params
 #params[seq]="-c juc.Counter -s HashSet -q LinkedList -m SkipListMap"
-params[juc]="-c juc.Counter -s ConcurrentSkipListSet -q Queue -m ConcurrentSkipListMap"
-params[dego]="-c CounterIncrementOnly -s ExtendedSegmentedSkipListSet -q Queue -m ConcurrentSkipListMap"
-#params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
+params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
+#params[dego]="-c CounterIncrementOnly -s ExtendedSegmentedHashSet -q Queue -m ConcurrentSkipListMap"
+params[dego]="-c CounterIncrementOnly -s ExtendedSegmentedHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
 params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
 
 for impl in juc dego;

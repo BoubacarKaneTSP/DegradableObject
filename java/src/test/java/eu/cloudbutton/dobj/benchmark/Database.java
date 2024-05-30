@@ -102,13 +102,13 @@ public class Database {
             mapFollowing = factory.newMap();
             mapTimelines = factory.newMap();
             mapProfiles = factory.newMap();
+            community = factory.newSet();
             counter = factory.newCounter();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
 
-        community = new ConcurrentHashSet<>();
         mapCommunityStatus = new ConcurrentHashMap<>();
 
         usersFollowProbability = new ConcurrentSkipListMap<>();

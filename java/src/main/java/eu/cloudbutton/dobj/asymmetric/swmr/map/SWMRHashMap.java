@@ -440,8 +440,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final float loadFactor;
 
-    private AtomicWriteOnceReference<Thread> owner = new AtomicWriteOnceReference<>();
-
     private static final Unsafe UNSAFE;
 
     static {
@@ -647,12 +645,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
      */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
-        if (owner.get() == null)
-            owner.set(Thread.currentThread());
-        else {
-            if (!owner.get().equals(Thread.currentThread()))
-                assert false;
-        }
+
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         tab = table;
         if (tab == null || (n = tab.length) == 0) {
@@ -814,7 +807,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             if (hd != null) {
                 hd.treeify(tab);
             }
-            U.fullFence();
+            VarHandle.fullFence();
         }
     }
 
@@ -889,7 +882,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
                     NEXT.setVolatile(p,node.next);
 
                 ++modCount;
-                U.getAndSetInt(this,SIZE,size-1);
+                SIZE.setRelease(this, size-1);
                 afterNodeRemoval(node);
                 return node;
             }
@@ -907,7 +900,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         if ((tab = table) != null && size > 0) {
             size = 0;
             table = null;
-            U.fullFence();
+            VarHandle.fullFence();
             for (int i = 0; i < tab.length; ++i) {
                 tab[i] = null;
             }
@@ -2520,7 +2513,6 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
         return nbBin;
     }
-    private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
 
     private static final VarHandle TABLE;
     private static final VarHandle TABLE_UPDATE;
@@ -2528,13 +2520,13 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     private static final VarHandle KEY;
     private static final VarHandle VALUE;
     private static final VarHandle NEXT;
+    private static final VarHandle SIZE;
 
     private static final VarHandle PARENT;
     private static final VarHandle LEFT;
     private static final VarHandle RIGHT;
     private static final VarHandle PREV;
 
-    private static final long SIZE = U.objectFieldOffset(SWMRHashMap.class, "size");
 
 
     static {
@@ -2542,6 +2534,7 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
             MethodHandles.Lookup l = MethodHandles.lookup();
             TABLE = MethodHandles.arrayElementVarHandle(Node[].class);
             TABLE_UPDATE = l.findVarHandle(SWMRHashMap.class, "table", Node[].class);
+            SIZE = l.findVarHandle(SWMRHashMap.class, "size", int.class);
             NEXT = l.findVarHandle(Node.class, "next", Node.class);
             HASH = l.findVarHandle(Node.class, "hash", int.class);
             KEY = l.findVarHandle(Node.class, "key", Object.class);
