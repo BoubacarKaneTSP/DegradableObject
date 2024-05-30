@@ -418,9 +418,11 @@ public class Retwis {
         List<Key> users, usersToFollow, dummies;
         List<operationType> differentOpToDo;
         Key user, userToFollow, dummy;
+        Set<Key> dummySet;
+        Timeline<String> dummyTimeline;
         int nextUser, nextUserToFollow, nextDummy;
 
-        public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) {
+        public RetwisApp(CountDownLatch latchFillCompletionTime, CountDownLatch latchFillDatabase, CountDownLatch latchFollowingPhase, CountDownLatch computePhase) throws InvocationTargetException, InstantiationException, IllegalAccessException {
             this.random = ThreadLocalRandom.current();
             this.myId = new ThreadLocal<>();
             this.ratiosArray = Arrays.stream(distribution).mapToInt(Integer::parseInt).toArray();
@@ -429,6 +431,8 @@ public class Retwis {
             this.latchFillFollowingPhase = latchFollowingPhase;
             this.computePhase = computePhase;
             this.counterID = new AtomicInteger();
+            this.dummySet = database.getFactory().newSet();
+            this.dummyTimeline = new Timeline(database.getFactory().newQueue());
         }
 
         @Override
@@ -636,7 +640,7 @@ public class Retwis {
                 switch (type) {
                     case ADD:
                         dummy = dummies.get(nextDummy++ % MAX_DUMMY_USERS_PER_THREAD);
-                        database.addOriginalUser(dummy);
+                        database.addUser(dummy, dummySet, dummyTimeline);
                         break;
                     case REMOVE:
                         dummy = dummies.get(nextDummy++ % MAX_DUMMY_USERS_PER_THREAD);
