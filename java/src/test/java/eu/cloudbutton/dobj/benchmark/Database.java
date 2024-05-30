@@ -68,7 +68,7 @@ public class Database {
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
     public final boolean usageStat = false;
-    public final boolean isDAP = true;
+    public final boolean isDAP = false;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -554,8 +554,8 @@ public class Database {
                             mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userToFollowIndice));
                         }
                         else
-//                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
-                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
+                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
+//                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
                     } catch (NullPointerException e) {
                         System.out.println("key from " + userIndice + " is suposed to be null : " + mapIndiceToKey.get(userIndice));
                     }
@@ -1045,7 +1045,7 @@ public class Database {
             Timeline<String> timeline = mapTimelines.get(follower);
             timeline.add(msg);
             i++;
-            if (i>100) break;
+            if (i>1) break;
         }
     }
 
