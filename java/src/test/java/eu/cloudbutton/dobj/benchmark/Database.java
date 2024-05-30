@@ -1146,9 +1146,13 @@ public class Database {
         for (Key user : mapFollowers.keySet()) {
             if (typeSet == "ConcurrentHashSet")
                 nbBin += ((ConcurrentHashSet)mapFollowers.get(user)).getNbBin();
-            else if (typeSet == "ExtendedSegmentedHashSet") {
+            else if (typeSet == "ExtendedSegmentedHashSet")
                 nbBin += ((ExtendedSegmentedHashSet)mapFollowers.get(user)).getNbBin();
+            else{
+                System.out.println("error");
+                System.exit(1);
             }
+
         }
         return nbBin;
     }
