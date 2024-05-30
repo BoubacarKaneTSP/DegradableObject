@@ -1040,13 +1040,13 @@ public class Database {
 
     public void tweet(Key user, String msg) {
         Set<Key> set = mapFollowers.get(user);
-//        int i = 0;
-//        for (Key follower : set) {
-//            Timeline<String> timeline = mapTimelines.get(follower);
+        int i = 0;
+        for (Key follower : set) {
+            Timeline<String> timeline = mapTimelines.get(follower);
 //            timeline.add(msg);
-//            i++;
-//            if (i>1) break;
-//        }
+            i++;
+            if (i>1) break;
+        }
     }
 
     public void showTimeline(Key user)  {
