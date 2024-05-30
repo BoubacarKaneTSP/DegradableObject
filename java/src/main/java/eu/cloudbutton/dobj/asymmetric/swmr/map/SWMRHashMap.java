@@ -2499,6 +2499,25 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         }
     }
 
+    public int getNbTreeBin(){
+        int nbTreeBin = 0;
+
+        for (Node<K, V> node : table)
+            if (node instanceof TreeNode<K, V>)
+                nbTreeBin++;
+
+        return nbTreeBin;
+    }
+
+    public int getNbBin(){
+        int nbBin = 0;
+
+        for (Node<K, V> node : table)
+            if (node != null)
+                nbBin++;
+
+        return nbBin;
+    }
     private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
 
     private static final VarHandle TABLE;
