@@ -466,7 +466,7 @@ public class Retwis {
                 for (Key userA : userToAdd){
                     for (Key userB : database.getMapListUserFollow().get(userA)){
                         try{
-                            database.followUser(userA, userB);
+//                            database.followUser(userA, userB);
                         } catch (NullPointerException e) {
                             int indiceA, indiceB;
 
