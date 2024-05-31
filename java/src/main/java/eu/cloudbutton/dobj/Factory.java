@@ -142,6 +142,8 @@ public class Factory {
                 return ShardedTreeSet.class;
             case "ShardedHashSet":
                 return ShardedHashSet.class;
+            case "ShardedSkipListSet":
+                return ShardedSkipListSet.class;
             case "Set":
             case "ConcurrentSkipListSet":
                 return ConcurrentSkipListSet.class;
