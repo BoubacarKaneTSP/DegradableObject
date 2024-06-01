@@ -210,4 +210,14 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
 
         return nbBin;
     }
+
+    public float getAvgSizeBin(){
+        int avgSize = 0;
+
+        for(Map m: segments){
+            avgSize += ((SWMRHashMap) m).getAvgSizeBin();
+        }
+
+        return avgSize/segments.size();
+    }
 }

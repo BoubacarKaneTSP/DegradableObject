@@ -100,9 +100,11 @@ public abstract class Tester<T> implements Callable<Void> {
             if (object instanceof ExtendedSegmentedHashMap){
                 System.out.println("Nb tree bin : " + ((ExtendedSegmentedHashMap) object).getNbTreeBin());
                 System.out.println("Nb bin : " + ((ExtendedSegmentedHashMap) object).getNbBin());
+                System.out.println("Avg size bin : " + ((ExtendedSegmentedHashMap) object).getAvgSizeBin());
             } else if (object instanceof ConcHashMap) {
                 System.out.println("Nb tree bin : " + ((ConcHashMap) object).getNbTreeBin());
                 System.out.println("Nb bin : " + ((ConcHashMap) object).getNbBin());
+                System.out.println("Avg size bin : " + ((ConcHashMap) object).getAvgSizeBin());
             }
 
         } catch (Exception e) {

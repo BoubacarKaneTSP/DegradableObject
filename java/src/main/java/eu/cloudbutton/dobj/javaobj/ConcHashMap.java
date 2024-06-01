@@ -3336,6 +3336,24 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
         }
         return nbBin;
     }
+
+    public float getAvgSizeBin(){
+        float nbBin = 0, size = 0;
+
+        if (size() > 0) {
+//            nbBin = table.length;
+            for (Node node : table){
+                if (node != null) {
+                    while (node.next != null) {
+                        size++;
+                        node = node.next;
+                    }
+                }
+                nbBin++;
+            }
+        }
+        return size/nbBin;
+    }
     /* ----------------Table Traversal -------------- */
 
     /**
