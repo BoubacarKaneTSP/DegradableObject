@@ -2530,6 +2530,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         return size()/nbBin;
     }
 
+    public int getTabSize(){
+        return table.length;
+    }
+
     private static final VarHandle TABLE;
     private static final VarHandle TABLE_UPDATE;
     private static final VarHandle HASH;

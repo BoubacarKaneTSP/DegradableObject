@@ -3350,6 +3350,10 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
         }
         return size()/nbBin;
     }
+
+    public int getTabSize(){
+        return table.length;
+    }
     /* ----------------Table Traversal -------------- */
 
     /**

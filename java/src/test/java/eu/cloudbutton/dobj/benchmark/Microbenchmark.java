@@ -2,6 +2,8 @@ package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
 import eu.cloudbutton.dobj.benchmark.tester.*;
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.incrementonly.FuzzyCounter;
 import org.kohsuke.args4j.CmdLineException;
@@ -240,6 +242,19 @@ public class Microbenchmark {
                     if (_gcinfo) {
                         System.out.println("End benchmark");
                     }
+
+                    if (object instanceof ExtendedSegmentedHashMap){
+                        System.out.println("Nb tree bin : " + ((ExtendedSegmentedHashMap) object).getNbTreeBin());
+                        System.out.println("Nb bin : " + ((ExtendedSegmentedHashMap) object).getNbBin());
+                        System.out.println("Avg size bin : " + ((ExtendedSegmentedHashMap) object).getAvgSizeBin());
+                        System.out.println("tab size: " + ((ExtendedSegmentedHashMap) object).getTabSize());
+                    } else if (object instanceof ConcHashMap) {
+                        System.out.println("Nb tree bin : " + ((ConcHashMap) object).getNbTreeBin());
+                        System.out.println("Nb bin : " + ((ConcHashMap) object).getNbBin());
+                        System.out.println("Avg size bin : " + ((ConcHashMap) object).getAvgSizeBin());
+                        System.out.println("tab size: " + ((ConcHashMap) object).getTabSize());
+                    }
+
 
                     benchmarkAvgTime += endTime - startTime;
 

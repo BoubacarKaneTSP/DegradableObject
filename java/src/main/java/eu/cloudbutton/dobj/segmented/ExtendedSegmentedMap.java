@@ -222,4 +222,14 @@ public class ExtendedSegmentedMap<T extends Map, K, V> extends ExtendedSegmentat
 
         return sizes/nbBins;
     }
+
+    public int getTabSize(){
+        int size = 0;
+
+        for(Map m: segments){
+            size += ((SWMRHashMap) m).getTabSize();
+        }
+
+        return size;
+    }
 }
