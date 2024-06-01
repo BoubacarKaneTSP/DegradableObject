@@ -251,9 +251,8 @@ public class SWMRSkipListMap<K, V> extends AbstractMap<K, V> implements SortedMa
 
             // link new node and nodes with less keys
             linkNodePrev(update[i], newNode, i);
-            UNSAFE.fullFence();
-
         }
+        UNSAFE.fullFence();
 
         size++;
         return null;

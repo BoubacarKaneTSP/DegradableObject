@@ -3,10 +3,13 @@ package eu.cloudbutton.dobj.benchmark.tester;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark;
 import eu.cloudbutton.dobj.benchmark.Microbenchmark.opType;
 import eu.cloudbutton.dobj.incrementonly.BoxedLong;
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
+import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -92,6 +95,14 @@ public abstract class Tester<T> implements Callable<Void> {
                 localOp.get(opNumber).val += nbRepeat;
                 localTimeOp.get(opNumber).val += elapsedTime;
 
+            }
+
+            if (object instanceof ExtendedSegmentedHashMap){
+                System.out.println("Nb tree bin : " + ((ExtendedSegmentedHashMap) object).getNbTreeBin());
+                System.out.println("Nb bin : " + ((ExtendedSegmentedHashMap) object).getNbBin());
+            } else if (object instanceof ConcHashMap) {
+                System.out.println("Nb tree bin : " + ((ConcHashMap) object).getNbTreeBin());
+                System.out.println("Nb bin : " + ((ConcHashMap) object).getNbBin());
             }
 
         } catch (Exception e) {
