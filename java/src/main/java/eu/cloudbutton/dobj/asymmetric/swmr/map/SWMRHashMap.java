@@ -40,6 +40,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 //import jdk.internal.misc.SharedSecrets;
 import com.sun.source.tree.Tree;
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
 import eu.cloudbutton.dobj.register.AtomicWriteOnceReference;
 import sun.misc.Unsafe;
 
@@ -2495,10 +2496,11 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
     public int getNbTreeBin(){
         int nbTreeBin = 0;
 
-        for (Node<K, V> node : table)
-            if (node instanceof TreeNode<K, V>)
-                nbTreeBin++;
-
+        if (size() > 0) {
+            for (Node node : table)
+                if (node instanceof TreeNode)
+                    nbTreeBin++;
+        }
         return nbTreeBin;
     }
 
@@ -2506,10 +2508,10 @@ public class SWMRHashMap<K,V> extends AbstractMap<K,V>
         int nbBin = 0;
 
         if (size() > 0) {
-            nbBin = table.length;
-//            for (Node<K, V> node : table)
-//                if (node != null)
-//                    nbBin++;
+//            nbBin = table.length;
+            for (Node node : table)
+                if (node != null)
+                    nbBin++;
         }
         return nbBin;
     }

@@ -3317,10 +3317,11 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
     public int getNbTreeBin(){
         int nbTreeBin = 0;
 
-        for (Node<K, V> node : table)
-            if (node instanceof TreeBin)
-                nbTreeBin++;
-
+        if (size() > 0) {
+            for (Node<K, V> node : table)
+                if (node instanceof TreeBin)
+                    nbTreeBin++;
+        }
         return nbTreeBin;
     }
 
@@ -3328,10 +3329,10 @@ public class ConcHashMap<K,V> extends AbstractMap<K,V>
         int nbBin = 0;
 
         if (size() > 0) {
-            nbBin = table.length;
-//            for (Node<K, V> node : table)
-//                if (node != null)
-//                    nbBin++;
+//            nbBin = table.length;
+            for (Node<K, V> node : table)
+                if (node != null)
+                    nbBin++;
         }
         return nbBin;
     }
