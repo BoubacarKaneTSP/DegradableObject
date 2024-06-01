@@ -3,6 +3,7 @@ package eu.cloudbutton.dobj;
 import eu.cloudbutton.dobj.asymmetric.DequeMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueMASP;
 import eu.cloudbutton.dobj.asymmetric.QueueSASP;
+import eu.cloudbutton.dobj.javaobj.ConcHashMap;
 import eu.cloudbutton.dobj.set.SetMWSR;
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
 import eu.cloudbutton.dobj.incrementonly.*;
@@ -199,6 +200,8 @@ public class Factory {
             case "Map":
             case "ConcurrentHashMap":
                 return ConcurrentHashMap.class;
+            case "ConcHashMap":
+                return ConcHashMap.class;
             case "ConcurrentSkipListMap":
                 return ConcurrentSkipListMap.class;
             case "MapReadIntensive":
