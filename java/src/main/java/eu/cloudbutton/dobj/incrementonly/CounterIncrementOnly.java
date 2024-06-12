@@ -38,14 +38,14 @@ public class CounterIncrementOnly extends BaseSegmentation<BoxedLong> implements
      */
     @Override
     public long incrementAndGet() {
-        segmentFor(null).val += 1;
         UNSAFE.storeFence();
+        segmentFor(null).val += 1;
         return 0;
     }
 
     public void increment(){
-        segmentFor(null).val +=1 ;
         UNSAFE.storeFence();
+        segmentFor(null).val +=1 ;
     }
     /**
      * Adds the given value to the current value of the Counter.
@@ -65,37 +65,37 @@ public class CounterIncrementOnly extends BaseSegmentation<BoxedLong> implements
      * @return the current value stored by this object.
      */
     @Override
-    public long read() {
+    public long get() {
         long total = 0;
-        UNSAFE.loadFence();
         for (BoxedLong v : segments) {
             total += v.val;
         }
+        UNSAFE.loadFence();
         return total;
     }
 
     public int intValue() {
-        long ret = read();
+        long ret = get();
         if (ret>=Integer.MAX_VALUE) return Integer.MAX_VALUE;
         return (int)ret;
     }
 
     @Override
     public long decrementAndGet(int delta) {
-        segmentFor(null).val -= delta;
         UNSAFE.storeFence();
+        segmentFor(null).val -= delta;
         return 0;
     }
 
     @Override
     public long decrementAndGet() {
-        segmentFor(null).val -= 1;
         UNSAFE.storeFence();
+        segmentFor(null).val -= 1;
         return 0;
     }
 
     public void decrement(){
-        segmentFor(null).val -=1 ;
         UNSAFE.storeFence();
+        segmentFor(null).val -=1 ;
     }
 }

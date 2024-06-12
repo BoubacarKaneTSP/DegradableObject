@@ -28,7 +28,7 @@ public class CounterTester extends Tester<Counter> {
             case READ:
                 startTime = System.nanoTime();
                 for (int i = 0; i < nbRepeat; i++) {
-                    object.read();
+                    object.get();
                 }
                 endTime = System.nanoTime();
 

@@ -25,7 +25,7 @@ public class WrappedLongAdder extends LongAdder implements Counter {
     }
 
     @Override
-    public long read() {
+    public long get() {
 
         return counter.longValue();
     }

@@ -15,7 +15,7 @@ public class Counter implements eu.cloudbutton.dobj.types.Counter {
      * Creates a new Counter initialized with the value stored in the specified counter.
      * @param counter The counter whose value is given to the new.
      */
-    public Counter(Counter counter) { count = new AtomicLong(counter.read()); }
+    public Counter(Counter counter) { count = new AtomicLong(counter.get()); }
 
     /**
      * Creates a new Counter initialized with the given initial value.
@@ -52,7 +52,7 @@ public class Counter implements eu.cloudbutton.dobj.types.Counter {
      * @return the current value stored by this object.
      */
     @Override
-    public long read() {
+    public long get() {
         return count.longValue();
     }
 

@@ -6,7 +6,7 @@ public class Counter extends AbstractCounter {
 
     private final AtomicInteger count;
 
-    public Counter(Counter counter) { count = new AtomicInteger(counter.read()); }
+    public Counter(Counter counter) { count = new AtomicInteger(counter.get()); }
     public Counter(int i) { count = new AtomicInteger(i); }
     public Counter() { count = new AtomicInteger(); }
 

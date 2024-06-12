@@ -18,20 +18,20 @@ public class FuzzyCounter implements Counter {
     public long incrementAndGet() {
         counter.increment();
 		
-	return (counter.read() * N) + ID.get();
+	return (counter.get() * N) + ID.get();
     }
 
     @Override
     public long addAndGet(int delta) {
         counter.addAndGet(delta);
 
-        return (counter.read() * N) + ID.get();
+        return (counter.get() * N) + ID.get();
     }
 
     @Override
-    public long read() {
+    public long get() {
 
-        return (counter.read() * N) + ID.get();
+        return (counter.get() * N) + ID.get();
     }
 
     @Override

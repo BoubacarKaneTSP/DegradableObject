@@ -67,17 +67,17 @@ public class CounterTest {
             future.get();
         }
 
-        assertEquals(count.read(),1000000,"Failed incrementing the Counter");
+        assertEquals(count.get(),1000000,"Failed incrementing the Counter");
 
         do {
             count.decrementAndGet();
 //            System.out.println(count.read());
-        }while (count.read() != 0);
+        }while (count.get() != 0);
 
-        assertEquals(count.read(),0,"Failed decrementing the Counter");
+        assertEquals(count.get(),0,"Failed decrementing the Counter");
     }
 
-    private static void testDifferentRead(FuzzyCounter count) throws ExecutionException, InterruptedException {
+    private static void testDifferentGet(FuzzyCounter count) throws ExecutionException, InterruptedException {
 
         int nbThread = 4;
         Map<Long, ArrayList<Long>> mapRead = new ConcurrentHashMap<>();

@@ -21,7 +21,7 @@ public interface Counter {
      *
      * @return the current value stored by this object.
      */
-    long read();
+    long get();
 
     /**
      * Retrieve the given value to the current value of the Counter.

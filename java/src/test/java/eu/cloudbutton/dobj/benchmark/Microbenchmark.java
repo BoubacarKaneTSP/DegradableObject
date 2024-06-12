@@ -268,7 +268,7 @@ public class Microbenchmark {
                         size+=((Queue<?>) object).size();
                     }
                     else if (object instanceof Counter) {
-                        size+=((Counter) object).read();
+                        size+=((Counter) object).get();
                     }
                     executor.shutdownNow();
 
