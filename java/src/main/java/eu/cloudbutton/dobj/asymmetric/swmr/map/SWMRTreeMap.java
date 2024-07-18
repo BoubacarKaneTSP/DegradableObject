@@ -3421,9 +3421,9 @@ public class SWMRTreeMap<K,V>
             ROOT = l.findVarHandle(SWMRTreeMap.class, "root", Entry.class);
             VALUE = l.findVarHandle(Entry.class, "value", Object.class);
             KEY = l.findVarHandle(Entry.class, "key", Object.class);
-            LEFT = l.findVarHandle(Entry.class, "left", Object.class);
-            RIGHT = l.findVarHandle(Entry.class, "right", Object.class);
-            PARENT = l.findVarHandle(Entry.class, "parent", Object.class);
+            LEFT = l.findVarHandle(Entry.class, "left", Entry.class);
+            RIGHT = l.findVarHandle(Entry.class, "right", Entry.class);
+            PARENT = l.findVarHandle(Entry.class, "parent", Entry.class);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
