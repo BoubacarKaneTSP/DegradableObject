@@ -28,6 +28,8 @@ package eu.cloudbutton.dobj.asymmetric.swmr.map;
 import sun.misc.Unsafe;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -304,7 +306,7 @@ public class SWMRTreeMap<K,V>
      */
     public V get(Object key) {
         Entry<K,V> p = getEntry(key);
-        return (p==null ? null : p.value);
+        return (p==null ? null : (V) VALUE.getAcquire(p));
     }
 
     public Comparator<? super K> comparator() {
@@ -396,13 +398,13 @@ public class SWMRTreeMap<K,V>
         Objects.requireNonNull(key);
         @SuppressWarnings("unchecked")
         Comparable<? super K> k = (Comparable<? super K>) key;
-        Entry<K,V> p = root;
+        Entry<K,V> p = (Entry<K, V>) ROOT.getAcquire(this);
         while (p != null) {
-            int cmp = k.compareTo(p.key);
+            int cmp = k.compareTo((K)KEY.getAcquire(p));
             if (cmp < 0)
-                p = p.left;
+                p = (Entry<K, V>) LEFT.getAcquire(p);
             else if (cmp > 0)
-                p = p.right;
+                p = (Entry<K, V>) RIGHT.getAcquire(p);
             else
                 return p;
         }
@@ -424,9 +426,9 @@ public class SWMRTreeMap<K,V>
             while (p != null) {
                 int cmp = cpr.compare(k, p.key);
                 if (cmp < 0)
-                    p = p.left;
+                    p = (Entry<K, V>) LEFT.getAcquire(p);
                 else if (cmp > 0)
-                    p = p.right;
+                    p = (Entry<K, V>) RIGHT.getAcquire(p);
                 else
                     return p;
             }
@@ -817,12 +819,11 @@ public class SWMRTreeMap<K,V>
 
     private void addEntry(K key, V value, Entry<K, V> parent, boolean addToLeft) {
         Entry<K,V> e = new Entry<>(key, value, parent);
-        UNSAFE.fullFence();
         if (addToLeft) {
-            parent.left = e;
+            LEFT.setRelease(parent, e);
         }
         else {
-            parent.right = e;
+            RIGHT.setRelease(parent, e);
         }
         fixAfterInsertion(e);
         size++;
@@ -831,8 +832,7 @@ public class SWMRTreeMap<K,V>
 
     private void addEntryToEmptyMap(K key, V value) {
         compare(key, key); // type (and possibly null) check
-        root = new Entry<>(key, value, null);
-        UNSAFE.fullFence();
+        ROOT.setRelease(this, new Entry<>(key, value, null));
         size = 1;
         modCount++;
     }
@@ -858,8 +858,7 @@ public class SWMRTreeMap<K,V>
                 else {
                     V oldValue = t.value;
                     if (replaceOld || oldValue == null) {
-                        t.value = value;
-
+                        VALUE.setRelease(t, value);
                     }
                     return oldValue;
                 }
@@ -878,7 +877,7 @@ public class SWMRTreeMap<K,V>
                 else {
                     V oldValue = t.value;
                     if (replaceOld || oldValue == null) {
-                        t.value = value;
+                        VALUE.setRelease(t, value);
                     }
                     return oldValue;
                 }
@@ -2696,8 +2695,8 @@ public class SWMRTreeMap<K,V>
         // point to successor.
         if (p.left != null && p.right != null) {
             Entry<K,V> s = successor(p);
-            p.key = s.key;
-            p.value = s.value;
+            KEY.setRelease(p, s.key);
+            VALUE.setRelease(p , s.value);
             p = s;
         } // p has 2 children
 
@@ -2710,31 +2709,30 @@ public class SWMRTreeMap<K,V>
             if (p.parent == null)
                 root = replacement;
             else if (p == p.parent.left)
-                p.parent.left  = replacement;
+                LEFT.setRelease(p.parent, replacement);
             else
-                p.parent.right = replacement;
+                RIGHT.setRelease(p.parent, replacement);
 
             // Null out links, so they are OK to use by fixAfterDeletion.
-            p.left = p.right = p.parent = null;
-            UNSAFE.fullFence();
+            LEFT.setRelease(p, null);
+            RIGHT.setRelease(p, null);
+            p.parent = null;
+
             // Fix replacement
             if (p.color == BLACK)
                 fixAfterDeletion(replacement);
         } else if (p.parent == null) { // return if we are the only node.
-            root = null;
-            UNSAFE.fullFence();
+            ROOT.setRelease(this, null);
         } else { //  No children. Use self as phantom replacement and unlink.
             if (p.color == BLACK)
                 fixAfterDeletion(p);
 
             if (p.parent != null) {
                 if (p == p.parent.left)
-                    p.parent.left = null;
+                    LEFT.setRelease(p.parent, null);
                 else if (p == p.parent.right)
-                    p.parent.right = null;
-                UNSAFE.fullFence();
+                    RIGHT.setRelease(p.parent, null);
                 p.parent = null;
-                UNSAFE.fullFence();
             }
         }
     }
@@ -3408,4 +3406,29 @@ public class SWMRTreeMap<K,V>
             }
         }
     }
+
+    private static final VarHandle ROOT;
+    private static final VarHandle VALUE;
+    private static final VarHandle KEY;
+    private static final VarHandle LEFT;
+    private static final VarHandle RIGHT;
+    private static final VarHandle PARENT;
+
+    static {
+        try{
+            MethodHandles.Lookup l = MethodHandles.lookup();
+
+            ROOT = l.findVarHandle(SWMRTreeMap.class, "root", Entry.class);
+            VALUE = l.findVarHandle(Entry.class, "value", Object.class);
+            KEY = l.findVarHandle(Entry.class, "key", Object.class);
+            LEFT = l.findVarHandle(Entry.class, "left", Object.class);
+            RIGHT = l.findVarHandle(Entry.class, "right", Object.class);
+            PARENT = l.findVarHandle(Entry.class, "parent", Object.class);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
