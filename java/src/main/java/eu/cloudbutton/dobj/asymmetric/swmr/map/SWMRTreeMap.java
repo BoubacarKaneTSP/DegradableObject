@@ -306,7 +306,7 @@ public class SWMRTreeMap<K,V>
      */
     public V get(Object key) {
         Entry<K,V> p = getEntry(key);
-        return (p==null ? null : (V) VALUE.getAcquire(p));
+        return (p==null ? null : (V) VALUE.getVolatile(p));
     }
 
     public Comparator<? super K> comparator() {
@@ -398,13 +398,13 @@ public class SWMRTreeMap<K,V>
         Objects.requireNonNull(key);
         @SuppressWarnings("unchecked")
         Comparable<? super K> k = (Comparable<? super K>) key;
-        Entry<K,V> p = (Entry<K, V>) ROOT.getAcquire(this);
+        Entry<K,V> p = (Entry<K, V>) ROOT.getVolatile(this);
         while (p != null) {
-            int cmp = k.compareTo((K)KEY.getAcquire(p));
+            int cmp = k.compareTo((K)KEY.getVolatile(p));
             if (cmp < 0)
-                p = (Entry<K, V>) LEFT.getAcquire(p);
+                p = (Entry<K, V>) LEFT.getVolatile(p);
             else if (cmp > 0)
-                p = (Entry<K, V>) RIGHT.getAcquire(p);
+                p = (Entry<K, V>) RIGHT.getVolatile(p);
             else
                 return p;
         }
@@ -426,9 +426,9 @@ public class SWMRTreeMap<K,V>
             while (p != null) {
                 int cmp = cpr.compare(k, p.key);
                 if (cmp < 0)
-                    p = (Entry<K, V>) LEFT.getAcquire(p);
+                    p = (Entry<K, V>) LEFT.getVolatile(p);
                 else if (cmp > 0)
-                    p = (Entry<K, V>) RIGHT.getAcquire(p);
+                    p = (Entry<K, V>) RIGHT.getVolatile(p);
                 else
                     return p;
             }
