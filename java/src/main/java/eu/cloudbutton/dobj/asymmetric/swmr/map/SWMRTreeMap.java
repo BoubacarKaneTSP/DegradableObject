@@ -820,10 +820,10 @@ public class SWMRTreeMap<K,V>
     private void addEntry(K key, V value, Entry<K, V> parent, boolean addToLeft) {
         Entry<K,V> e = new Entry<>(key, value, parent);
         if (addToLeft) {
-            LEFT.setRelease(parent, e);
+            LEFT.setVolatile(parent, e);
         }
         else {
-            RIGHT.setRelease(parent, e);
+            RIGHT.setVolatile(parent, e);
         }
         fixAfterInsertion(e);
         size++;
@@ -832,7 +832,7 @@ public class SWMRTreeMap<K,V>
 
     private void addEntryToEmptyMap(K key, V value) {
         compare(key, key); // type (and possibly null) check
-        ROOT.setRelease(this, new Entry<>(key, value, null));
+        ROOT.setVolatile(this, new Entry<>(key, value, null));
         size = 1;
         modCount++;
     }
@@ -858,7 +858,7 @@ public class SWMRTreeMap<K,V>
                 else {
                     V oldValue = t.value;
                     if (replaceOld || oldValue == null) {
-                        VALUE.setRelease(t, value);
+                        VALUE.setVolatile(t, value);
                     }
                     return oldValue;
                 }
@@ -877,7 +877,7 @@ public class SWMRTreeMap<K,V>
                 else {
                     V oldValue = t.value;
                     if (replaceOld || oldValue == null) {
-                        VALUE.setRelease(t, value);
+                        VALUE.setVolatile(t, value);
                     }
                     return oldValue;
                 }
@@ -2695,8 +2695,8 @@ public class SWMRTreeMap<K,V>
         // point to successor.
         if (p.left != null && p.right != null) {
             Entry<K,V> s = successor(p);
-            KEY.setRelease(p, s.key);
-            VALUE.setRelease(p , s.value);
+            KEY.setVolatile(p, s.key);
+            VALUE.setVolatile(p , s.value);
             p = s;
         } // p has 2 children
 
@@ -2709,29 +2709,29 @@ public class SWMRTreeMap<K,V>
             if (p.parent == null)
                 root = replacement;
             else if (p == p.parent.left)
-                LEFT.setRelease(p.parent, replacement);
+                LEFT.setVolatile(p.parent, replacement);
             else
-                RIGHT.setRelease(p.parent, replacement);
+                RIGHT.setVolatile(p.parent, replacement);
 
             // Null out links, so they are OK to use by fixAfterDeletion.
-            LEFT.setRelease(p, null);
-            RIGHT.setRelease(p, null);
+            LEFT.setVolatile(p, null);
+            RIGHT.setVolatile(p, null);
             p.parent = null;
 
             // Fix replacement
             if (p.color == BLACK)
                 fixAfterDeletion(replacement);
         } else if (p.parent == null) { // return if we are the only node.
-            ROOT.setRelease(this, null);
+            ROOT.setVolatile(this, null);
         } else { //  No children. Use self as phantom replacement and unlink.
             if (p.color == BLACK)
                 fixAfterDeletion(p);
 
             if (p.parent != null) {
                 if (p == p.parent.left)
-                    LEFT.setRelease(p.parent, null);
+                    LEFT.setVolatile(p.parent, null);
                 else if (p == p.parent.right)
-                    RIGHT.setRelease(p.parent, null);
+                    RIGHT.setVolatile(p.parent, null);
                 p.parent = null;
             }
         }
