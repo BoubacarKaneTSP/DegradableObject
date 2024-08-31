@@ -69,7 +69,7 @@ public class Database {
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
     public final boolean usageStat = false;
-    public final boolean isDAP = true;
+    public final boolean isDAP = false;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
