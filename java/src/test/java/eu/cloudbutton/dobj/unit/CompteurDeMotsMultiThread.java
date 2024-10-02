@@ -25,7 +25,7 @@ public class CompteurDeMotsMultiThread {
         }
 
 //        long totalTime = parallel_conc_obj(textes, nbThreads);
-        int nbTest = 10;
+        int nbTest = 30;
         long val_synchronyzed = 0, val_obj_conc = 0;
 
         for (int i = 0; i < nbTest; i++) {
@@ -43,7 +43,7 @@ public class CompteurDeMotsMultiThread {
     public static long parallel_conc_obj(ArrayList<StringBuilder> textes, int nbThreads){
         ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
         ArrayList<Runnable> taches = new ArrayList<>();
-        Map<String, Integer> compteurGlobale = new ConcurrentHashMap<>();
+        Map<String, AtomicInteger> compteurGlobale = new ConcurrentHashMap<>();
         String regex = "^[a-zA-Z-]+$";
 
         for (int i = 0; i < nbThreads; i++) {
@@ -54,13 +54,13 @@ public class CompteurDeMotsMultiThread {
                 int taille = mots.length;
                 for (int j = 0; j < taille; j++) {
                     String mot = mots[j].replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
-                    compteurGlobale.merge(mot, 1, Integer::sum);
-//                    if (mot.matches(regex)) {
-//                        compteurGlobale.merge(mot, new AtomicInteger(1), (ancien, _) -> {
-//                            ancien.incrementAndGet();
-//                            return ancien;
-//                        });
-//                    }
+//                    compteurGlobale.merge(mot, 1, Integer::sum);
+                    if (mot.matches(regex)) {
+                        compteurGlobale.merge(mot, new AtomicInteger(1), (ancien, _) -> {
+                            ancien.incrementAndGet();
+                            return ancien;
+                        });
+                    }
                 }
             });
         }
