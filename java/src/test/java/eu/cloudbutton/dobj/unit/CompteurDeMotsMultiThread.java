@@ -19,9 +19,9 @@ public class CompteurDeMotsMultiThread {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
             String ligne;
-            int i = 0;
+            long i = 0;
             while ((ligne = reader.readLine()) != null) {
-                textes.get(i % nbThreads).append(ligne);
+                textes.get((int) (i%nbThreads)).append(ligne);
                 i++;
             }
         }
