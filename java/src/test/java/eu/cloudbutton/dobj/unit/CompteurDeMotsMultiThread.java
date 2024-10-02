@@ -10,25 +10,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CompteurDeMotsMultiThread {
     public static void main(String[] args) throws IOException {
 
+//        String fileName = "experiences/LoremIpsum.txt";
         String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
-        String texte = "";
-        try{
-            texte = Files.readString(Paths.get(fileName));
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-        File fichier = new File(fileName);
-
-        FileReader fileReader = new FileReader(fichier);
-
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        bufferedReader.readLine();
-
-        texte = texte.replaceAll("[^a-zA-Z\\s-]", "");
-        String[] mots = texte.trim().split("\\s+");
-        System.out.println(mots.length);
         int nbThreads = Runtime.getRuntime().availableProcessors();
-        int tailleDeSegment = (int) Math.ceil((double) mots.length / nbThreads);
+        ArrayList<StringBuilder> textes = new ArrayList<>();
+        for (int i = 0; i < nbThreads; i++)
+            textes.add(new StringBuilder());
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+            String ligne;
+            int i = 0;
+            while ((ligne = reader.readLine()) != null)
+                textes.get(++i%nbThreads).append(ligne);
+        }
 
         ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
         ArrayList<Runnable> taches = new ArrayList<>();
@@ -36,16 +30,19 @@ public class CompteurDeMotsMultiThread {
         String regex = "^[a-zA-Z-]+$";
 
         for (int i = 0; i < nbThreads; i++) {
-            final int debut = i * tailleDeSegment;
-            final int fin = Math.min(debut + tailleDeSegment, mots.length);
+
+            String[] mots = textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+");
+
             taches.add(() -> {
-                for (int j = debut; j < fin; j++) {
+                int taille = mots.length;
+                for (int j = 0; j < taille; j++) {
                       String mot = mots[j].replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
                       if (mot.matches(regex)) {
-                            compteurGlobale.merge(mot, new AtomicInteger(1), (ancien, _) -> {ancien.incrementAndGet();
+                            compteurGlobale.merge(mot, new AtomicInteger(1), (ancien, _) -> {
+                                ancien.incrementAndGet();
                                 return ancien;
-                          });
-                        }
+                            });
+                      }
                 }
             });
         }
