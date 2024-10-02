@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CompteurDeMotsMultiThread {
     public static void main(String[] args) throws IOException {
 
-        String fileName = "experiences/LoremIpsum.txt";
-//        String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
+//        String fileName = "experiences/LoremIpsum.txt";
+        String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
         int nbThreads = Runtime.getRuntime().availableProcessors();
         ArrayList<StringBuilder> textes = new ArrayList<>();
         for (int i = 0; i < nbThreads; i++)
@@ -86,7 +86,7 @@ public class CompteurDeMotsMultiThread {
             String[] mots = textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+");
 
             taches.add(() -> {
-                HashMap<String,Integer> compteurLocale = new HashMap();
+                HashMap<String,Integer> compteurLocale = new HashMap<>();
 
                 int taille = mots.length;
                 for (int j = 0; j < taille; j++) {
