@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CompteurDeMotsMultiThread {
     public static void main(String[] args) throws IOException {
 
-        String fileName = "experiences/LoremIpsum.txt";
+        String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
         String texte = "";
         try{
             texte = Files.readString(Paths.get(fileName));
