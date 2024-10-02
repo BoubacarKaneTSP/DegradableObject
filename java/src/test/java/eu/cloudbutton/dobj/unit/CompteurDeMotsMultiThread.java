@@ -25,9 +25,16 @@ public class CompteurDeMotsMultiThread {
         }
 
 //        long totalTime = parallel_conc_obj(textes, nbThreads);
-        long totalTime = parallel_synchronyzed(textes, nbThreads);
+        int nbTest = 10;
+        long val_synchronyzed = 0, val_obj_conc = 0;
 
-        System.out.println("Temps de calcul : " + (double) totalTime / 1_000_000_000 + " seconds");
+        for (int i = 0; i < nbTest; i++) {
+            val_synchronyzed += parallel_synchronyzed(textes, nbThreads);
+            val_obj_conc += parallel_conc_obj(textes, nbThreads);
+        }
+
+        System.out.println("Temps de calcul synchronyzed: " + (double) (val_synchronyzed/nbTest) / 1_000_000_000 + " seconds");
+        System.out.println("Temps de calcul objet concurrent: " + (double) (val_obj_conc/nbTest) / 1_000_000_000 + " seconds");
 
 //        long totalMots = compteurGlobale.values().stream().mapToInt(AtomicInteger::get).sum();
 //        System.out.println("Nombre total de mots : " + totalMots);
