@@ -51,17 +51,16 @@ public class CompteurDeMotsMultiThread {
             String[] mots = textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+");
 
             taches.add(() -> {
-                int taille = mots.length;
-                for (int j = 0; j < taille; j++) {
-                    String mot = mots[j].replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
-//                    compteurGlobale.merge(mot, 1, Integer::sum);
-                    if (mot.matches(regex)) {
-                        compteurGlobale.merge(mot, new AtomicInteger(1), (ancien, _) -> {
-                            ancien.incrementAndGet();
-                            return ancien;
-                        });
-                    }
+                HashMap<String,Integer> compteurLocale = new HashMap<>();
+                for (String s : mots) {
+                    String mot = s.replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
+                    if (mot.matches(regex))
+                        compteurLocale.merge(mot, 1,Integer::sum);
                 }
+                compteurLocale.forEach((m, _) -> compteurGlobale.merge(m, new AtomicInteger(1), (ancien, _) -> {
+                    ancien.incrementAndGet();
+                    return ancien;
+                }));
             });
         }
 
@@ -96,9 +95,8 @@ public class CompteurDeMotsMultiThread {
             taches.add(() -> {
                 HashMap<String,Integer> compteurLocale = new HashMap<>();
 
-                int taille = mots.length;
-                for (int j = 0; j < taille; j++) {
-                    String mot = mots[j].replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
+                for (String s : mots) {
+                    String mot = s.replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
                     if (mot.matches(regex)) {
                         compteurLocale.merge(mot, 1, Integer::sum);
                     }
