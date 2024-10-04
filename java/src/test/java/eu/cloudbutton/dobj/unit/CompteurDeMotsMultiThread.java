@@ -5,9 +5,12 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CompteurDeMotsMultiThread {
-    public static void main(String[] args) throws IOException {
 
+public class CompteurDeMotsMultiThread {
+
+    static boolean detailed = true;
+
+    public static void main(String[] args) throws IOException {
 //        String fileName = "experiences/LoremIpsum.txt";
         String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
         int nbThreads = Runtime.getRuntime().availableProcessors();
@@ -57,8 +60,12 @@ public class CompteurDeMotsMultiThread {
         Map<String, AtomicInteger> compteurGlobale = new ConcurrentHashMap<>();
         AtomicInteger counter = new AtomicInteger(0);
 
-        for (int i = 0; i < nbThreads; i++) {
+        if (detailed)
+            System.out.println("compute concurrent obj : \n");
 
+        for (int i = 0; i < nbThreads; i++) {
+            if (detailed)
+                System.out.println("nb de mot à compter par le thread "+i+" :"+mots.get(i).length);
             int finalI = i;
             taches.add(() -> {
                 HashMap<String,Integer> compteurLocale = new HashMap<>();
@@ -69,9 +76,14 @@ public class CompteurDeMotsMultiThread {
                     ancien.addAndGet(val);
                     return ancien;
                 }));
-                counter.addAndGet(compteurLocale.size());
+
+                if (detailed)
+                    System.out.println("nb de mot different pour le thread "+finalI+" : " + compteurLocale.size());
             });
         }
+
+        if (detailed)
+            System.out.println("\n");
 
         long totalTime, endTime, startTime = System.nanoTime();
 
@@ -88,7 +100,9 @@ public class CompteurDeMotsMultiThread {
         endTime = System.nanoTime();
         totalTime = endTime - startTime;
 
-        System.out.println("avg size : " + counter.get()/nbThreads);
+        if (detailed)
+            System.out.println("\n");
+
         return totalTime;
     }
 
@@ -98,9 +112,12 @@ public class CompteurDeMotsMultiThread {
         Map<String, Integer> compteurGlobale = new HashMap<>();
         AtomicInteger counter = new AtomicInteger(0);
 
+        if (detailed)
+            System.out.println("compute synchronyzed : \n");
 
         for (int i = 0; i < nbThreads; i++) {
-
+            if (detailed)
+                System.out.println("nb de mot à compter par le thread "+i+" :"+mots.get(i).length);
             int finalI = i;
             taches.add(() -> {
                 HashMap<String,Integer> compteurLocale = new HashMap<>();
@@ -111,9 +128,14 @@ public class CompteurDeMotsMultiThread {
                 synchronized (compteurGlobale) {
                     compteurLocale.forEach((m, c) -> compteurGlobale.merge(m, c, Integer::sum));
                 }
-                counter.addAndGet(compteurLocale.size());
+
+                if (detailed)
+                    System.out.println("nb de mot different pour le thread "+finalI+" : " + compteurLocale.size());
             });
         }
+
+        if (detailed)
+            System.out.println("\n");
 
         long totalTime, endTime, startTime = System.nanoTime();
 
@@ -127,10 +149,12 @@ public class CompteurDeMotsMultiThread {
             e.printStackTrace();
         }
 
+        if (detailed)
+            System.out.println("\n");
+
         endTime = System.nanoTime();
         totalTime = endTime - startTime;
 
-        System.out.println("avg size : " + counter.get()/nbThreads);
         return totalTime;
     }
 
