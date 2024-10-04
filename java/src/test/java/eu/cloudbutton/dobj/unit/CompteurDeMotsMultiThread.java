@@ -15,25 +15,33 @@ public class CompteurDeMotsMultiThread {
         for (int i = 0; i < nbThreads; i++)
             textes.add(new StringBuilder());
 
+        String regex = "^[a-zA-Z-]+$";
+
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
             String ligne;
             long i = 0;
             while ((ligne = reader.readLine()) != null) {
-                if (!ligne.isEmpty()) {
-                    textes.get((int) (i % nbThreads)).append(ligne);
+                if (!ligne.isEmpty() || ligne.matches(regex)) {
+                    textes.get((int) (i % nbThreads)).append(ligne.replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", ""));
                     i++;
                 }
             }
         }
 
-        int nbTest = 30;
+        ArrayList<String[]> mots = new ArrayList<>();
+
+        for (int i = 0; i < nbThreads; i++)
+            mots.add(textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+"));
+
+
+        int nbTest = 1;
         long val_synchronyzed = 0, val_obj_conc = 0;
 
         for (int i = 0; i < nbTest; i++) {
 //            System.out.print("sync : ");
-            val_synchronyzed += parallel_synchronyzed(textes, nbThreads);
+            val_synchronyzed += parallel_synchronyzed(mots, nbThreads);
 //            System.out.print("conc : ");
-            val_obj_conc += parallel_conc_obj(textes, nbThreads);
+            val_obj_conc += parallel_conc_obj(mots, nbThreads);
         }
 
         System.out.println("Temps de calcul synchronyzed: " + (double) (val_synchronyzed/nbTest) / 1_000_000_000 + " seconds");
@@ -43,27 +51,25 @@ public class CompteurDeMotsMultiThread {
 //        System.out.println("Nombre total de mots : " + totalMots);
     }
 
-    public static long parallel_conc_obj(ArrayList<StringBuilder> textes, int nbThreads){
+    public static long parallel_conc_obj(ArrayList<String[]> mots, int nbThreads){
         ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
         ArrayList<Runnable> taches = new ArrayList<>();
         Map<String, AtomicInteger> compteurGlobale = new ConcurrentHashMap<>();
-        String regex = "^[a-zA-Z-]+$";
+        AtomicInteger counter = new AtomicInteger(0);
 
         for (int i = 0; i < nbThreads; i++) {
 
-            String[] mots = textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+");
-
+            int finalI = i;
             taches.add(() -> {
                 HashMap<String,Integer> compteurLocale = new HashMap<>();
-                for (String s : mots) {
-                    String mot = s.replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
-                    if (mot.matches(regex))
-                        compteurLocale.merge(mot, 1,Integer::sum);
-                }
-                compteurLocale.forEach((m, _) -> compteurGlobale.merge(m, new AtomicInteger(1), (ancien, _) -> {
-                    ancien.incrementAndGet();
+                for (String mot : mots.get(finalI))
+                    compteurLocale.merge(mot, 1,Integer::sum);
+
+                compteurLocale.forEach((m, val) -> compteurGlobale.merge(m, new AtomicInteger(1), (ancien, _) -> {
+                    ancien.addAndGet(val);
                     return ancien;
                 }));
+                counter.addAndGet(compteurLocale.size());
             });
         }
 
@@ -82,31 +88,30 @@ public class CompteurDeMotsMultiThread {
         endTime = System.nanoTime();
         totalTime = endTime - startTime;
 
+        System.out.println("avg size : " + counter.get()/nbThreads);
         return totalTime;
     }
 
-    public static long parallel_synchronyzed(ArrayList<StringBuilder> textes, int nbThreads){
+    public static long parallel_synchronyzed(ArrayList<String[]> mots, int nbThreads){
         ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
         ArrayList<Runnable> taches = new ArrayList<>();
         Map<String, Integer> compteurGlobale = new HashMap<>();
-        String regex = "^[a-zA-Z-]+$";
+        AtomicInteger counter = new AtomicInteger(0);
+
 
         for (int i = 0; i < nbThreads; i++) {
 
-            String[] mots = textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+");
+            int finalI = i;
             taches.add(() -> {
                 HashMap<String,Integer> compteurLocale = new HashMap<>();
 
-                for (String s : mots) {
-                    String mot = s.replaceAll("^[^a-zA-Z-]+|[^a-zA-Z-]+$", "");
-                    if (mot.matches(regex)) {
-                        compteurLocale.merge(mot, 1, Integer::sum);
-                    }
-                }
+                for (String mot : mots.get(finalI))
+                    compteurLocale.merge(mot, 1, Integer::sum);
 
                 synchronized (compteurGlobale) {
                     compteurLocale.forEach((m, c) -> compteurGlobale.merge(m, c, Integer::sum));
                 }
+                counter.addAndGet(compteurLocale.size());
             });
         }
 
@@ -125,6 +130,7 @@ public class CompteurDeMotsMultiThread {
         endTime = System.nanoTime();
         totalTime = endTime - startTime;
 
+        System.out.println("avg size : " + counter.get()/nbThreads);
         return totalTime;
     }
 
