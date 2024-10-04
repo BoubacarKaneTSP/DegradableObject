@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CompteurDeMotsMultiThread {
 
-    static boolean detailed = true;
+    static boolean detailed = false;
 
     public static void main(String[] args) throws IOException {
 //        String fileName = "experiences/LoremIpsum.txt";
@@ -37,7 +37,7 @@ public class CompteurDeMotsMultiThread {
             mots.add(textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+"));
 
 
-        int nbTest = 1;
+        int nbTest = 10;
         long val_synchronyzed = 0, val_obj_conc = 0;
 
         for (int i = 0; i < nbTest; i++) {
