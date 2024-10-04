@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CompteurDeMotsMultiThread {
     public static void main(String[] args) throws IOException {
 
-//        String fileName = "experiences/LoremIpsum.txt";
-        String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
+        String fileName = "experiences/LoremIpsum.txt";
+//        String fileName = "/home/bkane/IdeaProjects/DegradableObject/experiences/LoremIpsum.txt";
         int nbThreads = Runtime.getRuntime().availableProcessors();
         ArrayList<StringBuilder> textes = new ArrayList<>();
         for (int i = 0; i < nbThreads; i++)
@@ -19,17 +19,20 @@ public class CompteurDeMotsMultiThread {
             String ligne;
             long i = 0;
             while ((ligne = reader.readLine()) != null) {
-                textes.get((int) (i%nbThreads)).append(ligne);
-                i++;
+                if (!ligne.isEmpty()) {
+                    textes.get((int) (i % nbThreads)).append(ligne);
+                    i++;
+                }
             }
         }
 
-//        long totalTime = parallel_conc_obj(textes, nbThreads);
-        int nbTest = 30;
+        int nbTest = 1;
         long val_synchronyzed = 0, val_obj_conc = 0;
 
         for (int i = 0; i < nbTest; i++) {
+//            System.out.print("sync : ");
             val_synchronyzed += parallel_synchronyzed(textes, nbThreads);
+//            System.out.print("conc : ");
             val_obj_conc += parallel_conc_obj(textes, nbThreads);
         }
 
@@ -57,7 +60,6 @@ public class CompteurDeMotsMultiThread {
                     if (mot.matches(regex))
                         compteurLocale.merge(mot, 1,Integer::sum);
                 }
-                System.out.println("size locale : " + compteurLocale.size());
                 compteurLocale.forEach((m, _) -> compteurGlobale.merge(m, new AtomicInteger(1), (ancien, _) -> {
                     ancien.incrementAndGet();
                     return ancien;
@@ -92,7 +94,6 @@ public class CompteurDeMotsMultiThread {
         for (int i = 0; i < nbThreads; i++) {
 
             String[] mots = textes.get(i).toString().replaceAll("[^a-zA-Z\\s-]", "").trim().split("\\s+");
-
             taches.add(() -> {
                 HashMap<String,Integer> compteurLocale = new HashMap<>();
 
@@ -104,7 +105,6 @@ public class CompteurDeMotsMultiThread {
                 }
 
                 synchronized (compteurGlobale) {
-                    System.out.println("size locale : " + compteurLocale.size());
                     compteurLocale.forEach((m, c) -> compteurGlobale.merge(m, c, Integer::sum));
                 }
             });
