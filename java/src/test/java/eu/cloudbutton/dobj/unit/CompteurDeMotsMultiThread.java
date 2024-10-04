@@ -57,6 +57,7 @@ public class CompteurDeMotsMultiThread {
                     if (mot.matches(regex))
                         compteurLocale.merge(mot, 1,Integer::sum);
                 }
+                System.out.println("size locale : " + compteurLocale.size());
                 compteurLocale.forEach((m, _) -> compteurGlobale.merge(m, new AtomicInteger(1), (ancien, _) -> {
                     ancien.incrementAndGet();
                     return ancien;
@@ -103,6 +104,7 @@ public class CompteurDeMotsMultiThread {
                 }
 
                 synchronized (compteurGlobale) {
+                    System.out.println("size locale : " + compteurLocale.size());
                     compteurLocale.forEach((m, c) -> compteurGlobale.merge(m, c, Integer::sum));
                 }
             });
