@@ -26,7 +26,7 @@ public class CompteurDeMotsMultiThread {
             }
         }
 
-        int nbTest = 1;
+        int nbTest = 30;
         long val_synchronyzed = 0, val_obj_conc = 0;
 
         for (int i = 0; i < nbTest; i++) {
