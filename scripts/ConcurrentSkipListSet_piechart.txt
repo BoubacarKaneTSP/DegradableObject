@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+\def\printonlylargeenough#1#2{\unless\ifdim#2pt<#1pt\relax
+#2\printnumbertrue
+\else
+\printnumberfalse
+\fi}
+\newif\ifprintnumber
+\pie[radius=4,before number=\printonlylargeenough{5}, after number=\ifprintnumber\%\fi]{
+25.78/add, 25.0/contains, 14.84/remove, 9.38/size, 7.81/clear, 7.03/isempty, 2.34/, 1.56/, 1.56/, 1.56/, 3.12/, }
+\end{tikzpicture}
