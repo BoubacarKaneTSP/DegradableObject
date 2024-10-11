@@ -1,70 +1,84 @@
-import re
-from collections import Counter
-import argparse
 import os
+import re
+import shutil
+import tempfile
+import argparse
+from git import Repo
 
-def create_pie_chart(word_counts, clazz):
+def find_java_files(directory):
+    java_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".java"):
+                java_files.append(os.path.join(root, file))
+    return java_files
 
-    with open(clazz+"_piechart.txt", 'w') as out:
-        out.write("\\begin{tikzpicture}\n")
-        out.write("\\def\\printonlylargeenough#1#2{\\unless\\ifdim#2pt<#1pt\\relax\n")
-        out.write("#2\\printnumbertrue\n")
-        out.write("\\else\n")
-        out.write("\\printnumberfalse\n")
-        out.write("\\fi}\n")
-        out.write("\\newif\\ifprintnumber\n")
-        out.write("\\pie[radius=4,before number=\\printonlylargeenough{5}, after number=\\ifprintnumber\\%\\fi]{\n")
-        for word, count in word_counts.items():
-            if count >= 5 :
-                out.write(str(count)+"/"+word+", ")
-            else:
-                out.write(str(count)+"/, ")
-        out.write("}\n")
-        out.write("\\end{tikzpicture}\n")
-
-def count_word_occurrences(file_path):
+def analyze_file(file_path, clazz):
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
 
-    clazz = os.path.basename(file_path)[:-4]
+    matches = re.findall(rf'[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*new\s+{clazz}', content)
 
-    words = re.findall(r'\b\+?(\w+)\b', content.lower())  # Extraction des mots sans le symbole +
+    if matches:
+        var_names = [match.split('=')[0].strip() for match in matches]
 
-    word_counts = Counter(words)
+        for var in var_names:
+            is_private = re.search(rf'private\s+[^\n]*\b{var}\b', content)
+            is_private_str = "Y" if is_private else "N"
 
-    total_words = sum(word_counts.values())
+            methods = re.findall(rf'{var}\.(\w+)\(', content)
+            methods = sorted(list(methods))
 
-    raw_percentages = {word: round((count / total_words) * 100, 2) for word, count in word_counts.most_common()}
+            results = []
+            for method in methods:
+                method_usage = re.search(rf'return\s+{var}\.{method}\(|=\s*{var}\.{method}\(', content)
+                method_str = f"+{method}" if method_usage else method
+                results.append(method_str)
 
-    count_others = 0
-    sumup_words = dict()
+            write_results_to_file(clazz, is_private_str, results)
 
-    for word, count in raw_percentages.items():
-        if count >= 1:
-            sumup_words[word] = count
-        else:
-            count_others += count
+def write_results_to_file(clazz, is_private_str, methods):
+    filename = f"{clazz}.txt"
+    with open(filename, 'a') as f:
+        if is_private_str == "Y":
+            for method in methods:
+                f.write(f"{method} ")
 
-    sumup_words["autres"] = round(count_others,2)
+def extract_imports(file_path):
+    imports = []
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            if line.strip().startswith("import"):
+                imports.append(line.strip())
 
-    # rounded_percentages = {word: round(percentage) for word, percentage in raw_percentages.items()}
+    file_name = os.path.basename(file_path).replace('.java', '')
+    with open('liste_import_'+file_name+'.txt', 'a') as f:
+        for imp in imports:
+            f.write(f"{imp}\n")
 
-    # total_rounded = sum(rounded_percentages.values())
-    # difference = 100 - total_rounded
+def main(repo_url, list_clazz):
+    TMPDIR = tempfile.mkdtemp()
 
-    # if difference != 0:
-    #     sorted_words = sorted(raw_percentages, key=lambda word: raw_percentages[word] - rounded_percentages[word], reverse=True)
-    #     for i in range(abs(difference)):
-    #         word_to_adjust = sorted_words[i]
-    #         rounded_percentages[word_to_adjust] += (1 if difference > 0 else -1)
+    software = repo_url.split('/')[-1]
+    repo_path = os.path.join(TMPDIR, software)
+    print(f"Cloning {repo_url} into {repo_path}...")
+    Repo.clone_from(repo_url, repo_path)
 
-    create_pie_chart(sumup_words, clazz)
+    java_files = find_java_files(repo_path)
 
-# Lecture des arguments de la ligne de commande
+    for java_file in java_files:
+        extract_imports(java_file)
+        for clazz in list_clazz:
+            analyze_file(java_file, clazz)
+
+    shutil.rmtree(repo_path)
+    shutil.rmtree(TMPDIR)
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Count occurrences of each word in a file.")
-    parser.add_argument("-f", dest="file_path", help="The path to the file to analyze.")
+    parser = argparse.ArgumentParser(description="Analyse Java files for class instantiations and methods.")
+    parser.add_argument("-r", dest="repo_url", help="The URL of the git repository to clone.")
+    parser.add_argument("-c", dest="clazz", action="append", type=str, help="The Java class to search for (e.g., AtomicReference).")
 
     args = parser.parse_args()
 
-    count_word_occurrences(args.file_path)
+    main(args.repo_url, args.clazz)
