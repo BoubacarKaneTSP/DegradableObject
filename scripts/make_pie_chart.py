@@ -15,7 +15,7 @@ def create_pie_chart(word_counts, clazz):
         out.write("\\newif\\ifprintnumber\n")
         out.write("\\pie[radius=4,before number=\\printonlylargeenough{5}, after number=\\ifprintnumber\\%\\fi]{\n")
         for word, count in word_counts.items():
-            if count >= 5 :
+            if count >= 5 or word == "autres":
                 out.write(str(count)+"/"+word+", ")
             else:
                 out.write(str(count)+"/, ")

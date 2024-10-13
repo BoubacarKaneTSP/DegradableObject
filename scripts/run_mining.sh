@@ -57,7 +57,7 @@ repos=(
 classes=(
     "ConcurrentLinkedQueue"
     "ConcurrentHashMap"
-    "AtomicReference"
+    "AtomicLong"
     "ConcurrentSkipListSet"
 )
 

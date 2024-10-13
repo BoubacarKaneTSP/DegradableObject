@@ -6,5 +6,5 @@
 \fi}
 \newif\ifprintnumber
 \pie[radius=4,before number=\printonlylargeenough{5}, after number=\ifprintnumber\%\fi]{
-25.81/get, 17.66/put, 12.52/remove, 7.65/values, 5.13/containskey, 4.79/, 4.64/, 4.41/, 3.85/, 3.51/, 2.87/, 1.7/, 1.44/, 4.13/, }
+25.81/get, 17.66/put, 12.52/remove, 7.65/values, 5.13/containskey, 4.79/, 4.64/, 4.41/, 3.85/, 3.51/, 2.87/, 1.7/, 1.44/, 4.13/autres }
 \end{tikzpicture}
