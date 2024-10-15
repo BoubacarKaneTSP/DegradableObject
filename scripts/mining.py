@@ -201,7 +201,7 @@ def main(repo_url, list_clazz, evolution):
                         filename = f"yearly_evolution_{clazz}.txt"
 
                         with open(filename, 'a') as f:
-                            f.write(str(year) + " " + str(nb_match[clazz]/nb_all_match) + "\n")
+                            f.write(str(year) + " " + str((nb_match[clazz]/nb_all_match)*100) + "\n")
                 else:
                     print(f"No commit found for the year {year}")
     else:
