@@ -191,7 +191,8 @@ def main(repo_url, list_clazz, evolution):
                     print(f"Checked out commit {target_commit.hexsha} from {year}")
                     java_files = find_java_files(repo_path)
                     for java_file in java_files:
-                        _, nb_all_match += analyze_file(java_file, "default")
+                        _, nb = analyze_file(java_file, "default")
+                        nb_all_match += nb
                         for clazz in list_clazz:
                             nb_match[clazz] += analyze_file(java_file, clazz)
 
