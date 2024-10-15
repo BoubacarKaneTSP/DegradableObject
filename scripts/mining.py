@@ -23,6 +23,9 @@ def analyze_file(file_path, clazz):
     # Trouver les instances de la classe
     matches = re.findall(rf'[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*new\s+{clazz}', content)
 
+    # Trouver toutes instances
+    all_matches = re.findall(rf'[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*new\s', content)
+
     if matches:
         var_names = [match.split('=')[0].strip() for match in matches]
 
@@ -46,7 +49,7 @@ def analyze_file(file_path, clazz):
             # Écriture des résultats dans un fichier texte
             write_results_to_file(clazz, class_name, is_private_str, results)
 
-    return len(matches)
+    return len(matches), len(all_matches)
 
 # Fonction pour écrire les méthodes dans un fichier
 def write_results_to_file(clazz, class_name, is_private_str, methods):
@@ -172,6 +175,7 @@ def main(repo_url, list_clazz, evolution):
                 year = current_year - i
                 target_commit = None
                 nb_match = dict()
+                nb_all_match = 0
                 for clazz in list_clazz:
                     nb_match[clazz] = 0
 
@@ -187,7 +191,7 @@ def main(repo_url, list_clazz, evolution):
                     print(f"Checked out commit {target_commit.hexsha} from {year}")
                     java_files = find_java_files(repo_path)
                     for java_file in java_files:
-
+                        _, nb_all_match += analyze_file(java_file, "default")
                         for clazz in list_clazz:
                             nb_match[clazz] += analyze_file(java_file, clazz)
 
@@ -195,7 +199,7 @@ def main(repo_url, list_clazz, evolution):
                         filename = f"yearly_evolution_{clazz}.txt"
 
                         with open(filename, 'a') as f:
-                            f.write(str(year) + " " + str(nb_match[clazz]) + "\n")
+                            f.write(str(year) + " " + str(nb_match[clazz]/nb_all_match) + "\n")
                 else:
                     print(f"No commit found for the year {year}")
     else:
