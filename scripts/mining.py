@@ -194,7 +194,8 @@ def main(repo_url, list_clazz, evolution):
                         _, nb = analyze_file(java_file, "default")
                         nb_all_match += nb
                         for clazz in list_clazz:
-                            nb_match[clazz] += analyze_file(java_file, clazz)
+                            nb, _ = analyze_file(java_file, clazz)
+                            nb_match[clazz] += nb
 
                     for clazz in list_clazz:
                         filename = f"yearly_evolution_{clazz}.txt"
