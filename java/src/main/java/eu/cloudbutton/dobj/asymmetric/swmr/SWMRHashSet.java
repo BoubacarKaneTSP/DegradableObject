@@ -1,11 +1,9 @@
 package eu.cloudbutton.dobj.asymmetric.swmr;
 
 import eu.cloudbutton.dobj.asymmetric.swmr.map.SWMRHashMap;
-import eu.cloudbutton.dobj.javaobj.ConcHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class SWMRHashSet<E> extends AbstractSet<E> implements Set<E> {
 
