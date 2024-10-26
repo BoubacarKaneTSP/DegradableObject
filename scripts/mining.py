@@ -1,10 +1,14 @@
-import datetime
+from collections import defaultdict
 import os
+from pathlib import Path
 import re
-import shutil
+import subprocess
+import javalang
+import git
 import tempfile
+import shutil
 import argparse
-from git import Repo
+from datetime import datetime
 
 # Fonction pour trouver les fichiers Java
 def find_java_files(directory):
@@ -309,7 +313,7 @@ if __name__ == "__main__":
     parser.add_argument("-r", dest="repo_url", help="The URL of the git repository to clone.")
     parser.add_argument("-c", dest="clazz", action="append", type=str, help="The Java class to search for (e.g., AtomicReference).")
     parser.add_argument("-e", dest="evolution", action='store_true', help="Check the nb of declaration of clazz in the last 10 years")
-    parser.add_argument("-h", dest="hot", action='store_true', help="Check the 20 most updated java file in the last 10 years")
+    parser.add_argument("-hot", dest="hot", action='store_true', help="Check the 20 most updated java file in the last 10 years")
 
     args = parser.parse_args()
 
