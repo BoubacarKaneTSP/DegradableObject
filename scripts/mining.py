@@ -152,8 +152,87 @@ def get_repo_age(repo):
     oldest_commit_year = datetime.datetime.fromtimestamp(oldest_commit.committed_date).year
     return oldest_commit_year
 
-# Fonction principale
-def main(repo_url, list_clazz, evolution):
+def analyze_hot_files(repo_url):
+    # Nom du répertoire et du fichier d'analyse
+    repo_name = repo_url.split("/")[-1].replace(".git", "")
+    analysis_dir = Path("analyse_hot_file").resolve()
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    analysis_file = analysis_dir / f"{repo_name}_analysis.txt"
+
+    # Cloner le dépôt dans un répertoire temporaire
+    repo_dir = Path(f"/tmp/{repo_name}")
+
+    # Bloc try/except/finally pour garantir la suppression du répertoire temporaire
+    try:
+        # Nettoyage si le dossier existe déjà
+        if repo_dir.exists():
+            subprocess.run(["rm", "-rf", str(repo_dir)], check=True)
+
+        # Clonage du dépôt
+        subprocess.run(["git", "clone", repo_url, str(repo_dir)], check=True)
+
+        # Se déplacer dans le répertoire cloné
+        os.chdir(repo_dir)
+
+        # Commande pour obtenir les 20 fichiers les plus modifiés sur 10 ans (ou moins)
+        git_command = (
+            "git log --since=10.years.ago --numstat "
+            "| awk '/^[0-9-]+/{ print $NF}' | grep '.java$' | sort | uniq -c | sort -nr | head -n 20"
+        )
+        result = subprocess.run(git_command, shell=True, capture_output=True, text=True, check=True)
+
+        # Analyse des résultats
+        files_info = []
+        for line in result.stdout.splitlines():
+            count, file_path = line.strip().split(maxsplit=1)
+            count = int(count)
+
+            # Récupérer le dernier commit dans lequel le fichier existe réellement
+            git_exist_commit_cmd = f"git log -1 --format='%H' -- {file_path}"
+            commit_result = subprocess.run(git_exist_commit_cmd, shell=True, capture_output=True, text=True)
+
+            # Vérifier si le commit existe pour ce fichier
+            last_commit_hash = commit_result.stdout.strip()
+            if not last_commit_hash:
+                print(f"File {file_path} does not exist in any commit in the past 10 years.")
+                continue
+
+            # Utiliser `git show` pour extraire le contenu du fichier à partir du dernier commit existant
+            git_show_cmd = f"git show {last_commit_hash}:{file_path}"
+            file_content_result = subprocess.run(git_show_cmd, shell=True, capture_output=True, text=True)
+
+            # Vérifier si le fichier a pu être récupéré correctement
+            if file_content_result.returncode != 0:
+                print(f"Could not retrieve content for {file_path} in commit {last_commit_hash}")
+                continue
+
+            file_content = file_content_result.stdout
+
+            # Vérifier si le fichier importe "java.util.concurrent"
+            if re.search(r"import\s+java\.util\.concurrent(\.\*|(\.[A-Za-z0-9_]+)?);", file_content):
+                concurrent_import = "+"
+            else:
+                concurrent_import = "-"
+
+            files_info.append((count, file_path, concurrent_import))
+
+        # Enregistrement des résultats
+        with open(analysis_file, "w") as f:
+            for count, file_path, concurrent_import in files_info:
+                f.write(f"{count} {file_path} {concurrent_import}\n")
+
+        print(f"Analysis saved to {analysis_file}")
+
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred during processing: {e}")
+
+    finally:
+        # Nettoyage du répertoire cloné, même en cas d'erreur
+        if repo_dir.exists():
+            subprocess.run(["rm", "-rf", str(repo_dir)])
+        print(f"Temporary directory {repo_dir} has been cleaned up.")
+
+def main(repo_url, list_clazz, evolution, hot):
     TMPDIR = tempfile.mkdtemp()
 
     # Cloner le dépôt dans un répertoire temporaire
@@ -230,8 +309,12 @@ if __name__ == "__main__":
     parser.add_argument("-r", dest="repo_url", help="The URL of the git repository to clone.")
     parser.add_argument("-c", dest="clazz", action="append", type=str, help="The Java class to search for (e.g., AtomicReference).")
     parser.add_argument("-e", dest="evolution", action='store_true', help="Check the nb of declaration of clazz in the last 10 years")
+    parser.add_argument("-h", dest="hot", action='store_true', help="Check the 20 most updated java file in the last 10 years")
 
     args = parser.parse_args()
 
     # Lancer l'analyse avec les paramètres fournis
-    main(args.repo_url, args.clazz, args.evolution)
+    if args.hot:
+        analyze_hot_files(args.repo_url)
+    else:
+        main(args.repo_url, args.clazz, args.evolution, args.hot)
