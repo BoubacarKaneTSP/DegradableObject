@@ -191,8 +191,8 @@ def analyze_hot_files(repo_url):
             count, file_path = line.strip().split(maxsplit=1)
             count = int(count)
 
-            # Récupérer tous les commits où le fichier apparaît
-            git_all_commits_cmd = f"git log --format='%H' -- {file_path}"
+            # Récupérer tous les commits où le fichier apparaît en utilisant --follow pour traquer les renommages
+            git_all_commits_cmd = f"git log --format='%H' --follow -- {file_path}"
             commit_result = subprocess.run(git_all_commits_cmd, shell=True, capture_output=True, text=True)
 
             # Vérifier les commits pour obtenir le plus récent où le fichier existe
@@ -212,7 +212,7 @@ def analyze_hot_files(repo_url):
 
             # Vérifier si un commit valide a été trouvé
             if not last_commit_hash:
-                print(f"File {file_path} does not exist in any recent commit.")
+                print(f"File {file_path} does not exist in any recent commit, even with --follow.")
                 continue
 
             # Vérifier si le fichier importe "java.util.concurrent"
