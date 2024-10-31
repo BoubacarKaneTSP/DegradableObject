@@ -45,19 +45,22 @@ def format_matrix_for_tikz(matrix):
     formatted_output += "};\n"
     return formatted_output
 
-def sort_matrix_columns_by_nan(matrix):
-    nan_counts = np.isnan(matrix).sum(axis=0)  # Compter les `nan` dans chaque colonne
-    sorted_indices = np.argsort(nan_counts)    # Indices triés par nombre croissant de `nan`
+def sort_matrix_columns_by_plus(matrix):
+    plus_counts = (matrix > 0).sum(axis=0)  # Compter les signes '+' dans chaque colonne
+    sorted_indices = np.argsort(plus_counts)[::-1]  # Indices triés par nombre décroissant de '+'
     return matrix[:, sorted_indices]
 
 # Exemple d'utilisation
-input_dir = 'analyse_hot_file_sorted'  # Dossier d'entrée contenant les fichiers à analyser
+input_dir = 'analyse_hot_file'  # Dossier d'entrée contenant les fichiers à analyser
 matrix_plus, matrix_minus = process_files_in_directory(input_dir)
+
+# Trier les matrices en fonction du nombre de signes '+'
+sorted_matrix_plus = sort_matrix_columns_by_plus(matrix_plus)
+sorted_matrix_minus = sort_matrix_columns_by_plus(matrix_minus)
 
 # Afficher les matrices formatées pour TikZ
 print("Matrice pour les fichiers avec signe '+':")
-print(format_matrix_for_tikz(matrix_plus))
+print(format_matrix_for_tikz(sorted_matrix_plus))
 
 print("Matrice pour les fichiers avec signe '-':")
-print(format_matrix_for_tikz(matrix_minus))
-
+print(format_matrix_for_tikz(sorted_matrix_minus))
