@@ -192,16 +192,20 @@ def analyze_hot_files(repo_url):
             count = int(count)
 
             # Récupérer tous les commits où le fichier apparaît
-            git_all_commits_cmd = f"git log --name-only --format='%H' -- {file_path}"
+            git_all_commits_cmd = f"git log --format='%H' -- {file_path}"
             commit_result = subprocess.run(git_all_commits_cmd, shell=True, capture_output=True, text=True)
 
             # Vérifier les commits pour obtenir le plus récent où le fichier existe
             all_commits = commit_result.stdout.strip().splitlines()
             last_commit_hash = None
+            file_content = None
+
             for commit_hash in all_commits:
                 git_show_cmd = f"git show {commit_hash}:{file_path}"
                 file_content_result = subprocess.run(git_show_cmd, shell=True, capture_output=True, text=True)
-                if file_content_result.returncode == 0:  # Vérifie que le contenu est récupéré avec succès
+
+                # Si le fichier est trouvé dans ce commit, on garde ce commit et le contenu puis on arrête la boucle
+                if file_content_result.returncode == 0:
                     last_commit_hash = commit_hash
                     file_content = file_content_result.stdout
                     break
@@ -210,10 +214,6 @@ def analyze_hot_files(repo_url):
             if not last_commit_hash:
                 print(f"File {file_path} does not exist in any recent commit.")
                 continue
-            else:
-                # Le fichier existe dans le commit `last_commit_hash`, continuer l'analyse
-                print(f"File {file_path} found in commit {last_commit_hash}.")
-                # Analyse du contenu récupéré (file_content) pour la suite
 
             # Vérifier si le fichier importe "java.util.concurrent"
             if re.search(r"import\s+java\.util\.concurrent(\.\*|(\.[A-Za-z0-9_]+)?);", file_content):
