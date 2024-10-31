@@ -6,7 +6,7 @@ repos=(
     "https://github.com/apache/cassandra"
     "https://github.com/apache/dubbo"
     "https://github.com/apache/kafka"
-    "https://github.com/apache/incubator_seata"
+    #"https://github.com/apache/incubator_seata"
     "https://github.com/apache/flink"
     "https://github.com/apache/skywalking"
     "https://github.com/apache/rocketmq"
@@ -70,5 +70,5 @@ done
 for repo in "${repos[@]}"
 do
     echo "Analyzing repository: ${repo}"
-    python3 mining.py -r "${repo}" ${class_args}
+    python3 mining.py -r "${repo}" ${class_args} -hot
 done

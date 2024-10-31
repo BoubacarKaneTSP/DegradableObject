@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-import javalang
+#import javalang
 import git
 import tempfile
 import shutil
