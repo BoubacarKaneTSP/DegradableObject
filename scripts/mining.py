@@ -191,26 +191,29 @@ def analyze_hot_files(repo_url):
             count, file_path = line.strip().split(maxsplit=1)
             count = int(count)
 
-            # Récupérer le dernier commit dans lequel le fichier existe réellement
-            git_exist_commit_cmd = f"git log -1 --format='%H' -- {file_path}"
-            commit_result = subprocess.run(git_exist_commit_cmd, shell=True, capture_output=True, text=True)
+            # Récupérer tous les commits où le fichier apparaît
+            git_all_commits_cmd = f"git log --name-only --format='%H' -- {file_path}"
+            commit_result = subprocess.run(git_all_commits_cmd, shell=True, capture_output=True, text=True)
 
-            # Vérifier si le commit existe pour ce fichier
-            last_commit_hash = commit_result.stdout.strip()
+            # Vérifier les commits pour obtenir le plus récent où le fichier existe
+            all_commits = commit_result.stdout.strip().splitlines()
+            last_commit_hash = None
+            for commit_hash in all_commits:
+                git_show_cmd = f"git show {commit_hash}:{file_path}"
+                file_content_result = subprocess.run(git_show_cmd, shell=True, capture_output=True, text=True)
+                if file_content_result.returncode == 0:  # Vérifie que le contenu est récupéré avec succès
+                    last_commit_hash = commit_hash
+                    file_content = file_content_result.stdout
+                    break
+
+            # Vérifier si un commit valide a été trouvé
             if not last_commit_hash:
-                print(f"File {file_path} does not exist in any commit in the past 10 years.")
+                print(f"File {file_path} does not exist in any recent commit.")
                 continue
-
-            # Utiliser `git show` pour extraire le contenu du fichier à partir du dernier commit existant
-            git_show_cmd = f"git show {last_commit_hash}:{file_path}"
-            file_content_result = subprocess.run(git_show_cmd, shell=True, capture_output=True, text=True)
-
-            # Vérifier si le fichier a pu être récupéré correctement
-            if file_content_result.returncode != 0:
-                print(f"Could not retrieve content for {file_path} in commit {last_commit_hash}")
-                continue
-
-            file_content = file_content_result.stdout
+            else:
+                # Le fichier existe dans le commit `last_commit_hash`, continuer l'analyse
+                print(f"File {file_path} found in commit {last_commit_hash}.")
+                # Analyse du contenu récupéré (file_content) pour la suite
 
             # Vérifier si le fichier importe "java.util.concurrent"
             if re.search(r"import\s+java\.util\.concurrent(\.\*|(\.[A-Za-z0-9_]+)?);", file_content):
