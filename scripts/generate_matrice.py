@@ -23,6 +23,8 @@ def process_files_in_directory(input_dir):
     # Trier les fichiers en fonction du nombre de signes '+' (décroissant)
     file_plus_counts.sort(key=lambda x: x[1], reverse=True)
 
+    print(file_plus_counts)
+
     # Initialiser les matrices avec `nan`
     matrix_plus = np.full((project_count, max_lines), np.nan)
     matrix_minus = np.full((project_count, max_lines), np.nan)
@@ -65,8 +67,8 @@ input_dir = 'analyse_hot_file_sorted'  # Dossier d'entrée contenant les fichier
 matrix_plus, matrix_minus = process_files_in_directory(input_dir)
 
 # Afficher les matrices formatées pour TikZ
-print("Matrice pour les fichiers avec signe '+':")
-print(format_matrix_for_tikz(matrix_plus))
-
-print("Matrice pour les fichiers avec signe '-':")
-print(format_matrix_for_tikz(matrix_minus))
+# print("Matrice pour les fichiers avec signe '+':")
+# print(format_matrix_for_tikz(matrix_plus))
+#
+# print("Matrice pour les fichiers avec signe '-':")
+# print(format_matrix_for_tikz(matrix_minus))
