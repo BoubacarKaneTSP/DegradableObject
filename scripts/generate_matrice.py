@@ -1,7 +1,8 @@
+import os
 import numpy as np
 
 def process_files_in_directory(input_dir):
-    files = sorted(os.listdir(input_dir), key=lambda f: sum(1 for _ in open(os.path.join(input_dir, f))), reverse=True)
+    files = os.listdir(input_dir)  # Récupérer tous les fichiers
     project_count = len(files)
     max_lines = 0
 
@@ -22,12 +23,12 @@ def process_files_in_directory(input_dir):
     # Trier les fichiers en fonction du nombre de signes '+' (décroissant)
     file_plus_counts.sort(key=lambda x: x[1], reverse=True)
 
-    # Initialiser les matrices avec nan
+    # Initialiser les matrices avec `nan`
     matrix_plus = np.full((project_count, max_lines), np.nan)
     matrix_minus = np.full((project_count, max_lines), np.nan)
 
-    # Parcourir chaque fichier et remplir les matrices
-    for x, filename in enumerate(file_plus_counts):
+    # Parcourir chaque fichier trié et remplir les matrices
+    for x, (filename, _) in enumerate(file_plus_counts):
         file_path = os.path.join(input_dir, filename)
         with open(file_path, 'r') as file:
             for y, line in enumerate(file):
