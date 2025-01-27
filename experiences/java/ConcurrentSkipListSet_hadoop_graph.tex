@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+\begin{axis}[scatter/classes={U={mark=+,red}, NU={mark=x,blue}}, legend pos=outer north east,axis x line=bottom, axis y line=left, enlarge x limits=true, xlabel = {Classes}, ylabel = {Methods}, enlarge y limits=true, xtick = data, xticklabels = {,,},ytick=data, yticklabels={add,clear,isEmpty,first,remove,addAll}, title={Use of ConcurrentSkipListSet in hadoop}]
+\addplot[scatter,only marks, scatter src=explicit symbolic]
+coordinates {
+(0,0) [NU]
+(0,1) [NU]
+(1,0) [NU]
+(1,1) [NU]
+(1,2) [NU]
+(1,3) [NU]
+(1,4) [NU]
+(2,5) [NU]
+};
+\end{axis}
+\end{tikzpicture}

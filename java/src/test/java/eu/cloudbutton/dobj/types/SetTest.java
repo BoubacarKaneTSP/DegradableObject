@@ -1,55 +1,101 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Factory;
+import eu.cloudbutton.dobj.key.Key;
+import eu.cloudbutton.dobj.key.KeyGenerator;
+import eu.cloudbutton.dobj.key.SimpleKeyGenerator;
+import eu.cloudbutton.dobj.segmented.SegmentedHashSet;
+import eu.cloudbutton.dobj.segmented.SegmentedSkipListSet;
+import eu.cloudbutton.dobj.segmented.SegmentedTreeSet;
+import eu.cloudbutton.dobj.set.ConcurrentHashSet;
+import eu.cloudbutton.dobj.utils.Helpers;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
-import java.util.AbstractList;
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SetTest {
 
+    private static final int MAX_ITEMS_PER_THREAD = Integer.MAX_VALUE;
+    private static final int ITEMS_PER_THREAD = 1_000;
+
     private Factory factory;
+    private KeyGenerator generator;
+    private static int parallelism;
+
+    private static Class[] IMPL = {
+            ConcurrentHashSet.class,
+            SegmentedHashSet.class,
+            SegmentedTreeSet.class,
+            SegmentedSkipListSet.class
+    };
 
     @BeforeTest
     void setUp() {
         factory = new Factory();
+        generator = new SimpleKeyGenerator();
+        parallelism = Runtime.getRuntime().availableProcessors();
     }
 
     @Test
-    void add() throws ExecutionException, InterruptedException {
-        doAdd(factory.createDegradableSet());
-        doAdd(factory.createSet());
+    void test() throws Exception {
+        Arrays.stream(IMPL).sequential().forEach(
+                cls ->
+                {
+                    try {
+                        factory.setFactorySet(cls);
+                        doTest(factory.newSet());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
     }
 
-    private static void doAdd(AbstractSet<String> set) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+    private void doTest(Set set) {
         Callable<Void> callable = () -> {
-            set.add("v1");
-            set.add("v2");
-            set.add("v3");
+            try {
+                List<Key> list = new ArrayList<>();
+                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
+                    for(;;) {if (list.add(generator.nextKey())) break;}
+                }
+                list.stream().forEach(x -> set.add(x));
+                assertEquals(set.containsAll(list), true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
         };
+        Helpers.executeAll(parallelism, callable);
 
-        for (int i = 0; i < 10; i++) {
-            futures.add(executor.submit(callable));
-        }
+        AtomicInteger nbElement = new AtomicInteger();
+        set.stream().forEach(x -> nbElement.getAndIncrement());
+        assertEquals(nbElement.get() == ITEMS_PER_THREAD * parallelism,true);
+        assertEquals(nbElement.get(), set.size());
 
-        for (Future<Void> future :futures){
-            future.get();
-        }
+        callable = () -> {
+            try {
+                List<Key> list = new ArrayList<>();
+                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
+                    for(;;) { if (list.add(generator.nextKey())) break;}
+                }
+                for (int i = 0; i < ITEMS_PER_THREAD; i++) {
+                    set.remove(list.get(i));
+                    assertEquals(set.contains(list.get(i)), false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        };
+        Helpers.executeAll(parallelism, callable);
+        assertEquals(set.size(), ITEMS_PER_THREAD * parallelism);
 
-        java.util.Set<String> result = new HashSet<>();
-        result.add("v1");
-        result.add("v2");
-        result.add("v3");
-
-        assertEquals(set.contains("v1"), true,"error in contains methods");
-        assertEquals(set.contains("v2"), true,"error in contains methods");
-        assertEquals(set.contains("v3"), true,"error in contains methods");
+        set.clear();
+        assertEquals(set.size(), 0);
     }
+
 }

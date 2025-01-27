@@ -1,13 +1,12 @@
 package eu.cloudbutton.dobj.types;
 
+import eu.cloudbutton.dobj.Factory;
+import org.javatuples.Pair;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.*;
-import java.util.AbstractList;
 import java.util.concurrent.*;
-
-import static org.testng.Assert.*;
 
 public class TimelineTest {
 
@@ -18,26 +17,56 @@ public class TimelineTest {
         factory = new Factory();
     }
 
+
     @Test
     void append() throws ExecutionException, InterruptedException {
-//        doAppend(factory.createList());
-//        doAppend(factory.createDegradableList());
-//        doAppend(factory.createListSnapshot());
-//        doAppend(factory.createDegradableLinkedList());
-//        doAppend(factory.createLinkedListSnapshot());
-//        doAppend(factory.createLinkedList());
-//        doAppend(factory.createSecondDegradableList());
-//        doAppend(factory.createThirdDegradableList());
-        doAppend(new ConcurrentLinkedQueue());
-        doAppend(factory.createMapQueue());
+
+        Pair<Integer, Integer> pair1 = new Pair<>(1,2);
+        Pair<Integer, Integer> pair2 = new Pair<>(1,2);
+
+        System.out.println(pair1.equals(pair2));
+//        for (int i = 0; i < 1600000000; i++) {
+//            someMethods();
+////            someOtherMethods();
+//        }
+
+        /*
+        Class cls = Class.forName("ConcurrentLinkedQueue");
+        doAppend(factory.getQueue());
+
+        doAppend(factory
+                .queue(new MapQueue())
+                .build()
+                .getQueue()
+        );*/
+    }
+
+    private void someMethods() throws InterruptedException {
+        for (int i = 0; i < 2000; i++) {
+            Thread.sleep(1);
+        }
+        return;
+    }
+
+    private void someOtherMethods() throws InterruptedException {
+        for (int i = 0; i < 3000; i++) {
+            Thread.sleep(1);
+//            someOtherMethods2();
+        }
+    }
+
+    private void someOtherMethods2() throws InterruptedException {
+        for (int i = 0; i < 3000; i++) {
+            Thread.sleep(1);
+        }
     }
 
     private static void doAppend(AbstractQueue list) throws ExecutionException, InterruptedException {
 
-        Timeline timeline = new Timeline(list, new DegradableCounter());
+//        Timeline timeline = new Timeline(list, new DegradableCounter());
 
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-        AbstractList<Future<Void>> futures = new ArrayList<>();
+/*        ExecutorService executor = Executors.newFixedThreadPool(3);
+        List<Future<Void>> futures = new ArrayList<>();
         Callable<Void> callable = () -> {
             timeline.add(1);
             timeline.add(2);
@@ -62,6 +91,6 @@ public class TimelineTest {
 
         System.out.println(timeline.read());
         System.out.println(timeline.read().size());
-        System.out.println();
+        System.out.println();*/
     }
 }

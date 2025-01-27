@@ -1,1 +1,17 @@
-CLASSPATH=target/degradableobject-1.0.jar:target/degradableobject-1.0-tests.jar:target/lib/* java -XX:+UseNUMA -XX:+UseG1GC  eu.cloudbutton.dobj.Benchmark -type Counter -ratios 100 0 -time 10 -nbThreads 64
+#!/usr/bin/env bash
+
+export CLASSPATH="target/degradableobject-1.0.jar:target/degradableobject-1.0-tests.jar:target/lib/*"
+
+type=$1
+time=$2
+nbThreads=$3
+nbOps=$4
+
+java -Xlog:gc -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended -ea --add-opens java.base/java.lang=ALL-UNNAMED --enable-preview \
+     eu.cloudbutton.dobj.benchmark.Microbenchmark \
+     -type $type \
+     -nbThreads $nbThreads \
+     -time $time \
+     -nbOps $nbOps \
+     -quickTest \
+     -p

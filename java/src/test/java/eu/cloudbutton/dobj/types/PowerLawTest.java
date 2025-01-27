@@ -1,63 +1,147 @@
 package eu.cloudbutton.dobj.types;
 
 
-import nl.peterbloem.powerlaws.Discrete;
 import nl.peterbloem.powerlaws.DiscreteApproximate;
-import org.testng.annotations.BeforeTest;
+import org.apache.commons.math3.distribution.ParetoDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.RandomGeneratorFactory;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PowerLawTest {
 
-
-    private Factory factory;
-
-    @BeforeTest
-    void setUp() {
-        factory = new Factory();
-    }
-
     @Test
     void add() {
-        List<Double> listAlpha = new ArrayList<>();
 
-        for (double i = 1.315 ; i <= 1.315; i+=0.025) {
-            listAlpha.add(i);
-        }
+        double SCALE = 1, SHAPE = 0.1;
+        int numValues = 100000;
+        List<Double> doubleValues = new ArrayList<>();
+        List<Integer> values = new ArrayList<>();
+        double desiredMaxValue;
 
-        for (double alpha : listAlpha){
-            List<Integer> data = new DiscreteApproximate(1, alpha).generate(1000);
+        if ((numValues*8.4)/100 <= 0)
+            desiredMaxValue = numValues/2;
+        else
+            desiredMaxValue = (numValues*8.4)/100;
 
+        RandomGenerator rand = RandomGeneratorFactory.createRandomGenerator(new Random(94));
+        ParetoDistribution distribution = new ParetoDistribution(rand,SCALE,SHAPE);
 
-            int i = 0, nbMax = 0, max = 600, avg = 0;
-
-
-            for (int val: data){
-                if (val >= max) {
-                    nbMax++;
-                    data.set(i,max);
-                }
-                if (val < 0)
-                    data.set(i, 0);
-                avg += data.get(i);
-                i++;
+        double maxGeneratedValue = 0;
+        for (int i = 0; i < numValues; i++) {
+            double randomValue = distribution.sample();
+            doubleValues.add(randomValue);
+            if (randomValue > maxGeneratedValue) {
+                maxGeneratedValue = randomValue;
             }
-
-            Collections.sort(data);
-            System.out.println(data);
-            System.out.println();
-            System.out.println("======= " + alpha + " =======");
-            System.out.println("max : " + Collections.max(data) + " => " + Collections.max(data)/ 1000000.0 * 100 +"%");
-            System.out.println("Q1 : " + data.get(data.size()/4) + " => " + data.get(data.size()/4) / 1000000.0 * 100 +"%");
-            System.out.println("médiane : " + data.get(data.size()/2) + " => " + data.get(data.size()/2) / 1000000.0 * 100 +"%");
-            System.out.println("Q3 : " + data.get(3*data.size()/4) + " => " + data.get(3*data.size()/4) / 1000000.0 * 100 +"%");
-            System.out.println("nbMax : " + nbMax);
-            System.out.println("avg : " + avg/data.size());
         }
 
+        double scaleFactor = desiredMaxValue / maxGeneratedValue;
+
+        for (int i = 0; i < numValues; i++) {
+            double scaledValue = doubleValues.get(i) ;//* scaleFactor;
+            values.add((int) Math.round(scaledValue));
+        }
+
+//        System.out.println(Collections.max(values));
+
+        int maxFollower, maxFollowing;
+
+        maxFollower = (int) (0.084 * numValues);
+        maxFollowing = (int) (0.0043 * numValues);
+
+//        System.out.println("maxFollowers = " + maxFollower);
+//        System.out.println("maxFollowing = " + maxFollowing);
+
+        int i = 0, nbMax = 0;
+        long avg = 0;
+        int j = 0;
+
+        Map<Integer, Integer> countValues = new HashMap<>();
+
+        for (int val: values){
+            /*if (val >= maxFollower) {
+                nbMax++;
+            }
+            if (val>= 0.5*maxFollower)
+                j++;
+            if (val < 0) {
+                values.set(i, 1);
+            }*/
+
+            avg += values.get(i);
+            i++;
+
+            if (!countValues.containsKey(val)){
+                countValues.put(val, 1);
+            }else {
+                countValues.put(val, countValues.get(val) + 1);
+            }
+        }
+
+//        countValues = sortMapByValue(countValues);
+        countValues = sortMapByKey(countValues);
+//        System.out.println(countValues.values());
+
+        for (int k : countValues.keySet()){
+//            if (v>1)
+                System.out.println(k +": " + countValues.get(k));
+        }
+
+        Collections.sort(values);
+
+            System.out.println(values);
+        System.out.println("nb half max : " + j);
+        System.out.println();
+        System.out.println("max : " + Collections.max(values) + " => " + Collections.max(values)/ (double) maxFollower * 100 +"%");
+        System.out.println("Q1 : " + values.get(values.size()/4) + " => " + values.get(values.size()/4) / (double) maxFollower * 100 +"%");
+        System.out.println("médiane : " + values.get(values.size()/2) + " => " + values.get(values.size()/2) / (double) maxFollower * 100 +"%");
+        System.out.println("Q3 : " + values.get(3*values.size()/4) + " => " + values.get(3*values.size()/4) / (double) maxFollower * 100 +"%");
+        System.out.println("nbMax : " + nbMax);
+        System.out.println("avg : " + avg/values.size());
+
+
+ /*       Map<String,Integer> mapTest = new HashMap<>();
+
+        mapTest.put("D", 1);
+        mapTest.put("C", 2);
+        mapTest.put("B", 3);
+        mapTest.put("A", 4);
+
+        System.out.println(mapTest);*/
     }
 
+    public static Map<Integer, Integer> sortMapByValue(Map<Integer, Integer> inputMap) {
+        // Convert the inputMap to a List of Map.Entry objects
+        List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
+
+        // Sort the entryList using a custom comparator based on values
+        Collections.sort(entryList, Comparator.comparing(Map.Entry::getValue));
+
+        // Create a new LinkedHashMap to store the sorted entries
+        Map<Integer, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+    public static Map<Integer, Integer> sortMapByKey(Map<Integer, Integer> inputMap) {
+        // Convert the inputMap to a List of Map.Entry objects
+        List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
+
+        // Sort the entryList using a custom comparator based on values
+        Collections.sort(entryList, Map.Entry.comparingByKey());
+
+        // Create a new LinkedHashMap to store the sorted entries
+        Map<Integer, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
 }
