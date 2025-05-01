@@ -11,7 +11,7 @@ benchmarkTime=5
 warmingUpTime=1
 nbHashCode=10000000
 nbOps=10000000
-nbThreads=("1" "80")
+nbThreads=("1" "5" "10" "20" "40" "80")
 
 # ADD, FOLLOW/UNFOLLOW, TWEET, READ, GROUP, PROFILE
 ratio="5 5 15 60 5 10"

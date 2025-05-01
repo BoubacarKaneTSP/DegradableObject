@@ -17,7 +17,7 @@ def generate_latex_file(file_name_avg, file_name_proportion):
     years=("2015", "2018", "2021", "2024")
 
 
-    with open('evolution.tex', 'w') as f:
+    with open('results/evolution.tex', 'w') as f:
         f.write("\\begin{axis}[\n")
         f.write("    ybar,\n")
         f.write("    bar width=0.05\\linewidth,\n")

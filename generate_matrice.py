@@ -70,7 +70,7 @@ tikz_plus = format_matrix_for_tikz(matrix_plus)
 tikz_minus = format_matrix_for_tikz(matrix_minus)
 
 # Save to .tex files
-save_to_file(tikz_plus, 'include_shared_object.tex')
-save_to_file(tikz_minus, 'not_include_shared_object.tex')
+save_to_file(tikz_plus, 'results/include_shared_object.tex')
+save_to_file(tikz_minus, 'results/not_include_shared_object.tex')
 
 print("Files 'include_shared_object.tex' and 'not_include_shared_object.tex' generated successfully.")

@@ -82,7 +82,7 @@ def main():
     output += tikz_blocks[3] + "\n  &\n" + tikz_blocks[0] + "\n"
     output += "\\end{tabular}\n"
 
-    with open("all_pie_charts.tex", "w") as f:
+    with open("results/all_pie_charts.tex", "w") as f:
         f.write(output)
 
     print("Generated all_pie_charts.tex")
