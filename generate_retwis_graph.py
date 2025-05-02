@@ -206,7 +206,7 @@ def get_param(figure_type, xtick_label, xtick, ytick_label, ytick, xlabel, ylabe
     ylabel={{{ylabel}}},
     ytick={ytick},
     ymin=0,
-    ymax=2,
+    ymax=3,
     xlabel={{{xlabel}}},
     xticklabels={{{xtick_label}}},
     xtick={{{xtick[:-1]}}},
@@ -370,6 +370,8 @@ def write_histogram(dico_perf, figure_type):
             plot_param = get_param(figure_type, xticklabels, xtick, yticklabels, ytick, xlabel, ylabel, True)
             plot_param = plot_param.strip()
             plot_param = plot_param[:-2] + ",\n    yticklabel={\\empty},\n    xticklabel={\\empty}\n]"
+            plot_param.replace("SpeedUp","\\empty")
+            plot_param.replace("\\# threads","\\empty")
             out.write(plot_param)
 
             for nbUser in list_nbUsers:

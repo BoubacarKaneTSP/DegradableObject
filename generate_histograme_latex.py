@@ -23,7 +23,7 @@ def generate_latex(file1, file2, file3, file4, output_file):
             out.write("    ybar,\n")
             out.write("    width=0.6\\linewidth,\n")
             out.write("    height=0.6\\textwidth,\n")
-            out.write("    bar width=0.05\\linewidth,\n")
+            out.write("    bar width=0.03\\linewidth,\n")
             if args.update_rate == "25":
                 out.write("    ylabel={\\shortstack{25\\% upd \\\\ Kops/s per thread}},\n")
             elif args.update_rate == "75":
@@ -95,7 +95,7 @@ def generate_latex(file1, file2, file3, file4, output_file):
             out.write("    ybar,\n")
             out.write("    width=0.6\\linewidth,\n")
             out.write("    height=0.6\\textwidth,\n")
-            out.write("    bar width=0.05\\linewidth,\n")
+            out.write("    bar width=0.03\\linewidth,\n")
             out.write("    ymin=0,\n")
             out.write("    ymax=100000,\n")
             out.write("    symbolic x coords={LeftMargin, Unordered, Space, Ordered, RightMargin},\n")

@@ -6,9 +6,9 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 ./test.sh -x
 
-nbTest=2
-benchmarkTime=5
-warmingUpTime=1
+nbTest=10
+benchmarkTime=20
+warmingUpTime=5
 nbHashCode=10000000
 nbOps=10000000
 nbThreads=("1" "5" "10" "20" "40" "80")
@@ -153,8 +153,9 @@ python3.11 generate_retwis_graph.py -f results_retwis_fig_10.txt -o results/retw
 echo "Figure 6"
 initSize=16384
 range=32768
-benchmarkTime=5
-warmingUpTime=1
+benchmarkTime=60
+warmingUpTime=30
+nbTest=30
 objects=("Counter" "CounterIncrementOnly" "LongAdder" "ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
 ratio="100 0 0"
 
@@ -317,3 +318,7 @@ python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p 
 python3.11 generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
 
 ./run_mining.sh
+
+cd results
+pdflatex -interaction=nonstopmode all_figures.tex > /dev/null
+cd ..

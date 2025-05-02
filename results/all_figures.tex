@@ -1,0 +1,157 @@
+
+\documentclass{article}
+\usepackage{xcolor}
+\usepackage{pgf-pie}
+\usepackage{ifthen}
+% \usepackage{graphicx}
+\usepackage{subcaption}
+% \usepackage{adjustbox}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{pgfkeys}
+\usetikzlibrary{matrix}
+\usetikzlibrary{patterns}
+
+\definecolor{MyRoyalBlue}{RGB}{65,105,225}
+\definecolor{MyOrange}{RGB}{255,165,0}
+\definecolor{MyDodgerBlue}{RGB}{30,144,255}
+\definecolor{MyDarkOrange}{RGB}{255,140,0}
+\definecolor{MyMediumSlateBlue}{RGB}{123,104,238}
+\definecolor{MyCoral}{RGB}{255,127,80}
+\definecolor{MyCornflowerBlue}{RGB}{100,149,237}
+\definecolor{MyLightCoral}{RGB}{240,128,128}
+\definecolor{MySteelBlue}{RGB}{70,130,180}
+\definecolor{MyTomato}{RGB}{255,99,71}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\pgfplotsset{
+    colormap={CustomBlue}{
+        color(0cm)=(MyRoyalBlue!50!white),
+        color(1cm)=(MyRoyalBlue!70!white),
+        color(2cm)=(MyRoyalBlue!90!black),
+        color(3cm)=(MyRoyalBlue!70!black),
+        color(4cm)=(MyRoyalBlue!60!black),
+        color(5cm)=(MyRoyalBlue!50!black)
+    },
+    compat=1.18
+}
+
+\pgfplotsset{
+    colormap={CustomOrange}{
+        color(0cm)=(orange!50!white),
+        color(1cm)=(orange!70!white),
+        color(2cm)=(orange!90!black),
+        color(3cm)=(orange!70!black),
+        color(4cm)=(orange!60!black),
+        color(5cm)=(orange!50!black)
+    }
+}
+
+\begin{document}
+
+    \centering
+
+    \begin{figure}
+        \begin{minipage}[b]{0.8\textwidth}
+            \begin{tabular}{l}
+                \begin{tikzpicture}
+                    \input{evolution}
+                \end{tikzpicture}
+
+                \\
+                \input{hotfiles}
+            \end{tabular}
+        \end{minipage}
+        \caption{
+            Number of declarations of shared objects in the ASF projects:
+            \emph{(top)} on average over time, and
+            \emph{(bot)} in the 20 most modified files for the latest version of each project.
+        }
+    \end{figure}
+
+    \begin{figure}
+        \include{all_pie_charts}
+        \caption{
+            Most used methods in the ASF projects.
+        }
+    \end{figure}
+
+    \begin{figure}
+        \hspace{-10.8em}%
+        \begin{tabular}[t]{c c c}
+            \begin{tikzpicture}[baseline={(current axis.north)}]
+            \input{Counter.tex}
+            \end{tikzpicture}
+            &
+            \begin{tikzpicture}[baseline={(current axis.north)}]
+            \input{HashMap.tex}
+            \end{tikzpicture}
+            &
+            \begin{tikzpicture}[baseline={(current axis.north)}]
+            \input{SkipListMap.tex}
+            \end{tikzpicture}
+            \\
+            \begin{tikzpicture}[baseline={(current axis.north)}]
+            \input{Reference.tex}
+            \end{tikzpicture}
+            &
+            \begin{tikzpicture}[baseline={(current axis.north)}]
+            \input{Queue.tex}
+            \end{tikzpicture}
+            \\
+        \end{tabular}
+        ~~~~
+        \caption{
+            Performance of the objects in DEGO versus their counterparts in java.util.concurrent under high contention.
+        }
+    \end{figure}
+
+    \begin{figure}
+        \hspace{-8.8em}
+        \begin{tabular}[t]{c c}
+            \begin{tikzpicture}
+                \input{histogram_ratio_25}
+            \end{tikzpicture}
+            &
+            \begin{tikzpicture}
+                \input{histogram_ratio_50}
+            \end{tikzpicture}
+            \\
+            \begin{tikzpicture}
+                \input{histogram_ratio_75}
+            \end{tikzpicture}
+            &
+            \begin{tikzpicture}
+                \input{histogram_ratio_100}
+            \end{tikzpicture}
+            \\
+        \end{tabular}
+        \caption{
+            Varying the update ratio for a hash table (Unordered) and a skip list (Ordered).
+        }
+    \end{figure}
+
+    \begin{figure}
+        \begin{tikzpicture}
+            \input{sizes}
+        \end{tikzpicture}
+        \vspace{-1em}%
+        \caption{Performance of a hash table with various working sets (75\% of updates)}
+        \vspace{-1em}%
+    \end{figure}
+
+    \begin{figure}
+        \include{retwis}
+        \caption{
+            Performance of the social network application relative to the baseline (JUC).
+        }
+    \end{figure}
+
+    \begin{figure}
+        \include{retwis_alpha}
+        \caption{
+            Varying the user access distribution.
+        }
+    \end{figure}
+\end{document}

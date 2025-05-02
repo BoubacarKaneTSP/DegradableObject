@@ -1,0 +1,39 @@
+\begin{tikzpicture}
+    \begin{axis}[
+        enlargelimits=false,
+        colorbar,
+        colormap name=CustomBlue,
+        colorbar shift/.style={xshift=0.15\textwidth},
+        colorbar style={
+            width=0.04\textwidth,
+            title={\#~Modifications},     % Titre de la colorbar
+            title style={font=\small,
+            yshift=-0.35\textwidth,
+            xshift=0.2\textwidth,
+            rotate=90}, % Style du titre
+        },
+        width=0.8\textwidth,
+        height=0.8\textwidth,
+        xlabel=Projects,
+        ylabel=Files,
+        ylabel style={font=\small},
+        xlabel style={font=\small},
+        tick label style={font=\small},
+    ]
+        \input{include_shared_object}
+    \end{axis}
+    \begin{axis}[
+        enlargelimits=false,
+        colorbar,
+        colormap name=CustomOrange,
+        colorbar style={width=0.04\textwidth, ytick=\empty},
+        width=0.8\textwidth,
+        height=0.8\textwidth,
+        ylabel=\empty,
+        xlabel=\empty,
+        yticklabel=\empty,
+        xticklabel=\empty
+    ]
+        \input{not_include_shared_object}
+    \end{axis}
+\end{tikzpicture}
