@@ -1,0 +1,114 @@
+\begin{axis}[
+    width=\linewidth,
+    height=0.5\textwidth,
+    bar width=0.05\linewidth,
+    ybar,
+    ylabel={Kop/s per process},
+    ytick={0, 1.0E4, 2.0E4, 3.0E4, 4.0E4, 5.0E4, 6.0E4, 7.0E4, 8.0E4, 9.0E4, 1.0E5},
+    ymin=0,
+    ymax=100000,
+    ymajorgrids,
+    axis x line*=bottom,
+    axis y line*=left,
+    xtick={0,1,2},
+    xticklabels={16K,32K,64K},
+    legend style={draw=none, at={(0.8,1.05)}, anchor=north, font=\normalsize},
+    enlarge x limits=0.3,
+    cycle list={ {fill=orange}, {fill=orange} },
+    area legend,
+    ylabel style={font=\normalsize},
+    xlabel style={font=\normalsize},
+    title style={font=\normalsize},
+    y tick label style={font=\normalsize},
+    x tick label style={font=\normalsize},
+]
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=6pt, xshift=-0.1cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit] coordinates {
+ (0,41347) +- (19, 19) 
+ (1,41546) +- (30, 30) 
+ (2,42131) +- (224, 223) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=6pt, xshift=-0.1cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit] coordinates {
+ (0,35924) +- (928, 927) 
+ (1,37545) +- (2041, 2040) 
+ (2,35854) +- (490, 490) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=6pt, xshift=-0.1cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit] coordinates {
+ (0,37349) +- (2480, 2479) 
+ (1,35058) +- (454, 454) 
+ (2,34631) +- (1204, 1203) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=6pt, xshift=-0.1cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit] coordinates {
+ (0,26451) +- (389, 388) 
+ (1,26513) +- (144, 143) 
+ (2,20028) +- (1926, 1926) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=6pt, xshift=-0.1cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit] coordinates {
+ (0,9556) +- (23, 23) 
+ (1,7642) +- (20, 19) 
+ (2,8952) +- (1324, 1324) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=6pt, xshift=-0.1cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit] coordinates {
+ (0,1370) +- (26, 25) 
+ (1,1164) +- (152, 152) 
+ (2,1099) +- (275, 274) 
+};
+\legend{DEG}
+\end{axis}
+
+\begin{axis}[
+    width=\linewidth,
+    height=0.5\textwidth,
+    bar width=0.05\linewidth,
+    ybar,
+    ytick={0, 1.0E4, 2.0E4, 3.0E4, 4.0E4, 5.0E4, 6.0E4, 7.0E4, 8.0E4, 9.0E4, 1.0E5},
+    ymin=0,
+    ymax=100000,
+    ymajorgrids,
+    axis lines=none,
+    axis y line*=left,
+    xtick={0,1,2},
+    xticklabels={16K,32K,64K},
+    legend style={draw=none, at={(0.8,0.88)}, anchor=north, font=\normalsize}},
+    enlarge x limits=0.3,
+    cycle list={ {fill=MyRoyalBlue}, {fill=MyRoyalBlue} },
+    area legend,
+    ylabel style={font=\normalsize},
+    xlabel style={font=\normalsize},
+    title style={font=\normalsize},
+    tick label style={font=\normalsize},
+    yticklabel={\empty},
+    xticklabel={\empty},
+    scaled y ticks=false,
+]
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=3pt, xshift=-0.35cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit]coordinates {
+ (0,28632) +- (98, 98) 
+ (1,28126) +-(117, 117) 
+ (2,28034) +-(30, 30) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=3pt, xshift=-0.35cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit]coordinates {
+ (0,14003) +- (26, 26) 
+ (1,16610) +-(89, 89) 
+ (2,18988) +-(387, 387) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=3pt, xshift=-0.35cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit]coordinates {
+ (0,11587) +- (659, 658) 
+ (1,12716) +-(156, 156) 
+ (2,15408) +-(119, 119) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=3pt, xshift=-0.35cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit]coordinates {
+ (0,9030) +- (10, 9) 
+ (1,10401) +-(128, 128) 
+ (2,11293) +-(36, 36) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=3pt, xshift=-0.35cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit]coordinates {
+ (0,5444) +- (101, 101) 
+ (1,5619) +-(122, 123) 
+ (2,5058) +-(1328, 1328) 
+};
+\addplot+[nodes near coords, point meta=explicit symbolic, every node near coord/.append style={yshift=3pt, xshift=-0.35cm, rotate=45, anchor=west, font=\normalsize}, error bars/.cd, y dir=both, y explicit]coordinates {
+ (0,895) +- (254, 254) 
+ (1,937) +-(9, 9) 
+ (2,932) +-(10, 9) 
+};
+\legend{JUC}
+\end{axis}

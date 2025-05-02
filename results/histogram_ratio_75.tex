@@ -1,0 +1,112 @@
+\begin{axis}[
+    ybar,
+    width=0.6\linewidth,
+    height=0.6\textwidth,
+    bar width=0.05\linewidth,
+    ylabel={\shortstack{75\% upd \\ Kops/s per thread}},
+    ytick={0, 1.0E4, 2.0E4, 3.0E4, 4.0E4, 5.0E4, 6.0E4, 7.0E4, 8.0E4, 9.0E4, 1.0E5},
+    ymin=0,
+    ymax=100000,
+    symbolic x coords={LeftMargin, Unordered, Space, Ordered, RightMargin},
+    ymajorgrids,
+    axis x line*=bottom,
+    axis y line*=left,
+    xtick=data,
+    legend style={draw=none, at={(0.8,1.3)}, anchor=north, font=\normalsize},
+    xmin=LeftMargin,
+    xmax=RightMargin,
+    ylabel style={font=\normalsize},
+    xlabel style={font=\normalsize},
+    title style={font=\normalsize},
+    tick label style={font=\normalsize},
+    cycle list={ {fill=orange}, {fill=orange} },
+    area legend,
+]
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,42281) +- (2039, 2038) 
+        (Ordered,4028) +-(34, 34)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,18824) +- (4242, 4241) 
+        (Ordered,3801) +-(1, 1)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,28296) +- (7333, 7333) 
+        (Ordered,3571) +-(106, 105)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,18295) +- (4226, 4225) 
+        (Ordered,2721) +-(73, 74)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,8121) +- (164, 164) 
+        (Ordered,1700) +-(6, 5)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,1174) +- (110, 109) 
+        (Ordered,748) +-(40, 39)
+    };
+
+\end{axis}
+
+\begin{axis}[
+    ybar,
+    width=0.6\linewidth,
+    height=0.6\textwidth,
+    bar width=0.05\linewidth,
+    ymin=0,
+    ymax=100000,
+    symbolic x coords={LeftMargin, Unordered, Space, Ordered, RightMargin},
+    ymajorgrids,
+    axis x line*=bottom,
+    axis y line*=left,
+    xtick=data,
+    legend style={draw=none, at={(0.9,1.2)}, anchor=north, font=\normalsize},
+    xmin=LeftMargin,
+    xmax=RightMargin,
+    ylabel style={font=\normalsize},
+    xlabel style={font=\normalsize},
+    title style={font=\normalsize},
+    tick label style={font=\normalsize},
+    cycle list={ {fill=MyRoyalBlue}, {fill=MyRoyalBlue} },
+    area legend,
+    yticklabel={\empty},
+    xticklabel={\empty},
+    scaled y ticks=false,
+]
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,30270) +- (108, 107) 
+        (Ordered,3569) +-(244, 244)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,14669) +- (21, 21) 
+        (Ordered,2514) +-(6, 5)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,14214) +- (46, 45) 
+        (Ordered,2065) +-(34, 34)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,9646) +- (108, 107) 
+        (Ordered,1652) +-(8, 7)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,5927) +- (196, 196) 
+        (Ordered,953) +-(21, 21)
+    };
+
+    \addplot+[error bars/.cd, y dir=both, y explicit] coordinates {
+        (Unordered,834) +- (26, 25) 
+        (Ordered,657) +-(26, 25)
+    };
+
+\end{axis}

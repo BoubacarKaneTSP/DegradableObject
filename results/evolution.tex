@@ -1,0 +1,53 @@
+\begin{axis}[
+    ybar,
+    bar width=0.05\linewidth,
+    width=0.8\textwidth,
+    height=0.8\textwidth,
+    xlabel={Years},
+    x label style={anchor=north, below=1mm},
+    ylabel={\#~Declarations},
+    y label style={font=\footnotesize},
+    ymin=0,
+    ymax=150,
+    ytick={0, 25, 50, 75, 100, 125, 150},
+    y tick label style={font=\footnotesize},
+    xtick={2015,2018,2021,2024},
+    legend style={at={(0.5,-0.25)}, anchor=north, legend columns=2},
+    x label style={anchor=south,yshift=-2em,font=\footnotesize},
+    axis y line*=left,
+    axis x line*=bottom,
+    x tick label style={/pgf/number format/1000 sep=, rotate=45,anchor=east,font=\footnotesize},
+    every node near coord/.style={/pgf/number format/1000 sep=, rotate=45, yshift=-0.2em, xshift=0.6em, font=\tiny},
+    nodes near coords
+]
+    \addplot[fill=orange!50!white,draw=MyRoyalBlue,] coordinates {
+       (2018, 70.24242424242425)
+       (2021, 88.39393939393939)
+       (2024, 106.78787878787878)
+   };
+
+\end{axis}
+
+\begin{axis}[
+    width=0.8\textwidth,
+    height=0.8\textwidth,
+    ymin=0.5,
+    ymax=1,
+    ytick={0.5, 0.6, 0.7, 0.8, 0.9, 1},
+    y tick label style={font=\footnotesize},
+    axis y line*=right,
+    ylabel near ticks,
+    yticklabel pos=right,
+    ylabel={Proportion (\%)},
+    axis x line=none,
+    y label style={anchor=south, yshift=-2em, font=\footnotesize},
+    legend style={at={(0,-0.35)}, anchor=north, legend columns=2}
+]
+
+    \addplot[MyRoyalBlue, thick, mark=*] coordinates {
+       (2018, 0.7162229632371229)
+       (2021, 0.7760622729720591)
+       (2024, 0.8249854364915246)
+   };
+
+\end{axis}

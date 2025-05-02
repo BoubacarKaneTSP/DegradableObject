@@ -1,0 +1,43 @@
+\begin{tikzpicture}
+\begin{axis}[
+        xbar,
+        xlabel={Throughput (Mops/s)},
+        xtick={2000, 4000, 6000, 8000, 10000},
+        xticklabels={2, 4, 6, 8, 10},
+        xmin=0,
+        xmax=10000,
+        height=0.9\textwidth,
+        bar width=0.06\textwidth,
+        width=\textwidth,
+        ylabel={$\alpha$},
+        yticklabels={0.01,0.1,1},
+        ytick={0,1,2},
+        scaled ticks=false,
+        enlarge y limits=0.2,
+        scale only axis,
+        axis x line*=bottom,
+        axis y line*=left,
+        legend style={draw=none, at={(1.1,0.45)}, anchor=north},
+        cycle list={ {fill=MyRoyalBlue!90!white},{fill=black}, {fill=orange} },
+        area legend,]
+        
+\addplot+[error bars/.cd, x dir=both, x explicit] coordinates {
+ (5149.5,0) +- (1276.94,1276.94)
+ (4512.0,1) +- (2493.12,2493.12)
+ (6477.5,2) +- (55.86,55.86)
+};
+
+\addplot+[error bars/.cd, x dir=both, x explicit] coordinates {
+ (5737.0,0) +- (105.83999999999999,105.83999999999999)
+ (6148.5,1) +- (79.38,79.38)
+ (7549.5,2) +- (102.89999999999999,102.89999999999999)
+};
+
+\addplot+[error bars/.cd, x dir=both, x explicit] coordinates {
+ (6906.0,0) +- (1448.44,1448.44)
+ (6631.5,1) +- (44.099999999999994,44.099999999999994)
+ (8300.0,2) +- (197.95999999999998,197.95999999999998)
+};
+\legend{juc,dap,dego}
+\end{axis}
+\end{tikzpicture}

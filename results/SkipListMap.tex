@@ -1,0 +1,41 @@
+\begin{axis}[
+    xticklabels={1,5,10,20,40,80},
+    xtick={1,2,3,4,5,6},
+    ytick={0,10,1.0E2,1.0E3,1.0E4,1.0E5,1.0E6,1.0E7,1.0E8,1.0E9,1.0E10,1.0E11},
+    ymin=1,
+    ymax=100000000,
+    xmin=1,
+    xmax=6,
+    y=0.02\textwidth,
+    x=0.08\textwidth,
+    ymode=log,
+    log origin=0,
+    ymajorgrids,
+    axis x line*=bottom,
+    axis y line*=left,
+    ylabel style={font=\normalsize},
+    xlabel style={font=\normalsize},
+    title style={font=\normalsize},
+    tick label style={font=\normalsize},
+    legend style={draw=none, at={(0.5,-0.3)}, anchor=north,font=\normalsize},
+    title=results/SkipListMap]
+    \addplot coordinates {
+       (1, 3949)
+       (2, 3261)
+       (3, 2954)
+       (4, 2331)
+       (5, 1364)
+       (6, 997)
+   };
+
+    \addplot coordinates {
+       (1, 4169)
+       (2, 4354)
+       (3, 3931)
+       (4, 3151)
+       (5, 1896)
+       (6, 1179)
+   };
+
+  \legend{ConcurrentSkipListMap, ExtendedSegmentedSkipListMap, };
+\end{axis}
